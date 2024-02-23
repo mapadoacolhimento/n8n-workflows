@@ -9373,7 +9373,7 @@
   },
   "18": {
     "createdAt": "2024-02-09T14:21:32.324Z",
-    "updatedAt": "2024-02-23T15:12:53.000Z",
+    "updatedAt": "2024-02-23T17:22:22.000Z",
     "id": "VZ5E8nqAVVIrTOTv",
     "name": "[WIP] FLUXO DE BKP",
     "active": false,
@@ -9572,7 +9572,7 @@
           "triggerTimes": {
             "item": [
               {
-                "hour": 11,
+                "hour": 20,
                 "minute": 13
               }
             ]
@@ -9675,7 +9675,6 @@
       },
       {
         "parameters": {
-          "method": "PUT",
           "url": "={{ $('Globals').item.json[\"repo\"][\"path\"] }}{{ $('dataArray').item.json[\"json\"][\"file_name\"] }}",
           "authentication": "predefinedCredentialType",
           "nodeCredentialType": "githubApi",
@@ -9689,25 +9688,18 @@
               {
                 "name": "X-GitHub-Api-Version",
                 "value": "2022-11-28"
-              },
-              {
-                "name": "Content-Type",
-                "value": "application/json"
               }
             ]
           },
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n    \"path\": \"{{ $('dataArray').item.json[\"json\"][\"file_name\"] }}.json\",\n    \"message\": \"[N8N Backup] .json ({{$json[\"github_status\"]}}) {{ $('n8n').item.json.name }}\",\n    \"committer\": {\n        \"name\": \"Adriele Alvarenga Secundino\",\n        \"email\": \"dri.leela@gmail.com\"\n    },\n    \"content\": \"{{ $('new').item.json[\"n8n_data_stringy\"] }}\",\n    \"branch\": \"main\"\n}",
           "options": {}
         },
-        "id": "6aafeb1d-c3ae-4fd3-9692-a8c8fa9b359a",
-        "name": "HTTP Request",
+        "id": "42398509-0244-4df7-8051-d7596bc305c9",
+        "name": "Buscar o arquivo do fluxo no repositorio",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          2080,
-          760
+          1180,
+          380
         ],
         "credentials": {
           "githubApi": {
@@ -9715,6 +9707,19 @@
             "name": "GitHub account [viviane]"
           }
         }
+      },
+      {
+        "parameters": {
+          "functionCode": "// File Returned with Content\nif (Object.keys(items[0].json).includes(\"content\")) {\n  // Get JSON Objects\n  var origWorkflow = eval(\"(\"+Buffer.from(items[0].json.content, 'base64').toString()+\")\");\n  var n8nWorkflow = (items[1].json.data);\n  \n  // Order JSON Objects\n  var orderedOriginal = {}\n  var orderedActual = {}\n  Object.keys(origWorkflow).sort().forEach(function(key) {\n    orderedOriginal[key] = origWorkflow[key];\n  });\n  \n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Determine Difference\n  if ( orderedOriginal === orderedActual ) {\n    items[0].json.github_status = \"same\";\n    items[0].json.content_decoded = orderedOriginal;\n  } else {\n    items[0].json.github_status = \"different\";\n    items[0].json.content_decoded = orderedOriginal;\n    items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n  }\n// No File Returned / New Workflow\n} else {\n \n  // Order JSON Object\n  var n8nWorkflow = (items[1].json.data);\n  var orderedActual = {}\n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Proper Formatting\n  items[0].json.github_status = \"new\";\n  items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n}\n\n// Return Items\nreturn items;"
+        },
+        "name": "Verifica se é um novo arquivo",
+        "type": "n8n-nodes-base.function",
+        "position": [
+          1510,
+          610
+        ],
+        "typeVersion": 1,
+        "id": "ff021ac3-9ee9-4bdd-9f8d-04c605cc9ef8"
       },
       {
         "parameters": {
@@ -9745,12 +9750,12 @@
           "options": {}
         },
         "id": "9ad44108-a9d3-4ffb-805c-843d7a56f45a",
-        "name": "HTTP Request1",
+        "name": "Atualiza arquivo no github",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
           2080,
-          580
+          600
         ],
         "credentials": {
           "githubApi": {
@@ -9761,6 +9766,7 @@
       },
       {
         "parameters": {
+          "method": "PUT",
           "url": "={{ $('Globals').item.json[\"repo\"][\"path\"] }}{{ $('dataArray').item.json[\"json\"][\"file_name\"] }}",
           "authentication": "predefinedCredentialType",
           "nodeCredentialType": "githubApi",
@@ -9774,18 +9780,25 @@
               {
                 "name": "X-GitHub-Api-Version",
                 "value": "2022-11-28"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
               }
             ]
           },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"path\": \"{{ $('dataArray').item.json[\"json\"][\"file_name\"] }}.json\",\n    \"message\": \"[N8N Backup] .json ({{$json[\"github_status\"]}}) {{ $('n8n').item.json.name }}\",\n    \"committer\": {\n        \"name\": \"Adriele Alvarenga Secundino\",\n        \"email\": \"dri.leela@gmail.com\"\n    },\n    \"content\": \"{{ $('new').item.json[\"n8n_data_stringy\"] }}\",\n    \"branch\": \"main\"\n}",
           "options": {}
         },
-        "id": "42398509-0244-4df7-8051-d7596bc305c9",
-        "name": "Buscar o arquivo do fluxo no repositorio",
+        "id": "6aafeb1d-c3ae-4fd3-9692-a8c8fa9b359a",
+        "name": "Cria arquivo no github",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          1140,
-          380
+          2080,
+          760
         ],
         "credentials": {
           "githubApi": {
@@ -9793,19 +9806,6 @@
             "name": "GitHub account [viviane]"
           }
         }
-      },
-      {
-        "parameters": {
-          "functionCode": "// File Returned with Content\nif (Object.keys(items[0].json).includes(\"content\")) {\n  // Get JSON Objects\n  var origWorkflow = eval(\"(\"+Buffer.from(items[0].json.content, 'base64').toString()+\")\");\n  var n8nWorkflow = (items[1].json.data);\n  \n  // Order JSON Objects\n  var orderedOriginal = {}\n  var orderedActual = {}\n  Object.keys(origWorkflow).sort().forEach(function(key) {\n    orderedOriginal[key] = origWorkflow[key];\n  });\n  \n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Determine Difference\n  if ( orderedOriginal === orderedActual ) {\n    items[0].json.github_status = \"same\";\n    items[0].json.content_decoded = orderedOriginal;\n  } else {\n    items[0].json.github_status = \"different\";\n    items[0].json.content_decoded = orderedOriginal;\n    items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n  }\n// No File Returned / New Workflow\n} else {\n \n  // Order JSON Object\n  var n8nWorkflow = (items[1].json.data);\n  var orderedActual = {}\n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Proper Formatting\n  items[0].json.github_status = \"new\";\n  items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n}\n\n// Return Items\nreturn items;"
-        },
-        "name": "Verifica se é um novo arquivo",
-        "type": "n8n-nodes-base.function",
-        "position": [
-          1510,
-          610
-        ],
-        "typeVersion": 1,
-        "id": "ff021ac3-9ee9-4bdd-9f8d-04c605cc9ef8"
       }
     ],
     "connections": {
@@ -9857,7 +9857,7 @@
         "main": [
           [
             {
-              "node": "HTTP Request1",
+              "node": "Atualiza arquivo no github",
               "type": "main",
               "index": 0
             }
@@ -9953,29 +9953,7 @@
         "main": [
           [
             {
-              "node": "HTTP Request",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "HTTP Request": {
-        "main": [
-          [
-            {
-              "node": "OneAtATime",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "HTTP Request1": {
-        "main": [
-          [
-            {
-              "node": "OneAtATime",
+              "node": "Cria arquivo no github",
               "type": "main",
               "index": 0
             }
@@ -10003,6 +9981,28 @@
             }
           ]
         ]
+      },
+      "Atualiza arquivo no github": {
+        "main": [
+          [
+            {
+              "node": "OneAtATime",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria arquivo no github": {
+        "main": [
+          [
+            {
+              "node": "OneAtATime",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "settings": {
@@ -10013,7 +10013,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "632cbb6b-6400-40fb-a3e0-acccefd2b593",
+    "versionId": "2f5ed8a4-2c39-433e-b43a-8eb7a6e144e4",
     "triggerCount": 1,
     "tags": []
   },
