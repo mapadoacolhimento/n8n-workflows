@@ -1,7 +1,7 @@
 {
   "0": {
     "createdAt": "2024-01-24T01:52:22.279Z",
-    "updatedAt": "2024-02-20T18:01:35.000Z",
+    "updatedAt": "2024-02-26T13:09:20.000Z",
     "id": "0hojIhmzSHjJnPDe",
     "name": "[PROD] Volunteer register integrations - Moodle / Zendesk / DB",
     "active": true,
@@ -51,7 +51,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "=select * from volunteers v\nleft join integrations_logs il on il.internal_id = v.id and il.form_type = v.occupation\nwhere\nil.integration = 'moodle'\nand il.\"type\" = 'matricular'\nand il.external_id = {{$node[\"Webhook\"].json[\"body\"][\n\"userid\"]}}",
+          "query": "=select * from volunteers v\nwhere moodle_id = {{$node[\"Webhook\"].json[\"body\"][\n\"userid\"]}}",
           "additionalFields": {}
         },
         "id": "a2797037-f471-4eb8-955c-63dc3f458ec1",
@@ -996,7 +996,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "1f458ff8-1247-4a69-b25f-33ff7949ee59",
+    "versionId": "ee531950-e609-449b-9fcf-3b2c39d0614c",
     "triggerCount": 1,
     "tags": [
       {
@@ -9373,7 +9373,7 @@
   },
   "18": {
     "createdAt": "2024-02-09T14:21:32.324Z",
-    "updatedAt": "2024-02-23T17:22:22.000Z",
+    "updatedAt": "2024-02-26T13:28:11.000Z",
     "id": "VZ5E8nqAVVIrTOTv",
     "name": "[WIP] FLUXO DE BKP",
     "active": false,
@@ -9383,24 +9383,11 @@
         "name": "On clicking 'execute'",
         "type": "n8n-nodes-base.manualTrigger",
         "position": [
-          360,
+          120,
           460
         ],
         "typeVersion": 1,
         "id": "fb848085-9fa5-4493-a10a-63504bd44399"
-      },
-      {
-        "parameters": {
-          "functionCode": "const newItems = [];\nfor (item of items) {\n  str = item.json.name.replaceAll(\" \",\"_\")\n  str = str.replaceAll(/[ÀÁÂÃÄÅ]/g,\"A\");\n  str = str.replaceAll(/[àáâãäå]/g,\"a\");\n  str = str.replaceAll(/[ÈÉÊË]/g,\"E\");\n  str = str.replaceAll(\"/\",\"\");\n  item.json.file_name = str;\n  newItems.push({json: item});\n}\nreturn newItems;"
-        },
-        "name": "dataArray",
-        "type": "n8n-nodes-base.function",
-        "position": [
-          800,
-          560
-        ],
-        "typeVersion": 1,
-        "id": "46f15b6b-cad9-48ca-aaba-4563b06e8619"
       },
       {
         "parameters": {
@@ -9439,35 +9426,6 @@
         ],
         "typeVersion": 1,
         "id": "ea8f3bb1-23f9-42da-bb75-1a094f64ae38"
-      },
-      {
-        "parameters": {
-          "dataType": "string",
-          "value1": "={{$json[\"github_status\"]}}",
-          "rules": {
-            "rules": [
-              {
-                "value2": "same"
-              },
-              {
-                "value2": "different",
-                "output": 1
-              },
-              {
-                "value2": "new",
-                "output": 2
-              }
-            ]
-          }
-        },
-        "name": "github_status",
-        "type": "n8n-nodes-base.switch",
-        "position": [
-          1660,
-          610
-        ],
-        "typeVersion": 1,
-        "id": "3e06aa80-0546-41a9-ac0a-7f2738c3441c"
       },
       {
         "parameters": {},
@@ -9581,25 +9539,11 @@
         "name": "Daily @ 20:00",
         "type": "n8n-nodes-base.cron",
         "position": [
-          360,
-          760
+          160,
+          800
         ],
         "typeVersion": 1,
         "id": "be95095b-8489-4b37-81fa-f0eae1c2416a"
-      },
-      {
-        "parameters": {
-          "batchSize": 1,
-          "options": {}
-        },
-        "name": "OneAtATime",
-        "type": "n8n-nodes-base.splitInBatches",
-        "position": [
-          980,
-          560
-        ],
-        "typeVersion": 1,
-        "id": "efc3c6ba-ad7b-41f8-956d-0840cf85c292"
       },
       {
         "parameters": {
@@ -9624,8 +9568,8 @@
         "name": "Globals",
         "type": "n8n-nodes-base.set",
         "position": [
-          510,
-          610
+          340,
+          600
         ],
         "typeVersion": 1,
         "id": "1d42d9fd-1dc5-4bce-9252-6be21c81cd8e"
@@ -9639,8 +9583,8 @@
         "type": "n8n-nodes-base.n8n",
         "typeVersion": 1,
         "position": [
-          660,
-          620
+          500,
+          600
         ],
         "credentials": {
           "n8nApi": {
@@ -9663,48 +9607,13 @@
         "type": "n8n-nodes-base.n8n",
         "typeVersion": 1,
         "position": [
-          1180,
-          700
+          1280,
+          880
         ],
         "credentials": {
           "n8nApi": {
             "id": "7BqUjv3Vc4V09x0u",
             "name": "n8n account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "url": "={{ $('Globals').item.json[\"repo\"][\"path\"] }}{{ $('dataArray').item.json[\"json\"][\"file_name\"] }}",
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "githubApi",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Accept",
-                "value": "application/vnd.github+json"
-              },
-              {
-                "name": "X-GitHub-Api-Version",
-                "value": "2022-11-28"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "id": "42398509-0244-4df7-8051-d7596bc305c9",
-        "name": "Buscar o arquivo do fluxo no repositorio",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.1,
-        "position": [
-          1180,
-          380
-        ],
-        "credentials": {
-          "githubApi": {
-            "id": "enJuvcF6JzQBryLg",
-            "name": "GitHub account [viviane]"
           }
         }
       },
@@ -9806,20 +9715,102 @@
             "name": "GitHub account [viviane]"
           }
         }
+      },
+      {
+        "parameters": {
+          "functionCode": "const newItems = [];\nfor (item of items) {\n  str = item.json.name.replaceAll(\" \",\"_\")\n  str = str.replaceAll(/[ÀÁÂÃÄÅ]/g,\"A\");\n  str = str.replaceAll(/[àáâãäå]/g,\"a\");\n  str = str.replaceAll(/[ÈÉÊË]/g,\"E\");\n  str = str.replaceAll(\"/\",\"\");\n  item.json.file_name = str;\n  newItems.push({json: item});\n}\nreturn newItems;"
+        },
+        "name": "dataArray",
+        "type": "n8n-nodes-base.function",
+        "position": [
+          740,
+          600
+        ],
+        "typeVersion": 1,
+        "id": "46f15b6b-cad9-48ca-aaba-4563b06e8619",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "dataType": "string",
+          "value1": "={{$json[\"github_status\"]}}",
+          "rules": {
+            "rules": [
+              {
+                "value2": "same"
+              },
+              {
+                "value2": "different",
+                "output": 1
+              },
+              {
+                "value2": "new",
+                "output": 2
+              }
+            ]
+          }
+        },
+        "name": "github_status",
+        "type": "n8n-nodes-base.switch",
+        "position": [
+          1660,
+          610
+        ],
+        "typeVersion": 1,
+        "id": "3e06aa80-0546-41a9-ac0a-7f2738c3441c"
+      },
+      {
+        "parameters": {
+          "batchSize": 1,
+          "options": {}
+        },
+        "name": "OneAtATime",
+        "type": "n8n-nodes-base.splitInBatches",
+        "position": [
+          920,
+          920
+        ],
+        "typeVersion": 1,
+        "id": "efc3c6ba-ad7b-41f8-956d-0840cf85c292"
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Globals').item.json[\"repo\"][\"path\"] }}{{ $('dataArray').item.json[\"json\"][\"file_name\"] }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "githubApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Accept",
+                "value": "application/vnd.github+json"
+              },
+              {
+                "name": "X-GitHub-Api-Version",
+                "value": "2022-11-28"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "42398509-0244-4df7-8051-d7596bc305c9",
+        "name": "Buscar o arquivo do fluxo no repositorio",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1180,
+          380
+        ],
+        "credentials": {
+          "githubApi": {
+            "id": "enJuvcF6JzQBryLg",
+            "name": "GitHub account [viviane]"
+          }
+        },
+        "onError": "continueRegularOutput"
       }
     ],
     "connections": {
-      "same": {
-        "main": [
-          [
-            {
-              "node": "OneAtATime",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Merge": {
         "main": [
           [
@@ -9842,17 +9833,6 @@
           ]
         ]
       },
-      "dataArray": {
-        "main": [
-          [
-            {
-              "node": "OneAtATime",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "different": {
         "main": [
           [
@@ -9864,52 +9844,11 @@
           ]
         ]
       },
-      "OneAtATime": {
-        "main": [
-          [
-            {
-              "node": "n8n1",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Buscar o arquivo do fluxo no repositorio",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Daily @ 20:00": {
         "main": [
           [
             {
               "node": "Globals",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "github_status": {
-        "main": [
-          [
-            {
-              "node": "same",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "different",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "new",
               "type": "main",
               "index": 0
             }
@@ -9940,13 +9879,7 @@
       },
       "n8n1": {
         "main": [
-          [
-            {
-              "node": "Merge",
-              "type": "main",
-              "index": 1
-            }
-          ]
+          []
         ]
       },
       "new": {
@@ -9954,17 +9887,6 @@
           [
             {
               "node": "Cria arquivo no github",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Buscar o arquivo do fluxo no repositorio": {
-        "main": [
-          [
-            {
-              "node": "Merge",
               "type": "main",
               "index": 0
             }
@@ -9982,22 +9904,52 @@
           ]
         ]
       },
-      "Atualiza arquivo no github": {
+      "dataArray": {
         "main": [
           [
             {
-              "node": "OneAtATime",
+              "node": "Buscar o arquivo do fluxo no repositorio",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "github_status": {
+        "main": [
+          [
+            {
+              "node": "same",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "different",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "new",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Cria arquivo no github": {
+      "Buscar o arquivo do fluxo no repositorio": {
         "main": [
           [
             {
-              "node": "OneAtATime",
+              "node": "Merge",
               "type": "main",
               "index": 0
             }
@@ -10013,7 +9965,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "2f5ed8a4-2c39-433e-b43a-8eb7a6e144e4",
+    "versionId": "4dec3f02-80ab-4ede-9e44-85a2925b5343",
     "triggerCount": 1,
     "tags": []
   },
