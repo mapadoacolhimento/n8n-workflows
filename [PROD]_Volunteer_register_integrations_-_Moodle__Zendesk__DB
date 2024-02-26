@@ -9373,7 +9373,7 @@
   },
   "18": {
     "createdAt": "2024-02-09T14:21:32.324Z",
-    "updatedAt": "2024-02-26T13:28:11.000Z",
+    "updatedAt": "2024-02-26T13:38:14.000Z",
     "id": "VZ5E8nqAVVIrTOTv",
     "name": "[WIP] FLUXO DE BKP",
     "active": false,
@@ -9432,8 +9432,8 @@
         "name": "same",
         "type": "n8n-nodes-base.noOp",
         "position": [
-          1860,
-          440
+          1880,
+          380
         ],
         "typeVersion": 1,
         "id": "6ccc99e4-852a-438b-a3d1-b5c3a3eb38dd"
@@ -9568,7 +9568,7 @@
         "name": "Globals",
         "type": "n8n-nodes-base.set",
         "position": [
-          340,
+          240,
           600
         ],
         "typeVersion": 1,
@@ -9583,7 +9583,7 @@
         "type": "n8n-nodes-base.n8n",
         "typeVersion": 1,
         "position": [
-          500,
+          400,
           600
         ],
         "credentials": {
@@ -9607,8 +9607,8 @@
         "type": "n8n-nodes-base.n8n",
         "typeVersion": 1,
         "position": [
-          1280,
-          880
+          1180,
+          680
         ],
         "credentials": {
           "n8nApi": {
@@ -9619,7 +9619,7 @@
       },
       {
         "parameters": {
-          "functionCode": "// File Returned with Content\nif (Object.keys(items[0].json).includes(\"content\")) {\n  // Get JSON Objects\n  var origWorkflow = eval(\"(\"+Buffer.from(items[0].json.content, 'base64').toString()+\")\");\n  var n8nWorkflow = (items[1].json.data);\n  \n  // Order JSON Objects\n  var orderedOriginal = {}\n  var orderedActual = {}\n  Object.keys(origWorkflow).sort().forEach(function(key) {\n    orderedOriginal[key] = origWorkflow[key];\n  });\n  \n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Determine Difference\n  if ( orderedOriginal === orderedActual ) {\n    items[0].json.github_status = \"same\";\n    items[0].json.content_decoded = orderedOriginal;\n  } else {\n    items[0].json.github_status = \"different\";\n    items[0].json.content_decoded = orderedOriginal;\n    items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n  }\n// No File Returned / New Workflow\n} else {\n \n  // Order JSON Object\n  var n8nWorkflow = (items[1].json.data);\n  var orderedActual = {}\n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Proper Formatting\n  items[0].json.github_status = \"new\";\n  items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n}\n\n// Return Items\nreturn items;"
+          "functionCode": "// File Returned with Content\nconsole.log(items[0].json)\nif (Object.keys(items[0].json).includes(\"content\")) {\n  // Get JSON Objects\n  var origWorkflow = eval(\"(\"+Buffer.from(items[0].json.content, 'base64').toString()+\")\");\n  var n8nWorkflow = (items[1].json.data);\n  \n  // Order JSON Objects\n  var orderedOriginal = {}\n  var orderedActual = {}\n  Object.keys(origWorkflow).sort().forEach(function(key) {\n    orderedOriginal[key] = origWorkflow[key];\n  });\n  \n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Determine Difference\n  if ( orderedOriginal === orderedActual ) {\n    items[0].json.github_status = \"same\";\n    items[0].json.content_decoded = orderedOriginal;\n  } else {\n    items[0].json.github_status = \"different\";\n    items[0].json.content_decoded = orderedOriginal;\n    items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n  }\n// No File Returned / New Workflow\n} else {\n \n  // Order JSON Object\n  var n8nWorkflow = (items[1].json.data);\n  var orderedActual = {}\n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Proper Formatting\n  items[0].json.github_status = \"new\";\n  items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n}\n\n// Return Items\nreturn items;"
         },
         "name": "Verifica se é um novo arquivo",
         "type": "n8n-nodes-base.function",
@@ -9723,7 +9723,7 @@
         "name": "dataArray",
         "type": "n8n-nodes-base.function",
         "position": [
-          740,
+          660,
           600
         ],
         "typeVersion": 1,
@@ -9768,7 +9768,7 @@
         "type": "n8n-nodes-base.splitInBatches",
         "position": [
           920,
-          920
+          600
         ],
         "typeVersion": 1,
         "id": "efc3c6ba-ad7b-41f8-956d-0840cf85c292"
@@ -9879,7 +9879,13 @@
       },
       "n8n1": {
         "main": [
-          []
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
         ]
       },
       "new": {
@@ -9908,14 +9914,9 @@
         "main": [
           [
             {
-              "node": "Buscar o arquivo do fluxo no repositorio",
+              "node": "OneAtATime",
               "type": "main",
               "index": 0
-            },
-            {
-              "node": "Merge",
-              "type": "main",
-              "index": 1
             }
           ]
         ]
@@ -9955,6 +9956,55 @@
             }
           ]
         ]
+      },
+      "OneAtATime": {
+        "main": [
+          [
+            {
+              "node": "Buscar o arquivo do fluxo no repositorio",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "n8n1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza arquivo no github": {
+        "main": [
+          [
+            {
+              "node": "OneAtATime",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria arquivo no github": {
+        "main": [
+          [
+            {
+              "node": "OneAtATime",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "same": {
+        "main": [
+          [
+            {
+              "node": "OneAtATime",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "settings": {
@@ -9965,7 +10015,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "4dec3f02-80ab-4ede-9e44-85a2925b5343",
+    "versionId": "e5909a3d-0fb8-47ca-a215-4ecb0359a8c2",
     "triggerCount": 1,
     "tags": []
   },
