@@ -8186,7 +8186,7 @@
   },
   "17": {
     "createdAt": "2024-01-16T20:42:41.628Z",
-    "updatedAt": "2024-02-26T22:31:03.000Z",
+    "updatedAt": "2024-02-26T23:39:28.000Z",
     "id": "UUpbXKmCbVY9rmAH",
     "name": "Remover contatos do Loops",
     "active": false,
@@ -8271,7 +8271,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "fbe7acf8-acfa-4ae3-b303-5e36c77e8f61",
+    "versionId": "7e85aff4-ec9b-40a0-8aec-3a32a1e9f646",
     "triggerCount": 0,
     "tags": [
       {
@@ -8284,7 +8284,7 @@
   },
   "18": {
     "createdAt": "2024-02-09T14:21:32.324Z",
-    "updatedAt": "2024-02-26T20:19:07.000Z",
+    "updatedAt": "2024-02-27T13:02:53.000Z",
     "id": "VZ5E8nqAVVIrTOTv",
     "name": "Backup dos workflows no Github",
     "active": true,
@@ -8376,8 +8376,8 @@
         "type": "n8n-nodes-base.n8n",
         "typeVersion": 1,
         "position": [
-          1040,
-          700
+          1020,
+          660
         ],
         "credentials": {
           "n8nApi": {
@@ -8388,7 +8388,7 @@
       },
       {
         "parameters": {
-          "url": "={{ $('Globals variables of github repository').item.json[\"repo\"][\"path\"] }}{{ $('Return a array of worflows with format name').item.json[\"json\"][\"file_name\"] }}",
+          "url": "={{ $('Globals variables of github repository').item.json[\"repo\"][\"path\"] }}{{ $('Format name of worflow to find the file on github').item.json[\"file_name\"] }}",
           "authentication": "predefinedCredentialType",
           "nodeCredentialType": "githubApi",
           "sendHeaders": true,
@@ -8411,8 +8411,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          1040,
-          400
+          1260,
+          320
         ],
         "credentials": {
           "githubApi": {
@@ -8425,7 +8425,7 @@
       {
         "parameters": {
           "method": "PUT",
-          "url": "={{ $('Globals variables of github repository').item.json[\"repo\"][\"path\"] }}{{ $('Return a array of worflows with format name').item.json[\"json\"][\"file_name\"] }}",
+          "url": "={{ $('Globals variables of github repository').item.json[\"repo\"][\"path\"] }}{{ $('Format name of worflow to find the file on github').item.json[\"file_name\"] }}",
           "authentication": "predefinedCredentialType",
           "nodeCredentialType": "githubApi",
           "sendHeaders": true,
@@ -8591,7 +8591,7 @@
       },
       {
         "parameters": {
-          "functionCode": "const newItems = [];\nfor (item of items) {\n  str = item.json.name.replaceAll(\" \",\"_\")\n  str = str.replaceAll(/[ÀÁÂÃÄÅ]/g,\"A\");\n  str = str.replaceAll(/[àáâãäå]/g,\"a\");\n  str = str.replaceAll(/[ÈÉÊË]/g,\"E\");\n  str = str.replaceAll(\"/\",\"\");\n  item.json.file_name = str;\n  newItems.push({json: item});\n}\nreturn newItems;"
+          "functionCode": "const newItems = [];\nfor (item of items) {\n  newItems.push({json: item});\n}\nreturn newItems;"
         },
         "name": "Return a array of worflows with format name",
         "type": "n8n-nodes-base.function",
@@ -8627,6 +8627,20 @@
         ],
         "typeVersion": 1,
         "id": "ea8f3bb1-23f9-42da-bb75-1a094f64ae38"
+      },
+      {
+        "parameters": {
+          "functionCode": "\n\nstr = items[0].json.json.name.replaceAll(\" \",\"_\")\nstr = str.replaceAll(/[ÀÁÂÃÄÅ]/g,\"A\");\nstr = str.replaceAll(/[àáâãäå]/g,\"a\");\nstr = str.replaceAll(/[ÈÉÊË]/g,\"E\");\nstr = str.replaceAll(\"/\",\"\");\nitems[0].json.file_name = str;\n \nreturn items;"
+        },
+        "name": "Format name of worflow to find the file on github",
+        "type": "n8n-nodes-base.function",
+        "position": [
+          980,
+          340
+        ],
+        "typeVersion": 1,
+        "id": "7a951aa9-e004-43e5-af44-a1636a309025",
+        "onError": "continueRegularOutput"
       }
     ],
     "connections": {
@@ -8693,28 +8707,6 @@
           [
             {
               "node": "Make a iterteration with workflows array",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "get workflow": {
-        "main": [
-          [
-            {
-              "node": "Merge the outpus files to compare",
-              "type": "main",
-              "index": 1
-            }
-          ]
-        ]
-      },
-      "search worflow file on  github repository": {
-        "main": [
-          [
-            {
-              "node": "Merge the outpus files to compare",
               "type": "main",
               "index": 0
             }
@@ -8802,12 +8794,12 @@
         "main": [
           [
             {
-              "node": "search worflow file on  github repository",
+              "node": "get workflow",
               "type": "main",
               "index": 0
             },
             {
-              "node": "get workflow",
+              "node": "Format name of worflow to find the file on github",
               "type": "main",
               "index": 0
             }
@@ -8819,6 +8811,39 @@
           [
             {
               "node": "compare workflow files",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "search worflow file on  github repository": {
+        "main": [
+          [
+            {
+              "node": "Merge the outpus files to compare",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get workflow": {
+        "main": [
+          [
+            {
+              "node": "Merge the outpus files to compare",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Format name of worflow to find the file on github": {
+        "main": [
+          [
+            {
+              "node": "search worflow file on  github repository",
               "type": "main",
               "index": 0
             }
@@ -8837,7 +8862,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "45e7b723-e971-4a88-9883-f6ce96fab107",
+    "versionId": "502fefb1-4311-444f-8d35-7e5053feff8e",
     "triggerCount": 1,
     "tags": []
   },
