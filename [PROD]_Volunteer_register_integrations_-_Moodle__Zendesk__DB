@@ -34,7 +34,7 @@
         ],
         [
           {
-            "node": "Postgres",
+            "node": "Busca email no Moodle",
             "type": "main",
             "index": 0
           }
@@ -56,18 +56,7 @@
       "main": [
         [
           {
-            "node": "Seta os campos para atualizar voluntária no BD",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Cria o ticket de entrada da voluntária pela API do Zendesk": {
-      "main": [
-        [
-          {
-            "node": "Seta os campos para inserir na tabela volunteer_status_history",
+            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk",
             "type": "main",
             "index": 0
           }
@@ -79,6 +68,11 @@
         [
           {
             "node": "Atualiza voluntária no BD1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insere  o registro na volunteer_status_history",
             "type": "main",
             "index": 0
           }
@@ -114,6 +108,11 @@
             "node": "Atualiza status da voluntária no Zendesk1",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Seta os campos para atualizar a voluntária no BD",
+            "type": "main",
+            "index": 0
           }
         ],
         [
@@ -140,7 +139,7 @@
       "main": [
         [
           {
-            "node": "Seta os campos para atualizar a voluntária no BD",
+            "node": "Busca os tickets da voluntária no Zendesk",
             "type": "main",
             "index": 0
           }
@@ -154,13 +153,7 @@
             "node": "Atualiza voluntária no BD",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Seta os campos para inserir na tabela volunteer_status_history": {
-      "main": [
-        [
+          },
           {
             "node": "Insere o novo status na tabela volunteer_status_history",
             "type": "main",
@@ -191,44 +184,11 @@
         ]
       ]
     },
-    "Atualiza o ticket para \"aprovada\"": {
-      "main": [
-        [
-          {
-            "node": "Seta os campos para inserir na tabela volunteer_status_history1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Seta os campos para inserir na tabela volunteer_status_history1": {
-      "main": [
-        [
-          {
-            "node": "Insere  o registro na volunteer_status_history",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Atualiza voluntária no BD": {
       "main": [
         [
           {
-            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualiza voluntária no BD1": {
-      "main": [
-        [
-          {
-            "node": "Busca os tickets da voluntária no Zendesk",
+            "node": "Envia email início capacitação",
             "type": "main",
             "index": 0
           }
@@ -271,6 +231,11 @@
             "node": "Atualiza status da voluntária no Zendesk",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Seta os campos para atualizar voluntária no BD",
+            "type": "main",
+            "index": 0
           }
         ],
         [
@@ -290,39 +255,37 @@
             "type": "main",
             "index": 0
           }
-        ],
+        ]
+      ]
+    },
+    "Busca email no Moodle": {
+      "main": [
         [
           {
-            "node": "No Operation, do nothing",
+            "node": "Se o email for do Mapa",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Postgres": {
+    "Se o email for do Mapa": {
       "main": [
-        [
-          {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ],
+        [],
         [
           {
             "node": "Stop And Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza voluntária no BD1": {
+      "main": [
+        [
+          {
+            "node": "Envia email aprovada",
             "type": "main",
             "index": 0
           }
@@ -343,13 +306,13 @@
         "path": "moodle-zendesk",
         "options": {}
       },
-      "id": "755cbae2-69bf-4deb-92e8-fa787481d63e",
+      "id": "ba6f89c2-fb7c-40da-9478-092610472b1f",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        -880,
-        760
+        -820,
+        1600
       ],
       "webhookId": "3e06675f-aa55-42cd-bfa1-be979b64b575"
     },
@@ -357,26 +320,26 @@
       "parameters": {
         "errorMessage": "=Não achou a voluntária\nmoodle_id:  {{$node[\"Webhook\"].json[\"body\"][\"userid\"]}}"
       },
-      "id": "3feb912b-0efd-40ce-bd40-d3a17a2576e1",
+      "id": "0aa46bea-a62d-45da-b00c-a65698b86722",
       "name": "Stop And Error",
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        80,
-        1200
+        180,
+        2120
       ]
     },
     {
       "parameters": {
         "errorMessage": "=Não achou a voluntária\nvollunteer_id:  {{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
       },
-      "id": "df677af8-6cf3-47ef-b1a7-5f60c95b27b6",
+      "id": "3c9df06d-49e0-4664-9ef9-191bcc4fcef8",
       "name": "Stop And Error1",
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        340,
-        1080
+        660,
+        1900
       ]
     },
     {
@@ -385,13 +348,13 @@
         "query": "=select * from volunteers v\nwhere moodle_id = {{$node[\"Webhook\"].json[\"body\"][\n\"userid\"]}}",
         "additionalFields": {}
       },
-      "id": "a2797037-f471-4eb8-955c-63dc3f458ec1",
+      "id": "b938d562-2ab2-48df-9e8d-0e0e2ba8ab83",
       "name": "Busca voluntária pelo moodle ID",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
       "position": [
-        -640,
-        760
+        -580,
+        1600
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -412,13 +375,13 @@
           ]
         }
       },
-      "id": "e906724e-4b46-4f79-a913-2aaf424eff3a",
+      "id": "6f13d5a1-b690-4cff-8bf1-d41281867d26",
       "name": "Se retornou a voluntária",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        -440,
-        760
+        -380,
+        1600
       ]
     },
     {
@@ -430,13 +393,13 @@
           "query": "={{ $json.email }}"
         }
       },
-      "id": "821c6e9a-d42f-49c8-9c02-695311739b64",
+      "id": "3519880c-3a95-43dd-9a0f-36d4e5e302c0",
       "name": "Busca voluntária pelo email",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        20,
-        820
+        200,
+        1620
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -450,13 +413,13 @@
       "parameters": {
         "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  if (item.json.organization_id == 360269610652) {\n  \titem.json.subject =`[Advogada] ${item.json.name} - ${item.json.user_fields.registration_number}`;\n  } else {\n    item.json.subject =`[Psicóloga] ${item.json.name} - ${item.json.user_fields.registration_number}`;\n  }\n}\n\nreturn $input.all();"
       },
-      "id": "3920dc51-99c8-46d1-81a9-92ae6f46c4eb",
+      "id": "a0d12286-492c-4e87-8972-b2e026bceef4",
       "name": "Monta o assunto do ticket de acordo com a organização da voluntária",
       "type": "n8n-nodes-base.code",
       "typeVersion": 1,
       "position": [
-        780,
-        60
+        1060,
+        540
       ]
     },
     {
@@ -470,13 +433,13 @@
         "jsonBody": "={\n  \"ticket\": {\n\t\t\"requester_id\":{{$node[\"Atualiza status da voluntária no Zendesk\"].json[\"id\"]}},\n\t\t\"organization_id\": {{$node[\"Atualiza status da voluntária no Zendesk\"].json[\"organization_id\"]}},\n\t\t\"description\": \"Importado via N8N\",\n\t\t\"subject\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"subject\"] }}\",\n\t\t\"comment\": {\n\t\t\t\"body\": \"Cadastrada\",\n\t\t\t\"public\": false\n\t\t},\n\t\t\"status\": \"pending\",\n\t\t\"custom_fields\": [\n\t\t\t{\n\t\t\t\t\"id\": 360021879811, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"user_fields\"][\"city\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021812712, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"phone\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360016631592, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"name\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021665652, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"user_fields\"][\"condition\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021879791,\n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"user_fields\"][\"state\"] }}\"\n\t\t\t}\n\t\t]\n\t}\n}",
         "options": {}
       },
-      "id": "03395f91-68bd-419c-a86b-74872bced949",
+      "id": "6d4ffb93-e504-427c-bb6c-68859d657d5e",
       "name": "Cria o ticket de entrada da voluntária pela API do Zendesk",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        1360,
-        60
+        1260,
+        540
       ],
       "credentials": {
         "zendeskApi": {
@@ -491,18 +454,18 @@
         "values": {
           "string": [
             {
-              "name": "condition",
+              "name": "status",
               "value": "aprovada"
             },
             {
-              "name": "updated_at",
+              "name": "created_at",
               "value": "={{$now}}"
             }
           ],
           "number": [
             {
-              "name": "id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
+              "name": "volunteer_id",
+              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
             },
             {
               "name": "zendesk_user_id",
@@ -512,13 +475,13 @@
         },
         "options": {}
       },
-      "id": "f7a0f6fd-a864-41e4-b227-68573b450856",
+      "id": "7c9660dc-83b7-4cea-812f-ab3b19996fe8",
       "name": "Seta os campos para atualizar a voluntária no BD",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
       "position": [
-        600,
-        800
+        660,
+        1420
       ]
     },
     {
@@ -528,13 +491,13 @@
         "genericAuthType": "httpBasicAuth",
         "options": {}
       },
-      "id": "48c29a8a-c55e-43e6-a3d9-20b63b60c658",
+      "id": "0a56b7b1-e86c-4147-9549-61b20fa0ff50",
       "name": "Busca os tickets da voluntária no Zendesk",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        980,
-        800
+        840,
+        1680
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -549,13 +512,13 @@
         "include": "allOtherFields",
         "options": {}
       },
-      "id": "4eb27b4c-616d-4109-a5a4-bb0a782d3a9e",
+      "id": "68dd5f20-e9db-420e-9127-fb5642d355d9",
       "name": "Separa os tickets do objeto retornado",
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        1180,
-        800
+        1020,
+        1680
       ]
     },
     {
@@ -569,13 +532,13 @@
           ]
         }
       },
-      "id": "176bc847-9aef-458a-a39d-ae4249cbcc02",
+      "id": "dfa5f792-6b2b-407d-b28f-7b07fa9af45a",
       "name": "Se retornou a voluntária do Zendesk",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        180,
-        820
+        360,
+        1620
       ]
     },
     {
@@ -594,13 +557,13 @@
           }
         }
       },
-      "id": "2244999e-5659-409a-9b76-273a1c70b382",
+      "id": "463e372b-338c-4891-bdb6-1ac1be395d89",
       "name": "Atualiza status da voluntária no Zendesk",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        600,
-        60
+        860,
+        540
       ],
       "credentials": {
         "zendeskApi": {
@@ -625,13 +588,13 @@
           }
         }
       },
-      "id": "2b80278f-a43b-4863-9277-aa247998a4fa",
+      "id": "ed81b227-efe3-47d9-9cb8-ee80cba245c7",
       "name": "Atualiza status da voluntária no Zendesk1",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        440,
-        800
+        660,
+        1680
       ],
       "credentials": {
         "zendeskApi": {
@@ -639,42 +602,6 @@
           "name": "Zendesk account"
         }
       }
-    },
-    {
-      "parameters": {
-        "keepOnlySet": true,
-        "values": {
-          "string": [
-            {
-              "name": "condition",
-              "value": "capacitacao"
-            },
-            {
-              "name": "updated_at",
-              "value": "={{$now}}"
-            }
-          ],
-          "number": [
-            {
-              "name": "id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
-            },
-            {
-              "name": "zendesk_user_id",
-              "value": "={{$node[\"Atualiza status da voluntária no Zendesk\"].json[\"id\"]}}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "99e8f036-d770-4640-bbbc-77aa4417e4c9",
-      "name": "Seta os campos para atualizar voluntária no BD",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 1,
-      "position": [
-        980,
-        60
-      ]
     },
     {
       "parameters": {
@@ -693,19 +620,23 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
+              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
+            },
+            {
+              "name": "zendesk_user_id",
+              "value": "={{$json[\"id\"]}}"
             }
           ]
         },
         "options": {}
       },
-      "id": "38958f78-dbc4-4eed-a4a2-c5830a8b65eb",
-      "name": "Seta os campos para inserir na tabela volunteer_status_history",
+      "id": "f2731c76-96e7-4c3b-a4e1-a9508574f18b",
+      "name": "Seta os campos para atualizar voluntária no BD",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
       "position": [
-        1560,
-        60
+        880,
+        780
       ]
     },
     {
@@ -714,13 +645,13 @@
         "columns": "volunteer_id,status,created_at",
         "additionalFields": {}
       },
-      "id": "2da652b0-2401-4f36-9d74-e212a1a25079",
+      "id": "85307523-4cff-4ef4-999f-a72d9d588b04",
       "name": "Insere o novo status na tabela volunteer_status_history",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
       "position": [
-        1780,
-        60
+        1080,
+        980
       ],
       "credentials": {
         "postgres": {
@@ -740,26 +671,26 @@
           ]
         }
       },
-      "id": "88c425a4-1e80-4d02-95ad-08b2eed4c487",
+      "id": "637bca3d-f7ab-4647-8b3b-63d6cf5eea3c",
       "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        1340,
-        800
+        1220,
+        1680
       ]
     },
     {
       "parameters": {
         "operation": "limit"
       },
-      "id": "eb3e36b1-5f8c-409e-adce-a707e2f826cc",
+      "id": "7ebdc810-cd74-4522-a280-28050065ab8e",
       "name": "Seleciona o ticket mais antigo",
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        1560,
-        780
+        1420,
+        1680
       ]
     },
     {
@@ -777,13 +708,13 @@
           }
         }
       },
-      "id": "1dc0c5a3-4059-4566-bd8f-905aafac171a",
+      "id": "10b1cd39-0cab-40d8-b892-461ef6227ee5",
       "name": "Atualiza o ticket para \"aprovada\"",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1780,
-        780
+        1600,
+        1680
       ],
       "credentials": {
         "zendeskApi": {
@@ -794,48 +725,37 @@
     },
     {
       "parameters": {
-        "keepOnlySet": true,
-        "values": {
-          "string": [
-            {
-              "name": "status",
-              "value": "aprovada"
-            },
-            {
-              "name": "created_at",
-              "value": "={{ $now }} "
-            }
-          ],
-          "number": [
-            {
-              "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "2fee76a0-bc6b-4716-a85d-93a8b462c229",
-      "name": "Seta os campos para inserir na tabela volunteer_status_history1",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 1,
-      "position": [
-        1980,
-        780
-      ]
-    },
-    {
-      "parameters": {
         "table": "volunteer_status_history",
         "columns": "volunteer_id,status,created_at",
         "additionalFields": {}
       },
-      "id": "23b913c0-ec20-4470-a5f4-8698968618ae",
+      "id": "ce138019-936c-465d-a4ff-d2ebc23d8d18",
       "name": "Insere  o registro na volunteer_status_history",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
       "position": [
-        2200,
+        860,
+        1260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteers\nSET condition = '{{ $json[\"status\"] }}', updated_at = NOW(), zendesk_user_id={{ $json[\"zendesk_user_id\"] }}\nWHERE id = {{ $json[\"volunteer_id\"] }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"volunteer_id\"] }};",
+        "options": {}
+      },
+      "id": "db8ae640-6e3f-46c7-988f-524c789fcfdb",
+      "name": "Atualiza voluntária no BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1080,
         780
       ],
       "credentials": {
@@ -848,37 +768,16 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE public.volunteers\nSET condition = '{{ $json[\"condition\"] }}', updated_at = NOW(), zendesk_user_id={{ $json[\"zendesk_user_id\"] }}\nWHERE id = {{ $json[\"id\"] }}",
+        "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
         "options": {}
       },
-      "id": "c8b56c00-4992-4467-ae3a-b19b8d4a006e",
-      "name": "Atualiza voluntária no BD",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        1180,
-        60
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET condition = '{{ $json.condition }}', updated_at = NOW()\nWHERE id = {{ $json.id }}",
-        "options": {}
-      },
-      "id": "26bc07b6-e90d-4daf-b57d-664f963daf89",
+      "id": "2486c296-ed1b-4a7a-8815-2f1613ee2e07",
       "name": "Atualiza voluntária no BD1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        780,
-        800
+        860,
+        1440
       ],
       "credentials": {
         "postgres": {
@@ -903,26 +802,26 @@
           ]
         }
       },
-      "id": "b92c1d99-9f7e-4aa4-80d9-513e8384167e",
+      "id": "7f5088ab-4140-44b9-a895-201221ec4214",
       "name": "Determina se acessou módulo ou conclusão de curso",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 1,
       "position": [
-        -140,
-        560
+        -120,
+        1300
       ]
     },
     {
       "parameters": {
         "errorMessage": "=Não achou a voluntária\nvollunteer_id:  {{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
       },
-      "id": "649b4734-e500-44c0-afc3-346bb1cad177",
+      "id": "2bfc36a0-daff-4eea-a5d4-6a57ecda31ce",
       "name": "Stop And Error2",
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        500,
-        340
+        780,
+        1080
       ]
     },
     {
@@ -934,13 +833,13 @@
           "query": "={{ $json.email }}"
         }
       },
-      "id": "0460f562-be28-459c-9dc1-21dd61101a92",
+      "id": "25ccb9da-37a2-49f3-847a-7955136f485a",
       "name": "Busca voluntária pelo email1",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        180,
-        80
+        460,
+        880
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -961,13 +860,13 @@
           ]
         }
       },
-      "id": "1ae642d4-df00-40fa-a2cf-440103d04227",
+      "id": "8ca5df01-c0a3-468f-b36d-66ebf1d7df1b",
       "name": "Se retornou a voluntária do Zendesk1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        360,
-        80
+        640,
+        880
       ]
     },
     {
@@ -994,24 +893,13 @@
         },
         "options": {}
       },
-      "id": "6e3e9737-a1d1-42f0-9661-cb38f926324f",
+      "id": "0f5f12e9-5454-43e1-8807-d342b2a8573c",
       "name": "O atual status da mulher é cadastrada?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        20,
-        320
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "4af34494-246a-465e-bce9-0bd190becefd",
-      "name": "No Operation, do nothing",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        220,
-        340
+        200,
+        900
       ]
     },
     {
@@ -1020,13 +908,13 @@
         "query": "SELECT email from mdl_user where id = {{$node[\"Webhook\"].json[\"body\"][\n\"userid\"]}}",
         "options": {}
       },
-      "id": "b18ff367-8e66-4e44-8c19-9e1e6c64162f",
-      "name": "Postgres",
+      "id": "5ea21a00-96e9-4822-b932-5cc6211b31f0",
+      "name": "Busca email no Moodle",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        -320,
-        960
+        -220,
+        2040
       ],
       "credentials": {
         "postgres": {
@@ -1058,28 +946,115 @@
         },
         "options": {}
       },
-      "id": "cc431e27-3d45-42c2-b9ef-4464c5380655",
-      "name": "If",
+      "id": "89bec419-e850-428a-8e22-3b9fbf7c7404",
+      "name": "Se o email for do Mapa",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -120,
-        1080
+        -20,
+        2040
       ]
     },
     {
-      "parameters": {},
-      "id": "1387c816-740c-4588-8b23-f31c6989c3e9",
-      "name": "No Operation, do nothing1",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clt4d3xhp00j0y38uusnypgc0\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5c073dfc-3206-44fb-81e0-48662e4b8170",
+      "name": "Envia email início capacitação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
       "position": [
-        100,
-        1040
-      ]
+        1300,
+        780
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clt4ozsfp00ei114rjfkwwav1\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "3a631c7c-f00f-4d93-81f7-497bb6d185bc",
+      "name": "Envia email aprovada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1060,
+        1440
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "x-request-id": "98bb7c2beebe7fa41494b82aa78aaf14",
+            "x-real-ip": "54.85.56.248",
+            "x-forwarded-for": "54.85.56.248",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-scheme": "https",
+            "x-scheme": "https",
+            "content-length": "396",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "user-agent": "MoodleBot/4.1 (+https://capacitacao.mapa.org.br)"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventname": "\\mod_page\\event\\course_module_viewed",
+            "component": "mod_page",
+            "action": "viewed",
+            "target": "course_module",
+            "objecttable": "page",
+            "objectid": "1",
+            "crud": "r",
+            "edulevel": 2,
+            "contextid": 16,
+            "contextlevel": 70,
+            "contextinstanceid": "2",
+            "userid": "103",
+            "courseid": "2",
+            "relateduserid": null,
+            "anonymous": 0,
+            "other": null,
+            "timecreated": 1709066954,
+            "host": "capacitacao.mapa.org.br",
+            "token": "",
+            "extra": ""
+          }
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -1096,6 +1071,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-02-26T18:28:55.000Z",
-  "versionId": "5d6e78e3-000d-475d-abdc-1ee6216aa11f"
+  "updatedAt": "2024-02-27T21:34:29.000Z",
+  "versionId": "a466ee29-b431-4095-9077-23999009a72c"
 }
