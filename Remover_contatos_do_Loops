@@ -1,22 +1,56 @@
 {
   "active": false,
   "connections": {
-    "When clicking \"Test Workflow\"": {
+    "Loop Over Items": {
       "main": [
+        [],
         [
           {
-            "node": "Code",
+            "node": "HTTP Request1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code": {
+    "Wait": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Test Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Code1",
             "type": "main",
             "index": 0
           }
@@ -32,27 +66,47 @@
   "name": "Remover contatos do Loops",
   "nodes": [
     {
-      "parameters": {},
-      "id": "5f52c85d-56f7-4a2f-8647-f2a01291a3c0",
-      "name": "When clicking \"Test Workflow\"",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
+      "parameters": {
+        "batchSize": 5,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "807f1419-8e00-4797-a3e5-112161bd8b17",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
       "position": [
-        -700,
-        1020
+        -240,
+        1100
       ]
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nconst emailArr = [\"carolbarcelospsi@gmail.com\",\"barella.psicologia@gmail.com\",\"biancaramirezca@gmail.com\",\"alynejoyceadv@gmail.com\",\"elaine.rezende218@gmail.com\",\"kalinne_adv@hotmail.com\",\"polydorop@gmail.com\",\"daphneluiza.advocacia@gmail.com\",\"ticiana27.11@gmail.com\",\"danielleadvnascimento@gmail.com\",\"amazoesterj@gmail.com\",\"claudia@claudiaferreira.adv.br\",\"jacqueadv5@gmail.com\",\"brendasantana.asv@gmail.com\",\"michellyficagna@gmail.com\",\"veragare@gmail.com\",\"jovanildesillva@gmail.com\",\"clarissabarrosoliveira.adv@gmail.com\",\"angelicajanones@hotmail.com\",\"decamr@hotmail.com\",\"luannacasado_@hotmail.com\",\"flavianadefreitas@gmail.com\",\"julitapaesbarreto@gmail.com\",\"karla.loiola@hotmail.com\",\"drajaquelineborge@yahoo.com.br\",\"beatrizdgoncalves.advocacia@gmail.com\",\"barbara_bosi@hotmail.com\",\"aaa2@email.com\",\"tizianne@gomespereiraadvogados.com.br\",\"barbarapimenteltorres@gmail.com\",\"marianaoliveira.jus@outlook.com\",\"sanbertao@terra.com.br\",\"sandraop@hotmail.it\",\"ianelli41@hotmail.com\",\"asd@asd.asd\",\"emilenaamorim@bol.com.br\",\"quelenrs@brturbo.com.br\",\"anaflaviafsa@hotmail.com\",\"suzanapatury@hotmail.com\",\"pafrosangela@hotmail.com\",\"ludmilaprata20@gmail.com\",\"camila_ferrette@hotmail.com\",\"djaciradantas@hotmail.com\",\"thatiane.rantos@hotmail.com\",\"joseneide.rsantos@hotmail.com\",\"danprandipedro@gmail.com\",\"crishospital@hotmail.com\",\"elkaregioli@uol.com\",\"adrianaadvlucena@yahoo.com.br\",\"carol_marques09@hotmail.com\",\"arelialencaradv@gmail.com\",\"oliveiraadv.elaine@gmail.com\",\"julifeitoza@gmail.com\",\"adv.alexandra.elgui@gmail.com\",\"andreammtorres2@gmail.com\",\"medeiros.marianna@gmail.com\",\"kellycristinaluz@hotmail.com\",\"mayara.zy@gmail.com\",\"carolinecastronunes@hotmail.com\",\"michellighereda@gmail.com\",\"giulliastefanini@gmail.com\",\"stefany.psique@gmail.com\",\"deivaflorbh@hotmail.com\",\"marcela.peters.goncalves@gmail.com\",\"garciasonia@uol.com.br\",\"polly.psm10@gmail.com\",\"tamaraadv@hotmail.com\",\"ludimilafonseca@outlook.com\",\"terezaenymelo@hotmail.com\",\"steinangelisa@gmail.com\",\"betaniateixeirac@gmail.com\",\"harilcy@hotmail.com\",\"pinheiro.advcrim@gmail.com\",\"thabataarnaud@hotmail.com\",\"michellytag@hotmail.com\",\"zaracrisnc@gmail.com\",\"waleskamodesto@yahoo.com.br\",\"fernanda.lasil@gmail.com\",\"cubas.caroline@gmail.com\",\"mazzucattoadvogados@gmail.com\",\"giselengracia@hotmail.com\",\"isisfortunatos@gmail.com\",\"fabischutz@hotmail.com\",\"sandraboeing@hotmail.com\",\"sylla.cherfan@gmail.com\",\"renascimento.s@hotmail.com\",\"thamellaa@bol.com.br\",\"queilapasti@hotmail.com\",\"julianariffel@hotmail.com\",\"natycane@ig.com.br\",\"mgalmeida.adv@gmail.com\",\"yaspiovezan@gmail.com\",\"pauladuranadv@gmail.com\",\"layla.cardoso@hotmail.com\",\"kimberlymediciadvocacia@gmail.com\",\"er_1800@hotmail.com\",\"munizmf@outlook.com\",\"camilacaselato@hotmail.com\",\"marciamorais@mvtadvogados.adv.br\",\"julianaquillinan@yahoo.com.br\",\"re.cordeirob@gmail.com\",\"morena.campello@hotmail.com\",\"cestellita@yahoo.com\",\"filozine@hotmail.com\",\"bruna.rcc89@gmail.com\",\"juliaspina@adv.oabsp.org.br\",\"nahara.landim.adv@gmail.com\",\"mayra.dias@ycvd.adv\",\"indiamara_oliveira@yahoo.com.br\",\"regina.milone@gmail.com\",\"amanda@lorenzofernandes.com.br\",\"karen.gehrkeadv@yahoo.com.br\",\"robertagmft@gmail.com\",\"tatianembigossiadv@gmail.com\",\"barbara_mirian@hotmail.com\",\"upsbr@hotmail.com\",\"msoareslage@gmail.com\",\"andrezacolatto@gmail.com\",\"vanemiquelini@outlook.com\",\"ligiacris.ferraz@gmail.com\",\"amandalaysmaestri@hotmail.com\",\"andreak.goes@gmail.com\",\"luana.chagas@outlook.com\",\"camizlacerda@hotmail.com\",\"katiarmoliveira@icloud.com\",\"fabianabomtempo@adv.oabsp.org.br\",\"marinafogaca@live.com\",\"contato.carlavergara@gmail.com\",\"paulasouzaadvpp@gmail.com\",\"sofie_huysman@hotmail.com\",\"rigojanda@gmail.com\",\"barbara-dantass@hotmail.com\",\"tatianaquirino@globo.com\",\"apcastroadvocacia@gmail.com\",\"jessicafilsali@hotmail.com\",\"lucianaellste@gmail.com\",\"matylice@hotmail.com\",\"advlienelopes@yahoo.com.br\",\"nisobral2009@hotmail.com\",\"qfcadv@gmail.com\",\"pbordinhao77@gmail.com\",\"deborafjordan@gmail.com\",\"renatapontesadv@outlook.com\",\"thaysxavieradv@gnail.com\",\"prevital-e@uol.com.br\",\"potiragomes@yahoo.com.br\",\"neuropsicologa.usp@gmail.com\",\"nubiabaly@hotmail.com\",\"greicevargas@gmail.com\",\"priscilapainsso@hotmail.com\",\"lomasouza@hotmail.com\",\"mari.frmachado@yahoo.com.br\",\"mgflavio.cantanhede@gmail.com\",\"thalitaquintopsi@gmail.com\",\"patriciagodinho@ig.com.br\",\"renatamelatto@hotmail.com\",\"psicologathaiscavalcanti@gmail.com\",\"janice37estetica@gmail.com\",\"psico.kwf@gmail.com\",\"franciele_milan@outlook.com\",\"mariabethaniaoliveia@gmail.com\",\"marciasan233@gmail.com\",\"patriciayarza@hotmail.com\",\"cgodoypsi@gmail.com\",\"cspati@hotmail.com\",\"pupo.jessicafer@gmail.com\",\"psicologadaianehaas@gmail.com\",\"amorimxoom12@gmail.com\",\"fellinivanessa@gmail.com\",\"danielabritopsicologa@gmail.com\",\"ancilaph@uol.com.br\",\"winter.psicologia@gmail.con\",\"izascst@gmail.com\",\"psicologooliver@gmail.com\",\"ivetepsi@gmail.com\",\"ida_liane@yahoo.com.br\",\"rosangelampsicologa@mail.com\",\"casarevoluser@gmail.com\",\"fabianabatistacaetano@gmail.com\",\"emanuellebsb@hotmail.com\",\"fleudislanepsi@gmail.com\",\"robertafernandes73@gmail.com\",\"barbarasantos.psi@gmail.com\",\"psicarlaramalho@gmail.com\",\"irany.ira.barros.agostinho@gmail.com\",\"brop.psi@gmail.com\",\"suamentesaudavel@gmail.com\",\"ketunypriscylla@hotmail.com\",\"alanazanlorenzi@gmail.com\",\"renataaun@uol.com.br\",\"rebeccabarradas@hotmail.com\",\"pamplonamonteiro@hotmail.com\",\"marinaamaraltavares@gmail.com\",\"aline.ferreira31@hotmail.com\",\"kayannemourabarbosa@gmail.com\",\"reginajapia@hotmail.com\",\"rosana.musumeci@terra.com.br\",\"casstpsi@gmail.comcom\",\"psicologa.janainaevangelista@gmail.com\",\"veronica-valverde@hotmail.com\",\"lucielensilva.silva@yahoo.com\",\"rayniceramos@hotmail.com\",\"andreya.klima@gmail.com\",\"jessicadepaulaferreira@gmail.com\",\"jamillecsantos9@gmail.com\",\"amanacasas@gmail.com\",\"diegonisner.psi@gmail.com\",\"psisamaralima@gmail.com\",\"v_galbes@hotmail.com\",\"psicoandrejoao@hotmail.com\",\"haydee.haydee.marcia@yahoo.com.br\",\"mn.silva@uol.com.br\",\"dassi.psico@gmail.com\",\"ceia_livre@hotmail.com\",\"elainenoal@hotmail.com\",\"nilcardoso77@yahoo.com.br\",\"yedaccmonteiro@gmail.com\",\"nainemoraisc@gmail.com\",\"cleidesemenzato@hotmail.com\",\"marasuassuna@gmail.com\",\"anna.paula.fernandes@terra.com.br\",\"fatma_993@hotmail.com\",\"vivianejpsicologa@gmail.com\",\"tusantuza@gmail.com\",\"renatapassospitangueira@gmail.com\",\"suelibarros13@gmail.com\",\"lorenaa.reinato@gmail.com\",\"mariserayel@terra.com.br\",\"carloscostapsipsi@hotmail.com\",\"celialimoli@hotmail.com\",\"leumatias@hotmail.com\",\"claudetegrasi@hotmail.com\",\"juliaborgeslima@gmail.com\",\"telmaluciaparente@gmail.com\",\"alepedag@ig.com.br\",\"lucianatavaresv@gmail.com\",\"magarcia.amaral@gmail.com\",\"psi.crisrandazzo@gmail.com\",\"adriellen_sr@hotmail.com\",\"maaugustopereira@hotmail.com\",\"dsdias1@hotmail.com\",\"gracivn@hotmail.com\",\"kamila.c.prior@gmail.com\",\"elaine10nani10@gmail.com\",\"taynaceccon@hotmail.com\",\"kittamiranda@hotmail.com\",\"valerianunes.psi@gmail.com\",\"lilianmulroth@hotmail.com\",\"leticiadellorto@hotmail.com\",\"rosamartinscoac@gmail.com\"]\nconst output = []\n\nfor (const item of emailArr) {\n  output.push({ email: item })\n}\n\nreturn output;"
+        "amount": 5,
+        "unit": "seconds"
       },
-      "id": "6c17371c-406c-4ba9-aa6d-73aec27c7774",
-      "name": "Code",
+      "id": "80501908-7913-4547-85b4-aa58c178df2f",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        280,
+        1120
+      ],
+      "webhookId": "0c3a7cf3-61a3-42cb-a66a-7f85c4b46c53"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nconst emailArr = [\"dra.barbarapimentel@gmail.com\",\n\"psi.jparanhos@gmail.com\",\n\"acarolina@gmail.com\",\n\"reis.silva.gabriela@hotmail.com\",\n\"lanasantoss@gmail.com\",\n\"amandam56@hotmail.com\",\n\"dayanegaia@hotmail.com\",\n\"laize_assis@hotmail.com\",\n\"mcgowancosta@gmail.com\",\n\"tainah.salles96@gmail.com\",\n\"advanacasagrande@hotmail.com\",\n\"carolffornari@gmail.com\",\n\"christianesilva.adv@gmail.com\",\n\"adv.luana.negreiros@gmail.com\",\n\"giulliamts@gmail.com\",\n\"francyele.as@gmail.com\",\n\"psifernandabernal@gmail.com\",\n\"liviacastro.op@gmail.com\",\n\"psi.nelydias@gmail.com\",\n\"psiherlany@gmail.com\",\n\"barbararodrigues@sempreceub.com\",\n\"thaisblacerda@outlook.com\",\n\"catarinasouza1adv@gmail.com\",\n\"carla-advocacia@hotmail.com\",\n\"luana.bonassi@hotmail.com\",\n\"saraboni@gmail.com\",\n\"camilamaia15@gmail.com\",\n\"leticiassantos@adv.oabsp.org.br\",\n\"mariagabriellac.psico@outlook.com\",\n\"talitaespindola@hotmail.com\",\n\"marianasslopes.adv@outlook.com\",\n\"gislania.ca@hotmail.com\",\n\"isabelapdelucca@gmail.com\",\n\"taisa_menqui@hotmail.com\",\n\"charlieody@hotmail.com\",\n\"ananevespsicologa@gmail.com\",\n\"fernanda_azanha@hotmail.com\",\n\"juliacrepaldinmuller.adv@gmail.com\",\n\"lucianaftdias@gmail.com\",\n\"thaisatofetti18@gmail.com\",\n\"adv.carolineperozzo@outlook.com\",\n\"luiza.latini@adv.oabsp.org.br\",\n\"skaryme_psi@yahoo.com.br\",\n\"jaadxavierf@gmail.com\",\n\"sharliziesantana@hotmail.com\",\n\"a.andreapsicologa@bol.com.br\",\n\"liraquelpsi@outlook.com\",\n\"rosesclearuc@gmail.com\",\n\"brunaterram@gmail.com\",\n\"isabel@lagearaujo.com.br\",\n\"natal00@bol.com.br\",\n\"vmeloadvocacia@gmail.com\",\n\"karinesousa.jur@gmail.com\",\n\"psicologajessicacamargos@gmail.com\",\n\"bstephanyvg@gmail.com\",\n\"alieneadvogada@gmail.com\",\n\"adrianaalvesssa@gmail.com\",\n\"advsarahcsferreira@gmail.com\",\n\"giuliaddc@hotmail.com\",\n\"thaynarabrasil.adv@gmail.com\",\n\"anapaulacarneirobarbosa.adv@gmail.com\",\n\"dyannanogueira@hotmail.com\",\n\"aline.dorea@yahoo.com.br\",\n\"whendraveras@gmail.com\",\n\"li.bfelix20@gmail.com\",\n\"advocacia@snascimento.com.br\",\n\"marilialmeidadv@gmail.com\",\n\"adv.jessylaineaires@gmail.com\",\n\"fabriciaaraujo1821@gmail.com\",\n\"glaucianequental@gmail.com\",\n\"geisse.rezende@hotmail.com\",\n\"carolinampinheiro@gmail.com\",\n\"rosmara2010@gmail.com\",\n\"mariaelizabeth21@hotmail.com\",\n\"advogados.uchoa@gmail.com\",\n\"valeriafernandes1604@yahoo.com.br\",\n\"sfmbaa@gmail.com\",\n\"deboraleiteadv@yahoo.com.br\",\n\"kkfiock@hotmail.com\",\n\"amandagontijo@yahoo.com.br\",\n\"gesianea7psi@gmail.com\",\n\"mgqueiroz.adv@gmail.com\",\n\"soraiadiascoelho@gmail.com\",\n\"psicologapatricialanne@gmail.com\",\n\"larissasapucaia.adv@gmail.com\",\n\"hellemverasadv@outlook.com\",\n\"laizarodrigues.adv@yahoo.com\",\n\"bebelrabelo@yahoo.com.br\",\n\"thaismageste@hotmail.com\",\n\"lu.lascasas@yahoo.com\",\n\"psico.liviafigueiredo@gmail.com\",\n\"psimarianavirginio@gmail.com\",\n\"paola.lolima@gmail.com\",\n\"alinelouredocosta@hotmail.com\",\n\"marianacpdc@gmail.com\",\n\"psi.juhdleon@gmail.com\",\n\"oliveira.joycecristina@gmail.com\",\n\"psi.estherjcsilva@gmail.com\",\n\"desa.soares@outlook.com\",\n\"anaflaviada@outlook.com\",\n\"carol.yoshimura@gmail.com\",\n\"renatamyrrha@gmail.com\",\n\"nataliacamposbbueno@hotmail.com\",\n\"ezir.kataryna@hotmail.com\",\n\"amarinara@outlook.com\",\n\"monica.porto.cardoso@gmail.com\",\n\"psi.edeniziarosa@gmail.com\",\n\"santosjessicasousa@gmail.com\",\n\"biancabtcadv@gmail.com\",\n\"thassiapeixoto8@gmail.com\",\n\"adv.danielealmeida@hotmail.com\",\n\"liatostesadvogada@gmail.com\",\n\"camicamara2020@outlook.com\",\n\"polyanacrozara@hotmail.com\",\n\"karencf.mello@gmail.com\",\n\"hellenog123@gmail.com\",\n\"reyla_aliarte@hotmail.com\",\n\"thaismoraesdarosa.adv@gmail.com\",\n\"daniela.fornaciari@hotmail.com\",\n\"joscileia@advocaciajoscileia.com\",\n\"julianamoreirasilvafaria@gmail.com\",\n\"keulysvs.adv@gmail.com\",\n\"suzybenigno@hotmail.com\",\n\"suzellenoliveira19@yahoo.com.br\",\n\"leticiaoliveiraadv@outlook.com\",\n\"sorayamendes@adv.oabsp.org\",\n\"almeidaravis@gmail.com\",\n\"bmarcelelima.adv@gmail.com\",\n\"monicadantasadvocacia@gmail.com\",\n\"hildafrocha@gmail.com\",\n\"marciacesar.adv@gmail.com\",\n\"aryadnebittencourt@gmail.com\",\n\"eliziane.dias@yahoo.com.br\",\n\"natannakessiang@gmail.com\",\n\"isa.belborges@hotmail.com\",\n\"rafaella.costa@hotmail.com\",\n\"silnogueira_souza@yahoo.com.br\",\n\"ealcantaraadv@gmail.com\",\n\"souzaesousaadvogadas@gmail.com\",\n\"regianeguis@yahoo.com.br\",\n\"leilaneregis@gmail.com\",\n\"keillaingrid@gmail.com\",\n\"carolinaortegabarcelos.co@gmail.com\",\n\"vics.azevedo@gmail.com\",\n\"tpaschoalduarte@gmail.com\",\n\"mari_decarvalho@yahoo.com\",\n\"martamourasc@gmail.com\",\n\"fernandamozellipsico@gmail.com\",\n\"jmayaralencar@gmail.com\",\n\"luizarodriguess@outlook.com\",\n\"psicologamanudinalva@yahoo.com\",\n\"victoriagsdias@gmail.com\",\n\"jeanefm.advog.mg@gmail.com\",\n\"rebecaomr@gmail.com\",\n\"simone@simonelemespericias.com.br\",\n\"ligia-christine@live.com\",\n\"oliviamarcolan@hotmail.com\",\n\"annakaritha@hotmail.com\",\n\"psicologaestelamaria@gmail.com\",\n\"ana.torres@bfr.com.br\",\n\"gorettecarvalho@yahoo.com.br\",\n\"charisrocha@gmail.com\",\n\"shmvieira@gmail.com\",\n\"cecilia_carvalho@uol.com.br\",\n\"lucia.regis2013@gmail.com\",\n\"fcarnelos.bastos@gmail.com\",\n\"mthepaiva@gmail.com\",\n\"marcelle.estevespsi@gmail.com\",\n\"gloubetavila@gmail.com\",\n\"psicologiagabrielalima@gmail.com\",\n\"paolachies@hotmail.com\",\n\"lizcostasantana@gmail.com\",\n\"adv.elainealbuquerque@yahoo.com.br\",\n\"francimeire_franca@hotmail.com\",\n\"m.gaspar9@hotmail.com\",\n\"isabellaantunes_adv@hotmail.com\",\n\"giovannavernacci@gmail.com\",\n\"irnaverena@gmail.com\",\n\"auralice.carlos@gmail.com\",\n\"kamiladelazari@gmail.com\",\n\"larissa_safa@outlook.com\",\n\"staelbs1@gmail.com\",\n\"roberta.panisset@gmail.com\",\n\"psilumart@gmail.com\",\n\"mariaeugeniapsena@gmail.com\",\n\"vitoria.lisboa@hotmail.com\",\n\"anajuliaaguileragomes@gmail.com\",\n\"isabel.carla@sga.pucminas.br\",\n\"julianacspsicologia@gmail.com\",\n\"sacdora05@gmail.com\",\n\"advjulianagouvea@gmail.com\",\n\"martins.nena@me.com\",\n\"bruna.pinheiro10@hotmail.com\",\n\"crisms2000@yahoo.com.br\",\n\"adv.tamara@hotmail.com\",\n\"gabriellecollatusso@gmail.com\",\n\"mayarahcs@gmail.com\",\n\"magouveiachaves@gmail.com\",\n\"kayamalima@gmail.com\",\n\"marcelacioli@gmail.com\",\n\"ana_const@hotmail.com\",\n\"juridico_cab@hotmail.com\",\n\"malurcidade@gmail.com\",\n\"jesanni19@hotmail.com\",\n\"germanagmello@gmail.com\",\n\"taisprass@hotmail.com\",\n\"mayumi.lari@gmail.com\",\n\"beatrizcvvieira@gmail.com\",\n\"valquiriamarques53@gmail.com\",\n\"dradriana_ga@hotmail.com\",\n\"aline.zangari@hotmail.com\",\n\"fernanda.ma@gmail.com\",\n\"thaisadvog@gmail.com\",\n\"thaissmercadante@gmail.com\",\n\"averalucia1967@gmail.com\",\n\"paulamoreirapsicologa@gmail.com\",\n\"advrenatacsgomes@gmail.com\",\n\"thawanalongo@hotmail.com\",\n\"patriciacampos_11@live.com\",\n\"acmontealtos@gmail.com\",\n\"alinefranco@id.uff.br\",\n\"claudia.justino@ctjconsultores.com.br\",\n\"liziztaborda@hotmail.com\",\n\"katiachammas@gmail.com\",\n\"daianeroberta1@hotmail.com\",\n\"alinabuenoadvocacia@gmail.com\",\n\"nanda-811@hotmail.com\",\n\"psicologia.pamelamello@gmail.com\",\n\"cristianegouvea@yahoo.com.br\",\n\"morgananalli.adv@yahoo.com\",\n\"giumarcelo@hotmai.com\",\n\"cestellita@gmail.com\",\n\"larissamaioli90@gmail.com\",\n\"moniquequina@gmail.com\",\n\"gabriellacabraldemacedo@gmail.com\",\n\"advocaciaelivaniabraz@gmail.com\",\n\"vidatina2@gmail.com\",\n\"magmore22@gmail.com\",\n\"abreulima.abreulima.advgeral@gmail.com\",\n\"camilavieirabaptista.adv@gmail.com\",\n\"kaka488@hotmail.com\",\n\"paulaccr.adv@outlook.com\",\n\"naslassoares@gmail.com\",\n\"cristina.llopes@hotmail.com\",\n\"freitazilli.adv@gmail.com\",\n\"cienciaevivencia@gmail.com\",\n\"jamilesilveiraadv@gmail.com\",\n\"vanessarnovais@gmail.com\",\n\"gigimedeiros@yahoo.com.br\",\n\"alinerubi@hotmail.com\",\n\"alp.moreira@outlook.com\",\n\"ana_saliba_15@hotmail.com\",\n\"bethaniassantana@live.com\",\n\"talania@santoselopes.adv.br\",\n\"maripereira424@gmail.com\",\n\"denisepineli@gmail.com\",\n\"nathalynha.cat.484@hotmail.com\",\n\"bruna_giabardo@hotmail.com\",\n\"bsales.psicologa@gmail.com\",\n\"carolina.neiva@hotmail.com\",\n\"melinafelix@gmail.com\",\n\"pilarbdarochalima@gmail.com\",\n\"reginagodoy@aasp.org.br\",\n\"lehlocatelli26@gmail.com\",\n\"mcvsp@adv.oabsp.org.br\",\n\"adv.gabrielaps@gmail.com\",\n\"pamela.schneider@gmail.com\",\n\"lauranmoura@gmail.com\",\n\"larissa.furttado29@gmail.com\",\n\"antoniafigueiedoalves@gmail.com\",\n\"larissa.stch@gmail.com\",\n\"sofie_huysman@hotmail.com\",\n\"contato.carlavergara@gmail.com\",\n\"marinafogaca@live.com\",\n\"katiarmoliveira@icloud.com\",\n\"regina.milone@gmail.com\",\n\"filozine@hotmail.com\",\n\"camilacaselato@hotmail.com\",\n\"kimberlymediciadvocacia@gmail.com\",\n\"renascimento.s@hotmail.com\",\n\"waleskamodesto@yahoo.com.br\",\n\"marcela.peters.goncalves@gmail.com\",\n\"deivaflorbh@hotmail.com\",\n\"stefany.psique@gmail.com\",\n\"mayara.zy@gmail.com\",\n\"djaciradantas@hotmail.com\",\n\"camila_ferrette@hotmail.com\",\n\"anaflaviafsa@hotmail.com\",\n\"ranusa.vnc@gmail.com\",\n\"asd@asd.asd\",\n\"aaa2@email.com\",\n\"jumatrone@gmail.com\",\n\"angelicajanones@hotmail.com\",\n\"grazieleg.lima@yahoo.com.br\",\n\"alinevilasboas06@gmail.com\",\n\"thaiselislagleiadvogada@gmail.com\",\n\"lavocaterra@gmail.com\",\n\"crfadvocacia@outlook.com\",\n\"rosanereboucas@hotmail.com\",\n\"nati_oliveir@hotmail.com\",\n\"grazielastarling@hotmail.com\",\n\"beatriz.izquierdo94@gmail.com\",\n\"lsqueiroz@gmail.com\",\n\"bettina@engeplus.com.br\",\n\"lauramarconi_@hotmail.com\",\n\"criszoppi@hotmail.com\",\n\"paula.crestana@gmail.com\",\n\"dayane.couto@outlook.com\",\n\"anasismeiro@gmail.com\",\n\"cristianenascimentoes@gmail.com\",\n\"lizfermont@gmail.com\",\n\"vfaro534@gmail.com\",\n\"adv.tatianatavares@gmail.com\",\n\"talinepinheiro@gmail.com\",\n\"sirlene.adv@hotmail.com\",\n\"sarafsadv@gmail.com\",\n\"sandrafrazao@bol.com.br\",\n\"advogadarosanemartins@gmail.com\",\n\"ribeiro227@hotmail.com\",\n\"rafaelacaporaladv@gmail.com\",\n\"patriciasilva.jus@gmail.com\",\n\"natalia.boletta@hotmail.com\",\n\"moreschi1@gmail.com\",\n\"michelligiacomossi@hotmail.com\",\n\"liviatrinadv@gmail.com\",\n\"julianagarciaadv@gmail.com\",\n\"jschambeckadv@gmail.com\",\n\"janning.adv@gmail.com\",\n\"isabelesud@hotmail.com\",\n\"gracapmello@uol.com.br\",\n\"gabrielleochaves@gmail.com\",\n\"fernandarvasconcelos@gmail.com\",\n\"fernandarosa.direito@gmail.com\",\n\"erikafabri@hotmail.com\",\n\"eduardacmotta@gmail.com\",\n\"edineialourenco@gmail.com\",\n\"dardanadantas@gmail.com\",\n\"cunhacspaula@gmail.com\",\n\"cris.spinelli@bol.com.br\",\n\"celiacarvalho.adv@hotmail.com\",\n\"carool.fraga@hotmail.com\",\n\"camilagiurno@hotmail.com\",\n\"camilacm.adv@gmail.com\",\n\"c.fernandes@eliasfernandesadv.com.br\",\n\"biancatoadvocacia2011@gmail.com\",\n\"barbarapalomabento@gmail.com\",\n\"aquilaboy.adv@gmail.com\",\n\"angie.kloppel@gmail.com\",\n\"amanda_toneli@hotmail.com\",\n\"advogadasbagers@gmail.com\",\n\"advpriscilanunes@gmail.com\",\n\"adv.silvanavieira@hotmail.com\",\n\"aaveigaadv@gmail.com\",\n\"verenabarrosob@gmail.com\",\n\"thaislopes_psi@yahoo.com.br\",\n\"thaise.md@gmail.com\",\n\"th.britto@hotmail.com\",\n\"tdetammy@gmail.com\",\n\"tatianagarcia.psi@gmail.com\",\n\"rafa_zago@hotmail.com\",\n\"psicocamilaaraujo@gmail.com\",\n\"gra_rr22@hotmail.com\",\n\"patty.pfarina@gmail.com\",\n\"monicareguffe@gmail.com\",\n\"milenebordini@gmail.com\",\n\"mclfares@gmail.com\",\n\"mavilda.mvb@gmail.com\",\n\"marina.pandolfi@yahoo.com.br\",\n\"lydiasan55@gmail.com\",\n\"lezinha.ola@gmail.com\",\n\"leila.lgc@gmail.com\",\n\"larissembrito@hotmail.com\",\n\"lais.barreto08@gmail.com\",\n\"kelvia.kb@hotmail.com\",\n\"kassia.a.cardoso@gmail.com\",\n\"juliafacanha@yahoo.com.br\",\n\"felos@uol.com.br\",\n\"elizabethgaldino@yahoo.com.br\",\n\"contato@anamansur.com.br\",\n\"contato.asena@gmail.com\",\n\"carine.metz@bol.com.br\",\n\"brunavasconcellos.12@gmail.com\",\n\"beledp@hotmail.com\",\n\"ariellacaovilla@gmail.com\",\n\"aline_santos86@hotmail.com\",\n\"amartarello@hotmail.com\",\n\"pamula.psicologa@gmail.com\",\n\"tanararp@hotmail.com\",\n\"erica_alvesdasilva@hotmail.com\",\n\"sabrinagrubert@gmail.com\",\n\"psico.jaque@gmail.com\",\n\"marciamoraesgp@gmail.com\",\n\"alealbs2014@gmail.com\",\n\"takatuluciana@gmail.com\",\n\"marcialucascoach@gmail.com\",\n\"magacrema@hotmail.com\",\n\"carolgaletti@gmail.com\",\n\"barbara_mirian@hotmail.com\",\n\"greicevargas@gmail.com\",\n\"nubiabaly@hotmail.com\",\n\"neuropsicologa.usp@gmail.com\",\n\"potiragomes@yahoo.com.br\",\n\"prevital-e@uol.com.br\",\n\"thaysxavieradv@gnail.com\",\n\"renatapontesadv@outlook.com\",\n\"deborafjordan@gmail.com\",\n\"pbordinhao77@gmail.com\",\n\"qfcadv@gmail.com\",\n\"advlienelopes@yahoo.com.br\",\n\"matylice@hotmail.com\",\n\"lucianaellste@gmail.com\",\n\"jessicafilsali@hotmail.com\",\n\"tatianaquirino@globo.com\",\n\"apcastroadvocacia@gmail.com\",\n\"barbara-dantass@hotmail.com\",\n\"rigojanda@gmail.com\",\n\"rolo.felix@uol.com.br\",\n\"andrea.adv.rr@outlook.com\",\n\"paulasouzaadvpp@gmail.com\",\n\"fabianabomtempo@adv.oabsp.org.br\",\n\"nisobral2009@hotmail.com\",\n\"camizlacerda@hotmail.com\",\n\"luana.chagas@outlook.com\",\n\"andreak.goes@gmail.com\",\n\"ligiacris.ferraz@gmail.com\",\n\"amandalaysmaestri@hotmail.com\",\n\"andrezacolatto@gmail.com\",\n\"vanemiquelini@outlook.com\",\n\"upsbr@hotmail.com\",\n\"msoareslage@gmail.com\",\n\"tatianembigossiadv@gmail.com\",\n\"karen.gehrkeadv@yahoo.com.br\",\n\"robertagmft@gmail.com\",\n\"mayra.dias@ycvd.adv\",\n\"amanda@lorenzofernandes.com.br\",\n\"bibianapesamosca@gmail.com\",\n\"bruna.rcc89@gmail.com\",\n\"indiamara_oliveira@yahoo.com.br\",\n\"juliaspina@adv.oabsp.org.br\",\n\"nahara.landim.adv@gmail.com\",\n\"cestellita@yahoo.com\",\n\"morena.campello@hotmail.com\",\n\"re.cordeirob@gmail.com\",\n\"marciamorais@mvtadvogados.adv.br\",\n\"munizmf@outlook.com\",\n\"julianaquillinan@yahoo.com.br\",\n\"er_1800@hotmail.com\",\n\"layla.cardoso@hotmail.com\",\n\"pauladuranadv@gmail.com\",\n\"mgalmeida.adv@gmail.com\",\n\"yaspiovezan@gmail.com\",\n\"thiana.adv@gmail.com\",\n\"natycane@ig.com.br\",\n\"julianariffel@hotmail.com\",\n\"thamellaa@bol.com.br\",\n\"sylla.cherfan@gmail.com\",\n\"fabischutz@hotmail.com\",\n\"sandraboeing@hotmail.com\",\n\"isisfortunatos@gmail.com\",\n\"giselengracia@hotmail.com\",\n\"mazzucattoadvogados@gmail.com\",\n\"cubas.caroline@gmail.com\",\n\"fernanda.lasil@gmail.com\",\n\"zaracrisnc@gmail.com\",\n\"michellytag@hotmail.com\",\n\"pinheiro.advcrim@gmail.com\",\n\"uemura.andrea@gmail.com\",\n\"betaniateixeirac@gmail.com\",\n\"thabataarnaud@hotmail.com\",\n\"tamaraadv@hotmail.com\",\n\"harilcy@hotmail.com\",\n\"terezaenymelo@hotmail.com\",\n\"steinangelisa@gmail.com\",\n\"garciasonia@uol.com.br\",\n\"polly.psm10@gmail.com\",\n\"michellighereda@gmail.com\",\n\"giulliastefanini@gmail.com\",\n\"ludimilafonseca@outlook.com\",\n\"kellycristinaluz@hotmail.com\",\n\"carolinecastronunes@hotmail.com\",\n\"medeiros.marianna@gmail.com\",\n\"andreammtorres2@gmail.com\",\n\"adv.alexandra.elgui@gmail.com\",\n\"arelialencaradv@gmail.com\",\n\"oliveiraadv.elaine@gmail.com\",\n\"julifeitoza@gmail.com\",\n\"carol_marques09@hotmail.com\",\n\"adrianaadvlucena@yahoo.com.br\",\n\"crishospital@hotmail.com\",\n\"susanavdploeg@gmail.com\",\n\"joseneide.rsantos@hotmail.com\",\n\"danprandipedro@gmail.com\",\n\"elkaregioli@uol.com\",\n\"thatiane.rantos@hotmail.com\",\n\"ludmilaprata20@gmail.com\",\n\"bethania.couto@gmail.com\",\n\"suzanapatury@hotmail.com\",\n\"pafrosangela@hotmail.com\",\n\"quelenrs@brturbo.com.br\",\n\"emilenaamorim@bol.com.br\",\n\"fabianacostadoamaral@hotmail.com\",\n\"fabia.adv@hotmail.com\",\n\"sandraop@hotmail.it\",\n\"ianelli41@hotmail.com\",\n\"reboucasmonica@gmail.com\",\n\"marianaoliveira.jus@outlook.com\",\n\"sanbertao@terra.com.br\",\n\"juanassetenta@hotmail.com\",\n\"mariliacastro18@gmail.com\",\n\"beatrizdgoncalves.advocacia@gmail.com\",\n\"tizianne@gomespereiraadvogados.com.br\",\n\"barbarapimenteltorres@gmail.com\",\n\"barbara_bosi@hotmail.com\",\n\"drajaquelineborge@yahoo.com.br\",\n\"karla.loiola@hotmail.com\",\n\"julitapaesbarreto@gmail.com\",\n\"flavianadefreitas@gmail.com\",\n\"luannacasado_@hotmail.com\",\n\"decamr@hotmail.com\",\n\"clarissabarrosoliveira.adv@gmail.com\",\n\"camilabittancourt@hotmail.com\",\n\"tainansales.adv@gmail.com\",\n\"elsiecarolinne@hotmail.com\",\n\"queilapasti@hotmail.com\",\n\"biancasouto_@hotmail.com\",\n\"barbaralira.adv@outlook.com\",\n\"zamborlini.adv@gmail.com\",\n\"celine.saraujo@gmail.com\",\n\"claudia@claudiaferreira.adv.br\",\n\"amazoesterj@gmail.com\",\n\"beatrizlima1987@gmail.com\",\n\"jovanildesillva@gmail.com\",\n\"veragare@gmail.com\",\n\"michellyficagna@gmail.com\",\n\"marisa@arechavalaadvogados.com\",\n\"rute_noemi@yahoo.com.br\",\n\"brendasantana.asv@gmail.com\",\n\"danielleadvnascimento@gmail.com\",\n\"danielavieira.advba@hotmail.com\",\n\"jacqueadv5@gmail.com\"]\nconst output = []\n\nfor (const item of emailArr) {\n  output.push({ email: item })\n}\n\nreturn output;"
+      },
+      "id": "a5d38450-a471-4a79-8b61-407c1605faf8",
+      "name": "Code1",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         -480,
-        1020
+        1160
       ]
     },
     {
@@ -61,22 +115,42 @@
         "url": "https://app.loops.so/api/v1/contacts/delete",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $input.item.json.email }}"
+            }
+          ]
+        },
         "options": {}
       },
-      "id": "06e2f382-e9d3-461d-86c3-cb1cdb46387c",
-      "name": "HTTP Request",
+      "id": "4f85e0cc-92bc-4fb6-bec2-82008807464d",
+      "name": "HTTP Request1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -260,
-        1020
+        40,
+        1120
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "ZSugxhtsMkxobBKb",
-          "name": "Busara Qualtrics API"
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Header Auth account"
         }
       }
+    },
+    {
+      "parameters": {},
+      "id": "2189a603-bbe0-422d-8a95-8a92f57f8d78",
+      "name": "When clicking \"Test Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        1160
+      ]
     }
   ],
   "pinData": {},
@@ -93,6 +167,6 @@
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2024-02-26T23:39:28.000Z",
-  "versionId": "7e85aff4-ec9b-40a0-8aec-3a32a1e9f646"
+  "updatedAt": "2024-02-27T14:35:16.000Z",
+  "versionId": "55e78397-673d-4cd8-833a-8418857dea1e"
 }
