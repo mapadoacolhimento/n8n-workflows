@@ -517,7 +517,7 @@
     },
     {
       "parameters": {
-        "functionCode": "const newItems = [];\nfor (item of items) {\n  newItems.push({json: item});\n}\nreturn newItems;"
+        "functionCode": "const newItems = [];\nlet str = \"\";\nfor (item of items) {\n  str = item.json.name.replaceAll(\" \",\"_\")\n  str = str.replaceAll(/[ÀÁÂÃÄÅ]/g,\"A\");\n  str = str.replaceAll(/[àáâãäå]/g,\"a\");\n  str = str.replaceAll(/[ÈÉÊË]/g,\"E\");\n  str = str.replaceAll(\"/\",\"\");\n  item.json.file_name = str;\n  newItems.push({json: item});\n}\nreturn newItems;"
       },
       "name": "Return a array of worflows with format name",
       "type": "n8n-nodes-base.function",
@@ -579,6 +579,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-02-27T13:24:26.000Z",
-  "versionId": "fe6fc32a-ece4-4f59-ac8a-9400266f2f08"
+  "updatedAt": "2024-02-29T13:09:35.000Z",
+  "versionId": "fa761f7d-b617-45ff-954e-19bcb6ae0b6f"
 }
