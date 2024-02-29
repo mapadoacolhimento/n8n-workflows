@@ -24,6 +24,11 @@
             "node": "Update match status",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Check current_matches",
+            "type": "main",
+            "index": 0
           }
         ],
         [
@@ -71,13 +76,7 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Update current_matches",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Is match interrupted, expired or completed?": {
@@ -89,13 +88,7 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Check current_matches",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Check current_matches": {
@@ -177,6 +170,11 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Update match status": {
+      "main": [
+        []
       ]
     }
   },
@@ -321,7 +319,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET current_matches = GREATEST({{$json[\"current_matches\"]}} - 1, 0), is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
+        "query": "=UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
         "additionalFields": {}
       },
       "id": "0e0417fd-f203-471d-bf54-4115124bd418",
@@ -402,27 +400,6 @@
         -280,
         760
       ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "=UPDATE public.volunteer_availability\nSET current_matches = GREATEST({{$json[\"current_matches\"]}} - 1, 0), updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
-        "additionalFields": {}
-      },
-      "id": "907ec0ae-cd3b-4d6f-867c-4f0660c15811",
-      "name": "Update current_matches",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        460,
-        900
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -703,6 +680,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-02-21T13:38:12.000Z",
-  "versionId": "7bb7e714-cd04-4218-ab6e-6480a76b37bb"
+  "updatedAt": "2024-02-27T15:27:50.000Z",
+  "versionId": "8b81d6ef-dfaa-4c45-ba9d-e08ce100ab64"
 }
