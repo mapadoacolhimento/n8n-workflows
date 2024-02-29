@@ -1,32 +1,6 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
-    "When clicking \"Test Workflow\"": {
-      "main": [
-        [
-          {
-            "node": "Inicia export das respostas da survey",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca e-mails e hashes",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca e-mails e nomes de todas as MSRs",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca MSRs que se cadastraram há mais de 7 dias",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Inicia export das respostas da survey": {
       "main": [
         [
@@ -101,11 +75,6 @@
             "node": "Nem começaram a pesquisa",
             "type": "main",
             "index": 1
-          },
-          {
-            "node": "Não foram encontradas",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -117,11 +86,6 @@
             "node": "MSRs com hashes",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "MSRs com hashes1",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -131,11 +95,6 @@
         [
           {
             "node": "MSRs com hashes",
-            "type": "main",
-            "index": 1
-          },
-          {
-            "node": "MSRs com hashes1",
             "type": "main",
             "index": 1
           }
@@ -154,11 +113,6 @@
             "node": "Nem começaram a pesquisa",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Não foram encontradas",
-            "type": "main",
-            "index": 1
           }
         ]
       ]
@@ -185,11 +139,151 @@
         ]
       ]
     },
-    "Busca MSRs que se cadastraram há mais de 7 dias": {
+    "Nem começaram a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalizou a pesquisa?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 5 segundos": {
+      "main": [
+        [
+          {
+            "node": "Envia email de lembrete para as que nem começaram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera 5 segundos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email de lembrete para as que nem começaram": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 5 segundos2": {
+      "main": [
+        [
+          {
+            "node": "Envia email de lembrete para as que não finalizaram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera 5 segundos2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email de lembrete para as que não finalizaram": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que se cadastraram há exatamente 7 dias": {
       "main": [
         [
           {
             "node": "MSRs com e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs que se cadastraram há exatamente 7 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca e-mails e nomes de todas as MSRs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca e-mails e hashes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Inicia export das respostas da survey",
             "type": "main",
             "index": 0
           }
@@ -205,17 +299,6 @@
   "name": "[PROD] Enviar e-mails para MSRs que não terminaram de responder a pesquisa da Busara",
   "nodes": [
     {
-      "parameters": {},
-      "id": "72a24b83-8164-49d0-9236-2a424a22bb0d",
-      "name": "When clicking \"Test Workflow\"",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        980,
-        380
-      ]
-    },
-    {
       "parameters": {
         "operation": "executeQuery",
         "query": "SELECT DISTINCT msr_id\nFROM match.support_requests\nWHERE \n  DATE_TRUNC('day', created_at) = (CURRENT_DATE - INTERVAL '7 DAYS')\n  AND status != 'duplicated'",
@@ -226,8 +309,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1360,
-        -360
+        2020,
+        -100
       ],
       "credentials": {
         "postgres": {
@@ -235,42 +318,6 @@
           "name": "[PROD] Mapa"
         }
       }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT DISTINCT msr_id\nFROM match.support_requests\nWHERE \n  DATE_TRUNC('day', created_at) < CURRENT_DATE - INTERVAL '7 DAYS'\n  AND created_at >= '2024-01-30' \n  AND status != 'duplicated'",
-        "options": {}
-      },
-      "id": "02498f44-d199-4194-834e-b84389540fb8",
-      "name": "Busca MSRs que se cadastraram há mais de 7 dias",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        1980,
-        -160
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "content": "Esse node só deve ser rodada uma vez (e não de maneira programada) para buscar as MSRs que se cadastraram antes de começarmos a rodar esse cron job",
-        "height": 80,
-        "width": 403.8330727540383
-      },
-      "id": "618f4cc9-99a3-471a-a3da-631fdd67f510",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1800,
-        -560
-      ]
     },
     {
       "parameters": {
@@ -483,59 +530,13 @@
     },
     {
       "parameters": {
-        "mode": "combine",
-        "mergeByFields": {
-          "values": [
-            {
-              "field1": "user_id",
-              "field2": "user_id"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "8f2cee40-bc3a-441d-9532-400d0a0c7262",
-      "name": "MSRs que não terminaram a pesquisa",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        4200,
-        580
-      ]
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "mergeByFields": {
-          "values": [
-            {
-              "field1": "user_id",
-              "field2": "user_id"
-            }
-          ]
-        },
-        "joinMode": "keepNonMatches",
-        "outputDataFrom": "input1",
-        "options": {}
-      },
-      "id": "df9d66e4-3122-4a6b-beea-fa277e211690",
-      "name": "MSRs que não terminaram a pesquisa1",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        4200,
-        1200
-      ]
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clt661u05008hr8356tdw4r77\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"surveyLink\": \"{{ $json.surveyLink }}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clt661u05008hr8356tdw4r77\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}\"\n  }\n}",
         "options": {}
       },
       "id": "c6b8c52b-927f-4c32-b7da-d7aa245b459d",
@@ -543,8 +544,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        4180,
-        200
+        4380,
+        320
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -552,19 +553,6 @@
           "name": "Loops API"
         }
       }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = [{\n  \"first_name\": \"Camila\",\n  \"email\": \"camila@mapa.org.br\",\n  \"survey_link\": \"https://google.com.br\"\n}]\nreturn output;"
-      },
-      "id": "986d240b-2f4d-4bc7-8c9a-fe8983a0f611",
-      "name": "Code",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        4200,
-        920
-      ]
     },
     {
       "parameters": {
@@ -674,8 +662,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        4200,
-        -240
+        4360,
+        -200
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -707,50 +695,112 @@
     },
     {
       "parameters": {
-        "mode": "combine",
-        "mergeByFields": {
-          "values": [
-            {
-              "field1": "email",
-              "field2": "email"
-            }
-          ]
-        },
-        "joinMode": "keepNonMatches",
-        "outputDataFrom": "input1",
-        "options": {}
+        "jsCode": "filter_out = ['naspimentel@hotmail.com', 'nayara.tenorio19@gmail.com', 'michellesantos2077@gmail.com', 'danielegomess00@hotmail.com', 'jaemilly2305@gmail.com', 'brunadayane2300@gmail.com', 'izaa.pnogueira@gmail.com', 'manfrealicia@gmail.com', 'larissagomes_enf@hotmail.com', 'vivianaglopes@gmail.com', 'raphaella.cds@gmail.com', 'debyeidam@gmail.com', 'deboratgs@hotmail.com', 'nat_mell@hotmail.com', 'andrezza.ag1@live.com', 'nandabpires@gmail.com', 'thayyzze@hotmail.com', 'thayyzze@hotmail.com', 'monalisalourenco@gmail.com', 'fridabarros25@gmail.com', 'marthajez2019@gmail.com', 'yasminvitoriag.deoliveira@outlook.com', 'egladisuniati@gmail.com']\n\noutput = []\n\nfor (const item of $input.all()) {\n  if(!filter_out.includes(item.json.email)) {\n    output.push(item)\n  }\n}\n\nreturn output;"
       },
-      "id": "5c591711-500a-48b8-acd0-22416989dd73",
-      "name": "MSRs com hashes1",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
+      "id": "69c4a518-84ac-4b09-a1c4-d934086f1865",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        2920,
-        200
+        3600,
+        -220
       ]
     },
     {
       "parameters": {
-        "mode": "combine",
-        "mergeByFields": {
-          "values": [
-            {
-              "field1": "user_id",
-              "field2": "user_id"
-            }
-          ]
-        },
-        "joinMode": "keepNonMatches",
-        "outputDataFrom": "input1",
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "6234c7ab-4c8e-4eec-8030-79bf51271329",
+      "name": "Espera 5 segundos",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        4100,
+        -200
+      ],
+      "webhookId": "afb516d7-14e2-46db-891a-61ce74732683"
+    },
+    {
+      "parameters": {
         "options": {}
       },
-      "id": "e22cc766-b6c4-4214-b930-a1da904e027f",
-      "name": "Não foram encontradas",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
+      "id": "4ac41309-709a-4bd2-b616-8f12edd0b789",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
       "position": [
-        3440,
-        760
+        3820,
+        -220
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a935063d-cdf8-4218-9db9-5267a5b7b520",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4100,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "08d9d1af-daa8-4b42-8de6-7bc505b6e7da",
+      "name": "Espera 5 segundos2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        4140,
+        320
+      ],
+      "webhookId": "afb516d7-14e2-46db-891a-61ce74732683"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0e27646b-c12f-400f-8c49-0fa780e7e541",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3900,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "bebca199-1a11-42c0-b124-5e2f2f86a594",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4140,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 13
+            }
+          ]
+        }
+      },
+      "id": "ff86116c-5547-41a9-8eb9-42aa802da7b4",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        360
       ]
     }
   ],
@@ -758,9 +808,13 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    }
+  },
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-02-29T12:38:46.000Z",
-  "versionId": "8343e178-dbb4-490e-8f47-f0a571b11d30"
+  "triggerCount": 1,
+  "updatedAt": "2024-02-29T18:24:45.000Z",
+  "versionId": "48e001f8-237a-4752-8bdf-cb33f7a5116e"
 }
