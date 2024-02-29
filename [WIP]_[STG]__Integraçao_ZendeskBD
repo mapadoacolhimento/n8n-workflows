@@ -1,0 +1,767 @@
+{
+  "active": false,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntária no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Busca voluntária  no BD": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Compara as informações da voluntária no BD com as informações no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Tem alguma alteração?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compara as informações da voluntária no BD com as informações no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "As informações de endereço mudaram?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "As informações de endereço mudaram?": {
+      "main": [
+        [
+          {
+            "node": "Busca as coordenadas do endereço",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tem alguma alteração?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca as coordenadas do endereço": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Tem alguma alteração?": {
+      "main": [
+        [
+          {
+            "node": "Monta  query de atualização",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monta  query de atualização": {
+      "main": [
+        [
+          {
+            "node": "Atualiza voluntária no BD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Busca acolhimento no BD",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca MSR no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Busca voluntária  no BD",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Busca voluntária  no BD",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Compara as informações da voluntária no BD com as informações no Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca acolhimento no BD": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSR no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-02-26T19:30:17.425Z",
+  "id": "sDNi2TJAPi3UQO8U",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[WIP] [STG]  Integração Zendesk/BD",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ticket-updated",
+        "options": {}
+      },
+      "id": "1a43851b-1c19-4d9d-9156-26298ba7978b",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -620,
+        640
+      ],
+      "webhookId": "06308513-32bf-4667-8c8c-647e9dcd4e5f"
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.body.ticket.requester_id }}"
+      },
+      "id": "ca7dad05-c949-4b2a-b1c0-5e0647434cbb",
+      "name": "Busca voluntária no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        120,
+        1000
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=select * from volunteers v\nwhere zendesk_user_id = {{$node[\"Webhook\"].json[\"body\"][\n\"ticket\"][\"requester_id\"]}}",
+        "additionalFields": {}
+      },
+      "id": "3d128e31-921f-4f73-8966-9307e0a25ca4",
+      "name": "Busca voluntária  no BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        120,
+        820
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "d805de17-7e76-4f42-907f-184f807bffd1",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        1000
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "5eff0434-9bc1-4e73-888e-0b6b0ae3356b",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1360,
+        740
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e602a5b3-19cb-4b46-8329-dbd147bd9669",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode,\n  \"condition\": items[0].json.condition,\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": Number(items[1].json.user_fields.disponibilidade_de_atendimentos),\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep,\n  \"condition\": items[1].json.user_fields.condition,\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
+      },
+      "id": "2c6c3b9b-5d05-4c98-9c47-e450248ec6f0",
+      "name": "Compara as informações da voluntária no BD com as informações no Zendesk",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "2b84eba0-acaa-470b-b279-8edca556fb44",
+              "leftValue": "={{ $json.updated_fields.city }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "bbb95351-37ac-4568-a930-df238660897f",
+              "leftValue": "={{ $json.updated_fields.state }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ec0b47a6-958d-4bc3-b2ff-acbd9e2ceca7",
+              "leftValue": "={{ $json.updated_fields.zipcode }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "ac7a1ccb-de9e-49ff-bca6-b961d825b62c",
+      "name": "As informações de endereço mudaram?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://novoqueroacolher.staging.bonde.org/address/?zipcode={{ $json[\"updated_fields\"][\"zipcode\"] }}",
+        "options": {}
+      },
+      "id": "878198e8-0115-4468-9913-be6cb595f098",
+      "name": "Busca as coordenadas do endereço",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1200,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "42bd8ac1-280e-44a6-b602-bd0396e1deda",
+              "leftValue": "={{ $json.updated_fields }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1eda9e26-443c-45c8-a90e-317155cc4541",
+      "name": "Tem alguma alteração?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let updateSQL = \"\"\n\nlet fields = Object.entries(items[0].json.updated_fields)\nupdateSQL = updateSQL +  fields.map( ([key, val] = entry) => {\n  if (typeof val === \"string\") {\n      return `${key} = '${val}'`;\n    }  else{\n      return `${key} = ${val}`;\n    }\n    \n});\nif (items[1]) {\n  updateSQL = updateSQL + \n     \n     `,latitude = '${items[1].json.coordinates.lat.toFixed(3)}',` +\n     `longitude = '${items[1].json.coordinates.lng.toFixed(3)}'`\n  if (items[1].json.street){\n    updateSQL = updateSQL + `,street = '${items[1].json.street}'` \n  }\n}\n\nupdateSQL = 'UPDATE volunteers set ' + updateSQL + `, updated_at = now() where id = ${items[0].json.volunteer_id}`\n\nreturn {\"update_sql\": updateSQL };"
+      },
+      "id": "17fb9dc3-0fd5-4f5d-81f0-ac9c9089619c",
+      "name": "Monta  query de atualização",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1660,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $('Monta  query de atualização').item.json[\"update_sql\"] }}",
+        "additionalFields": {}
+      },
+      "id": "2c18f842-07d7-4eb1-93a4-9ba2064f3e3b",
+      "name": "Atualiza voluntária no BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        800
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=select * from match.support_requests where zendesk_ticket_id = {{$node[\"Webhook\"].json[\"body\"][\n\"ticket\"][\"id\"]}}",
+        "additionalFields": {}
+      },
+      "id": "fd0441cb-9d03-458b-b821-3946888a9f4e",
+      "name": "Busca acolhimento no BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        120
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.body.ticket.requester_id }}"
+      },
+      "id": "5142c927-6066-45a1-a4ae-823c924b2208",
+      "name": "Busca MSR no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        320
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.ticket.organization_id }}",
+                    "rightValue": 360273031591,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MSR"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "bfae5951-c72c-4899-aa29-a0118c3fb13a",
+                    "leftValue": "={{ $json.body.ticket.organization_id }}",
+                    "rightValue": 360269610652,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Advogada"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "0f6be240-f6f5-41d2-a856-04544f633b38",
+                    "leftValue": "{{ $json.body.ticket.organization_id }}",
+                    "rightValue": "360282119532",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Psicologa"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "533dc9f3-722c-4833-8487-f5fecd54a0ae",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -380,
+        640
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "935e34f6-2f5c-402a-b774-3d5b973cecff",
+      "name": "Merge2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode,\n  \"condition\": items[0].json.condition,\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": Number(items[1].json.user_fields.disponibilidade_de_atendimentos),\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep,\n  \"condition\": items[1].json.user_fields.condition,\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
+      },
+      "id": "596783e7-f2c8-429c-8f61-3350561d87a8",
+      "name": "Compara as informações da voluntária no BD com as informações no Zendesk1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        180
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "x-request-id": "98e6fd1d-a120-4ece-a6ea-095c0bb40981",
+            "x-real-ip": "216.198.2.195",
+            "x-forwarded-for": "216.198.2.195",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-scheme": "https",
+            "x-scheme": "https",
+            "content-length": "315",
+            "user-agent": "Zendesk Webhook",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyOkJQYlFFY1hrc3cyejhX",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-0000000000000000261efe3cb86eb4ef-261efe3cb86eb4ef-00",
+            "tracestate": "dd=s:-1",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HQNDS3MVX30JXB22GHD6JNDJ",
+            "x-zendesk-webhook-invocation-id": "test_webhook:fake_event:85c2a6752cc71d57-GIG",
+            "x-zendesk-webhook-signature": "wy+gHyZfcUP+bTJZUaTDm/laSc3mdDCxuBvDwJinQHs=",
+            "x-zendesk-webhook-signature-timestamp": "2024-02-27T18:56:52Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "ticket": {
+              "id": 80103,
+              "priority": "low",
+              "status": "new",
+              "subject": "psi teste prod",
+              "description": "-",
+              "fields": [
+                {
+                  "id": 360021879811,
+                  "value": null
+                },
+                {
+                  "id": 15863532864020,
+                  "value": null
+                },
+                {
+                  "id": 360016631592,
+                  "value": "Teste Psi"
+                },
+                {
+                  "id": 360017432652,
+                  "value": "2024-02-27"
+                },
+                {
+                  "id": 360016631632,
+                  "value": "https://mapadoacolhimento.zendesk.com/agent/tickets/80994"
+                },
+                {
+                  "id": 360017056851,
+                  "value": null
+                },
+                {
+                  "id": 360021665652,
+                  "value": null
+                },
+                {
+                  "id": 10907982454164,
+                  "value": null
+                },
+                {
+                  "id": 360014379412,
+                  "value": "encaminhamento__realizado"
+                },
+                {
+                  "id": 360032229831,
+                  "value": null
+                },
+                {
+                  "id": 360021812712,
+                  "value": null
+                },
+                {
+                  "id": 360021879791,
+                  "value": "SP"
+                },
+                {
+                  "id": 360016681971,
+                  "value": null
+                }
+              ],
+              "custom_fields": [
+                {
+                  "id": 360021879811,
+                  "value": null
+                },
+                {
+                  "id": 15863532864020,
+                  "value": null
+                },
+                {
+                  "id": 360016631592,
+                  "value": "Teste Psi"
+                },
+                {
+                  "id": 360017432652,
+                  "value": "2024-02-27"
+                },
+                {
+                  "id": 360016631632,
+                  "value": "https://mapadoacolhimento.zendesk.com/agent/tickets/80994"
+                },
+                {
+                  "id": 360017056851,
+                  "value": null
+                },
+                {
+                  "id": 360021665652,
+                  "value": null
+                },
+                {
+                  "id": 10907982454164,
+                  "value": null
+                },
+                {
+                  "id": 360014379412,
+                  "value": "encaminhamento__realizado"
+                },
+                {
+                  "id": 360032229831,
+                  "value": null
+                },
+                {
+                  "id": 360021812712,
+                  "value": null
+                },
+                {
+                  "id": 360021879791,
+                  "value": "SP"
+                },
+                {
+                  "id": 360016681971,
+                  "value": null
+                }
+              ],
+              "requester_id": 22858077211028,
+              "organization_id": 360273031591,
+              "tags": []
+            }
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-02-29T13:04:22.000Z",
+  "versionId": "7a887b46-e491-4684-9d1a-eee584f08589"
+}
