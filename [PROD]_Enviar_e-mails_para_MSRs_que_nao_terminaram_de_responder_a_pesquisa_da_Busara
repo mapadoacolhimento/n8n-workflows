@@ -5,17 +5,22 @@
       "main": [
         [
           {
-            "node": "Busca MSRs que se cadastraram há exatamente 7 dias",
+            "node": "Inicia export das respostas da survey",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca e-mails e hashes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca e-mails e nomes de todas as MSRs",
             "type": "main",
             "index": 0
           },
           {
             "node": "Busca MSRs que se cadastraram há mais de 7 dias",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Inicia export das respostas da survey",
             "type": "main",
             "index": 0
           }
@@ -88,7 +93,103 @@
       "main": [
         [
           {
+            "node": "Começaram a pesquisa",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Nem começaram a pesquisa",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Não foram encontradas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSRs com e-mail": {
+      "main": [
+        [
+          {
+            "node": "MSRs com hashes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MSRs com hashes1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca e-mails e hashes": {
+      "main": [
+        [
+          {
+            "node": "MSRs com hashes",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "MSRs com hashes1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "MSRs com hashes": {
+      "main": [
+        [
+          {
+            "node": "Começaram a pesquisa",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Nem começaram a pesquisa",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Não foram encontradas",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Começaram a pesquisa": {
+      "main": [
+        [
+          {
             "node": "Finalizou a pesquisa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca e-mails e nomes de todas as MSRs": {
+      "main": [
+        [
+          {
+            "node": "MSRs com e-mail",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que se cadastraram há mais de 7 dias": {
+      "main": [
+        [
+          {
+            "node": "MSRs com e-mail",
             "type": "main",
             "index": 0
           }
@@ -125,8 +226,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1540,
-        380
+        1360,
+        -360
       ],
       "credentials": {
         "postgres": {
@@ -138,7 +239,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT msr_id\nFROM match.support_requests\nWHERE \n  DATE_TRUNC('day', created_at) < CURRENT_DATE - INTERVAL '7 DAYS'\n  AND created_at >= '2024-01-25' \n  AND status != 'duplicated'",
+        "query": "SELECT DISTINCT msr_id\nFROM match.support_requests\nWHERE \n  DATE_TRUNC('day', created_at) < CURRENT_DATE - INTERVAL '7 DAYS'\n  AND created_at >= '2024-01-30' \n  AND status != 'duplicated'",
         "options": {}
       },
       "id": "02498f44-d199-4194-834e-b84389540fb8",
@@ -146,8 +247,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1540,
-        40
+        1980,
+        -160
       ],
       "credentials": {
         "postgres": {
@@ -159,7 +260,7 @@
     {
       "parameters": {
         "content": "Esse node só deve ser rodada uma vez (e não de maneira programada) para buscar as MSRs que se cadastraram antes de começarmos a rodar esse cron job",
-        "height": 94.03208278708617,
+        "height": 80,
         "width": 403.8330727540383
       },
       "id": "618f4cc9-99a3-471a-a3da-631fdd67f510",
@@ -167,8 +268,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1180,
-        -80
+        1800,
+        -560
       ]
     },
     {
@@ -209,7 +310,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1320,
+        1980,
         680
       ],
       "credentials": {
@@ -229,7 +330,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
       "position": [
-        1540,
+        2200,
         680
       ],
       "webhookId": "09a742e0-d5f5-4424-8d5f-399041900988"
@@ -246,7 +347,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1740,
+        2400,
         680
       ],
       "credentials": {
@@ -285,7 +386,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1940,
+        2600,
         680
       ]
     },
@@ -301,7 +402,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2160,
+        2820,
         660
       ],
       "credentials": {
@@ -320,7 +421,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2360,
+        3060,
         660
       ]
     },
@@ -355,8 +456,301 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        2560,
-        660
+        3620,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    msr_email AS email,\n    hash AS user_id,\n    CONCAT('https://busara.iad1.qualtrics.com/jfe/form/SV_3ltkrtQdVfXYEt0?user_id=', hash) AS survey_link\nFROM match.busara_hashes",
+        "options": {}
+      },
+      "id": "c2c45ba1-7101-472d-a1f7-3615623f9f59",
+      "name": "Busca e-mails e hashes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1980,
+        360
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8f2cee40-bc3a-441d-9532-400d0a0c7262",
+      "name": "MSRs que não terminaram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        4200,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "id": "df9d66e4-3122-4a6b-beea-fa277e211690",
+      "name": "MSRs que não terminaram a pesquisa1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        4200,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clt661u05008hr8356tdw4r77\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"surveyLink\": \"{{ $json.surveyLink }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "c6b8c52b-927f-4c32-b7da-d7aa245b459d",
+      "name": "Envia email de lembrete para as que não finalizaram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        4180,
+        200
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = [{\n  \"first_name\": \"Camila\",\n  \"email\": \"camila@mapa.org.br\",\n  \"survey_link\": \"https://google.com.br\"\n}]\nreturn output;"
+      },
+      "id": "986d240b-2f4d-4bc7-8c9a-fe8983a0f611",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4200,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "msr_id",
+              "field2": "msr_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6e06eb35-5a0d-46d2-b87b-6d00c34537b5",
+      "name": "MSRs com e-mail",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2500,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "email",
+              "field2": "email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c8b3212d-9d95-48ae-88e3-85a059e28f11",
+      "name": "MSRs com hashes",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2900,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "options": {
+          "multipleMatches": "first"
+        }
+      },
+      "id": "26865237-b93b-49c6-873a-ec50cf91bd97",
+      "name": "Começaram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        3380,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "id": "bcef9cd9-110f-4d79-b439-17afc9b3db9a",
+      "name": "Nem começaram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        3380,
+        -220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clt68ffrx00811250n1tezdb7\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "d61ec3a3-7701-4492-86ac-97018db148e8",
+      "name": "Envia email de lembrete para as que nem começaram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        4200,
+        -240
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  user_id AS msr_id, \n  email,\n  SPLIT_PART(name, ' ', 1) AS first_name\nFROM solidarity_users\nWHERE organization_id = 360273031591",
+        "options": {}
+      },
+      "id": "d559069b-db7c-4d57-b814-1a3813786899",
+      "name": "Busca e-mails e nomes de todas as MSRs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2000,
+        140
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "email",
+              "field2": "email"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "id": "5c591711-500a-48b8-acd0-22416989dd73",
+      "name": "MSRs com hashes1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2920,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "id": "e22cc766-b6c4-4214-b930-a1da904e027f",
+      "name": "Não foram encontradas",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        3440,
+        760
       ]
     }
   ],
@@ -367,6 +761,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-02-26T21:44:20.000Z",
-  "versionId": "2a6fc3c8-d755-4df3-ab4e-1fb2b3375dc6"
+  "updatedAt": "2024-02-29T12:38:46.000Z",
+  "versionId": "8343e178-dbb4-490e-8f47-f0a571b11d30"
 }
