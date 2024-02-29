@@ -768,7 +768,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json.volunteer_id }};",
         "options": {}
       },
       "id": "2486c296-ed1b-4a7a-8815-2f1613ee2e07",
@@ -1014,7 +1014,7 @@
         "json": {
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
-            "x-request-id": "98bb7c2beebe7fa41494b82aa78aaf14",
+            "x-request-id": "5ff8ce79973d7972841d9bc97879ff66",
             "x-real-ip": "54.85.56.248",
             "x-forwarded-for": "54.85.56.248",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
@@ -1022,7 +1022,7 @@
             "x-forwarded-proto": "https",
             "x-forwarded-scheme": "https",
             "x-scheme": "https",
-            "content-length": "396",
+            "content-length": "416",
             "accept": "*/*",
             "content-type": "application/json",
             "user-agent": "MoodleBot/4.1 (+https://capacitacao.mapa.org.br)"
@@ -1030,23 +1030,25 @@
           "params": {},
           "query": {},
           "body": {
-            "eventname": "\\mod_page\\event\\course_module_viewed",
-            "component": "mod_page",
-            "action": "viewed",
-            "target": "course_module",
-            "objecttable": "page",
-            "objectid": "1",
-            "crud": "r",
+            "eventname": "\\core\\event\\course_completed",
+            "component": "core",
+            "action": "completed",
+            "target": "course",
+            "objecttable": "course_completions",
+            "objectid": "272",
+            "crud": "u",
             "edulevel": 2,
-            "contextid": 16,
-            "contextlevel": 70,
+            "contextid": 14,
+            "contextlevel": 50,
             "contextinstanceid": "2",
-            "userid": "103",
+            "userid": "105",
             "courseid": "2",
-            "relateduserid": null,
+            "relateduserid": "105",
             "anonymous": 0,
-            "other": null,
-            "timecreated": 1709066954,
+            "other": {
+              "relateduserid": "105"
+            },
+            "timecreated": 1709215121,
             "host": "capacitacao.mapa.org.br",
             "token": "",
             "extra": ""
@@ -1071,6 +1073,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-02-27T21:34:29.000Z",
-  "versionId": "a466ee29-b431-4095-9077-23999009a72c"
+  "updatedAt": "2024-02-29T14:13:23.000Z",
+  "versionId": "e8ee009e-b8eb-4725-9727-f60379d38680"
 }
