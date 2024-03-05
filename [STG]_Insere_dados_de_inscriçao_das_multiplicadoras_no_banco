@@ -21,7 +21,7 @@
       "main": [
         [
           {
-            "node": "Insere na tabela multiplier_pii",
+            "node": "Initcap first_name e last_name",
             "type": "main",
             "index": 0
           }
@@ -48,18 +48,29 @@
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Update array",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Switch": {
+    "Initcap first_name e last_name": {
       "main": [
         [
           {
-            "node": "Update array",
+            "node": "Fix zip_code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fix zip_code": {
+      "main": [
+        [
+          {
+            "node": "Insere na multiplier_pii",
             "type": "main",
             "index": 0
           }
@@ -94,131 +105,9 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1020,
-        380
+        1000,
+        460
       ]
-    },
-    {
-      "parameters": {
-        "schema": {
-          "__rl": true,
-          "value": "mobilization",
-          "mode": "list",
-          "cachedResultName": "mobilization"
-        },
-        "table": {
-          "__rl": true,
-          "value": "multiplier_pii",
-          "mode": "list",
-          "cachedResultName": "multiplier_pii"
-        },
-        "columns": {
-          "mappingMode": "autoMapInputData",
-          "value": {
-            "multiplier_pii_id": 0,
-            "multiplier_id": 0
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "multiplier_pii_id",
-              "displayName": "multiplier_pii_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "multiplier_id",
-              "displayName": "multiplier_id",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "email",
-              "displayName": "email",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "first_name",
-              "displayName": "first_name",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "last_name",
-              "displayName": "last_name",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "phone",
-              "displayName": "phone",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "zip_code",
-              "displayName": "zip_code",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "created_at",
-              "displayName": "created_at",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "updated_at",
-              "displayName": "updated_at",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "canBeUsedToMatch": true
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "9ffbad01-76a1-45bd-ad0a-f5cce9882e0b",
-      "name": "Insere na tabela multiplier_pii",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        1240,
-        380
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -604,7 +493,7 @@
       "typeVersion": 2.3,
       "position": [
         1340,
-        20
+        40
       ],
       "credentials": {
         "postgres": {
@@ -616,16 +505,16 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE mobilization.multipliers\nSET shift_availability[0] = '{{} $json.shift_availability_string[0] }}'\nWHERE multiplier_id = {{ $json.multiplier_id }}",
+        "query": "UPDATE mobilization.multipliers\nSET shift_availability = '{ {{ $json.shift_availability_string }} }'\nWHERE multiplier_id = {{ $json.multiplier_id }}",
         "options": {}
       },
-      "id": "8de6747a-db22-4f56-aec4-e68a58f1df4b",
+      "id": "d7736de2-fda2-453f-a1ee-dd7410008615",
       "name": "Update array",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1800,
-        120
+        1580,
+        220
       ],
       "credentials": {
         "postgres": {
@@ -636,462 +525,51 @@
     },
     {
       "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.shift_availability_string }}",
-                    "rightValue": 1,
-                    "operator": {
-                      "type": "array",
-                      "operation": "lengthEquals",
-                      "rightType": "number"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "1"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "29de4e89-0d70-4876-b616-8feb23db5b09",
-                    "leftValue": "={{ $json.shift_availability_string }}",
-                    "rightValue": 2,
-                    "operator": {
-                      "type": "array",
-                      "operation": "lengthEquals",
-                      "rightType": "number"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "2"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "74a0e0a0-f21c-4379-b0fd-e678123961b8",
-                    "leftValue": "={{ $json.shift_availability_string }}",
-                    "rightValue": 3,
-                    "operator": {
-                      "type": "array",
-                      "operation": "lengthEquals",
-                      "rightType": "number"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "3"
-            }
-          ]
-        },
-        "options": {}
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction capitilizeFirstLetter(name) {\n  return (name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())\n}\n\nfor (const item of $input.all()) {\n  const firstName = capitilizeFirstLetter(item.json.first_name);\n  const lastNameArr = item.json.last_name.split(\" \");\n  const lastName = lastNameArr.map(capitilizeFirstLetter).join(\" \")\n\n  item.json.first_name = firstName;\n  item.json.last_name = lastName;\n  \n}\n\nreturn $input.all();"
       },
-      "id": "579268c8-a98b-4e0b-a0a8-aee0565171d4",
-      "name": "Switch",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
+      "id": "4bb0d718-b861-452a-ac6e-472eec3d8012",
+      "name": "Initcap first_name e last_name",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        1560,
-        220
+        1200,
+        460
       ]
     },
     {
       "parameters": {
-        "operation": "update",
-        "schema": {
-          "__rl": true,
-          "value": "mobilization",
-          "mode": "list",
-          "cachedResultName": "mobilization"
-        },
-        "table": {
-          "__rl": true,
-          "value": "multipliers",
-          "mode": "list",
-          "cachedResultName": "multipliers"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "multiplier_id": "={{ $json.multiplier_id }}",
-            "shift_availability": "={{ $json.shift_availability_string }}"
-          },
-          "matchingColumns": [
-            "multiplier_id"
-          ],
-          "schema": [
-            {
-              "id": "multiplier_id",
-              "displayName": "multiplier_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "gender",
-              "displayName": "gender",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "cis_woman",
-                  "value": "cis_woman"
-                },
-                {
-                  "name": "trans_woman",
-                  "value": "trans_woman"
-                },
-                {
-                  "name": "not_found",
-                  "value": "not_found"
-                }
-              ],
-              "removed": true
-            },
-            {
-              "id": "age",
-              "displayName": "age",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "region",
-              "displayName": "region",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "norte",
-                  "value": "norte"
-                },
-                {
-                  "name": "nordeste",
-                  "value": "nordeste"
-                },
-                {
-                  "name": "centro_oeste",
-                  "value": "centro_oeste"
-                },
-                {
-                  "name": "sudeste",
-                  "value": "sudeste"
-                },
-                {
-                  "name": "sul",
-                  "value": "sul"
-                },
-                {
-                  "name": "not_found",
-                  "value": "not_found"
-                }
-              ],
-              "removed": true
-            },
-            {
-              "id": "state",
-              "displayName": "state",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "race",
-              "displayName": "race",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "black",
-                  "value": "black"
-                },
-                {
-                  "name": "brown",
-                  "value": "brown"
-                },
-                {
-                  "name": "indigenous",
-                  "value": "indigenous"
-                },
-                {
-                  "name": "yellow",
-                  "value": "yellow"
-                },
-                {
-                  "name": "white",
-                  "value": "white"
-                },
-                {
-                  "name": "not_found",
-                  "value": "not_found"
-                }
-              ],
-              "removed": true
-            },
-            {
-              "id": "sexuality",
-              "displayName": "sexuality",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "lesbian",
-                  "value": "lesbian"
-                },
-                {
-                  "name": "bisexual",
-                  "value": "bisexual"
-                },
-                {
-                  "name": "heterosexual",
-                  "value": "heterosexual"
-                },
-                {
-                  "name": "asexual",
-                  "value": "asexual"
-                },
-                {
-                  "name": "not_found",
-                  "value": "not_found"
-                }
-              ],
-              "removed": true
-            },
-            {
-              "id": "religion",
-              "displayName": "religion",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "atheist",
-                  "value": "atheist"
-                },
-                {
-                  "name": "candomble",
-                  "value": "candomble"
-                },
-                {
-                  "name": "catholic",
-                  "value": "catholic"
-                },
-                {
-                  "name": "spiritist",
-                  "value": "spiritist"
-                },
-                {
-                  "name": "evangelical",
-                  "value": "evangelical"
-                },
-                {
-                  "name": "umbanda",
-                  "value": "umbanda"
-                },
-                {
-                  "name": "others",
-                  "value": "others"
-                },
-                {
-                  "name": "not_found",
-                  "value": "not_found"
-                }
-              ],
-              "removed": true
-            },
-            {
-              "id": "has_disability",
-              "displayName": "has_disability",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "has_internet_access",
-              "displayName": "has_internet_access",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "is_available",
-              "displayName": "is_available",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "shift_availability",
-              "displayName": "shift_availability",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "array",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "education_level",
-              "displayName": "education_level",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "basic_education",
-                  "value": "basic_education"
-                },
-                {
-                  "name": "high_school",
-                  "value": "high_school"
-                },
-                {
-                  "name": "completed_undergraduate",
-                  "value": "completed_undergraduate"
-                },
-                {
-                  "name": "incomplete_undergraduate",
-                  "value": "incomplete_undergraduate"
-                },
-                {
-                  "name": "not_found",
-                  "value": "not_found"
-                }
-              ],
-              "removed": true
-            },
-            {
-              "id": "is_university_student",
-              "displayName": "is_university_student",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "university_type",
-              "displayName": "university_type",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "public",
-                  "value": "public"
-                },
-                {
-                  "name": "private",
-                  "value": "private"
-                },
-                {
-                  "name": "not_found",
-                  "value": "not_found"
-                }
-              ],
-              "removed": true
-            },
-            {
-              "id": "created_at",
-              "displayName": "created_at",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "updated_at",
-              "displayName": "updated_at",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "canBeUsedToMatch": true,
-              "removed": true
-            }
-          ]
-        },
+        "operation": "executeQuery",
+        "query": "INSERT INTO mobilization.multiplier_pii (multiplier_id, email, first_name, last_name, phone, zip_code, created_at, updated_at) \nVALUES ( {{ $json.multiplier_id }}, '{{ $json.email }}', '{{ $json.first_name }}', '{{ $json.last_name }}', '{{ $json.phone }}', '{{ $json.fix_zip_code }}'::VARCHAR(9), '{{ $json.created_at }}', '{{ $json.updated_at }}')",
         "options": {}
       },
-      "id": "415ac5c3-7636-4283-bd52-6a0567962b1a",
-      "name": "Postgres",
+      "id": "1f0c4d51-faee-41e3-9bc4-91c52704ff5c",
+      "name": "Insere na multiplier_pii",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1800,
-        480
+        1580,
+        460
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
           "name": "[STG] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const zipCode = item.json.zip_code;\n  \n\n  if(zipCode.length > 8) { \n    item.json.fix_zip_code = 'not_found';\n  }\n  else {\n    item.json.fix_zip_code = zipCode;\n  }\n\n  item.json.zip_code_len =  item.json.fix_zip_code.length;\n  \n}\n\nreturn $input.all();"
+      },
+      "id": "78600221-b542-4710-9e27-4e6ce7e5604a",
+      "name": "Fix zip_code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        460
+      ]
     }
   ],
   "pinData": {},
@@ -1101,6 +579,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-02-28T00:16:47.000Z",
-  "versionId": "e811bd0e-9f6e-4c70-bd8c-2f9c6f8daa07"
+  "updatedAt": "2024-03-05T17:17:35.000Z",
+  "versionId": "946224dc-6c62-499e-9c36-1d48dbe55d39"
 }
