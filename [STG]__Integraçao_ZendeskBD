@@ -372,7 +372,7 @@
     },
     {
       "parameters": {
-        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode,\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": Number(items[1].json.user_fields.disponibilidade_de_atendimentos),\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep,\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
+        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode,\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": Number(items[1].json.user_fields.disponibilidade_de_atendimentos),\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep,\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field]!= null && volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
       },
       "id": "2c6c3b9b-5d05-4c98-9c47-e450248ec6f0",
       "name": "Compara as informações da voluntária no BD com as informações no Zendesk",
@@ -579,7 +579,7 @@
     },
     {
       "parameters": {
-        "jsCode": "support_request_bd = {\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n\n}\n\nmsr_zendesk = {\n\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n\n}\n\nlet fields = Object.keys(msr_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (msr_zendesk[field] != support_request_bd[field]) {\n    diference[field] = msr_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"support_request_id\": items[0].json.support_request_id};"
+        "jsCode": "support_request_bd = {\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n\n}\n\nmsr_zendesk = {\n\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n\n}\n\nlet fields = Object.keys(msr_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (msr_zendesk[field] !=null && msr_zendesk[field] != support_request_bd[field]) {\n    diference[field] = msr_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"support_request_id\": items[0].json.support_request_id};"
       },
       "id": "596783e7-f2c8-429c-8f61-3350561d87a8",
       "name": "Compara o endereço da MSr no Zendesk com o endereço no BD",
@@ -839,6 +839,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-02-29T20:37:59.000Z",
-  "versionId": "971839fb-2bdf-438f-b204-61c208f338e5"
+  "updatedAt": "2024-03-11T20:24:27.000Z",
+  "versionId": "46f9f72e-5b10-4870-b073-c25c5876905e"
 }
