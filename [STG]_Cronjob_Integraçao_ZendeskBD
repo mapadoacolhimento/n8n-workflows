@@ -157,7 +157,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "If1",
             "type": "main",
             "index": 0
           }
@@ -175,10 +175,33 @@
         ]
       ]
     },
-    "If": {
+    "If1": {
       "main": [
-        [],
-        []
+        [
+          {
+            "node": "Atualiza volunteer_availability",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza volunteer_availability": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -435,7 +458,7 @@
       "typeVersion": 1,
       "position": [
         2620,
-        560
+        300
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -488,6 +511,61 @@
         1920,
         420
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $('Monta  query de atualização').item.json[\"updateVolunteerAvailability\"] }}",
+        "additionalFields": {}
+      },
+      "id": "3431750a-511c-4d5f-8896-fe336dffebef",
+      "name": "Atualiza volunteer_availability",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        660
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f89e17f2-e9bb-4de3-b46c-2c7a14708628",
+              "leftValue": "={{ $('Monta  query de atualização').item.json[\"updateVolunteerAvailability\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2bb4661b-1195-47f2-82b8-810b0735a418",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2520,
+        540
+      ]
     }
   ],
   "pinData": {},
@@ -497,6 +575,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-03-11T20:23:34.000Z",
-  "versionId": "21cf99d7-37be-42a5-aa6d-06bde3b7419d"
+  "updatedAt": "2024-03-12T19:24:10.000Z",
+  "versionId": "eb54d205-5223-40e8-9025-1154abfc617c"
 }
