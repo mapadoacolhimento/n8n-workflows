@@ -435,7 +435,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let updateSQL = \"\"\n\nlet fields = Object.entries(items[0].json.updated_fields)\nfields.filter(v => v !== null)\nupdateSQL = updateSQL +  fields.map( ([key, val] = entry) => {\n  if (val != null){\n    if (typeof val === \"string\") {\n        return `${key} = '${val}'`;\n      }  else{\n        return `${key} = ${val}`;\n      }\n  }\n});\nif (items[1]) {\n  updateSQL = updateSQL + \n     \n     `,latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` +\n     `neighborhood = '${items[1].json.neighborhood}'`\n  if (items[1].json.street){\n    updateSQL = updateSQL + `,street = '${items[1].json.street}'` \n  }\n}\n\nupdateSQL = 'UPDATE volunteers set ' + updateSQL + `, updated_at = now() where id = ${items[0].json.volunteer_id}`\n\nreturn {\"update_sql\": updateSQL };\n"
+        "jsCode": "let updateVolunteers = \"\"\nlet updateVolunteerAvailability = \"\"\n\nlet fields = Object.entries(items[0].json.updated_fields)\nupdateVolunteers = updateVolunteers +  fields.map( ([key, val] = entry) => {\n  if (typeof val === \"string\") {\n      return `${key} = '${val}'`;\n    }  else{\n      return `${key} = ${val}`;\n    }\n \n    \n});\nif (items[1]) {\n  updateVolunteers = updateVolunteers + \n     \n     `,latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` +\n     `neighborhood = '${items[1].json.neighborhood}'`\n  if (items[1].json.street){\n    updateSQL = updateSQL + `,street = '${items[1].json.street}'` \n  }\n\n if (items[0].json.updated_fields.availability) {\n   updateVolunteerAvailability =  'UPDATE match.volunteer_availability set ' + \n     `max_matches = ${items[0].json.updated_fields.availability}, `+\n     `latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` + \n      `, city = ${items[1].json.city}, updated_at = now() where volunteer_id = ${items[0].json.volunteer_id}`\n } else {\n   updateVolunteerAvailability =  'UPDATE match.volunteer_availability set ' + \n     `latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` + \n      `, city = ${items[1].json.city}, updated_at = now() where volunteer_id = ${items[0].json.volunteer_id}`\n } \n \n}\n\nupdateVolunteers = 'UPDATE volunteers set ' + updateVolunteers + `, updated_at = now() where id = ${items[0].json.volunteer_id}`\n\nreturn {\"updateVolunteers\": updateVolunteers, \"updateVolunteerAvailability\": updateVolunteerAvailability };"
       },
       "id": "db919fa7-be62-4957-90e0-7ce15e93e2d6",
       "name": "Monta  query de atualização",
@@ -449,7 +449,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "={{ $('Monta  query de atualização').item.json[\"update_sql\"] }}",
+        "query": "={{ $('Monta  query de atualização').item.json[\"updateVolunteers\"] }}",
         "additionalFields": {}
       },
       "id": "c8199a27-3b0a-4d8a-a361-70d1d2be5505",
@@ -575,6 +575,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-03-12T19:24:10.000Z",
-  "versionId": "eb54d205-5223-40e8-9025-1154abfc617c"
+  "updatedAt": "2024-03-13T18:54:36.000Z",
+  "versionId": "d8c5dc4c-1601-4a48-934b-6424f41379b2"
 }
