@@ -1,0 +1,279 @@
+{
+  "active": true,
+  "connections": {
+    "Cal Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Slack - Reagendamento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack - Cancelamento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack - Novo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-03-18T21:17:45.868Z",
+  "id": "gRJx0R8RjbMq6VmF",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[Notificação] Agendamentos Cal",
+  "nodes": [
+    {
+      "parameters": {
+        "events": [
+          "BOOKING_CREATED",
+          "BOOKING_RESCHEDULED",
+          "BOOKING_CANCELLED"
+        ],
+        "options": {}
+      },
+      "id": "4b99f73f-840c-4a54-bd28-82791611e640",
+      "name": "Cal Trigger",
+      "type": "n8n-nodes-base.calTrigger",
+      "typeVersion": 2,
+      "position": [
+        540,
+        280
+      ],
+      "webhookId": "577771d1-a071-4c89-b718-a4212f5b149d",
+      "credentials": {
+        "calApi": {
+          "id": "lRoj2fcPQhQG4AQf",
+          "name": "Cal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#agendamento-ass-social",
+          "mode": "name"
+        },
+        "text": "={{ $json.attendees[0].name }} ({{ $json.attendees[0].email }}) reagendou o atendimento para o dia {{ new Date($json.startTime).getDay() + '/' + new Date($json.startTime).getMonth() + '/' + new Date($json.startTime).getFullYear() }}.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false
+        }
+      },
+      "id": "d7b6e19f-05c3-4560-9d78-6c9898bde1d1",
+      "name": "Slack - Reagendamento",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        60
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#agendamento-ass-social",
+          "mode": "name"
+        },
+        "text": "={{ $json.attendees[0].name }} ({{ $json.attendees[0].email }}) cancelou o atendimento do dia {{ new Date($json.startTime).getDay() + '/' + new Date($json.startTime).getMonth() + '/' + new Date($json.startTime).getFullYear() }}. {{ $json.cancellationReason ? `Adicionou o seguinte motivo: ${$json.cancellationReason}` : 'Não adicionou o motivo.' }}.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          }
+        }
+      },
+      "id": "17fbd01d-2132-4d81-800c-0f55b7b2f1ac",
+      "name": "Slack - Cancelamento",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        260
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#agendamento-ass-social",
+          "mode": "name"
+        },
+        "text": "={{ $json.attendees[0].name }} ({{ $json.attendees[0].email }}) agendou um atendimento para o dia {{ new Date($json.startTime).getDay() + '/' + new Date($json.startTime).getMonth() + '/' + new Date($json.startTime).getFullYear() }}.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          }
+        }
+      },
+      "id": "54a6520b-4e33-44f6-8754-2c8fc3f76262",
+      "name": "Slack - Novo",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        440
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.triggerEvent }}",
+                    "rightValue": "BOOKING_RESCHEDULED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reagendado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "363b3af0-e486-4ac1-854d-9ea8ae023a84",
+                    "leftValue": "={{ $json.triggerEvent }}",
+                    "rightValue": "BOOKING_CANCELLED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cancelado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "77dcf11d-eaa1-4021-8ea4-140e64d634ad",
+                    "leftValue": "={{ $json.triggerEvent }}",
+                    "rightValue": "BOOKING_CREATED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Agendamento criado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2226223-bcb5-4de7-94b0-9225a7bb6e82",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        760,
+        280
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Cal Trigger": {
+      "webhookId": "515f41c5-f4ff-4e0e-a49d-9f704d6b679e"
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-03-18T22:02:00.000Z",
+  "versionId": "08244290-1a11-49e7-898e-4f3e6af5d4d1"
+}
