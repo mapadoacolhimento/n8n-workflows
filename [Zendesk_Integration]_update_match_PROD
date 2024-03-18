@@ -16,7 +16,7 @@
       "main": [
         [
           {
-            "node": "Is match interrupted, expired or completed?",
+            "node": "Is match interrupted or completed?",
             "type": "main",
             "index": 0
           },
@@ -75,20 +75,7 @@
             "type": "main",
             "index": 0
           }
-        ],
-        []
-      ]
-    },
-    "Is match interrupted, expired or completed?": {
-      "main": [
-        [
-          {
-            "node": "Fetch previous volunteer_availability and volunteer_status",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        []
+        ]
       ]
     },
     "Check current_matches": {
@@ -172,9 +159,15 @@
         ]
       ]
     },
-    "Update match status": {
+    "Is match interrupted or completed?": {
       "main": [
-        []
+        [
+          {
+            "node": "Fetch previous volunteer_availability and volunteer_status",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -210,7 +203,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"encaminhamento__realizado\": \"waiting_contact\",\n      \"encaminhamento_interrompido\": \"interrupted_before_support\",\n      \"encaminhamento__expirado\": \"expired\",\n      \"atendimento__iniciado\": \"in_contact\",\n      \"atendimento__concluído\": \"completed\",\n      \"atendimento__interrompido\": \"interrupted_after_support\" \n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const status = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"encaminhamento__realizado\": \"waiting_contact\",\n      \"encaminhamento_interrompido\": \"interrupted_before_support\",\n      \"atendimento__iniciado\": \"in_contact\",\n      \"atendimento__concluído\": \"completed\",\n      \"atendimento__interrompido\": \"interrupted_after_support\" \n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const status = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "427e4edd-0a0f-46ba-9f6d-6c06a5a99c79",
       "name": "Extracts zendesk_ticket_id and support_request_status",
@@ -367,39 +360,6 @@
           "name": "Zendesk account"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{$json[\"new_status\"]}}",
-              "value2": "interrupted_before_support"
-            },
-            {
-              "value1": "={{$json[\"new_status\"]}}",
-              "value2": "interrupted_after_support"
-            },
-            {
-              "value1": "={{$json[\"new_status\"]}}",
-              "value2": "completed"
-            },
-            {
-              "value1": "={{$json[\"new_status\"]}}",
-              "value2": "expired"
-            }
-          ]
-        },
-        "combineOperation": "any"
-      },
-      "id": "5fb70447-71a1-4a85-a300-c81bce946d20",
-      "name": "Is match interrupted, expired or completed?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [
-        -280,
-        760
-      ]
     },
     {
       "parameters": {
@@ -628,6 +588,35 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"new_status\"]}}",
+              "value2": "interrupted_before_support"
+            },
+            {
+              "value1": "={{$json[\"new_status\"]}}",
+              "value2": "interrupted_after_support"
+            },
+            {
+              "value1": "={{$json[\"new_status\"]}}",
+              "value2": "completed"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "5fb70447-71a1-4a85-a300-c81bce946d20",
+      "name": "Is match interrupted or completed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        760
+      ]
     }
   ],
   "pinData": {
@@ -680,6 +669,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-02-27T15:27:50.000Z",
-  "versionId": "8b81d6ef-dfaa-4c45-ba9d-e08ce100ab64"
+  "updatedAt": "2024-03-18T13:45:12.000Z",
+  "versionId": "b9a101d1-73bb-4e4d-ac40-45213263ea47"
 }
