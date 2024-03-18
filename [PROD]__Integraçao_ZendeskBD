@@ -5,7 +5,7 @@
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Busca ticket",
             "type": "main",
             "index": 0
           }
@@ -269,6 +269,17 @@
           }
         ]
       ]
+    },
+    "Busca ticket": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-03-05T14:08:20.238Z",
@@ -289,7 +300,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
       "position": [
-        -620,
+        -780,
         640
       ],
       "webhookId": "effea0ce-7edb-4a48-b8e5-3e1ad57df510"
@@ -298,7 +309,7 @@
       "parameters": {
         "resource": "user",
         "operation": "get",
-        "id": "={{ $json.body.ticket.requester_id }}"
+        "id": "={{ $json.requester_id }}"
       },
       "id": "19c0ba15-9fea-4e7a-9190-1a4e9af7dd83",
       "name": "Busca voluntária no Zendesk",
@@ -318,7 +329,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=select * from volunteers v\nwhere zendesk_user_id = {{$node[\"Webhook\"].json[\"body\"][\n\"ticket\"][\"requester_id\"]}}",
+        "query": "=select * from volunteers v\nwhere zendesk_user_id = {{$node[\"Busca ticket\"].json[\"requester_id\"]}}",
         "additionalFields": {}
       },
       "id": "7343036f-1559-49d2-8b4c-52d4507d64bc",
@@ -522,7 +533,7 @@
       "parameters": {
         "resource": "user",
         "operation": "get",
-        "id": "={{ $json.body.ticket.requester_id }}"
+        "id": "={{ $json.requester_id }}"
       },
       "id": "a9ef5159-24de-409c-b121-4584b9f54ad5",
       "name": "Busca MSR no Zendesk",
@@ -715,7 +726,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.body.ticket.organization_id }}",
+                    "leftValue": "={{ $json.organization_id }}",
                     "rightValue": 360273031591,
                     "operator": {
                       "type": "number",
@@ -738,7 +749,7 @@
                 "conditions": [
                   {
                     "id": "bfae5951-c72c-4899-aa29-a0118c3fb13a",
-                    "leftValue": "={{ $json.body.ticket.organization_id }}",
+                    "leftValue": "={{ $json.organization_id }}",
                     "rightValue": 360269610652,
                     "operator": {
                       "type": "number",
@@ -761,7 +772,7 @@
                 "conditions": [
                   {
                     "id": "0f6be240-f6f5-41d2-a856-04544f633b38",
-                    "leftValue": "={{ $json.body.ticket.organization_id }}",
+                    "leftValue": "={{ $json.organization_id }}",
                     "rightValue": 360282119532,
                     "operator": {
                       "type": "number",
@@ -786,6 +797,26 @@
         -380,
         640
       ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": "={{ $json.body.ticket.id }}"
+      },
+      "id": "8c105737-5b82-48af-8b39-529ec08039e0",
+      "name": "Busca ticket",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        640
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -839,6 +870,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-03-14T14:48:02.000Z",
-  "versionId": "ddc7cc76-76f3-4958-b3df-8c736510458f"
+  "updatedAt": "2024-03-18T12:36:37.000Z",
+  "versionId": "bda4ed34-604d-43ea-a29a-05db37e4a1a7"
 }
