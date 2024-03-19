@@ -1,0 +1,583 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Compara as informações da voluntária no BD com as informações no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compara as informações da voluntária no BD com as informações no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Tem alguma alteração?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Monta  query de atualização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "As informações de endereço mudaram?": {
+      "main": [
+        [
+          {
+            "node": "Busca as coordenadas do endereço",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Monta  query de atualização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca as coordenadas do endereço": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Tem alguma alteração?": {
+      "main": [
+        [
+          {
+            "node": "As informações de endereço mudaram?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nenhuma alteração",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monta  query de atualização": {
+      "main": [
+        [
+          {
+            "node": "Atualiza voluntária no BD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza voluntária no BD": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nenhuma alteração": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza volunteer_availability",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza volunteer_availability": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-03-19T12:20:10.497Z",
+  "id": "gVrKlqoHtNDIPk3G",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Cronjob Integração Zendesk/BD",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21,
+              "triggerAtMinute": 13
+            }
+          ]
+        }
+      },
+      "id": "ac73cb34-3147-41b2-b2c0-524dc43dc00c",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from volunteers where zendesk_user_id is not null",
+        "options": {}
+      },
+      "id": "833600e3-5e4a-444d-9af3-e5e0ccc588f0",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        280,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.zendesk_user_id }}"
+      },
+      "id": "0d297ee4-4293-4ae4-a757-9fd3199c7ba2",
+      "name": "Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        740,
+        400
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "6a0831a8-aa85-4809-9c7a-1e4c4a5f650c",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        920,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode,\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\n\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": Number(items[1].json.user_fields.disponibilidade_de_atendimentos),\n  \"city\": items[1].json.user_fields.city\n    ?.normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep,\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field]!= null && volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\n//se nao tem coordenadas no BD\nif ((items[0].json.latitude === null || items[0].json.longitude === null) && \n     !diference['zipcode']) {\n  diference['zipcode'] = volunteer_zendesk['zipcode'];  \n}\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
+      },
+      "id": "997a893e-9007-45d0-b241-7e1fbc4c19f1",
+      "name": "Compara as informações da voluntária no BD com as informações no Zendesk",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9c8f8527-ac60-4ce3-b92f-38d39c9f925e",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        520,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "46623fde-ed0b-456d-94c8-df9591abfde6",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        700,
+        120
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6431b303-bca7-48e4-8aaa-e2240f28e27e",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2240,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "2b84eba0-acaa-470b-b279-8edca556fb44",
+              "leftValue": "={{ $json.updated_fields.city }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "bbb95351-37ac-4568-a930-df238660897f",
+              "leftValue": "={{ $json.updated_fields.state }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ec0b47a6-958d-4bc3-b2ff-acbd9e2ceca7",
+              "leftValue": "={{ $json.updated_fields.zipcode }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "dfdca3c1-8a69-41b2-903f-9c16009ef169",
+      "name": "As informações de endereço mudaram?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1660,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://novoqueroacolher.staging.bonde.org/address/?zipcode={{ $json[\"updated_fields\"][\"zipcode\"] }}",
+        "options": {}
+      },
+      "id": "43439f93-964a-4f77-99d5-7ae1f2c76ed8",
+      "name": "Busca as coordenadas do endereço",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2080,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "42bd8ac1-280e-44a6-b602-bd0396e1deda",
+              "leftValue": "={{ $json.updated_fields }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c6e0528c-e273-471b-934e-fd2ce4338db9",
+      "name": "Tem alguma alteração?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let updateVolunteers = \"\"\nlet updateVolunteerAvailability = \"\"\n\nlet fields = Object.entries(items[0].json.updated_fields)\nupdateVolunteers = updateVolunteers +  fields.map( ([key, val] = entry) => {\n  if (typeof val === \"string\") {\n      return `${key} = '${val}'`;\n    }  else{\n      return `${key} = ${val}`;\n    }\n \n    \n});\nif (items[1]) {\n  updateVolunteers = updateVolunteers + \n     \n     `,latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` +\n     `neighborhood = '${items[1].json.neighborhood}'`\n  if (items[1].json.street){\n    updateSQL = updateSQL + `,street = '${items[1].json.street}'` \n  }\n\n if (items[0].json.updated_fields.availability) {\n   updateVolunteerAvailability =  'UPDATE match.volunteer_availability set ' + \n     `max_matches = ${items[0].json.updated_fields.availability}, `+\n     `latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` + \n      `, city = ${items[1].json.city}, updated_at = now() where volunteer_id = ${items[0].json.volunteer_id}`\n } else {\n   updateVolunteerAvailability =  'UPDATE match.volunteer_availability set ' + \n     `latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` + \n      `, city = ${items[1].json.city}, updated_at = now() where volunteer_id = ${items[0].json.volunteer_id}`\n } \n \n}\n\nupdateVolunteers = 'UPDATE volunteers set ' + updateVolunteers + `, updated_at = now() where id = ${items[0].json.volunteer_id}`\n\nreturn {\"updateVolunteers\": updateVolunteers, \"updateVolunteerAvailability\": updateVolunteerAvailability };"
+      },
+      "id": "84989f54-25ec-4702-9f3e-95d2d8c01dd6",
+      "name": "Monta  query de atualização",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2360,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $('Monta  query de atualização').item.json[\"updateVolunteers\"] }}",
+        "additionalFields": {}
+      },
+      "id": "60cf2cbb-1ee1-4a32-9ae4-e0d99661b1f2",
+      "name": "Atualiza voluntária no BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        300
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "5219443f-14d6-47d3-89b8-1d4333be937f",
+              "leftValue": "={{ $('Monta  query de atualização').item.json[\"update_sql\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8bf2269d-b9a0-4da7-b102-f60d3a8cc6b6",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2580,
+        -420
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "faf119f6-2eca-4c13-ba90-87fb1b9e9af9",
+      "name": "Nenhuma alteração",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $('Monta  query de atualização').item.json[\"updateVolunteerAvailability\"] }}",
+        "additionalFields": {}
+      },
+      "id": "1a7879a0-caa1-4e10-adc7-bf43ff08bd89",
+      "name": "Atualiza volunteer_availability",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        660
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f89e17f2-e9bb-4de3-b46c-2c7a14708628",
+              "leftValue": "={{ $('Monta  query de atualização').item.json[\"updateVolunteerAvailability\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1b970869-353b-475c-9ff5-59522db92357",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2520,
+        540
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-03-19T12:21:41.000Z",
+  "versionId": "65cffc24-788a-44e5-a98d-2aefa970f6bb"
+}
