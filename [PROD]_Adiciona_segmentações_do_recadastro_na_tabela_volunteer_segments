@@ -1,0 +1,99 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias que participarão do recadastro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias que participarão do recadastro": {
+      "main": [
+        [
+          {
+            "node": "Insere na tabela volunteer_segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-03-20T19:41:05.456Z",
+  "id": "i8YS0o1fS26bWQkc",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Adiciona segmentações do recadastro na tabela volunteer_segments",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "54c5189c-6b87-405f-9436-5a649715e443",
+      "name": "When clicking \"Test Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('recadastro_2024', {{ $json.volunteer_id }}, '{{ $json.volunteer_segment_group }}', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "ad0c52a3-ce42-4508-87ef-c249a9cfcd35",
+      "name": "Insere na tabela volunteer_segments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1160,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH volunteers_who_never_had_services_2018_2022 AS (\n    SELECT id AS volunteer_id\n    FROM volunteers v\n    LEFT JOIN match.matches m ON id = volunteer_id\n    WHERE \n        (match_id IS NULL OR m.status IN ('expired', 'waiting_contact', 'interrupted_before_support'))\n        AND v.created_at BETWEEN '2018-01-01' AND '2023-01-01'\n        AND condition IN ('disponivel', 'indisponivel_sem_vagas')\n),\nidle_volunteers_2018_2022 AS (\n    SELECT volunteer_id\n    FROM volunteer_availability a\n    LEFT JOIN volunteers v ON id = volunteer_id\n    WHERE is_available = TRUE AND current_matches = 0\n    AND a.created_at BETWEEN '2018-01-01' AND '2023-01-01'\n),\nall_group_1 AS (\n    SELECT volunteer_id\n    FROM volunteers_who_never_had_services_2018_2022\n    UNION ALL\n    SELECT volunteer_id\n    FROM idle_volunteers_2018_2022\n),\ngroup_1 AS (\n    SELECT \n    DISTINCT volunteer_id,\n    'group_1' AS recadastro_group\n    FROM all_group_1\n),\nvolunteers_who_never_had_matches_2023_2024 AS (\n    SELECT id AS volunteer_id\n    FROM volunteers v\n    LEFT JOIN match.matches m ON id = volunteer_id\n    WHERE \n        (match_id IS NULL OR m.status IN ('expired', 'waiting_contact', 'interrupted_before_support'))\n        AND v.created_at BETWEEN '2023-01-01' AND '2024-01-24'\n        AND condition IN ('disponivel', 'indisponivel_sem_vagas')\n),\nidle_volunteers_2023_2024 AS (\n    SELECT volunteer_id\n    FROM volunteer_availability a\n    LEFT JOIN volunteers v ON id = volunteer_id\n    WHERE is_available = TRUE AND current_matches = 0\n    AND a.created_at BETWEEN '2023-01-01' AND '2024-01-24'    \n),\nall_group_2 AS (\n    SELECT volunteer_id\n    FROM volunteers_who_never_had_matches_2023_2024\n    UNION ALL\n    SELECT volunteer_id\n    FROM idle_volunteers_2023_2024\n),\ngroup_2 AS (\n    SELECT \n        DISTINCT volunteer_id,\n        'group_2' AS recadastro_group\n    FROM all_group_2\n),\ngroup_3 AS (\n    SELECT \n        DISTINCT volunteer_id,\n        'group_3' AS recadastro_group\n    FROM match.matches m\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE status IN ('in_contact', 'interrupted_after_support', 'completed')\n    AND volunteer_id IS NOT NULL\n    AND condition IN ('disponivel', 'indisponivel_sem_vagas')\n    AND v.created_at < '2024-01-24'\n),\ngroup_4 AS (\n    SELECT \n        DISTINCT id AS volunteer_id,\n        'group_4' AS recadastro_group\n    FROM volunteers\n    WHERE condition = 'reprovada_estudo_de_caso'\n    AND created_at BETWEEN '2018-01-01' AND '2023-01-01'\n),\ngroup_5 AS (\n    SELECT \n        DISTINCT id AS volunteer_id,\n        'group_5' AS recadastro_group\n    FROM volunteers\n    WHERE condition = 'reprovada_estudo_de_caso'\n    AND created_at BETWEEN '2023-01-01' AND '2024-01-24'\n),\nall_groups AS (\n    SELECT *\n    FROM group_1\n    UNION ALL\n    SELECT *\n    FROM group_2\n    UNION ALL\n    SELECT *\n    FROM group_3\n    UNION ALL\n    SELECT *\n    FROM group_4\n    UNION ALL\n    SELECT *\n    FROM group_5\n),\nvolunteers_with_groups AS (\n    SELECT \n        DISTINCT\n        volunteer_id,\n        ARRAY_AGG(recadastro_group) OVER (PARTITION BY volunteer_id) AS recadastro_groups\n    FROM all_groups\n),\ngroup_1_to_5 AS (\n    SELECT DISTINCT\n        volunteer_id,\n        CASE WHEN 'group_3'=ANY(recadastro_groups) THEN 'group_3' ELSE ARRAY_TO_STRING(recadastro_groups, '') END AS recadastro_group\n    FROM volunteers_with_groups\n),\nall_volunteers AS (\n    SELECT id, condition, email\n    FROM volunteers\n    WHERE condition IN ('disponivel', 'indisponivel_sem_vagas', 'reprovada_estudo_de_caso', 'dados_incompletos_email', 'dados_incompletos_endereço', 'dados_incompletos_telefone', 'indisponível_-sem_resposta', 'indisponível_agenda', 'indisponível_férias', 'indisponível_maternidade', 'indisponível_outros_motivos', 'indisponível_saude', 'indisponível_trabalho_e_estudo')\n    AND created_at < '2024-01-24'\n),\nvolunteer_with_groups AS (\n    SELECT \n        volunteer_id,\n        email,\n        CASE \n            WHEN recadastro_group IS NULL THEN 'group_6'\n            ELSE recadastro_group\n        END AS recadastro_group,\n        condition\n    FROM all_volunteers\n    LEFT JOIN group_1_to_5 g ON id = g.volunteer_id\n)\nSELECT \n    volunteer_id,\n    recadastro_group AS volunteer_segment_group \nFROM volunteer_with_groups\n",
+        "options": {}
+      },
+      "id": "b14cb048-e80c-4d9f-b1c0-eb18bb585515",
+      "name": "Busca voluntárias que participarão do recadastro",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        940,
+        340
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-03-20T20:12:04.000Z",
+  "versionId": "f17edcb1-6d8f-4900-85b7-e56ad2ff38da"
+}
