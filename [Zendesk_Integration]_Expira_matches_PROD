@@ -34,6 +34,11 @@
             "node": "Fetch previous volunteer_availability and volunteer_status",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Check current_matches",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -52,13 +57,7 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Update current_matches",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Fetch previous volunteer_availability and volunteer_status": {
@@ -66,6 +65,28 @@
         [
           {
             "node": "Should update volunteer status?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check current_matches": {
+      "main": [
+        [
+          {
+            "node": "Should update current_matches?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should update current_matches?": {
+      "main": [
+        [
+          {
+            "node": "Update current_matches1",
             "type": "main",
             "index": 0
           }
@@ -214,7 +235,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
       "position": [
-        600,
+        620,
         460
       ],
       "credentials": {
@@ -240,14 +261,14 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        800,
+        1060,
         460
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET current_matches = GREATEST({{$json[\"current_matches\"]}} - 1, 0), is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
+        "query": "=UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET  is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
         "additionalFields": {}
       },
       "id": "e3db0a4c-fc0c-4583-9332-462d879d0dda",
@@ -255,7 +276,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
       "position": [
-        1080,
+        1320,
         440
       ],
       "credentials": {
@@ -286,8 +307,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1080,
-        200
+        1340,
+        220
       ],
       "credentials": {
         "zendeskApi": {
@@ -299,16 +320,71 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=UPDATE public.volunteer_availability\nSET current_matches = GREATEST({{$json[\"current_matches\"]}} - 1, 0), updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
-        "additionalFields": {}
+        "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, current_matches, max_matches, condition",
+        "options": {}
       },
-      "id": "220bdcee-72bf-4376-ab9f-1365b162ee32",
-      "name": "Update current_matches",
+      "id": "985b1ffe-ef55-4493-8f09-82609875a9ae",
+      "name": "Check current_matches",
       "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
+      "typeVersion": 2.3,
       "position": [
-        1080,
-        680
+        620,
+        220
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "40361bb8-ee27-4874-8c13-bbaa181aaece",
+              "leftValue": "={{ $json.current_matches }}",
+              "rightValue": "={{ $json.calculated_current_matches }}",
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "2f9c8940-f6d9-431e-b7f7-47de45860a35",
+      "name": "Should update current_matches?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "d3d869f9-3a16-47c7-b68e-32e2a79ec228",
+      "name": "Update current_matches1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1380,
+        -300
       ],
       "credentials": {
         "postgres": {
@@ -339,6 +415,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-03-18T13:29:50.000Z",
-  "versionId": "434d0816-e77b-401b-9fb0-779f805a38d0"
+  "updatedAt": "2024-03-21T14:51:29.000Z",
+  "versionId": "cb531006-b595-446e-94bb-52f3d5bb0e19"
 }
