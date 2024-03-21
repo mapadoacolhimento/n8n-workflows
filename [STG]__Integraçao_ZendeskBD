@@ -1,29 +1,118 @@
 {
   "active": false,
   "connections": {
-    "Webhook": {
+    "Busca as coordenadas do endereço1": {
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Merge2",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Busca voluntária no Zendesk": {
+    "Checks if we need to update support_request": {
       "main": [
         [
           {
-            "node": "Merge",
+            "node": "Should update?",
             "type": "main",
-            "index": 1
+            "index": 0
           }
         ]
       ]
     },
-    "Busca voluntária  no BD": {
+    "Should update?": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Busca as coordenadas do endereço1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Updates support_request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook MSR": {
+      "main": [
+        [
+          {
+            "node": "Normalize Zendesk input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Zendesk input": {
+      "main": [
+        [
+          {
+            "node": "Checks if we need to update support_request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Volunteer": {
+      "main": [
+        [
+          {
+            "node": "Normalize Zendesk input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Zendesk input1": {
+      "main": [
+        [
+          {
+            "node": "Checks if we need to update support_request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca as coordenadas do endereço2": {
       "main": [
         [
           {
@@ -38,197 +127,18 @@
       "main": [
         [
           {
-            "node": "Compara as informações da voluntária no BD com as informações no Zendesk",
+            "node": "Updates volunteer",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Merge1": {
+    "Checks if we need to update support_request1": {
       "main": [
         [
           {
-            "node": "Monta  query de atualização",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Compara as informações da voluntária no BD com as informações no Zendesk": {
-      "main": [
-        [
-          {
-            "node": "Tem alguma alteração?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "As informações de endereço mudaram?": {
-      "main": [
-        [
-          {
-            "node": "Busca as coordenadas do endereço",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Merge1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Monta  query de atualização",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca as coordenadas do endereço": {
-      "main": [
-        [
-          {
-            "node": "Merge1",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Tem alguma alteração?": {
-      "main": [
-        [
-          {
-            "node": "As informações de endereço mudaram?",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Monta  query de atualização": {
-      "main": [
-        [
-          {
-            "node": "Atualiza voluntária no BD",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Merge2": {
-      "main": [
-        [
-          {
-            "node": "Compara o endereço da MSr no Zendesk com o endereço no BD",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca MSR no Zendesk": {
-      "main": [
-        [
-          {
-            "node": "Merge2",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Compara o endereço da MSr no Zendesk com o endereço no BD": {
-      "main": [
-        [
-          {
-            "node": "O endereço mudou?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "O endereço mudou?": {
-      "main": [
-        [
-          {
-            "node": "Busca as coordenadas do endereço1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Merge3",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca as coordenadas do endereço1": {
-      "main": [
-        [
-          {
-            "node": "Merge3",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Merge3": {
-      "main": [
-        [
-          {
-            "node": "Monta  query de atualização1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Monta  query de atualização1": {
-      "main": [
-        [
-          {
-            "node": "Atualiza support_request no BD",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca support_request no BD": {
-      "main": [
-        [
-          {
-            "node": "Merge2",
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -239,54 +149,21 @@
       "main": [
         [
           {
-            "node": "Busca support_request no BD",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca MSR no Zendesk",
+            "node": "Busca as coordenadas do endereço2",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Busca voluntária  no BD",
+            "node": "Merge",
             "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca voluntária no Zendesk",
-            "type": "main",
-            "index": 0
+            "index": 1
           }
         ],
         [
           {
-            "node": "Busca voluntária  no BD",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca voluntária no Zendesk",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Atualiza volunteer_availability",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing2",
+            "node": "Update volunteer_availability",
             "type": "main",
             "index": 0
           }
@@ -303,289 +180,21 @@
   "nodes": [
     {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "ticket-updated",
-        "options": {}
-      },
-      "id": "1a43851b-1c19-4d9d-9156-26298ba7978b",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1.1,
-      "position": [
-        -620,
-        640
-      ],
-      "webhookId": "06308513-32bf-4667-8c8c-647e9dcd4e5f"
-    },
-    {
-      "parameters": {
-        "resource": "user",
-        "operation": "get",
-        "id": "={{ $json.body.ticket.requester_id }}"
-      },
-      "id": "ca7dad05-c949-4b2a-b1c0-5e0647434cbb",
-      "name": "Busca voluntária no Zendesk",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        -140,
-        1100
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "=select * from volunteers v\nwhere zendesk_user_id = {{$node[\"Webhook\"].json[\"body\"][\n\"ticket\"][\"requester_id\"]}}",
-        "additionalFields": {}
-      },
-      "id": "3d128e31-921f-4f73-8966-9307e0a25ca4",
-      "name": "Busca voluntária  no BD",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        -40,
-        740
-      ],
-      "alwaysOutputData": false,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {},
-      "id": "d805de17-7e76-4f42-907f-184f807bffd1",
-      "name": "Merge",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        220,
-        960
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "5eff0434-9bc1-4e73-888e-0b6b0ae3356b",
-      "name": "Merge1",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        1580,
-        540
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "e602a5b3-19cb-4b46-8329-dbd147bd9669",
-      "name": "No Operation, do nothing",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        1020,
-        1180
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode,\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": Number(items[1].json.user_fields.disponibilidade_de_atendimentos),\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep,\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field]!= null && volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
-      },
-      "id": "2c6c3b9b-5d05-4c98-9c47-e450248ec6f0",
-      "name": "Compara as informações da voluntária no BD com as informações no Zendesk",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        540,
-        960
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "2b84eba0-acaa-470b-b279-8edca556fb44",
-              "leftValue": "={{ $json.updated_fields.city }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "bbb95351-37ac-4568-a930-df238660897f",
-              "leftValue": "={{ $json.updated_fields.state }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "ec0b47a6-958d-4bc3-b2ff-acbd9e2ceca7",
-              "leftValue": "={{ $json.updated_fields.zipcode }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
-      },
-      "id": "ac7a1ccb-de9e-49ff-bca6-b961d825b62c",
-      "name": "As informações de endereço mudaram?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        1000,
-        920
-      ]
-    },
-    {
-      "parameters": {
-        "url": "=https://novoqueroacolher.staging.bonde.org/address/?zipcode={{ $json[\"updated_fields\"][\"zipcode\"] }}",
-        "options": {}
-      },
-      "id": "878198e8-0115-4468-9913-be6cb595f098",
-      "name": "Busca as coordenadas do endereço",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        1420,
-        820
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "42bd8ac1-280e-44a6-b602-bd0396e1deda",
-              "leftValue": "={{ $json.updated_fields }}",
-              "rightValue": "",
-              "operator": {
-                "type": "object",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "1eda9e26-443c-45c8-a90e-317155cc4541",
-      "name": "Tem alguma alteração?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        740,
-        960
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "let updateVolunteers = \"\"\nlet updateVolunteerAvailability = \"\"\n\nlet fields = Object.entries(items[0].json.updated_fields)\nupdateVolunteers = updateVolunteers +  fields.map( ([key, val] = entry) => {\n  if (typeof val === \"string\") {\n      return `${key} = '${val}'`;\n    }  else{\n      return `${key} = ${val}`;\n    }\n \n    \n});\nif (items[1]) {\n  updateVolunteers = updateVolunteers + \n     \n     `,latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` +\n     `neighborhood = '${items[1].json.neighborhood}'`\n  if (items[1].json.street){\n    updateSQL = updateSQL + `,street = '${items[1].json.street}'` \n  }\n\n if (items[0].json.updated_fields.availability) {\n   updateVolunteerAvailability =  'UPDATE match.volunteer_availability set ' + \n     `max_matches = ${items[0].json.updated_fields.availability}, `+\n     `latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` + \n      `, city = ${items[1].json.city}, updated_at = now() where volunteer_id = ${items[0].json.volunteer_id}`\n } else {\n   updateVolunteerAvailability =  'UPDATE match.volunteer_availability set ' + \n     `latitude = ${items[1].json.coordinates.lat.toFixed(3)},` +\n     `longitude = ${items[1].json.coordinates.lng.toFixed(3)},` + \n      `, city = ${items[1].json.city}, updated_at = now() where volunteer_id = ${items[0].json.volunteer_id}`\n } \n \n}\n\nupdateVolunteers = 'UPDATE volunteers set ' + updateVolunteers + `, updated_at = now() where id = ${items[0].json.volunteer_id}`\n\nreturn {\"updateVolunteers\": updateVolunteers, \"updateVolunteerAvailability\": updateVolunteerAvailability };"
-      },
-      "id": "17fb9dc3-0fd5-4f5d-81f0-ac9c9089619c",
-      "name": "Monta  query de atualização",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1720,
-        940
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "={{ $('Monta  query de atualização').item.json[\"updateVolunteers\"] }}",
-        "additionalFields": {}
-      },
-      "id": "2c18f842-07d7-4eb1-93a4-9ba2064f3e3b",
-      "name": "Atualiza voluntária no BD",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        1960,
-        920
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "user",
-        "operation": "get",
-        "id": "={{ $json.body.ticket.requester_id }}"
-      },
-      "id": "5142c927-6066-45a1-a4ae-823c924b2208",
-      "name": "Busca MSR no Zendesk",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        -40,
-        320
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {},
-      "id": "935e34f6-2f5c-402a-b774-3d5b973cecff",
-      "name": "Merge2",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        300,
-        180
-      ]
-    },
-    {
-      "parameters": {
         "url": "=https://novoqueroacolher.staging.bonde.org/address/",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
             {
               "name": "city",
-              "value": "={{ $json.updated_fields.city }}"
+              "value": "={{ $json.new_city }}"
             },
             {
               "name": "state",
-              "value": "={{ $json.updated_fields.state }}"
+              "value": "={{ $json.new_state }}"
+            },
+            {
+              "name": "zipcode",
+              "value": "={{ $json.zipcode }}"
             }
           ]
         },
@@ -596,22 +205,41 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1280,
-        260
+        640,
+        -60
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "42f634cf-ecd7-4c73-b1d4-3d0f6318d82a",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        420,
+        400
       ]
     },
     {
       "parameters": {
-        "jsCode": "support_request_bd = {\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n\n}\n\nmsr_zendesk = {\n\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n\n}\n\nlet fields = Object.keys(msr_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (msr_zendesk[field] !=null && msr_zendesk[field] != support_request_bd[field]) {\n    diference[field] = msr_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"support_request_id\": items[0].json.support_request_id};"
+        "operation": "executeQuery",
+        "query": "SELECT\n  support_request_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS zipcode,\n  CASE WHEN city != '{{ $json.body.city }}' OR state != '{{ $json.body.state }}' THEN TRUE ELSE FALSE END AS should_update\nFROM match.support_requests\nWHERE msr_id = {{ $json.body.msr_id }}",
+        "options": {}
       },
-      "id": "596783e7-f2c8-429c-8f61-3350561d87a8",
-      "name": "Compara o endereço da MSr no Zendesk com o endereço no BD",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "id": "e34a4c81-a8a0-484b-8cce-1f2acc62c7f4",
+      "name": "Checks if we need to update support_request",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
       "position": [
-        560,
-        180
-      ]
+        20,
+        140
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
     },
     {
       "parameters": {
@@ -623,12 +251,12 @@
           },
           "conditions": [
             {
-              "id": "42bd8ac1-280e-44a6-b602-bd0396e1deda",
-              "leftValue": "={{ $json.updated_fields }}",
+              "id": "9bbb07e8-f753-4190-b6a4-ca7c6eee7875",
+              "leftValue": "={{ $json.should_update }}",
               "rightValue": "",
               "operator": {
-                "type": "object",
-                "operation": "notEmpty",
+                "type": "boolean",
+                "operation": "true",
                 "singleValue": true
               }
             }
@@ -637,52 +265,133 @@
         },
         "options": {}
       },
-      "id": "9cbad47c-d885-48d6-943b-2496998480d1",
-      "name": "O endereço mudou?",
+      "id": "e6468469-ef55-46f6-af0e-105a2405484b",
+      "name": "Should update?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        780,
-        180
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "let updateSQL = \"\"\n\nlet fields = Object.entries(items[0].json.updated_fields)\nupdateSQL = updateSQL +  fields.map( ([key, val] = entry) => {\n  if (typeof val === \"string\") {\n      return `${key} = '${val}'`;\n    }  else{\n      return `${key} = ${val}`;\n    }\n    \n});\nif (items[1]) {\n  updateSQL = updateSQL + \n     \n     `,lat = '${items[1].json.coordinates.lat.toFixed(3)}',` +\n     `lng = '${items[1].json.coordinates.lng.toFixed(3)}'`\n  if (items[1].json.street){\n    updateSQL = updateSQL + `,street = '${items[1].json.street}'` \n  }\n}\n\nupdateSQL = 'UPDATE match.support_requests set ' + updateSQL + `, updated_at = now() where support_request_id = ${items[0].json.support_request_id}`\n\nreturn {\"update_sql\": updateSQL };"
-      },
-      "id": "378748e5-f380-4923-bf87-580399a7e607",
-      "name": "Monta  query de atualização1",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1660,
-        120
+        240,
+        140
       ]
     },
     {
       "parameters": {},
-      "id": "081d240a-f4da-49fd-b106-5f1cb9ec1f38",
-      "name": "Merge3",
+      "id": "45b7f25c-16c0-4619-b38c-e9d457eab266",
+      "name": "Limit",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        420,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "a4818087-e2ec-4656-a4db-0b5f39ce11b6",
+      "name": "Merge2",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        1440,
-        0
+        840,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "update-msr-info",
+        "options": {}
+      },
+      "id": "1a43851b-1c19-4d9d-9156-26298ba7978b",
+      "name": "Webhook MSR",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        140
+      ],
+      "webhookId": "06308513-32bf-4667-8c8c-647e9dcd4e5f"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET city = '{{ $json.new_city }}', state = '{{ $json.new_state }}', lat = {{ $json.coordinates.lat }}, lng = {{ $json.coordinates.lng }}, updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }}",
+        "options": {}
+      },
+      "id": "c033f74f-d901-4cb1-ae89-ce92d678ffaf",
+      "name": "Updates support_request",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1060,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "update-volunteer-info",
+        "options": {}
+      },
+      "id": "7a57eee9-bd44-488a-b99e-f1fefa9c50fc",
+      "name": "Webhook Volunteer",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -440,
+        820
+      ],
+      "webhookId": "06308513-32bf-4667-8c8c-647e9dcd4e5f"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.body.city = item.json.body.city.normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase();\n  item.json.body.zipcode = item.json.body.zipcode.replace(\"-\", \"\")\n}\n\nreturn $input.all();"
+      },
+      "id": "ddc5e665-b8c0-40d8-aa93-0cb06346a157",
+      "name": "Normalize Zendesk input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.body.city = item.json.body.city.normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase();\n  item.json.body.zipcode = item.json.body.zipcode.replaceAll(\"-\", \"\"),\n    item.json.body.phone = item.json.body.phone.replaceAll(\" \", \"\").replaceAll(\"(\", \"\").replaceAll(\")\", \"\").replaceAll(\"-\", \"\")\n}\n\nreturn $input.all();"
+      },
+      "id": "4821aff8-673a-4108-8d42-75352126b5cf",
+      "name": "Normalize Zendesk input1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        820
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "={{ $('Monta  query de atualização1').item.json[\"update_sql\"] }}",
-        "additionalFields": {}
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}' AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}' THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_user_id }}",
+        "options": {}
       },
-      "id": "13bba623-f75c-490a-b342-645576b03d53",
-      "name": "Atualiza support_request no BD",
+      "id": "dca0f90d-e87f-4b0b-ad67-c45b25283083",
+      "name": "Checks if we need to update support_request1",
       "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
+      "typeVersion": 2.3,
       "position": [
-        1860,
-        120
+        60,
+        820
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -694,36 +403,70 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "=select * from match.support_requests where zendesk_ticket_id = {{$node[\"Webhook\"].json[\"body\"][\n\"ticket\"][\"id\"]}}",
-        "additionalFields": {}
+        "url": "=https://novoqueroacolher.staging.bonde.org/address/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "city",
+              "value": "={{ $json.new_city }}"
+            },
+            {
+              "name": "state",
+              "value": "={{ $json.new_state }}"
+            },
+            {
+              "name": "zipcode",
+              "value": "={{ $json.new_zipcode }}"
+            }
+          ]
+        },
+        "options": {}
       },
-      "id": "fd0441cb-9d03-458b-b821-3946888a9f4e",
-      "name": "Busca support_request no BD",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
+      "id": "1a23cb8d-5898-45c8-94ec-586e8571546e",
+      "name": "Busca as coordenadas do endereço2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
       "position": [
-        -40,
-        120
+        600,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "8ec81839-3e2a-4d27-abc6-ed6dd35ccdbb",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        980,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  first_name = '{{ $json.new_first_name }}',\n  availability = '{{ $json.new_availability }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "952cf2df-69b7-4c31-b1b1-cc011740336d",
+      "name": "Updates volunteer",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1180,
+        760
       ],
-      "alwaysOutputData": false,
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
           "name": "[STG] Mapa"
         }
       }
-    },
-    {
-      "parameters": {},
-      "id": "42f634cf-ecd7-4c73-b1d4-3d0f6318d82a",
-      "name": "No Operation, do nothing1",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        1020,
-        380
-      ]
     },
     {
       "parameters": {
@@ -738,18 +481,19 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.body.ticket.organization_id }}",
-                    "rightValue": 360273031591,
+                    "leftValue": "={{ $json.should_update_geolocation }}",
+                    "rightValue": "{{ true }}",
                     "operator": {
-                      "type": "number",
-                      "operation": "equals"
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
                     }
                   }
                 ],
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "MSR"
+              "outputKey": "geolocation"
             },
             {
               "conditions": {
@@ -760,19 +504,20 @@
                 },
                 "conditions": [
                   {
-                    "id": "bfae5951-c72c-4899-aa29-a0118c3fb13a",
-                    "leftValue": "={{ $json.body.ticket.organization_id }}",
-                    "rightValue": 360269610652,
+                    "id": "1206305f-a715-4cb0-990a-d942246a7212",
+                    "leftValue": "={{ $json.should_update_personal }}",
+                    "rightValue": "",
                     "operator": {
-                      "type": "number",
-                      "operation": "equals"
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
                     }
                   }
                 ],
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "Advogada"
+              "outputKey": "personal"
             },
             {
               "conditions": {
@@ -783,140 +528,95 @@
                 },
                 "conditions": [
                   {
-                    "id": "0f6be240-f6f5-41d2-a856-04544f633b38",
-                    "leftValue": "={{ $json.body.ticket.organization_id }}",
-                    "rightValue": 360282119532,
+                    "id": "26fd6c46-a2eb-4299-a425-e7978d0102fd",
+                    "leftValue": "={{ $json.should_update_availability }}",
+                    "rightValue": "",
                     "operator": {
-                      "type": "number",
-                      "operation": "equals"
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
                     }
                   }
                 ],
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "Psicologa"
+              "outputKey": "availability"
             }
           ]
         },
-        "options": {}
+        "options": {
+          "allMatchingOutputs": true
+        }
       },
-      "id": "533dc9f3-722c-4833-8487-f5fecd54a0ae",
+      "id": "b518578a-818b-405a-afa4-d7f76ec9d59f",
       "name": "Switch",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        -380,
-        640
+        280,
+        820
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "={{ $('Monta  query de atualização').item.json[\"updateVolunteerAvailability\"] }}",
-        "additionalFields": {}
+        "query": "UPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
       },
-      "id": "29035908-d532-414f-ae8e-cc7a8fff1360",
-      "name": "Atualiza volunteer_availability",
+      "id": "ec0f39f8-aff8-48b4-aa23-6c4a3066862c",
+      "name": "Update volunteer_availability",
       "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
+      "typeVersion": 2.3,
       "position": [
-        2080,
-        1180
+        580,
+        1020
       ],
-      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
           "name": "[STG] Mapa"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "f89e17f2-e9bb-4de3-b46c-2c7a14708628",
-              "leftValue": "={{ $('Monta  query de atualização').item.json[\"updateVolunteerAvailability\"] }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "14be1ab8-3325-4269-884c-02fb73fb02ae",
-      "name": "If",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        1860,
-        1200
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "3a553fbc-1666-4880-b3f8-69a1c8ea5459",
-      "name": "No Operation, do nothing2",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        1980,
-        1440
-      ]
     }
   ],
   "pinData": {
-    "Webhook": [
+    "Webhook Volunteer": [
       {
         "json": {
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
-            "x-request-id": "98e6fd1d-a120-4ece-a6ea-095c0bb40981",
-            "x-real-ip": "216.198.2.195",
-            "x-forwarded-for": "216.198.2.195",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "206",
+            "accept-encoding": "gzip",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-000000000000000038f170c384542dfd-38f170c384542dfd-00",
+            "tracestate": "dd=s:-1",
+            "x-forwarded-for": "216.198.2.146",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-scheme": "https",
-            "x-scheme": "https",
-            "content-length": "315",
-            "user-agent": "Zendesk Webhook",
-            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyOkJQYlFFY1hrc3cyejhX",
-            "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-0000000000000000261efe3cb86eb4ef-261efe3cb86eb4ef-00",
-            "tracestate": "dd=s:-1",
+            "x-forwarded-server": "traefik-f7d8fb88c-x5dxb",
+            "x-real-ip": "216.198.2.146",
+            "x-request-id": "6b88f9d6-5514-4a70-bc0c-103310d86794",
             "x-zendesk-account-id": "9040899",
-            "x-zendesk-webhook-id": "01HQNDS3MVX30JXB22GHD6JNDJ",
-            "x-zendesk-webhook-invocation-id": "test_webhook:fake_event:85c2a6752cc71d57-GIG",
-            "x-zendesk-webhook-signature": "wy+gHyZfcUP+bTJZUaTDm/laSc3mdDCxuBvDwJinQHs=",
-            "x-zendesk-webhook-signature-timestamp": "2024-02-27T18:56:52Z"
+            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
+            "x-zendesk-webhook-invocation-id": "01HSH5WFT3QGMKVJ8KMXP8FXF0",
+            "x-zendesk-webhook-signature": "vi0SpiaywFdDLF7JA5UZ4eoEKsAbmCuKT9hv2x1j0jI=",
+            "x-zendesk-webhook-signature-timestamp": "2024-03-21T18:55:27Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "ticket": {
-              "id": 81068,
-              "priority": "low",
-              "status": "new",
-              "subject": "psi teste prod",
-              "description": "-",
-              "fields": [],
-              "requester_id": 417544904932,
-              "organization_id": 360282119532,
-              "tags": []
-            }
+            "volunteer_user_id": "423092711812",
+            "city": "Belo Horizonte",
+            "state": "MG",
+            "first_name": "Adev",
+            "availability": "1",
+            "zipcode": "",
+            "phone": "(31) 9 9910-7452",
+            "register_number": "17643999"
           }
         }
       }
@@ -928,6 +628,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-03-13T18:52:20.000Z",
-  "versionId": "619d8bc8-6b53-47cc-8d5c-db88f01d7fdb"
+  "updatedAt": "2024-03-21T19:35:35.000Z",
+  "versionId": "534d30fe-8a27-4053-8903-5b2696ff721c"
 }
