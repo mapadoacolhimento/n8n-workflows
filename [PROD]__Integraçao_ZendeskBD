@@ -401,7 +401,7 @@
     },
     {
       "parameters": {
-        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode.replace('-',''),\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\navailability = Number(items[1].json.user_fields.disponibilidade_de_atendimentos)\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": availability? availability : null,\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep.replace('-',''),\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field]!= null && volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
+        "jsCode": "volunteer_bd = {\n  \"first_name\":  items[0].json.first_name, \n  \"last_name\":  items[0].json.last_name,\n  \"availability\": items[0].json.availability,\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n  \"neighborhood\": items[0].json.neighborhood,\n  \"zipcode\": items[0].json.zipcode?.replace('-',''),\n  \"phone\": items[0].json.phone,\n  \"register_number\": items[0].json.register_number\n}\n\nconst nameV =  items[1].json.name\navailability = Number(items[1].json.user_fields.disponibilidade_de_atendimentos)\nvolunteer_zendesk = {\n  \"first_name\":  nameV.substring(0,nameV.indexOf(' ')), \n  \"last_name\":  nameV.substring(nameV.indexOf(' ') + 1),\n  \"availability\": availability? availability : null,\n  \"city\": items[1].json.user_fields.city?.normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase(),\n  \"state\": items[1].json.user_fields.state?.toUpperCase(),\n  \"zipcode\": items[1].json.user_fields.cep?.replace('-',''),\n  \"phone\": items[1].json.phone,\n  \"register_number\": items[1].json.user_fields.registration_number\n}\n\nlet fields = Object.keys(volunteer_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (volunteer_zendesk[field]!= null && volunteer_zendesk[field] != volunteer_bd[field]) {\n    diference[field] = volunteer_zendesk[field];\n  }\n});\n\nreturn {\"updated_fields\": diference, \"volunteer_id\": items[0].json.id};"
       },
       "id": "0f479549-3baf-42b5-9e7c-f3c1f55ae71d",
       "name": "Compara as informações da voluntária no BD com as informações no Zendesk",
@@ -421,26 +421,6 @@
             "typeValidation": "strict"
           },
           "conditions": [
-            {
-              "id": "2b84eba0-acaa-470b-b279-8edca556fb44",
-              "leftValue": "={{ $json.updated_fields.city }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "bbb95351-37ac-4568-a930-df238660897f",
-              "leftValue": "={{ $json.updated_fields.state }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "singleValue": true
-              }
-            },
             {
               "id": "ec0b47a6-958d-4bc3-b2ff-acbd9e2ceca7",
               "leftValue": "={{ $json.updated_fields.zipcode }}",
@@ -608,7 +588,7 @@
     },
     {
       "parameters": {
-        "jsCode": "support_request_bd = {\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n\n}\n\nmsr_zendesk = {\n\n  \"city\": items[1].json.user_fields.city\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\")?.toUpperCase(),\n  \"state\": items[1].json.user_fields.state?.toUpperCase(),\n\n}\n\nlet fields = Object.keys(msr_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (msr_zendesk[field] !=null && msr_zendesk[field] != support_request_bd[field]) {\n    diference[field] = msr_zendesk[field];\n  }\n});\n\n\nreturn {\"updated_fields\": diference, \"support_request_id\": items[0].json.support_request_id};"
+        "jsCode": "support_request_bd = {\n  \"city\": items[0].json.city,\n  \"state\": items[0].json.state,\n\n}\n\nmsr_zendesk = {\n\n  \"city\": items[1].json.user_fields.city?.normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\")?.toUpperCase(),\n  \"state\": items[1].json.user_fields.state?.toUpperCase(),\n\n}\n\nlet fields = Object.keys(msr_zendesk);\nlet diference = {};\nfields.forEach((field) => {\n  if (msr_zendesk[field] !=null && msr_zendesk[field] != support_request_bd[field]) {\n    diference[field] = msr_zendesk[field];\n  }\n});\n\n\nreturn {\"updated_fields\": diference, \"support_request_id\": items[0].json.support_request_id};"
       },
       "id": "cb87a32d-8b59-4844-a50e-94edc3a88850",
       "name": "Compara o endereço da MSr no Zendesk com o endereço no BD",
@@ -909,40 +889,40 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Zendesk Webhook",
-            "content-length": "713",
+            "content-length": "480",
             "accept-encoding": "gzip",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyOkJQYlFFY1hrc3cyejhX",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-00000000000000004465690bf0fdffa4-4465690bf0fdffa4-00",
+            "traceparent": "00-00000000000000000ce81eff04b644cf-0ce81eff04b644cf-00",
             "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.146",
+            "x-forwarded-for": "216.198.2.195",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-f7d8fb88c-lvr2v",
-            "x-real-ip": "216.198.2.146",
-            "x-request-id": "b863e87b-bf5e-49f8-a7b5-ced2f9a62571",
+            "x-forwarded-server": "traefik-f7d8fb88c-wh5hb",
+            "x-real-ip": "216.198.2.195",
+            "x-request-id": "69ee35a5-a43a-4018-b609-9509824bd8b5",
             "x-zendesk-account-id": "9040899",
             "x-zendesk-webhook-id": "01HQNDS3MVX30JXB22GHD6JNDJ",
-            "x-zendesk-webhook-invocation-id": "01HSEDAJX9XHAFQCGBM6MB3PCZ",
-            "x-zendesk-webhook-signature": "vY4jlAO+uxZX51xJO+8WOgzZr/57/HMMMqkWfN1Qg9A=",
-            "x-zendesk-webhook-signature-timestamp": "2024-03-20T17:07:46Z"
+            "x-zendesk-webhook-invocation-id": "01HSGHKARJFBKWQBK6M5NVRK8M",
+            "x-zendesk-webhook-signature": "Y4gm6I4lzfbXS1yejCXZB0dcrMIUJwYjh2QPcqrV82U=",
+            "x-zendesk-webhook-signature-timestamp": "2024-03-21T13:00:56Z"
           },
           "params": {},
           "query": {},
           "body": {
             "ticket": {
-              "id": "81646",
+              "id": "80715",
               "priority": "",
-              "status": "Novo",
+              "status": "Pendente",
               "subject": "",
-              "description": "----------------------------------------------\n\nAtualizado por: Kalina de Lima Santos, 20 de mar. de 2024, 15:07\n\nOlá, sou psicóloga, fiz o cadastro para ser voluntária, entretanto não consegui acessar o curso, que é pré requisito. A plataforma diz que meu cadastro está inativo, ou algo assim. Não consigo entrar na plataforma para visualizar o curso.\n\n\nDesde já fico grata.\n\nKalina de Lima Santos",
+              "description": "----------------------------------------------\n\nAtualizado por: Mariana, 19 de fev. de 2024, 11:52 (privado)\n\nImportado pelo BONDE.",
               "fields": "",
               "requester_id": "",
               "organization_id": "",
               "organization_details": "",
               "requester_details": "",
-              "tags": "1 cadastrada ce"
+              "tags": "ana encaminhamento__expirado inscrita parda psicológico sp"
             }
           }
         }
@@ -958,6 +938,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-03-20T19:56:20.000Z",
-  "versionId": "90ba92fd-edfa-45a0-9533-a1cdb331cb14"
+  "updatedAt": "2024-03-21T13:02:37.000Z",
+  "versionId": "1949415a-645a-4841-b2ab-62b9215a6266"
 }
