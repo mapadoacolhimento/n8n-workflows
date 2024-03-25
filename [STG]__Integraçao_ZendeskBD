@@ -16,7 +16,7 @@
       "main": [
         [
           {
-            "node": "Should update?",
+            "node": "MSR exists in our DB",
             "type": "main",
             "index": 0
           }
@@ -27,14 +27,14 @@
       "main": [
         [
           {
-            "node": "Limit",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Merge2",
             "type": "main",
             "index": 1
+          },
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
           }
         ],
         [
@@ -50,7 +50,7 @@
       "main": [
         [
           {
-            "node": "Busca as coordenadas do endereço1",
+            "node": "Check city, state and zipcode",
             "type": "main",
             "index": 0
           }
@@ -72,18 +72,7 @@
       "main": [
         [
           {
-            "node": "Normalize Zendesk input",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Zendesk input": {
-      "main": [
-        [
-          {
-            "node": "Checks if we need to update support_request",
+            "node": "Normalize Zendesk input from MSR",
             "type": "main",
             "index": 0
           }
@@ -94,18 +83,7 @@
       "main": [
         [
           {
-            "node": "Normalize Zendesk input1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Zendesk input1": {
-      "main": [
-        [
-          {
-            "node": "Checks if we need to update support_request1",
+            "node": "Normalize Zendesk input from volunteer",
             "type": "main",
             "index": 0
           }
@@ -127,25 +105,59 @@
       "main": [
         [
           {
-            "node": "Updates volunteer",
+            "node": "Updates volunteer geolocation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Updates volunteer_availability geolocation",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Checks if we need to update support_request1": {
+    "Add null lat/lng": {
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Merge2",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Switch": {
+    "Check city, state and zipcode": {
+      "main": [
+        [
+          {
+            "node": "Busca as coordenadas do endereço1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add null lat/lng",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checks if we need to update volunteer": {
+      "main": [
+        [
+          {
+            "node": "Volunteer exists in our DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check city, state and zipcode1": {
       "main": [
         [
           {
@@ -156,14 +168,106 @@
         ],
         [
           {
+            "node": "Add null lat/lng1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add null lat/lng1": {
+      "main": [
+        [
+          {
             "node": "Merge",
             "type": "main",
-            "index": 1
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSR exists in our DB": {
+      "main": [
+        [
+          {
+            "node": "Should update?",
+            "type": "main",
+            "index": 0
           }
         ],
         [
           {
-            "node": "Update volunteer_availability",
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Volunteer exists in our DB": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Check city, state and zipcode1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Updates volunteer personal data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update volunteer_availability max_matches",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Updates volunteer availability",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Zendesk input from volunteer": {
+      "main": [
+        [
+          {
+            "node": "Checks if we need to update volunteer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Zendesk input from MSR": {
+      "main": [
+        [
+          {
+            "node": "Checks if we need to update support_request",
             "type": "main",
             "index": 0
           }
@@ -194,7 +298,7 @@
             },
             {
               "name": "zipcode",
-              "value": "={{ $json.zipcode }}"
+              "value": "={{ $json.new_zipcode }}"
             }
           ]
         },
@@ -205,8 +309,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        640,
-        -60
+        1220,
+        -220
       ]
     },
     {
@@ -216,14 +320,14 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        420,
-        400
+        640,
+        240
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  support_request_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS zipcode,\n  CASE WHEN city != '{{ $json.body.city }}' OR state != '{{ $json.body.state }}' THEN TRUE ELSE FALSE END AS should_update\nFROM match.support_requests\nWHERE msr_id = {{ $json.body.msr_id }}",
+        "query": "SELECT\n  support_request_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  CASE WHEN city != '{{ $json.body.city }}' OR state != '{{ $json.body.state }}' THEN TRUE ELSE FALSE END AS should_update\nFROM match.support_requests\nWHERE msr_id = {{ $json.body.msr_zendesk_user_id }}",
         "options": {}
       },
       "id": "e34a4c81-a8a0-484b-8cce-1f2acc62c7f4",
@@ -231,9 +335,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        20,
-        140
+        -60,
+        160
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
@@ -270,8 +375,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        240,
-        140
+        420,
+        80
       ]
     },
     {
@@ -281,7 +386,7 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        420,
+        680,
         -60
       ]
     },
@@ -296,8 +401,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        840,
-        100
+        1580,
+        140
       ]
     },
     {
@@ -311,8 +416,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
       "position": [
-        -420,
-        140
+        -500,
+        160
       ],
       "webhookId": "06308513-32bf-4667-8c8c-647e9dcd4e5f"
     },
@@ -327,8 +432,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1060,
-        100
+        1760,
+        140
       ],
       "credentials": {
         "postgres": {
@@ -348,58 +453,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
       "position": [
-        -440,
+        -540,
         820
       ],
       "webhookId": "06308513-32bf-4667-8c8c-647e9dcd4e5f"
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.body.city = item.json.body.city.normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase();\n  item.json.body.zipcode = item.json.body.zipcode.replace(\"-\", \"\")\n}\n\nreturn $input.all();"
-      },
-      "id": "ddc5e665-b8c0-40d8-aa93-0cb06346a157",
-      "name": "Normalize Zendesk input",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -200,
-        140
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.body.city = item.json.body.city.normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(\"'\", \" \")\n    .replace(/ *\\([^)]*\\) */g, \"\").toUpperCase();\n  item.json.body.zipcode = item.json.body.zipcode.replaceAll(\"-\", \"\"),\n    item.json.body.phone = item.json.body.phone.replaceAll(\" \", \"\").replaceAll(\"(\", \"\").replaceAll(\")\", \"\").replaceAll(\"-\", \"\")\n}\n\nreturn $input.all();"
-      },
-      "id": "4821aff8-673a-4108-8d42-75352126b5cf",
-      "name": "Normalize Zendesk input1",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -200,
-        820
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}' AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}' THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_user_id }}",
-        "options": {}
-      },
-      "id": "dca0f90d-e87f-4b0b-ad67-c45b25283083",
-      "name": "Checks if we need to update support_request1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        60,
-        820
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -428,8 +485,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        600,
-        640
+        1020,
+        460
       ]
     },
     {
@@ -443,24 +500,312 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        980,
-        760
+        1360,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"coordinates\": {\n    \"lat\": null,\n    \"lng\": null\n  }\n}\n",
+        "options": {}
+      },
+      "id": "9f8a3832-7731-4888-a9e3-d85279a2cb05",
+      "name": "Add null lat/lng",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cd3132a5-7821-49ae-a080-957a931cb612",
+              "leftValue": "={{ $json.new_city }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "e0a033c3-38d5-4583-943e-43fffb34b624",
+              "leftValue": "={{ $json.new_state }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "f95c4be6-693b-4809-b28c-a583b7c813ca",
+              "leftValue": "={{ $json.new_zipcode }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "f517acf8-6804-4fca-bd00-f45f23d908a9",
+      "name": "Check city, state and zipcode",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        900,
+        -60
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  first_name = '{{ $json.new_first_name }}',\n  availability = '{{ $json.new_availability }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}' AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}' THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
         "options": {}
       },
-      "id": "952cf2df-69b7-4c31-b1b1-cc011740336d",
-      "name": "Updates volunteer",
+      "id": "dca0f90d-e87f-4b0b-ad67-c45b25283083",
+      "name": "Checks if we need to update volunteer",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1180,
-        760
+        -40,
+        820
       ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cd3132a5-7821-49ae-a080-957a931cb612",
+              "leftValue": "={{ $json.new_city }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "e0a033c3-38d5-4583-943e-43fffb34b624",
+              "leftValue": "={{ $json.new_state }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "f95c4be6-693b-4809-b28c-a583b7c813ca",
+              "leftValue": "={{ $json.new_zipcode }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "2b22ed61-138f-464f-8415-b009214c77f2",
+      "name": "Check city, state and zipcode1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"coordinates\": {\n    \"lat\": null,\n    \"lng\": null\n  }\n}\n",
+        "options": {}
+      },
+      "id": "03619d53-3e5d-4a3a-8bd1-48fe061ae330",
+      "name": "Add null lat/lng1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1020,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "ec0f39f8-aff8-48b4-aa23-6c4a3066862c",
+      "name": "Update volunteer_availability max_matches",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        1100
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteer_availability\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  lat = {{ $json.coordinates.lat }}, \n  lng = {{ $json.coordinates.lng }}, \n  updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "8f4bbf43-f1cb-4f3b-8738-29619411cc52",
+      "name": "Updates volunteer_availability geolocation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1640,
+        440
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "=A MSR com Zendesk User ID '{{$node[\"Webhook MSR\"].json['body']['msr_zendesk_user_id']}}' não existe no nosso banco de dados."
+      },
+      "id": "d73e3b1b-0f74-4dbc-98a9-1a2d7ccaac46",
+      "name": "Stop and Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        340,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "43ab3526-3a4b-49a3-b6db-2e482b0f9e31",
+              "leftValue": "={{ $json.support_request_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "00543d3a-1404-4f96-b3d0-37e4f2fffb38",
+      "name": "MSR exists in our DB",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        160,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "93753f6a-58ca-4ad5-a9ce-0b173efe7565",
+              "leftValue": "={{ $json.volunteer_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ef6bf7c1-c265-4354-97c6-5cbadb9b6dea",
+      "name": "Volunteer exists in our DB",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        180,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=A voluntária com Zendesk User ID '{{$node[\"Webhook Volunteer\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados."
+      },
+      "id": "c371f7bc-a5c7-43a0-95fe-543ffb4f18fa",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        360,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET availability = '{{ $json.new_availability }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "f481d775-9f12-4ce7-9a77-93e0c640489e",
+      "name": "Updates volunteer availability",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        900
+      ],
+      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
@@ -554,23 +899,70 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        280,
+        460,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n}\n\nreturn $input.all();\n"
+      },
+      "id": "4821aff8-673a-4108-8d42-75352126b5cf",
+      "name": "Normalize Zendesk input from volunteer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -300,
         820
       ]
     },
     {
       "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n}\n\nreturn $input.all();\n"
+      },
+      "id": "ddc5e665-b8c0-40d8-aa93-0cb06346a157",
+      "name": "Normalize Zendesk input from MSR",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -280,
+        160
+      ]
+    },
+    {
+      "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
         "options": {}
       },
-      "id": "ec0f39f8-aff8-48b4-aa23-6c4a3066862c",
-      "name": "Update volunteer_availability",
+      "id": "952cf2df-69b7-4c31-b1b1-cc011740336d",
+      "name": "Updates volunteer geolocation",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        580,
-        1020
+        1640,
+        680
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET \n  first_name = '{{ $json.new_first_name }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "cd212575-4e22-470f-90d1-319bd7fbde48",
+      "name": "Updates volunteer personal data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        720
       ],
       "credentials": {
         "postgres": {
@@ -581,42 +973,38 @@
     }
   ],
   "pinData": {
-    "Webhook Volunteer": [
+    "Webhook MSR": [
       {
         "json": {
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Zendesk Webhook",
-            "content-length": "206",
+            "content-length": "107",
             "accept-encoding": "gzip",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-000000000000000038f170c384542dfd-38f170c384542dfd-00",
+            "traceparent": "00-000000000000000011616374a7c0d803-11616374a7c0d803-00",
             "tracestate": "dd=s:-1",
             "x-forwarded-for": "216.198.2.146",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-f7d8fb88c-x5dxb",
+            "x-forwarded-server": "traefik-f7d8fb88c-nzctq",
             "x-real-ip": "216.198.2.146",
-            "x-request-id": "6b88f9d6-5514-4a70-bc0c-103310d86794",
+            "x-request-id": "c607a09a-dcb2-4f9c-aa66-e6a65d3876d4",
             "x-zendesk-account-id": "9040899",
-            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01HSH5WFT3QGMKVJ8KMXP8FXF0",
-            "x-zendesk-webhook-signature": "vi0SpiaywFdDLF7JA5UZ4eoEKsAbmCuKT9hv2x1j0jI=",
-            "x-zendesk-webhook-signature-timestamp": "2024-03-21T18:55:27Z"
+            "x-zendesk-webhook-id": "01HSGNVFZXZ0VD5KXJJC8YG4Z7",
+            "x-zendesk-webhook-invocation-id": "01HSV8QB4KCMYXQ9YCG7S4KDVS",
+            "x-zendesk-webhook-signature": "z6AXHtNmCpvSLFOEoNKNVMG2hRBcf1SyxvkIbIww5jg=",
+            "x-zendesk-webhook-signature-timestamp": "2024-03-25T16:57:29Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "volunteer_user_id": "423092711812",
-            "city": "Belo Horizonte",
-            "state": "MG",
-            "first_name": "Adev",
-            "availability": "1",
-            "zipcode": "",
-            "phone": "(31) 9 9910-7452",
-            "register_number": "17643999"
+            "msr_zendesk_user_id": "22858077211028",
+            "city": "São Paulo",
+            "state": "SP",
+            "zipcode": "05411000"
           }
         }
       }
@@ -627,7 +1015,7 @@
   },
   "staticData": null,
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-03-21T19:35:35.000Z",
-  "versionId": "534d30fe-8a27-4053-8903-5b2696ff721c"
+  "triggerCount": 2,
+  "updatedAt": "2024-03-25T17:01:14.000Z",
+  "versionId": "3bfb8e79-11d8-432b-9885-63445afa0b5a"
 }
