@@ -34,11 +34,6 @@
             "node": "Fetch previous volunteer_availability and volunteer_status",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Check current_matches",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -56,8 +51,7 @@
             "type": "main",
             "index": 0
           }
-        ],
-        []
+        ]
       ]
     },
     "Fetch previous volunteer_availability and volunteer_status": {
@@ -87,6 +81,17 @@
         [
           {
             "node": "Update current_matches1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expire match in database": {
+      "main": [
+        [
+          {
+            "node": "Check current_matches",
             "type": "main",
             "index": 0
           }
@@ -215,7 +220,7 @@
       "typeVersion": 1,
       "position": [
         600,
-        700
+        740
       ],
       "credentials": {
         "postgres": {
@@ -320,7 +325,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, current_matches, max_matches, condition",
+        "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $('Fetch matches that should be expired today').item.json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $('Fetch matches that should be expired today').item.json.volunteer_id }}\nGROUP BY volunteer_id, current_matches, max_matches, condition",
         "options": {}
       },
       "id": "985b1ffe-ef55-4493-8f09-82609875a9ae",
@@ -328,8 +333,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        620,
-        220
+        860,
+        740
       ],
       "credentials": {
         "postgres": {
@@ -368,8 +373,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1040,
-        -80
+        1060,
+        740
       ]
     },
     {
@@ -383,8 +388,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1380,
-        -300
+        1300,
+        720
       ],
       "credentials": {
         "postgres": {
@@ -415,6 +420,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-03-21T14:51:29.000Z",
-  "versionId": "cb531006-b595-446e-94bb-52f3d5bb0e19"
+  "updatedAt": "2024-03-25T13:46:19.000Z",
+  "versionId": "e78b2e1e-a66f-4d2b-9eff-09a534d96601"
 }
