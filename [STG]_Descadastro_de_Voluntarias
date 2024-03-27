@@ -82,7 +82,7 @@
   "nodes": [
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfor (const item of $input.all()) {\n  const volunteerEmail = item.json.body.data.fields[0].value;\n  const unsubscribeReasonValue = item.json.body.data.fields[1].value;\n\n  const unsubscribeReasonLabel = item.json.body.data.fields[1].options.find((element) => element.id == unsubscribeReasonValue).text;\n\n  const describeUnsubscribeReason = item.json.body.data.fields[2].value;\n  \n  output.push(\n    {\n      \"email\": volunteerEmail,\n      \"unsubscribe_reason\": unsubscribeReasonLabel,\n      \"describe_unsubscribe_reason\": describeUnsubscribeReason\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfor (const item of $input.all()) {\n  const volunteerEmail = item.json.body.data.fields[0].value;\n  const unsubscriptionReasonValue = item.json.body.data.fields[1].value;\n\n  const unsubscriptionReasonLabel = item.json.body.data.fields[1].options.find((element) => element.id == unsubscriptionReasonValue).text;\n\n  const unsubscriptionDescription = item.json.body.data.fields[2].value;\n  \n  output.push(\n    {\n      \"email\": volunteerEmail,\n      \"unsubscription_reason\": unsubscriptionReasonLabel,\n      \"unsubscription_description\": unsubscriptionDescription\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "5c1bc8c7-7add-4b31-83ea-a9e04548d6a8",
       "name": "Filtra apenas as infos que importam",
@@ -151,7 +151,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n  id AS volunteer_id,\n  email,\n  first_name,\n  phone,\n  zendesk_user_id,\n  COALESCE(current_matches, 0) AS current_matches\nFROM volunteers\nLEFT JOIN volunteer_availability ON id = volunteer_id\nWHERE email = '{{ $json.email }}'",
+        "query": "SELECT \n  id AS volunteer_id,\n  email,\n  first_name,\n  phone,\n  zendesk_user_id,\n  COALESCE(current_matches, 0) AS current_matches,\n  '{{ $json.unsubscription_reason }}' AS unsubscription_reason,\n  '{{ $json.unsubscription_description }}' AS unsubscription_description\nFROM volunteers\nLEFT JOIN volunteer_availability ON id = volunteer_id\nWHERE email = '{{ $json.email }}'",
         "options": {}
       },
       "id": "7d74cd4d-378c-4219-a096-ed0715c82bfe",
@@ -191,7 +191,7 @@
       "typeVersion": 1,
       "position": [
         2100,
-        1000
+        1060
       ],
       "credentials": {
         "zendeskApi": {
@@ -266,7 +266,7 @@
       "typeVersion": 4.1,
       "position": [
         2100,
-        780
+        840
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -296,7 +296,7 @@
       "typeVersion": 2.1,
       "position": [
         2100,
-        1220
+        1280
       ],
       "credentials": {
         "slackOAuth2Api": {
@@ -308,6 +308,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_unsubscriptions (volunteer_id, unsubscription_reason, unsubscription_description, created_at, updated_at)\nVALUES ({{ $json.volunteer_id }}, '{{ $json.unsubscription_reason }}', '{{ $json.unsubscription_description }}', NOW(), NOW())",
         "options": {}
       },
       "id": "2871c0fd-1121-475c-bd15-d14c9f4a8b9a",
@@ -315,8 +316,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1940,
-        660
+        2100,
+        640
       ],
       "credentials": {
         "postgres": {
@@ -332,7 +333,7 @@
   },
   "staticData": null,
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-03-26T21:48:29.000Z",
-  "versionId": "c12d227e-544f-4919-8424-c3925f6bd091"
+  "triggerCount": 1,
+  "updatedAt": "2024-03-26T23:50:18.000Z",
+  "versionId": "d407f439-bded-4db4-bb65-878e3c40da76"
 }
