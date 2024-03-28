@@ -1,17 +1,6 @@
 {
   "active": false,
   "connections": {
-    "Filtra apenas as infos que importam": {
-      "main": [
-        [
-          {
-            "node": "Busca voluntária no BD",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Possui match?": {
       "main": [
         [
@@ -71,6 +60,17 @@
           }
         ]
       ]
+    },
+    "Filtra apenas as infos que importam": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntária no BD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-03-26T23:50:28.345Z",
@@ -80,19 +80,6 @@
   },
   "name": "[PROD] Descadastro de Voluntárias",
   "nodes": [
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfor (const item of $input.all()) {\n  const volunteerEmail = item.json.body.data.fields[0].value;\n  const unsubscriptionReasonValue = item.json.body.data.fields[1].value;\n\n  const unsubscriptionReasonLabel = item.json.body.data.fields[1].options.find((element) => element.id == unsubscriptionReasonValue).text;\n\n  const unsubscriptionDescription = item.json.body.data.fields[2].value;\n  \n  output.push(\n    {\n      \"email\": volunteerEmail,\n      \"unsubscription_reason\": unsubscriptionReasonLabel,\n      \"unsubscription_description\": unsubscriptionDescription\n    }\n  )\n}\n\nreturn output;"
-      },
-      "id": "555c90ba-7638-4171-a44b-19345145034a",
-      "name": "Filtra apenas as infos que importam",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        940,
-        340
-      ]
-    },
     {
       "parameters": {
         "conditions": {
@@ -325,6 +312,19 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfor (const item of $input.all()) {\n  const volunteerEmail = item.json.body.data.fields[1].value;\n  const unsubscriptionReasonValue = item.json.body.data.fields[2].value;\n\n  const unsubscriptionReasonLabel = item.json.body.data.fields[2].options.find((element) => element.id == unsubscriptionReasonValue).text;\n\n  const unsubscriptionDescription = item.json.body.data.fields[3].value;\n  \n  output.push(\n    {\n      \"email\": volunteerEmail,\n      \"unsubscription_reason\": unsubscriptionReasonLabel,\n      \"unsubscription_description\": unsubscriptionDescription\n    }\n  )\n}\n\nreturn output;"
+      },
+      "id": "5ca4309f-023d-41dd-bee1-86af6a4b7d2e",
+      "name": "Filtra apenas as infos que importam",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        340
+      ]
     }
   ],
   "pinData": {},
@@ -334,6 +334,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-03-26T23:50:45.000Z",
-  "versionId": "3d149047-1b24-4007-a339-f3c715c2176b"
+  "updatedAt": "2024-03-28T15:13:17.000Z",
+  "versionId": "fe548898-69ee-4c87-ad94-884afdf8b4b4"
 }
