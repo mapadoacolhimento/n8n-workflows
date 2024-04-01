@@ -572,7 +572,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}' AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}' THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
         "options": {}
       },
       "id": "5f1be305-e048-468e-9c7e-cd2f0aff1236",
@@ -794,7 +794,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET availability = '{{ $json.new_availability }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "query": "UPDATE volunteers\nSET availability = {{ $json.new_availability }}, updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
         "options": {}
       },
       "id": "cbafbd71-a04a-444f-9769-b9ed7a390665",
@@ -974,11 +974,14 @@
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-03-28T15:41:01.000Z",
-  "versionId": "68bda0d0-48b8-4629-a2c9-6c68ac2ab2e5"
+  "updatedAt": "2024-04-01T20:04:13.000Z",
+  "versionId": "ffae0e45-ce88-4d29-aa50-2bac12526a27"
 }
