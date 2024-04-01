@@ -1,0 +1,141 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca eventos da capacitação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca eventos da capacitação": {
+      "main": [
+        [
+          {
+            "node": "moodle_user_id existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "moodle_user_id existe?": {
+      "main": [
+        [
+          {
+            "node": "Insere na tabela volunteer_training_history",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-03-27T17:58:39.499Z",
+  "id": "Fyl7cbUJAMCPjmSx",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Insere eventos da capacitação na tabela volunteer_training_history",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "6cd95367-b1c9-4e90-b89d-2b4173574c6c",
+      "name": "When clicking \"Test Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        780,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH started_training_events AS (\n    SELECT \n        volunteer_id,\n        'started_training' AS event,\n        created_at\n    FROM volunteer_status_history\n    WHERE status = 'capacitacao'\n    AND created_at >= '2024-01-25'\n),\nfinished_training_events AS (\n    SELECT \n        volunteer_id,\n        'finished_training' AS event,\n        h.created_at\n    FROM volunteer_status_history h\n    INNER JOIN started_training_events USING (volunteer_id)\n    WHERE status = 'aprovada'\n    AND h.created_at >= '2024-01-25'\n),\nall_events AS (\n    SELECT *\n    FROM started_training_events\n    UNION ALL\n    SELECT *\n    FROM finished_training_events\n)\nSELECT \n    volunteer_id,\n    moodle_id AS moodle_user_id,\n    event,\n    e.created_at\nFROM all_events e\nINNER JOIN volunteers ON id = volunteer_id\n",
+        "options": {}
+      },
+      "id": "3cafdec8-9539-47d7-87c0-967098360eca",
+      "name": "Busca eventos da capacitação",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1020,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_training_history (volunteer_id, moodle_user_id, event, created_at)\nVALUES ({{ $json.volunteer_id }}, {{ $json.moodle_user_id }}, '{{ $json.event }}', NOW())",
+        "options": {}
+      },
+      "id": "81eded41-9d39-406d-8d7b-9890dc38a954",
+      "name": "Insere na tabela volunteer_training_history",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1520,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b2302535-ee9d-4c1e-8ed7-5eb46af3a0f3",
+              "leftValue": "={{ $json.moodle_user_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9fd2cf8c-c4c9-48f4-90c4-8db19857a220",
+      "name": "moodle_user_id existe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        340
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-04-01T12:54:37.000Z",
+  "versionId": "45677d5b-baf7-4006-b5fb-9ebfdd6f4b38"
+}
