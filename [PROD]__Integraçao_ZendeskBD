@@ -101,22 +101,6 @@
         ]
       ]
     },
-    "Merge": {
-      "main": [
-        [
-          {
-            "node": "Updates volunteer geolocation",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Updates volunteer_availability geolocation",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Add null lat/lng": {
       "main": [
         [
@@ -222,6 +206,44 @@
         ]
       ]
     },
+    "Normalize Zendesk input from volunteer": {
+      "main": [
+        [
+          {
+            "node": "Checks if we need to update volunteer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Zendesk input from MSR": {
+      "main": [
+        [
+          {
+            "node": "Checks if we need to update support_request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Updates volunteer_availability geolocation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Updates volunteer geolocation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Switch": {
       "main": [
         [
@@ -229,6 +251,11 @@
             "node": "Check city, state and zipcode1",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
           }
         ],
         [
@@ -246,28 +273,6 @@
           },
           {
             "node": "Updates volunteer availability",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Zendesk input from volunteer": {
-      "main": [
-        [
-          {
-            "node": "Checks if we need to update volunteer",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Zendesk input from MSR": {
-      "main": [
-        [
-          {
-            "node": "Checks if we need to update support_request",
             "type": "main",
             "index": 0
           }
@@ -403,7 +408,8 @@
       "position": [
         1580,
         140
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -485,23 +491,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1020,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combinationMode": "multiplex",
-        "options": {}
-      },
-      "id": "75317a15-7c51-4115-99c1-04c092dc8f91",
-      "name": "Merge",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        1360,
-        580
+        920,
+        360
       ]
     },
     {
@@ -572,7 +563,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT AND '{{ $json.body.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
         "options": {}
       },
       "id": "5f1be305-e048-468e-9c7e-cd2f0aff1236",
@@ -637,8 +628,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        720,
-        520
+        620,
+        500
       ]
     },
     {
@@ -652,8 +643,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.2,
       "position": [
-        1020,
-        660
+        920,
+        540
       ]
     },
     {
@@ -668,7 +659,7 @@
       "typeVersion": 2.3,
       "position": [
         720,
-        1100
+        1200
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -681,7 +672,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE public.volunteer_availability\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  lat = {{ $json.coordinates.lat }}, \n  lng = {{ $json.coordinates.lng }}, \n  updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "query": "UPDATE public.volunteer_availability\nSET \n  city = '{{ $json.city }}', \n  state = '{{ $json.state }}', \n  lat = {{ $json.coordinates.lat }}, \n  lng = {{ $json.coordinates.lng }}, \n  updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
         "options": {}
       },
       "id": "3c57cc76-dfa7-44a6-af83-4478b4e218af",
@@ -689,8 +680,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1640,
-        440
+        1420,
+        480
       ],
       "credentials": {
         "postgres": {
@@ -803,7 +794,7 @@
       "typeVersion": 2.3,
       "position": [
         720,
-        900
+        1020
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -812,6 +803,90 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.availability = Number(item.json.body.availability) || 0\n}\n\nreturn $input.all();\n"
+      },
+      "id": "f0480c15-63c6-4f7c-a6f5-fe984ce2ef6c",
+      "name": "Normalize Zendesk input from volunteer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n}\n\nreturn $input.all();\n"
+      },
+      "id": "434ce109-bbfa-460c-9aaa-bbdf8bdc7514",
+      "name": "Normalize Zendesk input from MSR",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -280,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "d4866656-0b3a-4bf7-bf6b-0dd4df2cb9c0",
+      "name": "Updates volunteer geolocation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1460,
+        740
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET \n  first_name = '{{ $json.new_first_name }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "9aaa0c13-89ef-4ba0-a154-c90a413d2854",
+      "name": "Updates volunteer personal data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        840
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "517cd779-2807-48c2-9e55-5f91d0172aa0",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        620
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -902,77 +977,50 @@
         460,
         800
       ]
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n}\n\nreturn $input.all();\n"
-      },
-      "id": "f0480c15-63c6-4f7c-a6f5-fe984ce2ef6c",
-      "name": "Normalize Zendesk input from volunteer",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -300,
-        820
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n}\n\nreturn $input.all();\n"
-      },
-      "id": "434ce109-bbfa-460c-9aaa-bbdf8bdc7514",
-      "name": "Normalize Zendesk input from MSR",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -280,
-        160
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
-        "options": {}
-      },
-      "id": "d4866656-0b3a-4bf7-bf6b-0dd4df2cb9c0",
-      "name": "Updates volunteer geolocation",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        1640,
-        680
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET \n  first_name = '{{ $json.new_first_name }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
-        "options": {}
-      },
-      "id": "9aaa0c13-89ef-4ba0-a154-c90a413d2854",
-      "name": "Updates volunteer personal data",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        720,
-        720
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook Volunteer": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "214",
+            "accept-encoding": "gzip",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-00000000000000001d7d5053fe8a4d0f-1d7d5053fe8a4d0f-00",
+            "tracestate": "dd=s:-1",
+            "x-forwarded-for": "216.198.2.146",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-f7d8fb88c-ltct2",
+            "x-real-ip": "216.198.2.146",
+            "x-request-id": "91a96c0b-572b-4d60-8d1d-cd32395d1b31",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
+            "x-zendesk-webhook-invocation-id": "01HTDTYBK19ABEDC7PPJB3DFJC",
+            "x-zendesk-webhook-signature": "aIyol1xfG8S4nhmRT0TcC5qSbxYIT7qYbfUdpZtqcvE=",
+            "x-zendesk-webhook-signature-timestamp": "2024-04-01T22:02:13Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "volunteer_zendesk_user_id": "377401240291",
+            "city": "Rio de Janeiro",
+            "state": "RJ",
+            "first_name": "Heve",
+            "availability": "",
+            "zipcode": "20241040",
+            "phone": "5521999658666",
+            "register_number": "6621"
+          }
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -982,6 +1030,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-04-01T20:04:13.000Z",
-  "versionId": "ffae0e45-ce88-4d29-aa50-2bac12526a27"
+  "updatedAt": "2024-04-02T14:36:50.000Z",
+  "versionId": "f95ae742-e562-4b84-a78e-80bf51743057"
 }
