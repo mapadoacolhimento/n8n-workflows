@@ -303,7 +303,7 @@
             },
             {
               "name": "zipcode",
-              "value": "={{ $json.new_zipcode }}"
+              "value": "={{ $json.new_zipcode === 'not_found' ? '' : $json.new_zipcode  }}"
             }
           ]
         },
@@ -480,7 +480,7 @@
             },
             {
               "name": "zipcode",
-              "value": "={{ $json.new_zipcode }}"
+              "value": "={{ $json.new_zipcode === 'not_found' ? '' : $json.new_zipcode  }}"
             }
           ]
         },
@@ -806,7 +806,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.availability = Number(item.json.body.availability) || 0\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.availability = Number(item.json.body.availability) || 0\n}\n\nreturn $input.all();\n"
       },
       "id": "f0480c15-63c6-4f7c-a6f5-fe984ce2ef6c",
       "name": "Normalize Zendesk input from volunteer",
@@ -819,7 +819,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace('-', '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n}\n\nreturn $input.all();\n"
       },
       "id": "434ce109-bbfa-460c-9aaa-bbdf8bdc7514",
       "name": "Normalize Zendesk input from MSR",
@@ -986,36 +986,36 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Zendesk Webhook",
-            "content-length": "214",
+            "content-length": "252",
             "accept-encoding": "gzip",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-00000000000000001d7d5053fe8a4d0f-1d7d5053fe8a4d0f-00",
+            "traceparent": "00-00000000000000003a1d55e47914d68a-3a1d55e47914d68a-00",
             "tracestate": "dd=s:-1",
             "x-forwarded-for": "216.198.2.146",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-f7d8fb88c-ltct2",
+            "x-forwarded-server": "traefik-f7d8fb88c-x5dxb",
             "x-real-ip": "216.198.2.146",
-            "x-request-id": "91a96c0b-572b-4d60-8d1d-cd32395d1b31",
+            "x-request-id": "9e6ad194-5866-41e3-8719-d71f9a529237",
             "x-zendesk-account-id": "9040899",
             "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01HTDTYBK19ABEDC7PPJB3DFJC",
-            "x-zendesk-webhook-signature": "aIyol1xfG8S4nhmRT0TcC5qSbxYIT7qYbfUdpZtqcvE=",
-            "x-zendesk-webhook-signature-timestamp": "2024-04-01T22:02:13Z"
+            "x-zendesk-webhook-invocation-id": "01HTG4SGQKCNWFENB1DYBAN2ZH",
+            "x-zendesk-webhook-signature": "k+ZOLlHkMWrZ+z9X2A3gvODj5NpX3YBLkX3wyeZN8Eo=",
+            "x-zendesk-webhook-signature-timestamp": "2024-04-02T19:32:49Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "volunteer_zendesk_user_id": "377401240291",
-            "city": "Rio de Janeiro",
-            "state": "RJ",
-            "first_name": "Heve",
-            "availability": "",
-            "zipcode": "20241040",
-            "phone": "5521999658666",
-            "register_number": "6621"
+            "volunteer_zendesk_user_id": "377337981472",
+            "city": "Espírito Santo do Dourado",
+            "state": "MG",
+            "first_name": "Jéssica",
+            "availability": "2",
+            "zipcode": "Estrada do Itararé 29 Ramos",
+            "phone": "21990369337",
+            "register_number": "0555286"
           }
         }
       }
@@ -1030,6 +1030,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-04-02T14:36:50.000Z",
-  "versionId": "f95ae742-e562-4b84-a78e-80bf51743057"
+  "updatedAt": "2024-04-03T08:02:43.000Z",
+  "versionId": "7aa07bc7-277e-4702-9355-b28ab60eb34d"
 }
