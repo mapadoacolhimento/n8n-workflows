@@ -50,7 +50,7 @@
       "main": [
         [
           {
-            "node": "Check city, state and zipcode",
+            "node": "Check city, state and zipcode2",
             "type": "main",
             "index": 0
           }
@@ -106,24 +106,6 @@
         [
           {
             "node": "Merge2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check city, state and zipcode": {
-      "main": [
-        [
-          {
-            "node": "Busca as coordenadas do endereço1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Add null lat/lng",
             "type": "main",
             "index": 0
           }
@@ -238,6 +220,24 @@
           },
           {
             "node": "Updates volunteer geolocation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check city, state and zipcode2": {
+      "main": [
+        [
+          {
+            "node": "Busca as coordenadas do endereço1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add null lat/lng",
             "type": "main",
             "index": 0
           }
@@ -512,56 +512,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "cd3132a5-7821-49ae-a080-957a931cb612",
-              "leftValue": "={{ $json.new_city }}",
-              "rightValue": "not_found",
-              "operator": {
-                "type": "string",
-                "operation": "notEquals"
-              }
-            },
-            {
-              "id": "e0a033c3-38d5-4583-943e-43fffb34b624",
-              "leftValue": "={{ $json.new_state }}",
-              "rightValue": "not_found",
-              "operator": {
-                "type": "string",
-                "operation": "notEquals"
-              }
-            },
-            {
-              "id": "f95c4be6-693b-4809-b28c-a583b7c813ca",
-              "leftValue": "={{ $json.new_zipcode }}",
-              "rightValue": "={{\"\"}}",
-              "operator": {
-                "type": "string",
-                "operation": "notEquals"
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
-      },
-      "id": "33f1f07a-0893-4038-b65e-fbd726f62b61",
-      "name": "Check city, state and zipcode",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        900,
-        -60
-      ]
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
         "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT AND '{{ $json.body.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
         "options": {}
@@ -612,7 +562,7 @@
             {
               "id": "f95c4be6-693b-4809-b28c-a583b7c813ca",
               "leftValue": "={{ $json.new_zipcode }}",
-              "rightValue": "={{\"\"}}",
+              "rightValue": "=not_found",
               "operator": {
                 "type": "string",
                 "operation": "notEquals"
@@ -806,7 +756,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.availability = Number(item.json.body.availability) || 0\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '')\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.availability = Number(item.json.body.availability) || 0\n}\n\nreturn $input.all();\n"
       },
       "id": "f0480c15-63c6-4f7c-a6f5-fe984ce2ef6c",
       "name": "Normalize Zendesk input from volunteer",
@@ -819,7 +769,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const zipcode =\n    item.json.body.zipcode === 'ZERO_RESULTS' ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n      : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '')\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.availability = Number(item.json.body.availability) || 0\n}\n\nreturn $input.all();\n"
       },
       "id": "434ce109-bbfa-460c-9aaa-bbdf8bdc7514",
       "name": "Normalize Zendesk input from MSR",
@@ -887,6 +837,56 @@
         620
       ],
       "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cd3132a5-7821-49ae-a080-957a931cb612",
+              "leftValue": "={{ $json.new_city }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "e0a033c3-38d5-4583-943e-43fffb34b624",
+              "leftValue": "={{ $json.new_state }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "f95c4be6-693b-4809-b28c-a583b7c813ca",
+              "leftValue": "={{ $json.new_zipcode }}",
+              "rightValue": "=not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "8310f92e-ee94-4502-910c-e0e196e05387",
+      "name": "Check city, state and zipcode2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        900,
+        -100
+      ]
     },
     {
       "parameters": {
@@ -990,32 +990,32 @@
             "accept-encoding": "gzip",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-0000000000000000665b8bf9816768b9-665b8bf9816768b9-00",
+            "traceparent": "00-00000000000000003f963db9c392adae-3f963db9c392adae-00",
             "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.195",
+            "x-forwarded-for": "216.198.2.158",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-f7d8fb88c-p4x5b",
-            "x-real-ip": "216.198.2.195",
-            "x-request-id": "e68a9143-9d3d-4bb2-8e52-a764ebe3ec83",
+            "x-forwarded-server": "traefik-f7d8fb88c-x5dxb",
+            "x-real-ip": "216.198.2.158",
+            "x-request-id": "e6e5fcd1-f7ae-499e-891f-2df7750b313a",
             "x-zendesk-account-id": "9040899",
             "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01HTZ1APNT12FGEB7DKS01PK1R",
-            "x-zendesk-webhook-signature": "yUJSDm1PqulMruAWlFG9AoRmvk1x7wdocxUrzvlpNlE=",
-            "x-zendesk-webhook-signature-timestamp": "2024-04-08T14:20:54Z"
+            "x-zendesk-webhook-invocation-id": "01HTZVD993RPBJK8X56Z67PH0D",
+            "x-zendesk-webhook-signature": "vdFMNU938XI+m5qcOwwcrsAVMnjZ3pmY0gc0H57by8E=",
+            "x-zendesk-webhook-signature-timestamp": "2024-04-08T21:56:41Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "volunteer_zendesk_user_id": "416438757852",
+            "volunteer_zendesk_user_id": "418158419712",
             "city": "ZERO_RESULTS",
             "state": "",
-            "first_name": "sem",
-            "availability": "",
-            "zipcode": "On-line ",
-            "phone": "11945025879",
-            "register_number": "0651276"
+            "first_name": "Gabriela",
+            "availability": "3",
+            "zipcode": "",
+            "phone": "11976615888",
+            "register_number": "06/135101"
           }
         }
       }
@@ -1030,6 +1030,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-04-08T14:27:08.000Z",
-  "versionId": "0a207933-e74b-4217-b621-838a21b2ef0b"
+  "updatedAt": "2024-04-09T16:49:42.000Z",
+  "versionId": "a863fa4a-c781-49b7-a60d-3a873a121939"
 }
