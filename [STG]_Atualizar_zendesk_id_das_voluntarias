@@ -1,0 +1,224 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Make a iterteration with workflows array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make a iterteration with workflows array": {
+      "main": [
+        [
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Make a iterteration with workflows array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-04-10T19:47:28.478Z",
+  "id": "GWspq9XJYn74q5yH",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Atualizar zendesk id das voluntárias",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9c79021c-2001-48f9-921a-00d8f27aa76c",
+      "name": "When clicking \"Test Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "search",
+        "filters": {
+          "query": "={{ $json.email }}"
+        }
+      },
+      "id": "a8e6d1ef-e54b-4102-afe7-8a506d8e4530",
+      "name": "Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "volunteers",
+          "mode": "list",
+          "cachedResultName": "volunteers"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "zendesk_user_id",
+              "condition": "IS NULL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1ce7671-b6fd-4a67-b2df-ffd10561003c",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        440,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "id",
+              "type": "numberValue",
+              "numberValue": "={{ $('Postgres').item.json.id }}"
+            },
+            {
+              "name": "zendesk_user_id",
+              "type": "numberValue",
+              "numberValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "include": "none",
+        "options": {}
+      },
+      "id": "bcabadba-2f0d-46c4-a079-14bcc1d4056e",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Make a iterteration with workflows array",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        740,
+        300
+      ],
+      "typeVersion": 1,
+      "id": "0737fba9-6601-478d-baa9-b30dd9eeb1f2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers SET zendesk_user_id = {{ $json.zendesk_user_id }}, updated_at = NOW() WHERE id = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "1cd36f2d-6da1-453f-8372-2f6cd1460a0f",
+      "name": "Postgres1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-04-10T20:15:52.000Z",
+  "versionId": "272a6e77-9496-4873-a888-d2f4228dac9a"
+}
