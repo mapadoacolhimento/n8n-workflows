@@ -30,6 +30,11 @@
             "node": "Insere na tabela volunteer_training_history",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Atualiza created_at",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -85,7 +90,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1520,
+        1740,
         320
       ],
       "credentials": {
@@ -127,6 +132,27 @@
         1240,
         340
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteer_training_history\nSET created_at = '{{ $json.created_at }}'\nWHERE volunteer_id = {{ $json.volunteer_id }} AND event = '{{ $json.event }}'",
+        "options": {}
+      },
+      "id": "0ce326f4-9a1a-4229-9d64-d72cc6eec12a",
+      "name": "Atualiza created_at",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1500,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -136,6 +162,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-01T12:54:37.000Z",
-  "versionId": "45677d5b-baf7-4006-b5fb-9ebfdd6f4b38"
+  "updatedAt": "2024-04-10T15:48:51.000Z",
+  "versionId": "58f5d3bf-7821-465a-aa96-5e55fb37e1e8"
 }
