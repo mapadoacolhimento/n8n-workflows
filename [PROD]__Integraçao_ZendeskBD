@@ -769,7 +769,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '')\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n\n  const first_name = item.json.body.first_name;\n  item.json.body.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.body.phone = item.json.body.phone.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.register_number = item.json.body.register_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.body.availability = Number(item.json.body.availability) || 0\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === ''\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '')\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n}\n\nreturn $input.all();\n"
       },
       "id": "434ce109-bbfa-460c-9aaa-bbdf8bdc7514",
       "name": "Normalize Zendesk input from MSR",
@@ -979,48 +979,7 @@
       ]
     }
   ],
-  "pinData": {
-    "Webhook Volunteer": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Zendesk Webhook",
-            "content-length": "210",
-            "accept-encoding": "gzip",
-            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
-            "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-00000000000000003f963db9c392adae-3f963db9c392adae-00",
-            "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.158",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-f7d8fb88c-x5dxb",
-            "x-real-ip": "216.198.2.158",
-            "x-request-id": "e6e5fcd1-f7ae-499e-891f-2df7750b313a",
-            "x-zendesk-account-id": "9040899",
-            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01HTZVD993RPBJK8X56Z67PH0D",
-            "x-zendesk-webhook-signature": "vdFMNU938XI+m5qcOwwcrsAVMnjZ3pmY0gc0H57by8E=",
-            "x-zendesk-webhook-signature-timestamp": "2024-04-08T21:56:41Z"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "volunteer_zendesk_user_id": "418158419712",
-            "city": "ZERO_RESULTS",
-            "state": "",
-            "first_name": "Gabriela",
-            "availability": "3",
-            "zipcode": "",
-            "phone": "11976615888",
-            "register_number": "06/135101"
-          }
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -1028,8 +987,15 @@
     "errorWorkflow": "HYstwqyTrzYsvJ2P"
   },
   "staticData": null,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2024-01-09T22:32:23.916Z",
+      "updatedAt": "2024-01-09T22:32:23.916Z",
+      "id": "JnlufCPRnot361zL",
+      "name": "zendesk integration"
+    }
+  ],
   "triggerCount": 2,
-  "updatedAt": "2024-04-09T16:49:42.000Z",
-  "versionId": "a863fa4a-c781-49b7-a60d-3a873a121939"
+  "updatedAt": "2024-04-10T15:48:58.000Z",
+  "versionId": "0393bd9e-2b30-4787-b66c-f4d57b47eb9e"
 }
