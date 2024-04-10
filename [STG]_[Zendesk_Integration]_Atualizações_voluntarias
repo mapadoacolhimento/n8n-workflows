@@ -1,0 +1,422 @@
+{
+  "active": false,
+  "connections": {
+    "Extracts zendesk_user_id and is_available": {
+      "main": [
+        [
+          {
+            "node": "Fetch volunteer_id and status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch volunteer_id and status": {
+      "main": [
+        [
+          {
+            "node": "Is it a new status?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Extracts zendesk_user_id and is_available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is it a new status?1": {
+      "main": [
+        [
+          {
+            "node": "Update volunteer status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoOp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extracts zendesk_ticket_id and survey_type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch match_id": {
+      "main": [
+        [
+          {
+            "node": "Fetch past survey",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracts zendesk_ticket_id and survey_type": {
+      "main": [
+        [
+          {
+            "node": "Fetch match_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch past survey": {
+      "main": [
+        [
+          {
+            "node": "Is it a new survey?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is it a new survey?": {
+      "main": [
+        [
+          {
+            "node": "Insert into match_surveys",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoOp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-04-10T15:27:56.993Z",
+  "id": "3czvGIftlLYUWWw9",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] [Zendesk Integration] Atualizações voluntárias",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const is_available_lookup = {\n      \"disponivel\": 1,\n      \"indisponível_férias\": 0,\n      \"indisponível_maternidade\": 0,\n      \"indisponível_saude\": 0,\n      \"indisponível_trabalho_e_estudo\": 0,\n      \"indisponível_outros_motivos\": 0,\n      \"indisponível_agenda\": 0,\n      \"indisponível_-sem_resposta\": 0,\n      \"dados_incompletos_endereço\": 0,\n      \"dados_incompletos_telefone\": 0,\n      \"dados_incompletos_email\": 0,\n      \"descadastrada\": 0,\n      \"reprovada_estudo_de_caso\": 0,\n      \"reprovada_diretrizes_do_mapa\": 0,\n      \"reprovada_registro_inválido\": 0,\n      \"aprovada\": 1,\n      \"anti-etica\": 0,\n      \"capacitacao\": 0,\n      \"indisponivel_sem_vagas\": 0,\n      \"desabilitada\": 0\n  }\n \n  const zendesk_user_id = item.json.body.volunteer_user_id;\n  const status = item.json.body.volunteer_status;\n  \n  const is_available = is_available_lookup[status]\n    \n  const newItem = {\n    \"zendesk_user_id\": zendesk_user_id,\n    \"status\": status,\n    \"is_available\": is_available\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+      },
+      "id": "29e1c498-0f1a-4571-899a-999c729a73cf",
+      "name": "Extracts zendesk_user_id and is_available",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT \n\tid AS volunteer_id, \n\tcondition AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    {{$json[\"is_available\"]}}AS is_available \nFROM public.volunteers\nWHERE zendesk_user_id = {{$json[\"zendesk_user_id\"]}}::BIGINT\nLIMIT 1",
+        "additionalFields": {}
+      },
+      "id": "ef5e2e12-5790-4d04-9d16-9c0fedf7cac6",
+      "name": "Fetch volunteer_id and status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        720
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE public.volunteers\nSET condition = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = {{$json[\"is_available\"]}}::boolean, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
+        "additionalFields": {}
+      },
+      "id": "3593805c-3308-46e6-87ce-46b45f0a303d",
+      "name": "Update volunteer status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        420,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "httpMethod": "POST",
+        "path": "update-volunteer-status",
+        "options": {}
+      },
+      "id": "6d4272a4-b0b6-42f0-bd45-6eea8e71e062",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        720
+      ],
+      "webhookId": "7a031726-8076-438a-bdcc-5179ceb238e9",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"current_status\"]}}",
+              "operation": "notEqual",
+              "value2": "={{$json[\"new_status\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "35c5c776-af2e-43a3-9bfb-47d5d0e9d36b",
+      "name": "Is it a new status?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        120,
+        720
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "2b0b64ae-f98b-4952-8e82-cbf44ceaf300",
+      "name": "NoOp1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        420,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "content": "updates volunteer status\n",
+        "height": 80,
+        "width": 201.2686034032215
+      },
+      "id": "34698ce3-52b0-40c8-bb49-f89ee9ea5b44",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "httpMethod": "POST",
+        "path": "create-match-survey",
+        "options": {}
+      },
+      "id": "9afdfdff-7314-4df7-b928-df0083ea800b",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        1280
+      ],
+      "webhookId": "b7b05a6e-1aee-476c-b857-3785740b5a41",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT \n\tmatch_id, \n    '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nLIMIT 1",
+        "additionalFields": {}
+      },
+      "id": "8675c9c6-0a68-4e95-bcd8-a51647305477",
+      "name": "Fetch match_id",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        1280
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"atendimento_triagem_1\": \"triagem_1\",\n      \"atendimento_triagem_2\": \"triagem_2\",\n      \"atendimento_acompanhamento_1\": \"acompanhamento_1\",\n      \"atendimento_acompanhamento_2\": \"acompanhamento_2\"\n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const survey_type = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"survey_type\": survey_type\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+      },
+      "id": "b000769d-952f-4bba-bb99-4a28359617ca",
+      "name": "Extracts zendesk_ticket_id and survey_type",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=INSERT INTO match.match_surveys (match_id, survey_type, created_at, updated_at)\nVALUES ({{$node[\"Fetch match_id\"].json[\"match_id\"]}}, '{{$node[\"Fetch match_id\"].json[\"survey_type\"]}}', NOW(), NOW());",
+        "additionalFields": {}
+      },
+      "id": "13ae3eac-2833-4ac5-94f9-d3ac7ed6115b",
+      "name": "Insert into match_surveys",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        520,
+        1260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT\n   match_survey_id,\n   {{$json[\"match_id\"]}} AS match_id,\n   '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.match_surveys\nWHERE match_id = {{$json[\"match_id\"]}}\nAND survey_type = '{{$json[\"survey_type\"]}}'",
+        "additionalFields": {}
+      },
+      "id": "b4ee4196-7276-48e8-8dd8-4fc4bbf2d130",
+      "name": "Fetch past survey",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        60,
+        1280
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json[\"match_survey_id\"]}}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "id": "3f501fd7-f92a-4ad0-b514-cdfc6d86c0bf",
+      "name": "Is it a new survey?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        300,
+        1280
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "83cdb043-0f6e-4b87-9976-471c2b8a9694",
+      "name": "NoOp",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        520,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "content": "creates match_survey",
+        "height": 80,
+        "width": 199.30187017656982
+      },
+      "id": "2507d1a4-d375-4b2e-91df-d27767356f26",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        1160
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-24T01:51:54.592Z",
+      "updatedAt": "2024-01-24T01:51:54.592Z",
+      "id": "9qHi7Mg3P0urkBHm",
+      "name": "volunteer"
+    },
+    {
+      "createdAt": "2024-01-09T22:32:23.916Z",
+      "updatedAt": "2024-01-09T22:32:23.916Z",
+      "id": "JnlufCPRnot361zL",
+      "name": "zendesk integration"
+    }
+  ],
+  "triggerCount": 2,
+  "updatedAt": "2024-04-10T15:42:24.000Z",
+  "versionId": "6ff05051-1649-458b-aa3a-eee3c4e418e1"
+}
