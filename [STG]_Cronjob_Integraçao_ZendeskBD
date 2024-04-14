@@ -5,18 +5,7 @@
       "main": [
         [
           {
-            "node": "Postgres",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Postgres": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
+            "node": "Get all volunteers",
             "type": "main",
             "index": 0
           }
@@ -28,24 +17,6 @@
         [
           {
             "node": "Normalize Zendesk input from volunteer",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Zendesk",
             "type": "main",
             "index": 0
           }
@@ -110,21 +81,11 @@
             "node": "Switch",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
           }
         ],
         [
           {
             "node": "Stop and Error1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -180,17 +141,6 @@
         ]
       ]
     },
-    "Updates volunteer availability": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Updates volunteer geolocation": {
       "main": [
         [
@@ -202,9 +152,44 @@
         ]
       ]
     },
-    "No Operation, do nothing1": {
+    "Get all volunteers": {
       "main": [
-        []
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Switch": {
@@ -230,12 +215,40 @@
         ],
         [
           {
-            "node": "Update volunteer_availability max_matches",
+            "node": "Check if volunteer is available",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Check if volunteer is available": {
+      "main": [
+        [
           {
-            "node": "Updates volunteer availability",
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -266,30 +279,9 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
       "position": [
-        60,
-        240
+        180,
+        360
       ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "select * from volunteers where zendesk_user_id is not null",
-        "options": {}
-      },
-      "id": "f653f28b-6a65-4175-a2b3-69bae053bfef",
-      "name": "Postgres",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        280,
-        240
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -302,7 +294,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        760,
+        940,
         380
       ],
       "credentials": {
@@ -313,27 +305,14 @@
       }
     },
     {
-      "parameters": {
-        "options": {}
-      },
-      "id": "77af91e2-f448-4d83-994e-197971d272c1",
-      "name": "Loop Over Items",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        560,
-        240
-      ]
-    },
-    {
       "parameters": {},
       "id": "b9740dce-712b-4dbd-90cc-9b6c61074f5b",
       "name": "No Operation, do nothing",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        940,
-        40
+        900,
+        100
       ]
     },
     {
@@ -363,14 +342,14 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2520,
+        3180,
         -140
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.user_fields.city }}' AS new_city,\n  '{{ $json.user_fields.state }}' AS new_state,\n  '{{ $json.user_fields.zipcode }}' AS new_zipcode,\n  '{{ $json.user_fields.first_name }}' AS new_first_name,\n  '{{ $json.user_fields.availability }}'::INT AS new_availability,\n  '{{ $json.user_fields.whatsapp }}' AS new_phone,\n  '{{ $json.user_fields.registration_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.user_fields.city }}' OR \n      state != '{{ $json.user_fields.state }}' OR \n      zipcode != '{{ $json.user_fields.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.user_fields.availability }}'::INT AND '{{ $json.user_fields.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.user_fields.first_name }}' OR \n      phone != '{{ $json.user_fields.whatsapp }}' OR \n      register_number != '{{ $json.user_fields.registration_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.id }}",
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.user_fields.city }}' AS new_city,\n  '{{ $json.user_fields.state }}' AS new_state,\n  '{{ $json.user_fields.zipcode }}' AS new_zipcode,\n  '{{ $json.user_fields.first_name }}' AS new_first_name,\n  '{{ $json.user_fields.availability }}'::INT AS new_availability,\n  '{{ $json.phone }}' AS new_phone,\n  '{{ $json.user_fields.registration_number }}' AS new_register_number,\n  '{{ $json.user_fields.condition }}' AS new_volunteer_status,\n  CASE \n    WHEN \n      city != '{{ $json.user_fields.city }}' OR \n      state != '{{ $json.user_fields.state }}' OR \n      zipcode != '{{ $json.user_fields.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.user_fields.availability }}'::INT AND '{{ $json.user_fields.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.user_fields.first_name }}' OR \n      phone != '{{ $json.user_fields.whatsapp }}' OR \n      register_number != '{{ $json.user_fields.registration_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal,\n  CASE WHEN condition != '{{ $json.user_fields.condition }}' THEN TRUE ELSE FALSE END AS should_update_status\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.id }}",
         "options": {}
       },
       "id": "e2e4aa00-2a34-4835-b35a-cb2b25090d0e",
@@ -378,7 +357,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1280,
+        1500,
         380
       ],
       "alwaysOutputData": true,
@@ -435,7 +414,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        2080,
+        2740,
         20
       ]
     },
@@ -450,31 +429,9 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.2,
       "position": [
-        2440,
+        3100,
         80
       ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
-        "options": {}
-      },
-      "id": "257f4176-963f-43c6-902d-dce8f96ca524",
-      "name": "Update volunteer_availability max_matches",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        2340,
-        600
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -487,7 +444,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        2960,
+        3620,
         340
       ],
       "credentials": {
@@ -526,8 +483,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1520,
-        540
+        1740,
+        380
       ]
     },
     {
@@ -539,42 +496,20 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1820,
+        2040,
         660
       ]
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET availability = {{ $json.new_availability }}, updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
-        "options": {}
-      },
-      "id": "9ed56bb7-3faa-4db5-92ec-39205471837b",
-      "name": "Updates volunteer availability",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        2420,
-        860
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === ''\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '')\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.user_fields.city = city;\n  item.json.user_fields.zipcode = zipcode;\n  item.json.user_fields.state = item.json.user_fields.state || 'not_found';\n\n  const first_name = item.json.name;\n  item.json.user_fields.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n item.json.user_fields.whatsapp = item.json.user_fields.whatsapp?.replace(/[^0-9\\\\.]+/g, '');\n  item.json.user_fields.registration_number = item.json.user_fields.registration_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.user_fields.availability = Number(item.json.user_fields.disponibilidade_de_atendimentos) || 0\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === ''\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '')\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.user_fields.city = city;\n  item.json.user_fields.zipcode = zipcode;\n  item.json.user_fields.state = item.json.user_fields.state || 'not_found';\n\n  const first_name = item.json.name.split(\" \")[0];\n  item.json.user_fields.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  const whatsapp = item.json.user_fields.whatsapp?.replace(/[^0-9\\\\.]+/g, '');\n  const phone = item.json.phone?.replace(/[^0-9\\\\.]+/g, '')\n  item.json.phone = phone || whatsapp;\n  item.json.user_fields.whatsapp =  phone || whatsapp;\n  item.json.user_fields.registration_number = item.json.user_fields.registration_number.replace(/[^0-9\\\\.]+/g, '');\n  item.json.user_fields.availability = Number(item.json.user_fields.disponibilidade_de_atendimentos) || 0\n}\n\nreturn $input.all();\n"
       },
       "id": "3f794825-34c8-4ae4-afd9-ab4e0259e852",
       "name": "Normalize Zendesk input from volunteer",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1000,
+        1220,
         380
       ]
     },
@@ -589,7 +524,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3040,
+        3700,
         -80
       ],
       "credentials": {
@@ -610,7 +545,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        2780,
+        3440,
         520
       ],
       "credentials": {
@@ -631,7 +566,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        2820,
+        3480,
         160
       ],
       "alwaysOutputData": true
@@ -643,9 +578,82 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3240,
+        3900,
         940
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM volunteers \nWHERE \n  zendesk_user_id IS NOT null AND \n  condition NOT IN ('anti-etica', 'descadastrada')",
+        "options": {}
+      },
+      "id": "f653f28b-6a65-4175-a2b3-69bae053bfef",
+      "name": "Get all volunteers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        460,
+        360
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "c7138e38-333e-49c7-a55f-3f2e141166db",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        680,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "id": "633d6a25-95a2-4f28-abbe-299fa72b3903",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        1280
+      ],
+      "webhookId": "ac50b938-b311-4d71-abbb-4fc02dab703d"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE public.volunteers\nSET \n  condition = '{{ $json.new_status }}',\n  availability = {{ $json.max_matches }}, \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET \n  is_available = {{$json[\"is_available\"]}}::boolean, \n  max_matches = {{ $json.max_matches }},\n  updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
+        "options": {}
+      },
+      "id": "ba42da19-551e-49bf-8142-cb07f5051289",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2580,
+        540
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
     },
     {
       "parameters": {
@@ -708,7 +716,7 @@
                 "conditions": [
                   {
                     "id": "26fd6c46-a2eb-4299-a425-e7978d0102fd",
-                    "leftValue": "={{ $json.should_update_availability }}",
+                    "leftValue": "={{ $json.should_update_availability || $json.should_update_status  }}",
                     "rightValue": "",
                     "operator": {
                       "type": "boolean",
@@ -733,8 +741,21 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        1880,
-        420
+        2040,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const is_available_lookup = {\n      \"disponivel\": 1,\n      \"indisponível_férias\": 0,\n      \"indisponível_maternidade\": 0,\n      \"indisponível_saude\": 0,\n      \"indisponível_trabalho_e_estudo\": 0,\n      \"indisponível_outros_motivos\": 0,\n      \"indisponível_agenda\": 0,\n      \"indisponível_-sem_resposta\": 0,\n      \"dados_incompletos_endereço\": 0,\n      \"dados_incompletos_telefone\": 0,\n      \"dados_incompletos_email\": 0,\n      \"descadastrada\": 0,\n      \"reprovada_estudo_de_caso\": 0,\n      \"reprovada_diretrizes_do_mapa\": 0,\n      \"reprovada_registro_inválido\": 0,\n      \"aprovada\": 1,\n      \"anti-etica\": 0,\n      \"capacitacao\": 0,\n      \"indisponivel_sem_vagas\": 0,\n      \"desabilitada\": 0,\n      \"cadastrada\": 0\n  }\n \n  const volunteer_id = item.json.volunteer_id;\n  const status = item.json.new_volunteer_status;\n  \n  const is_available = is_available_lookup[status]\n    \n  const newItem = {\n    \"volunteer_id\": volunteer_id,\n    \"new_status\": status,\n    \"is_available\": is_available,\n    \"max_matches\": item.json.new_availability\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+      },
+      "id": "f3b0f54b-fd18-4b9e-8874-9c61df7b5c9a",
+      "name": "Check if volunteer is available",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2360,
+        540
       ]
     }
   ],
@@ -745,6 +766,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-11T17:43:05.000Z",
-  "versionId": "3f693422-a08e-43ee-9467-7f23e6ef82d6"
+  "updatedAt": "2024-04-14T20:11:34.000Z",
+  "versionId": "75bf9480-ede7-45d9-a23e-5888d944f837"
 }
