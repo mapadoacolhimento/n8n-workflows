@@ -149,65 +149,11 @@
         ]
       ]
     },
-    "Should update is_available?": {
-      "main": [
-        [
-          {
-            "node": "Update is_available",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Should update volunteer condition?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Update is_available": {
-      "main": [
-        [
-          {
-            "node": "Should update volunteer condition?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Should update volunteer condition?": {
-      "main": [
-        [
-          {
-            "node": "Update volunteer condition",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Insert into volunteer_status_history",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Fetch match_id and status": {
       "main": [
         [
           {
             "node": "Is it a new status?1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Is match interrupted or completed?": {
-      "main": [
-        [
-          {
-            "node": "Fetch previous volunteer_availability and volunteer_status1",
             "type": "main",
             "index": 0
           }
@@ -240,17 +186,7 @@
       "main": [
         [
           {
-            "node": "Is match interrupted or completed?",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Update match status",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Check current_matches1",
             "type": "main",
             "index": 0
           }
@@ -264,38 +200,38 @@
         ]
       ]
     },
-    "Should update volunteer status?1": {
-      "main": [
-        [
-          {
-            "node": "Update volunteer_availability and volunteer status1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Update zendesk Status da Mulher1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch previous volunteer_availability and volunteer_status1": {
-      "main": [
-        [
-          {
-            "node": "Should update volunteer status?1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check current_matches1": {
+    "Fetch volunteer current_matches": {
       "main": [
         [
           {
             "node": "Should update current_matches?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should make volunteer unavailable?": {
+      "main": [
+        [
+          {
+            "node": "Make volunteer unavailable",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Status da Mulher = Indisponivel - Sem Vagas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update match status": {
+      "main": [
+        [
+          {
+            "node": "Fetch volunteer current_matches",
             "type": "main",
             "index": 0
           }
@@ -311,7 +247,28 @@
             "index": 0
           },
           {
-            "node": "Should update is_available?",
+            "node": "Should make volunteer unavailable?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Should make volunteer available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should make volunteer available?": {
+      "main": [
+        [
+          {
+            "node": "Make volunteer available",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Status da Mulher = Disponível",
             "type": "main",
             "index": 0
           }
@@ -761,159 +718,6 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=UPDATE match.matches\nSET status = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE match_id = {{$json[\"match_id\"]}};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{$json[\"match_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\n\n",
-        "additionalFields": {}
-      },
-      "id": "9678d673-7c66-438e-aef0-b517ab53c603",
-      "name": "Update match status",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        3080,
-        -100
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose"
-          },
-          "conditions": [
-            {
-              "id": "53a6dfc0-564c-46c6-ba31-a373e2b718ac",
-              "leftValue": "={{ $json.calculated_current_matches }}",
-              "rightValue": "={{ $json.max_matches }}",
-              "operator": {
-                "type": "number",
-                "operation": "gte"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {
-          "looseTypeValidation": true
-        }
-      },
-      "id": "4ebb3e92-6fbc-44ce-b977-6e07d2bdcda6",
-      "name": "Should update is_available?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        4200,
-        880
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteer_availability\nSET is_available = FALSE\nWHERE volunteer_id = {{ $json.volunteer_id }}",
-        "options": {}
-      },
-      "id": "5118c3d0-6ade-47b0-a5f9-92ee59209ee2",
-      "name": "Update is_available",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        4540,
-        860
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "fa143aea-49de-479a-9acd-2a188df0b168",
-              "leftValue": "={{ $json.condition }}",
-              "rightValue": "disponivel",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "1a453625-26d6-44d8-8d86-c8a5abac571c",
-      "name": "Should update volunteer condition?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        4820,
-        1120
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET condition = 'indisponivel_sem_vagas', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}\n",
-        "options": {}
-      },
-      "id": "4d57cac7-4b33-43fe-be1e-e8405010094c",
-      "name": "Update volunteer condition",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        5320,
-        940
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "INSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.volunteer_id }}, 'indisponivel_sem_vagas', NOW())",
-        "options": {}
-      },
-      "id": "8a696fba-13f7-4153-9a0d-a8f14fefa174",
-      "name": "Insert into volunteer_status_history",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        5300,
-        1140
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
         "query": "=SELECT \n\tmatch_id, \n\tstatus AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    volunteer_id \nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT \nOR msr_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nORDER BY created_at DESC\nLIMIT 1",
         "options": {}
       },
@@ -931,35 +735,6 @@
           "name": "[STG] Mapa"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{$json[\"new_status\"]}}",
-              "value2": "interrupted_before_support"
-            },
-            {
-              "value1": "={{$json[\"new_status\"]}}",
-              "value2": "interrupted_after_support"
-            },
-            {
-              "value1": "={{$json[\"new_status\"]}}",
-              "value2": "completed"
-            }
-          ]
-        },
-        "combineOperation": "any"
-      },
-      "id": "388dd156-6fd9-470b-be5b-2823b1aa30fd",
-      "name": "Is match interrupted or completed?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [
-        3080,
-        420
-      ]
     },
     {
       "parameters": {
@@ -999,6 +774,21 @@
     },
     {
       "parameters": {
+        "content": "updates match",
+        "height": 80,
+        "width": 238.13661201650135
+      },
+      "id": "1df017cf-b41e-49ab-9939-9f968b2e0ba3",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        300
+      ]
+    },
+    {
+      "parameters": {
         "conditions": {
           "string": [
             {
@@ -1009,7 +799,7 @@
           ]
         }
       },
-      "id": "e834e8c2-563c-472f-8bba-69012473a626",
+      "id": "20c542fd-444b-4e86-a613-b40d44bc88b8",
       "name": "Is it a new status?1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
@@ -1020,126 +810,119 @@
     },
     {
       "parameters": {},
-      "id": "ff9fb8fd-dfb5-4a32-aad4-ffa2a8ca8085",
+      "id": "86b0404e-0465-4238-8019-76fc060f9a22",
       "name": "NoOp1",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        2960,
+        3060,
         740
       ]
     },
     {
       "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "1542b1b9-551a-4662-8648-a3ead7642749",
+      "name": "Update current_matches",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        3880,
+        -40
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    zendesk_user_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, zendesk_user_id, current_matches, max_matches, condition",
+        "options": {}
+      },
+      "id": "180e8aff-1860-4e1e-a395-2fa1793960e4",
+      "name": "Fetch volunteer current_matches",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        3300,
+        480
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
         "conditions": {
-          "string": [
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
             {
-              "value1": "={{$json[\"condition\"]}}",
-              "value2": "indisponivel_sem_vagas"
+              "id": "53a6dfc0-564c-46c6-ba31-a373e2b718ac",
+              "leftValue": "={{ $json.calculated_current_matches }}",
+              "rightValue": "={{ $json.max_matches }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "a2bc3ae3-1aab-441f-85c1-1b45156b8492",
+              "leftValue": "={{ $json.condition }}",
+              "rightValue": "disponivel",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
             }
-          ]
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
         }
       },
-      "id": "c8d4fd74-bf0f-49ea-a0ab-7a2776840d47",
-      "name": "Should update volunteer status?1",
+      "id": "c8ab0cd4-a286-4865-ac7f-139bd8d9464a",
+      "name": "Should make volunteer unavailable?",
       "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
+      "typeVersion": 2,
       "position": [
-        3580,
-        400
+        3880,
+        260
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=SELECT\n   volunteer_id,\n   zendesk_user_id, \n   current_matches,\n    max_matches,  \n   is_available,\n   condition\nFROM public.volunteer_availability\nLEFT JOIN public.volunteers ON volunteer_id = id\nWHERE volunteer_id = \t{{$json[\"volunteer_id\"]}}",
-        "additionalFields": {}
-      },
-      "id": "e047c947-ec7e-4a2a-9aa2-ab20922b9262",
-      "name": "Fetch previous volunteer_availability and volunteer_status1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        3360,
-        400
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "=UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
-        "additionalFields": {}
-      },
-      "id": "be6585e8-ed67-4598-98ee-ebed18d04ba7",
-      "name": "Update volunteer_availability and volunteer status1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        3820,
-        320
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "user",
-        "operation": "update",
-        "id": "={{$json[\"zendesk_user_id\"]}}",
-        "updateFields": {
-          "userFieldsUi": {
-            "userFieldValues": [
-              {
-                "field": "condition",
-                "value": "Disponível"
-              }
-            ]
-          }
-        }
-      },
-      "id": "9931f01a-defe-46f9-832e-23d23dd8f26f",
-      "name": "Update zendesk Status da Mulher1",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        3820,
-        120
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, current_matches, max_matches, condition",
+        "query": "UPDATE match.matches\nSET status = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE match_id = {{$json[\"match_id\"]}};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{$json[\"match_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nSELECT volunteer_id\nFROM match.matches\nWHERE match_id = {{$json[\"match_id\"]}};\n\n",
         "options": {}
       },
-      "id": "a3508278-7750-4796-8df9-ffd3af18170b",
-      "name": "Check current_matches1",
+      "id": "8dbcd17f-d89f-4a3d-ad87-b0e4e3800532",
+      "name": "Update match status",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3460,
-        820
+        3060,
+        480
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -1168,49 +951,176 @@
           "looseTypeValidation": true
         }
       },
-      "id": "301fdf15-6ed8-4a2b-8327-352422aadd56",
+      "id": "2bc7f3f8-9ba0-49e2-b4d7-d4530321fdb8",
       "name": "Should update current_matches?1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3700,
-        820
+        3500,
+        480
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "query": "=UPDATE public.volunteers\nSET condition = 'indisponivel_sem_vagas', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'indisponivel_sem_vagas', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = FALSE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
         "options": {}
       },
-      "id": "81dd724e-4f97-48b7-ac65-c6207dc60977",
-      "name": "Update current_matches",
+      "id": "fcf26cde-ba2b-456f-94a9-84c455c4af90",
+      "name": "Make volunteer unavailable",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4200,
-        660
+        4260,
+        40
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
     {
       "parameters": {
-        "content": "updates match",
+        "resource": "user",
+        "operation": "update",
+        "id": "={{$json[\"zendesk_user_id\"]}}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "indisponivel_sem_vagas"
+              }
+            ]
+          }
+        }
+      },
+      "id": "b607eaa2-6811-4db0-aa5b-2b2ad1585ae7",
+      "name": "Status da Mulher = Indisponivel - Sem Vagas",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4260,
+        240
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "53a6dfc0-564c-46c6-ba31-a373e2b718ac",
+              "leftValue": "={{ $json.calculated_current_matches }}",
+              "rightValue": "={{ $json.max_matches }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "a2bc3ae3-1aab-441f-85c1-1b45156b8492",
+              "leftValue": "={{ $json.condition }}",
+              "rightValue": "indisponivel_sem_vagas",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "5aa70f2d-be80-474e-a176-715448ec9d9a",
+      "name": "Should make volunteer available?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3900,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
+        "options": {}
+      },
+      "id": "d021aba6-a378-4422-90b8-be1e5102c44d",
+      "name": "Make volunteer available",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        4260,
+        580
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{$json[\"zendesk_user_id\"]}}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "Disponível"
+              }
+            ]
+          }
+        }
+      },
+      "id": "00821dc9-0f87-4f09-8491-746527805546",
+      "name": "Status da Mulher = Disponível",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4260,
+        820
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "updates match based on volunteer form",
         "height": 80,
         "width": 238.13661201650135
       },
-      "id": "1df017cf-b41e-49ab-9939-9f968b2e0ba3",
-      "name": "Sticky Note2",
+      "id": "9a6af1cd-4e2a-4035-9587-1dedaf21102b",
+      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2140,
-        300
+        5060,
+        320
       ]
     }
   ],
@@ -1235,6 +1145,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2024-04-10T15:42:15.000Z",
-  "versionId": "6d16cd57-0bc8-46a2-a492-e41ff79f4f6b"
+  "updatedAt": "2024-04-16T20:52:16.000Z",
+  "versionId": "20431b7f-bc37-47ec-9d58-683abb0c7c31"
 }
