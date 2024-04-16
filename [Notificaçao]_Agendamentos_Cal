@@ -12,6 +12,60 @@
         ]
       ]
     },
+    "Busca o pedido de acolhimento com status social_worker": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status pedido de acolhimento",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do acolhimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca o pedido de acolhimento com status social_worker1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status pedido de acolhimento1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do acolhimento 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSR": {
+      "main": [
+        [
+          {
+            "node": "Busca o pedido de acolhimento com status social_worker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSR1": {
+      "main": [
+        [
+          {
+            "node": "Busca o pedido de acolhimento com status social_worker1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Switch": {
       "main": [
         [
@@ -59,8 +113,8 @@
       "type": "n8n-nodes-base.calTrigger",
       "typeVersion": 2,
       "position": [
-        540,
-        280
+        -260,
+        300
       ],
       "webhookId": "577771d1-a071-4c89-b718-a4212f5b149d",
       "credentials": {
@@ -96,7 +150,7 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        1080,
+        1300,
         60
       ],
       "credentials": {
@@ -131,7 +185,7 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        1080,
+        1200,
         260
       ],
       "credentials": {
@@ -166,13 +220,203 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        1080,
-        440
+        560,
+        540
       ],
       "credentials": {
         "slackOAuth2Api": {
           "id": "01G85hUbLT4VlY92",
           "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "\nselect * from \"match\".support_requests sr where status  = 'social_worker' and msr_id  = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "fe5359ac-433b-4bcc-87a8-08cf774035ce",
+      "name": "Busca o pedido de acolhimento com status social_worker",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        680,
+        760
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "Assistente Social: Agendado"
+              }
+            ]
+          }
+        }
+      },
+      "id": "499e25c3-dc89-4557-a2a8-4b51ea3efc26",
+      "name": "Atualiza status do acolhimento",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        640
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \"match\".support_requests set status = 'scheduled_social_worker' WHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO \"match\".support_request_status_history\n(support_request_id, status, created_at)\nVALUES( {{ $json.support_request_id }}, 'scheduled_social_worker', CURRENT_TIMESTAMP);",
+        "options": {}
+      },
+      "id": "307669e5-1a6c-4990-9ff6-404c97210762",
+      "name": "Atualiza status pedido de acolhimento",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1060,
+        860
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "\nselect * from \"match\".support_requests sr where status  = 'scheduled_social_worker' and msr_id  = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "a2582413-2f3e-4aa3-b72d-742423695978",
+      "name": "Busca o pedido de acolhimento com status social_worker1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1500,
+        440
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \"match\".support_requests set status = 'social_worker' WHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO \"match\".support_request_status_history\n(support_request_id, status, created_at)\nVALUES( {{ $json.support_request_id }}, 'social_worker', CURRENT_TIMESTAMP);",
+        "options": {}
+      },
+      "id": "7eea6773-c956-4995-905b-cc64a36439a1",
+      "name": "Atualiza status pedido de acolhimento1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1900,
+        640
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "search",
+        "filters": {
+          "query": "={{ $json.responses.email.value }}"
+        }
+      },
+      "id": "cede8f6d-9012-4bdd-893c-c322f73643ca",
+      "name": "Busca MSR",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        460,
+        760
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "search",
+        "filters": {
+          "query": "={{ $json.responses.email.value }}"
+        }
+      },
+      "id": "a690cd9b-c054-4527-b5fa-d3a5445c8206",
+      "name": "Busca MSR1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        440
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "Encaminhamento: Assistente Social"
+              }
+            ]
+          }
+        }
+      },
+      "id": "9c327e04-93fb-46c9-bb96-2f17236512d2",
+      "name": "Atualiza status do acolhimento 1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        420
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
         }
       }
     },
@@ -258,7 +502,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        760,
+        220,
         280
       ]
     }
@@ -292,12 +536,12 @@
           "responses": {
             "name": {
               "label": "your_name",
-              "value": "Anne Luaryel ",
+              "value": "MSR Dev Teste ",
               "isHidden": false
             },
             "email": {
               "label": "email_address",
-              "value": "luaryelmedeiros@gmail.com",
+              "value": "msr.dev.mapa@gmail.com",
               "isHidden": false
             },
             "location": {
@@ -334,8 +578,8 @@
           },
           "attendees": [
             {
-              "email": "luaryelmedeiros@gmail.com",
-              "name": "Anne Luaryel ",
+              "email": "msr.dev.mapa@gmail.com",
+              "name": "MSR dev Teste",
               "firstName": "",
               "lastName": "",
               "timeZone": "America/Sao_Paulo",
@@ -411,11 +655,11 @@
   },
   "staticData": {
     "node:Cal Trigger": {
-      "webhookId": "9e77ec5a-3410-4ac5-afcb-2e0a677ed8ce"
+      "webhookId": "c17dff6c-6a3b-4d01-b5ea-a90edacd56e2"
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-04-08T18:21:42.000Z",
-  "versionId": "d2aa5b1f-5f61-4ffe-af0e-c01e5cc0fb8f"
+  "updatedAt": "2024-04-16T21:04:20.000Z",
+  "versionId": "d9887a7b-cc30-4dec-b344-39b330477155"
 }
