@@ -5,7 +5,56 @@
       "main": [
         [
           {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Email list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email list": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Limit",
             "type": "main",
             "index": 0
           }
@@ -14,14 +63,81 @@
     },
     "Edit Image": {
       "main": [
-        []
+        [
+          {
+            "node": "Extract From File",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Google Drive": {
+    "Extract From File": {
       "main": [
         [
           {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Envia certificado para as multiplicadoras",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          },
+          {
             "node": "Edit Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia certificado para as multiplicadoras": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
@@ -43,14 +159,20 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        540,
+        500,
         280
       ]
     },
     {
       "parameters": {
         "operation": "text",
-        "text": "Viviane Dias",
+        "dataPropertyName": "=data",
+        "text": "={{ $json.name }}",
+        "fontSize": 60,
+        "fontColor": "#622565",
+        "positionX": "={{ 1000 - 12 * $json.name.length }}",
+        "positionY": 630,
+        "lineLength": 120,
         "options": {
           "fileName": "certificado",
           "format": "png"
@@ -61,8 +183,8 @@
       "type": "n8n-nodes-base.editImage",
       "typeVersion": 1,
       "position": [
-        980,
-        280
+        2220,
+        180
       ]
     },
     {
@@ -70,8 +192,10 @@
         "operation": "download",
         "fileId": {
           "__rl": true,
+          "value": "1de699dN6EyRjIVEnU4Llms73gYKdsJW8",
           "mode": "list",
-          "value": ""
+          "cachedResultName": "[MOB] Certificados.png",
+          "cachedResultUrl": "https://drive.google.com/file/d/1de699dN6EyRjIVEnU4Llms73gYKdsJW8/view?usp=drivesdk"
         },
         "options": {}
       },
@@ -80,8 +204,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        760,
-        280
+        920,
+        540
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -89,6 +213,142 @@
           "name": "Google Drive account"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "items[0].json = {\n    value: [\n  {\n    \"email\": \"bsdeab@gmail.com\",\n    \"name\": \"Beatriz Silva de Almeida Barros\"\n  },\n  {\n    \"email\": \"michelle.romeiro.brito@gmail.com\",\n    \"name\": \"Michelle Romeiro\"\n  },\n  {\n    \"email\": \"luciana_family@hotmail.com\",\n    \"name\": \"Luciana Alves de Jesus \"\n  },\n  {\n    \"email\": \"loisecosta@id.uff.br\",\n    \"name\": \"Loise da Costa Santos\"\n  },\n  {\n    \"email\": \"luana.ribeiro.capela@gmail.com\",\n    \"name\": \"Luana Capela\"\n  },\n  { \"email\": \"lauravitorino@me.com\", \"name\": \"Laura Vitorino\" },\n  {\n    \"email\": \"lbarcellosc@ufrrj.br\",\n    \"name\": \"Letícia Barcellos Castelar Vieira\"\n  },\n  {\n    \"email\": \"fernanda.regina028@gmail.com\",\n    \"name\": \"Fernanda Regina da Silva\"\n  },\n  {\n    \"email\": \"manupirespirolo@hotmail.com\",\n    \"name\": \"Manuela Pires Pirolo\"\n  },\n  {\n    \"email\": \"contato.analuisahickmann@gmail.com\",\n    \"name\": \"Ana Luisa Hickmann \"\n  },\n  {\n    \"email\": \"carolinaemoura.adv@gmail.com\",\n    \"name\": \"Carolina Elias de Moura\"\n  },\n  { \"email\": \"rtsantannads@gmail.com\", \"name\": \"Rute Sant Anna \" },\n  {\n    \"email\": \"amanda.vivianee@gmail.com\",\n    \"name\": \"Amanda Viviane Chaves Neres\"\n  },\n  {\n    \"email\": \"cbandeira.angela@gmail.com\",\n    \"name\": \"Angela Bandeira \"\n  },\n  {\n    \"email\": \"deborahtoledoc@gmail.com\",\n    \"name\": \"Deborah Conceição Toledo Camara\"\n  },\n  { \"email\": \"03liviamedeiros@gmail.com\", \"name\": \"Livia Medeiros \" },\n  {\n    \"email\": \"ellendijure@gmail.com\",\n    \"name\": \"Ellen Caroline Oliveira das Neves\"\n  },\n  {\n    \"email\": \"mariana.martins@fm.usp.br\",\n    \"name\": \"Mariana Gomes Martins\"\n  },\n  {\n    \"email\": \"Isabela.mrcavalcante@gmail.com\",\n    \"name\": \"Isabela Cavalcante\"\n  },\n  {\n    \"email\": \"claudiakaroline09@gmail.com\",\n    \"name\": \"Cláudia Karoline da Conceição de Oliveira \"\n  },\n  { \"email\": \"Camilalobogama@gmail.com\", \"name\": \"Camila Alves\" },\n  {\n    \"email\": \"psicarolinelira@gmail.com\",\n    \"name\": \"Caroline Lira Ferreira\"\n  },\n  { \"email\": \"irlannadias@gmail.com\", \"name\": \"Irlanna Dias Ramos\" },\n  { \"email\": \"apnlins099@gmail.com\", \"name\": \"Ana Paula Neves Lins\" },\n  { \"email\": \"iasminpiresmilfont@gmail.com\", \"name\": \"Iasmin Pires\" },\n  {\n    \"email\": \"lizflorencio12@gmail.com\",\n    \"name\": \"Elizama Florencio\"\n  },\n  {\n    \"email\": \"marciaissenguele@gmail.com\",\n    \"name\": \"Márcia Cândido Issenguele\"\n  },\n  {\n    \"email\": \"beatriznascimento.santanasantos@gmail.com\",\n    \"name\": \"Beatriz Nascimento Santana Santos\"\n  },\n  { \"email\": \"julianasreis1@gmail.com\", \"name\": \"Juliana\" },\n  {\n    \"email\": \"talinesantosps@gmail.com\",\n    \"name\": \"Mônica Taline Reis Santos\"\n  },\n  {\n    \"email\": \"Isabelflorenciom@gmail.com\",\n    \"name\": \"Isabel Florêncio Monteiro Tabosa Pinheiro \"\n  },\n  {\n    \"email\": \"leticiapereirapsico@gmail.com\",\n    \"name\": \"Maria Letícia Pereira da Silva\"\n  },\n  {\n    \"email\": \"leticiab.rodrigues@outlook.com\",\n    \"name\": \"Letícia Batista Rodrigues\"\n  },\n  { \"email\": \"italanathaliafs@gmail.com\", \"name\": \"Ítala Ferreira\" },\n  { \"email\": \"rebecalima.psy@gmail.com\", \"name\": \"Rebeca Lima\" },\n  {\n    \"email\": \"rafaela.figueredo1@outlook.com\",\n    \"name\": \"Rafaela Figueredo Rocha\"\n  },\n  {\n    \"email\": \"helencristinasouza@hotmail.com\",\n    \"name\": \"Helen Cristina Souza de Jesus\"\n  },\n  {\n    \"email\": \"rafa.cris.santtos@gmail.com\",\n    \"name\": \"Rafaela Cristina da Silva dos Santos \"\n  },\n  {\n    \"email\": \"leticiareisnovaes2007@gmail.com\",\n    \"name\": \"Letícia Reis \"\n  },\n  {\n    \"email\": \"psi.deboramarianna@gmail.com\",\n    \"name\": \"Débora Marianna Vila Nova Santos\"\n  },\n  {\n    \"email\": \"beatrizbarbosa14@yahoo.com\",\n    \"name\": \"Beatriz Barbosa Lopes\"\n  },\n  {\n    \"email\": \"julia.nogueirabarros@gmail.com\",\n    \"name\": \"Julia Nogueira de Barros \"\n  },\n  {\n    \"email\": \"isabellabarbosaa04@gmail.com\",\n    \"name\": \"Isabella Soares Barbosa\"\n  },\n  {\n    \"email\": \"raquelpastordesantana@gmail.com\",\n    \"name\": \"Raquel Pastor\"\n  },\n  { \"email\": \"aetsaap@gmail.com\", \"name\": \"Ana Eduarda\" },\n  {\n    \"email\": \"Lanadecastrosou@gmail.com\",\n    \"name\": \"Lana de Castro Souza\"\n  },\n  {\n    \"email\": \"millenafreitasv@gmail.com\",\n    \"name\": \"Millena Maria Freitas Leocádio Vieira\"\n  },\n  {\n    \"email\": \"carolinasfvieira@gmail.com\",\n    \"name\": \"Carolina Vieira\"\n  },\n  {\n    \"email\": \"contato.analuisahickmann@gmail.com\",\n    \"name\": \"Ana Luisa Hickmann\"\n  },\n  { \"email\": \"grazigomesk@outlook.com\", \"name\": \"Graziela Karina \" },\n  {\n    \"email\": \"aetsaap@gmail.com\",\n    \"name\": \"Ana Eduarda Teixeira Seixas de Azevedo\"\n  },\n  { \"email\": \"sbenzi@fordham.edu\", \"name\": \"Sofia Benzi \" },\n  {\n    \"email\": \"angelicarnogueira@hotmail.com\",\n    \"name\": \"Angelica Raimundo Nogueira\"\n  },\n  { \"email\": \"tete.laurinha2020@gmail.com\", \"name\": \"ester laura\" },\n  {\n    \"email\": \"iasminpiresmilfont@gmail.com\",\n    \"name\": \"Iasmin Pires Milfont\"\n  },\n  {\n    \"email\": \"ellendijure@gmail.com\",\n    \"name\": \"Ellen Caroline Oliveira das Neves\"\n  },\n  {\n    \"email\": \"bgelangauskas@gmail.com\",\n    \"name\": \"Bruna Gelangauskas\"\n  },\n  { \"email\": \"raquelpastordesantana@gmail.com\", \"name\": \"Raquel\" },\n  {\n    \"email\": \"bsdeab@gmail.com\",\n    \"name\": \"Beatriz Silva de Almeida Barros\"\n  },\n  {\n    \"email\": \"leticiaseestudos@gmail.com \",\n    \"name\": \"Letícia Santos França \"\n  },\n  { \"email\": \"rosanadrea@yahoo.com\", \"name\": \"Rosana Dorea Castro\" },\n  {\n    \"email\": \"monteirosjamilly@gmail.com\",\n    \"name\": \"Jamilly Monteiro\"\n  },\n  {\n    \"email\": \"luciana_family@hotmail.com\",\n    \"name\": \"Luciana Alves de Jesus\"\n  },\n  {\n    \"email\": \"michelle.romeiro.brito@gmail.com\",\n    \"name\": \"Michelle Romeiro\"\n  },\n  {\n    \"email\": \"Ingrid.g.ss@hotmail.com\",\n    \"name\": \"Ingrid Gomes da Silva \"\n  },\n  {\n    \"email\": \"eduarda.cambraia23@gmail.com\",\n    \"name\": \"Elaine Eduarda Sampaio Cambraia\"\n  },\n  {\n    \"email\": \"isabelflorenciom@gmail.com\",\n    \"name\": \"isabel florencio\"\n  },\n  {\n    \"email\": \"deborahtoledoc@gmail.com\",\n    \"name\": \"Deborah Conceição Toledo Camara\"\n  },\n  {\n    \"email\": \"Jenifer.rodrigues.tjpa@gmail.com\",\n    \"name\": \"Jenifer N Sodré Rodrigues\"\n  },\n  {\n    \"email\": \"gabrsluna@gmail.com\",\n    \"name\": \"Ionara Gabriella Santiago Luna \"\n  },\n  {\n    \"email\": \"anabeatrizlopesdesouza570@gmail.com\",\n    \"name\": \"Ana Beatriz Lopes de Souza\"\n  },\n  {\n    \"email\": \"camila.vila.nova@hotmail.com\",\n    \"name\": \"camila vila nova \"\n  },\n  {\n    \"email\": \"psi.camilass@outlook.com\",\n    \"name\": \"Camila Souza da Silva \"\n  },\n  { \"email\": \"claudiakaroline09@gmail.com\", \"name\": \"Cláudia \" },\n  { \"email\": \"apnlins099@gmail.com\", \"name\": \"Ana Paula Neves Lins\" },\n  {\n    \"email\": \"loisecosta@id.uff.br\",\n    \"name\": \"Loise da Costa Santos\"\n  },\n  { \"email\": \"jhudysouzza@gmail.com\", \"name\": \"Jhudy Souza\" },\n  { \"email\": \"talinesantosps@gmail.com\", \"name\": \"Taline Santos\" },\n  {\n    \"email\": \"laurapessoa804390@gmail.com\",\n    \"name\": \"Maria Laura Pessoa Magalhães\"\n  },\n  {\n    \"email\": \"julia.nogueirabarros@gmail.com\",\n    \"name\": \"Júlia Nogueira de Barros\"\n  },\n  {\n    \"email\": \"gabrielarobertapsi@gmail.com\",\n    \"name\": \"Gabriela Roberta\"\n  },\n  {\n    \"email\": \"cbandeira.angela@gmail.com\",\n    \"name\": \"Angela Bandeira \"\n  },\n  {\n    \"email\": \"03liviamedeiros@gmail.com\",\n    \"name\": \"Livia Medeiros dos Santos\"\n  },\n  {\n    \"email\": \"millenafreitasv@gmail.com\",\n    \"name\": \"Millena Freitas \"\n  },\n  {\n    \"email\": \"hsarges2004@gmail.com\",\n    \"name\": \"Hevellen de Jesus Bichara \"\n  },\n  {\n    \"email\": \"lauravitorino@me.com\",\n    \"name\": \"Laura Furtado Vitorino\"\n  },\n  { \"email\": \"isabellabarbosaa04@gmail.com\", \"name\": \"Isabella\" },\n  {\n    \"email\": \"mariana.rosetti.maia.mrm@gmail.com\",\n    \"name\": \"Mariana Rosetti Mais \"\n  },\n  {\n    \"email\": \"bianca.marquessilva2016@gmail.com\",\n    \"name\": \"Bianca Marques da silva\"\n  },\n  {\n    \"email\": \"contato.analuisahickmann@gmail.com\",\n    \"name\": \"Ana Luisa\"\n  },\n  {\n    \"email\": \"lizflorencio12@gmail.com\",\n    \"name\": \"Elizama Florencio\"\n  },\n  { \"email\": \"thaiscervini@hotmail.com\", \"name\": \"Thais\" },\n  {\n    \"email\": \"mariana.martins@fm.usp.br\",\n    \"name\": \"Mariana Gomes Martins\"\n  },\n  {\n    \"email\": \"blessing.ifekaibeya@gmail.com \",\n    \"name\": \"Blessing Ifekaibeya \"\n  },\n  { \"email\": \"lbarcellosc@ufrrj.br\", \"name\": \"Letícia Barcellos \" },\n  {\n    \"email\": \"vrginiaazevedo@gmail.com\",\n    \"name\": \"Ana Virgínia Azevedo Oliveira\"\n  },\n  {\n    \"email\": \"amanda.vivianee@gmail.com\",\n    \"name\": \"Amanda Viviane Chaves Neres \"\n  },\n  {\n    \"email\": \"rafaela.figueredo1@outlook.com\",\n    \"name\": \"Rafaela Figueredo Rocha\"\n  },\n  {\n    \"email\": \"lulianeestudos@gmail.com\",\n    \"name\": \"Luliane Silva dos Santos \"\n  },\n  { \"email\": \"ellengalvao13@gmail.com\", \"name\": \"Ellen Galvão\" },\n  {\n    \"email\": \"alicemargfc@gmail.com\",\n    \"name\": \"Alice Mariana Gomes Franco Costa\"\n  },\n  { \"email\": \"italanathaliafs@gmail.com\", \"name\": \"Ítala Ferreira\" },\n  { \"email\": \"karen.antonia@hotmail.com\", \"name\": \"Karen\" },\n  {\n    \"email\": \"fernanda.regina028@gmail.com\",\n    \"name\": \"Fernanda Regina da Silva\"\n  },\n  {\n    \"email\": \"psicarolinelira@gmail.com\",\n    \"name\": \"Caroline Lira Ferreira\"\n  },\n  { \"email\": \"luanasegantini@gmail.com\", \"name\": \"Luana Segantini\" },\n  {\n    \"email\": \"Lanadecastrosou@gmail.com\",\n    \"name\": \"Lana de Castro Souza\"\n  },\n  { \"email\": \"andreia.santos07@unifesp.br\", \"name\": \"Andreia \" },\n  {\n    \"email\": \"ruane_nanny@hotmail.com\",\n    \"name\": \"Ruane Silva de Jesus\"\n  },\n  {\n    \"email\": \"mariaas.luiza25@outlook.com\",\n    \"name\": \"Maria Luiza Acosta dos Santos\"\n  },\n  {\n    \"email\": \"manupirespirolo@hotmail.com\",\n    \"name\": \"Manuela Pires Pirolo \"\n  },\n  {\n    \"email\": \"beatriznascimento.santanasantos@gmail.com\",\n    \"name\": \"Beatriz Nascimento Santana Santos\"\n  },\n  {\n    \"email\": \"psi.deboramarianna@gmail.com\",\n    \"name\": \"Débora Marianna Vila Nova Santos\"\n  },\n  {\n    \"email\": \"leticiapereirapsico@gmail.com\",\n    \"name\": \"Maria Letícia Pereira da Silva\"\n  },\n  {\n    \"email\": \"bea22.r2004@gmail.com\",\n    \"name\": \"Beatriz Rocha de Oliveira\"\n  },\n  {\n    \"email\": \"paula.anapatricia.17@hotmail.com\",\n    \"name\": \"Ana Patrícia\"\n  },\n  {\n    \"email\": \"dumspirospero@outlook.com.br\",\n    \"name\": \"Thamires Nogueira da Silva Santos \"\n  },\n  {\n    \"email\": \"mariadaniella.lima@hotmail.com\",\n    \"name\": \"Maria Daniella Rodrigues de Lima\"\n  },\n  {\n    \"email\": \"natalia.loliveira@upe.br\",\n    \"name\": \"Natália Oliveira \"\n  },\n  {\n    \"email\": \"beatrizbarbosa14@yahoo.com\",\n    \"name\": \"Beatriz Barbosa Lopes\"\n  },\n  {\n    \"email\": \"camilalobogama@gmail.com\",\n    \"name\": \"Camila Lobo da Gama Alves\"\n  },\n  {\n    \"email\": \"leticiareisnovaes2007@gmail.com\",\n    \"name\": \"Letícia Reis \"\n  },\n  {\n    \"email\": \"amandasantoslopes@hotmail.com\",\n    \"name\": \"Amanda Lopes\"\n  },\n  { \"email\": \"camilalobogama@gmail.com\", \"name\": \"Camila Alves\" },\n  { \"email\": \"juliana.sreis95@gmail.com\", \"name\": \"Juliana\" }\n]\n};\nreturn items;"
+      },
+      "id": "7381c61f-dce6-4886-aa93-54d6e36883de",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const newItems = [];\n\nfor (const item of items[0].json.value) {\n  newItems.push({ \n    json: {\n      ...item,\n      first_name: item.name.split(\" \")[0]\n    } \n  });\n}\n\nreturn newItems;"
+      },
+      "id": "18d6014e-0c22-48e0-b208-9b5b7531b509",
+      "name": "Email list",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "3b5d6cd2-2a5a-4aa7-b9ee-6c5ae4cb89ca",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "ea35bf05-2480-49f9-bfa0-cd02a7900a29",
+      "name": "Extract From File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"vivi@mapa.org.br\",\n  \"transactionalId\": \"clv2o2bjs0081dmf8a28rdywd\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "10400241-7d85-456c-9c34-9ad5938eed52",
+      "name": "Envia certificado para as multiplicadoras",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2900,
+        440
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "f6fe8707-01cd-4100-a289-0962cbad6db2",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2640,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ab49f799-19fa-46a1-8402-1b0f80393658",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1880,
+        260
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "1d43fa5b-dbd0-4a60-8267-7b7ed26617fc",
+      "name": "Limit",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "email",
+        "options": {}
+      },
+      "id": "bcdfcf41-9ff8-4de2-af48-c589b8006cd7",
+      "name": "Remove Duplicates",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        280
+      ]
     }
   ],
   "pinData": {},
@@ -98,6 +358,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-15T19:25:59.000Z",
-  "versionId": "dc1fdfd8-ca04-4567-8f26-124552cb1920"
+  "updatedAt": "2024-04-16T20:49:59.000Z",
+  "versionId": "ddd29d72-10cd-4d96-9f89-c5730f9b30aa"
 }
