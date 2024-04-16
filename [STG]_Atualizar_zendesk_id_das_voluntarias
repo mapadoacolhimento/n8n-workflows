@@ -16,7 +16,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -66,6 +66,29 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Make a iterteration with workflows array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        []
+      ]
     }
   },
   "createdAt": "2024-04-10T19:47:28.478Z",
@@ -102,6 +125,7 @@
         960,
         300
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "zendeskApi": {
           "id": "MYAFeR51noxrxEC7",
@@ -172,8 +196,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.2,
       "position": [
-        1200,
-        300
+        1420,
+        280
       ]
     },
     {
@@ -201,8 +225,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1440,
-        300
+        1720,
+        280
       ],
       "credentials": {
         "postgres": {
@@ -210,6 +234,59 @@
           "name": "[STG] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "6761fdeb-5290-4948-8ea9-6b08e2dc9f83",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7eceed67-7553-453a-b6e1-690f73bba121",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "id": "a4ca4859-8750-4e5d-848a-54a73b1dbfd1",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        260,
+        500
+      ]
     }
   ],
   "pinData": {},
@@ -219,6 +296,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-10T20:15:52.000Z",
-  "versionId": "272a6e77-9496-4873-a888-d2f4228dac9a"
+  "updatedAt": "2024-04-16T17:42:20.000Z",
+  "versionId": "dbf730aa-bb9c-4114-b47b-790f02868601"
 }
