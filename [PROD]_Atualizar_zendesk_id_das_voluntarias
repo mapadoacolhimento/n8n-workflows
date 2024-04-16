@@ -1,0 +1,276 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntarias sem zendesk ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make a iterteration with workflows array": {
+      "main": [
+        [
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Salva zendesk id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Make a iterteration with workflows array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntarias sem zendesk ID": {
+      "main": [
+        [
+          {
+            "node": "Make a iterteration with workflows array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salva zendesk id": {
+      "main": [
+        [
+          {
+            "node": "Make a iterteration with workflows array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-04-16T17:42:11.434Z",
+  "id": "GSDdjxq6LcSQly3i",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Atualizar zendesk id das voluntárias",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2420e0d9-bc6f-49a1-86da-41558dccef35",
+      "name": "When clicking \"Test Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "search",
+        "filters": {
+          "query": "={{ $json.email }}"
+        }
+      },
+      "id": "bc1b9c4a-c79a-48ca-8cd2-b22684893787",
+      "name": "Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        960,
+        300
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "id",
+              "type": "numberValue",
+              "numberValue": "={{ $('Busca voluntarias sem zendesk ID').item.json.id }}"
+            },
+            {
+              "name": "zendesk_user_id",
+              "type": "numberValue",
+              "numberValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "include": "none",
+        "options": {}
+      },
+      "id": "184fc2ff-3055-4080-b6e6-023bece3d025",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1420,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Make a iterteration with workflows array",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        740,
+        300
+      ],
+      "typeVersion": 1,
+      "id": "766acdba-5491-49d1-bb6a-00c7af007418"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "6761fdeb-5290-4948-8ea9-6b08e2dc9f83",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b7b75744-bea3-41dc-b2bc-1dbdcdc90fb8",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "volunteers",
+          "mode": "list",
+          "cachedResultName": "volunteers"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "zendesk_user_id",
+              "condition": "IS NULL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "421c041d-c370-49e7-b5c5-fc22eb23675c",
+      "name": "Busca voluntarias sem zendesk ID",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        440,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers SET zendesk_user_id = {{ $json.zendesk_user_id }}, updated_at = NOW() WHERE id = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "ff5704f9-b4af-44ea-a7a0-61260db8925d",
+      "name": "Salva zendesk id",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1720,
+        280
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-04-16T19:41:26.000Z",
+  "versionId": "039419f3-ea8e-43aa-85cf-63a7b34efdf2"
+}
