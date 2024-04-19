@@ -274,6 +274,69 @@
           }
         ]
       ]
+    },
+    "Voluntária preencheu o formulário": {
+      "main": [
+        [
+          {
+            "node": "Filtra apenas as infos que importam",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra apenas as infos que importam": {
+      "main": [
+        [
+          {
+            "node": "MSR entrou em contato?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSR entrou em contato?": {
+      "main": [
+        [
+          {
+            "node": "Busca match",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca match": {
+      "main": [
+        [
+          {
+            "node": "Encontrou o match?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou o match?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-04-10T15:28:34.873Z",
@@ -1122,6 +1185,175 @@
         5060,
         320
       ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMsrReachedOut(item){\n  const msrReachedOutField = item.json.body.data.fields.find(\n    (element) => element.label === 'msr_reached_out'\n  );\n  const msrReachedOutText = msrReachedOutField.options.find(\n    (element) => element.id == msrReachedOutField.value\n  ).text;\n\n  if(msrReachedOutText === 'Sim, ela entrou em contato') return true\n\n  return false\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"Já agendamos o primeiro atendimento\": \"in_contact\",\n    \"Não estou disponível para atendimento\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfor (const item of $input.all()) {\n  \n  const volunteerEmail = getHiddenFieldValue(item, 'volunteer_email');\n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const msrReachedOut = getMsrReachedOut(item);\n  const matchStatus = getMatchStatus(item);\n  \n  output.push(\n    {\n      \"volunteer_email\": volunteerEmail,\n      \"match_id\": matchId,\n      \"msr_reached_out\": msrReachedOut,\n      \"match_status\": matchStatus\n\n    }\n  )\n}\n\nreturn output;"
+      },
+      "id": "408c365b-4388-4136-a63a-75ee4d9a00d0",
+      "name": "Filtra apenas as infos que importam",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5320,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "httpMethod": "POST",
+        "path": "volunteer-update-match-status",
+        "options": {}
+      },
+      "id": "08cbadf0-43ae-40de-a63e-8af780ced71f",
+      "name": "Voluntária preencheu o formulário",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        5120,
+        480
+      ],
+      "webhookId": "2833ff82-a447-4f31-bfc4-1425f4d0f906",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b1be7b64-c40a-43e8-8208-b802c431bb7f",
+              "leftValue": "={{ $json.msr_reached_out }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3c8cb98a-3721-4f5b-b16d-1055d8b751f2",
+      "name": "MSR entrou em contato?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        5520,
+        480
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e463fae4-eb37-416d-b0ca-10b0ff4b2424",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        5860,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.matches\nSET status = '{{ $json.match_status }}', updated_at = NOW()\nWHERE match_id = {{ $json.match_id }};\n\nINSERT INTO match.matches (match_id, status, created_at)\nVALUES ({{ $json.match_id }}, '{{ $json.match_status }}', NOW())",
+        "options": {}
+      },
+      "id": "3908bf48-2a01-492f-b6fb-c62458a99e96",
+      "name": "Atualiza status do match",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        6200,
+        860
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_id,\n  msr_zendesk_ticket_id,\n  volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE match_id = {{ $json.match_id }}",
+        "options": {}
+      },
+      "id": "60241b78-1d51-4cca-a3b3-95d9233f9a94",
+      "name": "Busca match",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        5840,
+        460
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "dd3678ee-3ca4-4887-8696-ed25abe79551",
+              "leftValue": "={{ json.match_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b770c8d9-eec4-4a6f-b243-1cedb72b7922",
+      "name": "Encontrou o match?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        6060,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "match não encontrado"
+      },
+      "id": "aeb42689-d6b6-4b3e-a51f-7b1d8cb5e0b8",
+      "name": "Stop and Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        6280,
+        620
+      ]
     }
   ],
   "pinData": {},
@@ -1145,6 +1377,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2024-04-16T20:52:16.000Z",
-  "versionId": "20431b7f-bc37-47ec-9d58-683abb0c7c31"
+  "updatedAt": "2024-04-19T14:36:22.000Z",
+  "versionId": "12039d70-28a5-42aa-ab31-54f4cc5ef1bc"
 }
