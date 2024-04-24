@@ -1,0 +1,486 @@
+{
+  "active": false,
+  "connections": {
+    "Inicia export das respostas da survey": {
+      "main": [
+        [
+          {
+            "node": "Aguarda o export terminar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguarda o export terminar": {
+      "main": [
+        [
+          {
+            "node": "Verifica o status do export",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica o status do export": {
+      "main": [
+        [
+          {
+            "node": "Terminou de exportar as respostas?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Terminou de exportar as respostas?": {
+      "main": [
+        [
+          {
+            "node": "Obtém as respostas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aguarda o export terminar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtém as respostas": {
+      "main": [
+        [
+          {
+            "node": "Gera lista com user_id e finished",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gera lista com user_id e finished": {
+      "main": [
+        [
+          {
+            "node": "Finalizou a pesquisa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca e-mails e hashes": {
+      "main": [
+        [
+          {
+            "node": "Terminaram a pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca e-mails e nomes de todas as MSRs": {
+      "main": [
+        [
+          {
+            "node": "Busca e-mails e hashes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs que se cadastraram há 3 meses",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Inicia export das respostas da survey",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que se cadastraram há 3 meses": {
+      "main": [
+        [
+          {
+            "node": "Busca e-mails e nomes de todas as MSRs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Terminaram a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Envia email de lembrete para as que não finalizaram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalizou a pesquisa?": {
+      "main": [
+        [
+          {
+            "node": "Terminaram a pesquisa",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-04-24T14:55:19.531Z",
+  "id": "4jrDQ6oyAvugBtXB",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Envio de email busara pesquisa 3 meses",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://iad1.qualtrics.com/API/v3/surveys/SV_3ltkrtQdVfXYEt0/export-responses",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "format",
+              "value": "json"
+            },
+            {
+              "name": "compress",
+              "value": "false"
+            },
+            {
+              "name": "questionIds",
+              "value": "={{ [] }}"
+            },
+            {
+              "name": "surveyMetadataIds",
+              "value": "={{ ['finished'] }}"
+            },
+            {
+              "name": "embeddedDataIds",
+              "value": "={{ ['user_id'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b313c0b1-8f0a-4c1d-ae2e-b26ac42f101b",
+      "name": "Inicia export das respostas da survey",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2860,
+        1320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZSugxhtsMkxobBKb",
+          "name": "Busara Qualtrics API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "84293987-aad1-44dd-9984-ff4d7784a928",
+      "name": "Aguarda o export terminar",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        -2640,
+        1320
+      ],
+      "webhookId": "09a742e0-d5f5-4424-8d5f-399041900988"
+    },
+    {
+      "parameters": {
+        "url": "=https://iad1.qualtrics.com/API/v3/surveys/SV_3ltkrtQdVfXYEt0/export-responses/{{ $json.result.progressId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "2573f3ab-791f-4932-8ff2-47929524eeec",
+      "name": "Verifica o status do export",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2380,
+        1320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZSugxhtsMkxobBKb",
+          "name": "Busara Qualtrics API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f0b7e6b7-2a50-4082-8986-3ffb4437610e",
+              "leftValue": "={{ $json.result.status }}",
+              "rightValue": "complete",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1098cf4d-ca6a-4481-a92c-724b959edce8",
+      "name": "Terminou de exportar as respostas?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2060,
+        1340
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://iad1.qualtrics.com/API/v3/surveys/SV_3ltkrtQdVfXYEt0/export-responses/{{ $json.result.fileId }}/file",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "90658ded-ffd9-4d57-83e8-25cc6065c024",
+      "name": "Obtém as respostas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1820,
+        1320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZSugxhtsMkxobBKb",
+          "name": "Busara Qualtrics API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const answers = $input.all()[0].json.responses;\n\nconst output = [];\n\nfor (const item of answers){\n  if(!!item.values.user_id)\n    output.push({\n      'user_id': item.values.user_id,\n      'finished': item.values.finished,\n  \n    })\n}\n\nreturn output;"
+      },
+      "id": "de12daef-4e0c-4e01-b256-131a9a924497",
+      "name": "Gera lista com user_id e finished",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1620,
+        1320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    '{{ $json.first_name }}' first_name,\n    msr_email AS email,\n    hash AS user_id,\n    CONCAT('https://busara.iad1.qualtrics.com/jfe/form/SV_bfpbu1KfIDj34Q6?user_id=', hash) AS survey_link\nFROM match.busara_hashes\nwhere msr_email = '{{ $json.email }}'",
+        "options": {}
+      },
+      "id": "5829ec25-2bd4-4f70-86ca-0148b0f4850e",
+      "name": "Busca e-mails e hashes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        -1960,
+        980
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  user_id AS msr_id, \n  email,\n  SPLIT_PART(name, ' ', 1) AS first_name\nFROM solidarity_users\nWHERE organization_id = 360273031591\nAND user_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "39d33404-5fa1-4ff4-a003-7503bc99e644",
+      "name": "Busca e-mails e nomes de todas as MSRs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        -2420,
+        1000
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "bNRm9reAeAU1uKu5",
+          "name": "[STG] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 13
+            }
+          ]
+        }
+      },
+      "id": "c93bcfcd-c2c5-4367-965d-8aa6a70b62c5",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3140,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT msr_id\nFROM match.support_requests\nWHERE \n  DATE_TRUNC('day', created_at) >= (CURRENT_DATE - INTERVAL '90 DAYS')\n  AND status != 'duplicated'",
+        "options": {}
+      },
+      "id": "3b12f741-7216-4df0-a00e-1c2b4f28232d",
+      "name": "Busca MSRs que se cadastraram há 3 meses",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        -2800,
+        1000
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clvdteefr01569iklhmx72s8r\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "e839a6e2-daac-49f1-8f54-08ac46efd6d5",
+      "name": "Envia email de lembrete para as que não finalizaram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1000,
+        1020
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "options": {
+          "multipleMatches": "first"
+        }
+      },
+      "id": "5791a9ff-ae86-4fb5-b917-a35ad62a79a6",
+      "name": "Terminaram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        -1280,
+        980
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c051d753-ee13-4b40-9b4d-c257b7ddbb0e",
+              "leftValue": "={{ $json.finished }}",
+              "rightValue": "1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "6c770462-b936-44ef-b658-3b6f849d6fab",
+      "name": "Finalizou a pesquisa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1380,
+        1180
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-04-24T20:18:52.000Z",
+  "versionId": "ea6fa757-0f46-40c3-a6d8-f1e06b225119"
+}
