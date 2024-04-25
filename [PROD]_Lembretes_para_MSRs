@@ -317,6 +317,17 @@
         ]
       ]
     },
+    "Busca MSR": {
+      "main": [
+        [
+          {
+            "node": "seleciona campos necessários",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "determina qual a ação dependendo da quantidade de dias": {
       "main": [
         [
@@ -335,27 +346,21 @@
         ],
         [
           {
-            "node": "No Operation, do nothing2",
+            "node": "Atualiza pedido de acolhimento para expirado",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca MSR": {
-      "main": [
-        [
+          },
           {
-            "node": "seleciona campos necessários",
+            "node": "Atualiza status do acolhimento para encaminhado",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[15] Envia email de encaminhamento expirado",
             "type": "main",
             "index": 0
           }
         ]
-      ]
-    },
-    "Schedule Trigger1": {
-      "main": [
-        []
       ]
     }
   },
@@ -969,8 +974,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -1016,8 +1021,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -1061,6 +1066,27 @@
         2040,
         1680
       ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.msr_id }}"
+      },
+      "id": "63962c2d-cff2-4542-a9c8-968cf3747dd7",
+      "name": "Busca MSR",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1820,
+        1680
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1146,58 +1172,6 @@
         2220,
         1680
       ]
-    },
-    {
-      "parameters": {
-        "resource": "user",
-        "operation": "get",
-        "id": "={{ $json.msr_id }}"
-      },
-      "id": "63962c2d-cff2-4542-a9c8-968cf3747dd7",
-      "name": "Busca MSR",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        1820,
-        1680
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "triggerAtHour": 8,
-              "triggerAtMinute": 13
-            }
-          ]
-        }
-      },
-      "id": "d70020a9-662e-4fa3-8e8d-00ae5b1c9d43",
-      "name": "Schedule Trigger1",
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        1020,
-        1420
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "1638c0b1-c521-4d8a-8878-73c9b1b4c722",
-      "name": "No Operation, do nothing2",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        2480,
-        1940
-      ]
     }
   ],
   "pinData": {},
@@ -1216,7 +1190,7 @@
     }
   },
   "tags": [],
-  "triggerCount": 2,
-  "updatedAt": "2024-04-24T19:50:15.000Z",
-  "versionId": "e0579a74-5710-4ef5-8240-afcd7ac92726"
+  "triggerCount": 1,
+  "updatedAt": "2024-04-25T17:26:32.000Z",
+  "versionId": "90e4d9fb-df0c-4b9a-932f-52ee3dcafd98"
 }
