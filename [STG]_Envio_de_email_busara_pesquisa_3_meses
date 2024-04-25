@@ -81,6 +81,11 @@
             "node": "Terminaram a pesquisa",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Não terminaram a pesquisa",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -127,7 +132,7 @@
       "main": [
         [
           {
-            "node": "Envia email de lembrete para as que não finalizaram",
+            "node": "Envia email da pesquisa para as que finalizaram",
             "type": "main",
             "index": 0
           }
@@ -141,6 +146,24 @@
             "node": "Terminaram a pesquisa",
             "type": "main",
             "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Não terminaram a pesquisa",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Não terminaram a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Envia email de pesquisa para asque não finalizaram",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -317,8 +340,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        -1960,
-        980
+        -2080,
+        1000
       ],
       "credentials": {
         "postgres": {
@@ -390,32 +413,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clvdteefr01569iklhmx72s8r\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}\"\n  }\n}",
-        "options": {}
-      },
-      "id": "e839a6e2-daac-49f1-8f54-08ac46efd6d5",
-      "name": "Envia email de lembrete para as que não finalizaram",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        -1000,
-        1020
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "mode": "combine",
         "mergeByFields": {
           "values": [
@@ -434,8 +431,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        -1280,
-        980
+        -1260,
+        1000
       ]
     },
     {
@@ -470,8 +467,108 @@
       "typeVersion": 2,
       "position": [
         -1380,
-        1180
+        1340
       ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "options": {
+          "multipleMatches": "first"
+        }
+      },
+      "id": "96cf2b88-56e0-4424-a535-1c9fca85f531",
+      "name": "Terminaram a pesquisa1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "options": {
+          "multipleMatches": "first"
+        }
+      },
+      "id": "1e4c9cfc-8792-405c-bbba-066d61ec7699",
+      "name": "Não terminaram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        -980,
+        1340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clvdteefr01569iklhmx72s8r\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}&has_completed_baseline=false\"\n  }\n}",
+        "options": {}
+      },
+      "id": "eae268e1-4180-4316-bc1a-b24af1c42700",
+      "name": "Envia email de pesquisa para asque não finalizaram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -700,
+        1340
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clvdteefr01569iklhmx72s8r\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}&has_completed_baseline=true\"\n  }\n}",
+        "options": {}
+      },
+      "id": "e839a6e2-daac-49f1-8f54-08ac46efd6d5",
+      "name": "Envia email da pesquisa para as que finalizaram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1000,
+        1000
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -481,6 +578,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-24T20:18:52.000Z",
-  "versionId": "ea6fa757-0f46-40c3-a6d8-f1e06b225119"
+  "updatedAt": "2024-04-25T19:05:32.000Z",
+  "versionId": "db4e562f-f27f-42d7-92c4-501107e82c47"
 }
