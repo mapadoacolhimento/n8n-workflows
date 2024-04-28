@@ -1,0 +1,73 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs com match aguardando contato há 14 ou 28 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-04-28T22:38:04.590Z",
+  "id": "VVg1NBTjVkYDyKw7",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Lembretes para Voluntárias",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "id": "bdcfcfb1-5a9c-45b4-a2b6-ec6592a39244",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  support_type\nFROM match.matches\nWHERE DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '14 DAY'",
+        "options": {}
+      },
+      "id": "ec0d9625-c5c1-4c8e-8958-a27445022008",
+      "name": "Busca MSRs com match aguardando contato há 14 ou 28 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1000,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-04-28T22:43:22.000Z",
+  "versionId": "13b80def-d875-43db-838e-f7a2f8cfed5b"
+}
