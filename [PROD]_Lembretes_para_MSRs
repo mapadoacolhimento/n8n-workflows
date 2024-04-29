@@ -75,6 +75,11 @@
             "node": "Nem começaram a pesquisa",
             "type": "main",
             "index": 1
+          },
+          {
+            "node": "Finalizou a pesquisa?1",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -291,6 +296,11 @@
             "node": "Busca pedidos de acolhimento sem agendamento",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca MSRs que se cadastraram há 3 meses",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -359,6 +369,84 @@
             "node": "[15] Envia email de encaminhamento expirado",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que se cadastraram há 3 meses": {
+      "main": [
+        [
+          {
+            "node": "Busca e-mails e nomes de todas as MSRs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Terminaram a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "[RESPODERAM] Envia email da pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Não terminaram a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "[NÃO RESPODERAM]Envia email de pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca e-mails e hashes1": {
+      "main": [
+        [
+          {
+            "node": "Terminaram a pesquisa",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Não terminaram a pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca e-mails e nomes de todas as MSRs1": {
+      "main": [
+        [
+          {
+            "node": "Busca e-mails e hashes1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalizou a pesquisa?1": {
+      "main": [
+        [
+          {
+            "node": "Terminaram a pesquisa",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Não terminaram a pesquisa",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
@@ -872,8 +960,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
       "position": [
-        1360,
-        360
+        1280,
+        340
       ]
     },
     {
@@ -1172,6 +1260,204 @@
         2220,
         1680
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT msr_id\nFROM match.support_requests\nWHERE \n  DATE_TRUNC('day', created_at) >= (CURRENT_DATE - INTERVAL '90 DAYS')\n  AND status != 'duplicated'",
+        "options": {}
+      },
+      "id": "96704ef5-3c8f-4236-a23e-29d21761848e",
+      "name": "Busca MSRs que se cadastraram há 3 meses",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1960,
+        920
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "options": {
+          "multipleMatches": "first"
+        }
+      },
+      "id": "d3d7f93f-2f62-42e0-bae2-fd6b6e6fb6e1",
+      "name": "Terminaram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        3660,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "options": {
+          "multipleMatches": "first"
+        }
+      },
+      "id": "f259390d-0a5c-458f-bf40-8e41df4abdf8",
+      "name": "Não terminaram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        3860,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clvdteefr01569iklhmx72s8r\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}&has_completed_baseline=true\"\n  }\n}",
+        "options": {}
+      },
+      "id": "9ee848ca-0340-4599-b6d0-fd27b9273618",
+      "name": "[RESPODERAM] Envia email da pesquisa",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3880,
+        920
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clvldt03j01dk14cjzi6g5u7l\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n   \"survey_link\": \"{{ $json.survey_link }}&has_completed_baseline=false\"\n  }\n}",
+        "options": {}
+      },
+      "id": "b71fb2a3-1351-4489-a2f2-9cb6f94d9eeb",
+      "name": "[NÃO RESPODERAM]Envia email de pesquisa",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        4140,
+        1280
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    '{{ $json.first_name }}' first_name,\n    msr_email AS email,\n    hash AS user_id,\n    CONCAT('https://busara.iad1.qualtrics.com/jfe/form/SV_bfpbu1KfIDj34Q6?user_id=', hash) AS survey_link\nFROM match.busara_hashes\nwhere msr_email = '{{ $json.email }}'",
+        "options": {}
+      },
+      "id": "13880fa3-4b28-4e9d-a120-ed4074fda858",
+      "name": "Busca e-mails e hashes1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2400,
+        920
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  user_id AS msr_id, \n  email,\n  SPLIT_PART(name, ' ', 1) AS first_name\nFROM solidarity_users\nWHERE organization_id = 360273031591\nAND user_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "dcf5c79d-c321-4ae8-9db8-923560c80969",
+      "name": "Busca e-mails e nomes de todas as MSRs1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2180,
+        920
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c051d753-ee13-4b40-9b4d-c257b7ddbb0e",
+              "leftValue": "={{ $json.finished }}",
+              "rightValue": "1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "5dfa1b81-fdd4-4979-acf7-7f8cf6de35bf",
+      "name": "Finalizou a pesquisa?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3460,
+        1280
+      ]
     }
   ],
   "pinData": {},
@@ -1191,6 +1477,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-04-26T17:56:36.000Z",
-  "versionId": "764cced3-d161-4c40-96cc-edc66b207f56"
+  "updatedAt": "2024-04-29T20:47:01.000Z",
+  "versionId": "04a5fd66-efe5-4915-afcd-592270d20a07"
 }
