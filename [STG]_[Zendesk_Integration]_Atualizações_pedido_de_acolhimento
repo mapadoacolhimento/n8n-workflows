@@ -301,7 +301,7 @@
       "main": [
         [
           {
-            "node": "É um novo status?",
+            "node": "O status atual é waiting_contact?",
             "type": "main",
             "index": 0
           }
@@ -315,45 +315,11 @@
         ]
       ]
     },
-    "É um novo status?": {
-      "main": [
-        [
-          {
-            "node": "Qual o status do acolhimento?",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Atualiza status do match",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Obtém o transactionaId da Voluntária": {
       "main": [
         [
           {
             "node": "email Voluntária - atendimento iniciado",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "MSR ou Voluntária preencheu o formulário": {
-      "main": [
-        [
-          {
-            "node": "Filtra apenas as infos que importam",
             "type": "main",
             "index": 0
           }
@@ -385,11 +351,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "email Voluntária - encaminhamento interrompido": {
-      "main": [
-        []
       ]
     },
     "Busca infos da MSR e da Voluntária": {
@@ -434,16 +395,45 @@
         ]
       ]
     },
-    "Qual o status do acolhimento?": {
+    "O status atual é waiting_contact?": {
       "main": [
         [
           {
-            "node": "ticket Voluntária - atendimento iniciado",
+            "node": "Qual o novo status do acolhimento?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSR ou Voluntária preencheu o formulário": {
+      "main": [
+        [
+          {
+            "node": "Filtra apenas as infos que importam",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qual o novo status do acolhimento?": {
+      "main": [
+        [
+          {
+            "node": "ticket MSR - atendimento iniciado2",
             "type": "main",
             "index": 0
           },
           {
-            "node": "ticket MSR - atendimento iniciado2",
+            "node": "ticket Voluntária - atendimento iniciado",
             "type": "main",
             "index": 0
           },
@@ -451,16 +441,17 @@
             "node": "Busca infos da MSR e da Voluntária1",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Atualiza status do match",
+            "type": "main",
+            "index": 0
           }
         ],
+        [],
         [
           {
             "node": "ticket MSR - encaminhamento interrompido",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca infos da MSR e da Voluntária",
             "type": "main",
             "index": 0
           },
@@ -476,6 +467,11 @@
           },
           {
             "node": "ticket MSR - encaminhamento interrompido1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca infos da MSR e da Voluntária",
             "type": "main",
             "index": 0
           }
@@ -1332,7 +1328,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"Ela me respondeu, mas não estava mais disponível\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "408c365b-4388-4136-a63a-75ee4d9a00d0",
       "name": "Filtra apenas as infos que importam",
@@ -1354,8 +1350,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        6200,
-        260
+        6740,
+        -20
       ],
       "credentials": {
         "postgres": {
@@ -1433,38 +1429,6 @@
       ]
     },
     {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "24c712a9-5da0-47cf-85ab-3b8d6795bb22",
-              "leftValue": "={{ $json.new_status }}",
-              "rightValue": "={{ $json.current_status }}",
-              "operator": {
-                "type": "string",
-                "operation": "notEquals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "5054b3e7-0da4-4cc8-81b8-de1a38f18f60",
-      "name": "É um novo status?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        6020,
-        460
-      ]
-    },
-    {
       "parameters": {},
       "id": "c9558a72-d16c-49d9-ab23-6cf07d15e0ab",
       "name": "No Operation, do nothing1",
@@ -1503,8 +1467,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        6820,
-        -80
+        6760,
+        -480
       ],
       "credentials": {
         "zendeskApi": {
@@ -1539,8 +1503,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        6820,
-        -280
+        6760,
+        -680
       ],
       "credentials": {
         "zendeskApi": {
@@ -1565,8 +1529,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        7120,
-        -80
+        7060,
+        -480
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1591,8 +1555,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        7380,
-        160
+        7320,
+        -240
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1610,8 +1574,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        7120,
-        160
+        7060,
+        -240
       ]
     },
     {
@@ -1640,8 +1604,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        6820,
-        700
+        6940,
+        1200
       ],
       "credentials": {
         "zendeskApi": {
@@ -1666,36 +1630,13 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        7380,
-        1440
+        7480,
+        1920
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "XrvtxHAVgwwJ3r6q",
           "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "volunteer-update-match-status",
-        "authentication": "headerAuth",
-        "options": {}
-      },
-      "id": "08cbadf0-43ae-40de-a63e-8af780ced71f",
-      "name": "MSR ou Voluntária preencheu o formulário",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1.1,
-      "position": [
-        5120,
-        480
-      ],
-      "webhookId": "2833ff82-a447-4f31-bfc4-1425f4d0f906",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "BhcubpnINJanuVaZ",
-          "name": "Tally API"
         }
       }
     },
@@ -1706,8 +1647,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        7080,
-        700
+        7200,
+        1200
       ],
       "webhookId": "81756717-b55e-4931-8c96-cdb8b400e111"
     },
@@ -1737,8 +1678,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        7560,
-        460
+        7660,
+        1000
       ],
       "credentials": {
         "zendeskApi": {
@@ -1763,8 +1704,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        7380,
-        1200
+        7480,
+        1680
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1784,8 +1725,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        6840,
-        1200
+        6940,
+        1680
       ],
       "credentials": {
         "postgres": {
@@ -1805,8 +1746,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        6820,
-        160
+        6760,
+        -240
       ],
       "credentials": {
         "postgres": {
@@ -1836,8 +1777,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        7380,
-        1740
+        7480,
+        2220
       ],
       "credentials": {
         "zendeskApi": {
@@ -1857,8 +1798,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        7380,
-        1940
+        7480,
+        2420
       ],
       "credentials": {
         "postgres": {
@@ -1878,13 +1819,102 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        7560,
-        700
+        7680,
+        1200
       ],
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
           "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "assigneeEmail": "marcia@nossas.org",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "encaminhamento_interrompido"
+              }
+            ]
+          },
+          "internalNote": "Fomos informadas pelo formulário que o encaminhamento foi interrompido",
+          "status": "pending",
+          "tags": []
+        }
+      },
+      "id": "509d8c37-8794-499f-b402-23f4317d1752",
+      "name": "ticket MSR - encaminhamento interrompido1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        6940,
+        1440
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "24c712a9-5da0-47cf-85ab-3b8d6795bb22",
+              "leftValue": "={{ $json.current_status }}",
+              "rightValue": "=waiting_contact",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5054b3e7-0da4-4cc8-81b8-de1a38f18f60",
+      "name": "O status atual é waiting_contact?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        6020,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "volunteer-update-match-status",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "08cbadf0-43ae-40de-a63e-8af780ced71f",
+      "name": "MSR ou Voluntária preencheu o formulário",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        5120,
+        480
+      ],
+      "webhookId": "2833ff82-a447-4f31-bfc4-1425f4d0f906",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
         }
       }
     },
@@ -1923,6 +1953,30 @@
                 },
                 "conditions": [
                   {
+                    "id": "75fb8a5f-30df-4495-9a4f-712baef0f960",
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "waiting_contact",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "não mudar o status"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
                     "id": "4f3fd665-2742-4831-b7d0-d005e78b34e5",
                     "leftValue": "={{ $json.new_status }}",
                     "rightValue": "interrupted_before_support",
@@ -1943,47 +1997,13 @@
         "options": {}
       },
       "id": "e73120e1-42b1-4e38-b449-cf4210a5cb11",
-      "name": "Qual o status do acolhimento?",
+      "name": "Qual o novo status do acolhimento?",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
         6380,
         440
       ]
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
-        "updateFields": {
-          "assigneeEmail": "marcia@nossas.org",
-          "customFieldsUi": {
-            "customFieldsValues": [
-              {
-                "id": 360014379412,
-                "value": "encaminhamento_interrompido"
-              }
-            ]
-          },
-          "internalNote": "Fomos informadas pelo formulário que o encaminhamento foi interrompido",
-          "status": "pending",
-          "tags": []
-        }
-      },
-      "id": "509d8c37-8794-499f-b402-23f4317d1752",
-      "name": "ticket MSR - encaminhamento interrompido1",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        6820,
-        940
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
     }
   ],
   "pinData": {},
@@ -2007,6 +2027,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2024-04-28T22:34:18.000Z",
-  "versionId": "90d1318b-18a3-47e3-87a6-568c3404ff0b"
+  "updatedAt": "2024-04-29T20:34:01.000Z",
+  "versionId": "62607008-c5f0-4377-a0f5-b9cb4a661f62"
 }
