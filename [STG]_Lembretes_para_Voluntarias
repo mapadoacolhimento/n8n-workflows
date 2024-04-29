@@ -5,7 +5,18 @@
       "main": [
         [
           {
-            "node": "Busca MSRs com match aguardando contato há 14 ou 28 dias",
+            "node": "Busca matches aguardando contato há 14 ou 28 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca matches aguardando contato há 14 ou 28 dias": {
+      "main": [
+        [
+          {
+            "node": "Busca informações da MSR e da Voluntária",
             "type": "main",
             "index": 0
           }
@@ -42,11 +53,11 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  support_type\nFROM match.matches\nWHERE DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '14 DAY'",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY'\n  OR DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '7 DAY'",
         "options": {}
       },
       "id": "ec0d9625-c5c1-4c8e-8958-a27445022008",
-      "name": "Busca MSRs com match aguardando contato há 14 ou 28 dias",
+      "name": "Busca matches aguardando contato há 14 ou 28 dias",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
@@ -59,6 +70,27 @@
           "name": "[STG] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "050524ad-1c9c-4fab-a056-f04ea4501815",
+      "name": "Busca informações da MSR e da Voluntária",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1240,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -68,6 +100,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-28T22:43:22.000Z",
-  "versionId": "13b80def-d875-43db-838e-f7a2f8cfed5b"
+  "updatedAt": "2024-04-29T17:43:14.000Z",
+  "versionId": "315bcf67-d16c-4979-b8be-26a0914e36c9"
 }
