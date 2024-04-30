@@ -22,6 +22,22 @@
           }
         ]
       ]
+    },
+    "Busca informações da MSR e da Voluntária": {
+      "main": [
+        [
+          {
+            "node": "[MSR] Envia email de lembrete",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Voluntaria] Envia email de lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-04-28T22:38:04.590Z",
@@ -46,14 +62,14 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        720,
+        360,
         340
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY'\n  OR DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '7 DAY'",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '28 DAY'\n  OR DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY'",
         "options": {}
       },
       "id": "ec0d9625-c5c1-4c8e-8958-a27445022008",
@@ -61,7 +77,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1000,
+        660,
         340
       ],
       "credentials": {
@@ -82,13 +98,65 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1240,
+        880,
         340
       ],
       "credentials": {
         "postgres": {
-          "id": "GPnWI2OL5IjBv3zm",
-          "name": "[PROD] Bonde"
+          "id": "bNRm9reAeAU1uKu5",
+          "name": "[STG] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "3b4c5f1c-6025-4056-a7ec-c0ece8f017e5",
+      "name": "[MSR] Envia email de lembrete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1180,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "c81c3eaf-d518-4005-bb90-b0b62fba51f2",
+      "name": "[Voluntaria] Envia email de lembrete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1140,
+        220
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
         }
       }
     }
@@ -100,6 +168,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-29T17:43:14.000Z",
-  "versionId": "315bcf67-d16c-4979-b8be-26a0914e36c9"
+  "updatedAt": "2024-04-30T21:15:37.000Z",
+  "versionId": "de4ca73d-629d-4ab5-8ba6-d7fef4faf2f1"
 }
