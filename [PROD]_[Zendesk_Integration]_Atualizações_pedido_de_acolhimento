@@ -284,6 +284,33 @@
           }
         ]
       ]
+    },
+    "Busca matches aguardando contato há 14 ou 28 dias": {
+      "main": [
+        [
+          {
+            "node": "Busca informações da MSR e da Voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca informações da MSR e da Voluntária": {
+      "main": [
+        [
+          {
+            "node": "[MSR] Envia email de lembrete",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Voluntaria] Envia email de lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-04-10T15:17:23.968Z",
@@ -295,9 +322,9 @@
   "nodes": [
     {
       "parameters": {
-        "authentication": "basicAuth",
         "httpMethod": "POST",
         "path": "update-support-request",
+        "authentication": "basicAuth",
         "options": {}
       },
       "id": "925959b8-87b6-4555-83fe-d1b1f309040e",
@@ -579,9 +606,9 @@
     },
     {
       "parameters": {
-        "authentication": "basicAuth",
         "httpMethod": "POST",
         "path": "update-match",
+        "authentication": "basicAuth",
         "options": {}
       },
       "id": "780f613f-79c3-41ee-ae05-5973a6675a6a",
@@ -1216,6 +1243,100 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '28 DAY'\n  OR DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY'",
+        "options": {}
+      },
+      "id": "ebb13996-00cf-43c6-8b1e-4a0ca234e1ae",
+      "name": "Busca matches aguardando contato há 14 ou 28 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        580,
+        2160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "c1f3db04-4b92-496b-894d-48cb237c0e3a",
+      "name": "Busca informações da MSR e da Voluntária",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        780,
+        2160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "8659a8e6-60b9-4230-80ed-ac282c6921b2",
+      "name": "[MSR] Envia email de lembrete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1160,
+        2360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "013e90d0-d586-4abc-97d8-9e9c3da0dd23",
+      "name": "[Voluntaria] Envia email de lembrete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1140,
+        2100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
     }
   ],
   "pinData": {
@@ -1274,6 +1395,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2024-04-23T23:13:08.000Z",
-  "versionId": "331144fb-fba0-477a-a6fd-172e8962c69f"
+  "updatedAt": "2024-04-30T21:03:06.000Z",
+  "versionId": "f2f40da5-242d-43f4-a308-dd1562c49710"
 }
