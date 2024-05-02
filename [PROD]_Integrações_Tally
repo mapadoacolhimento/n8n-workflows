@@ -210,11 +210,6 @@
         ],
         [
           {
-            "node": "ticket Voluntária - Voluntária não respondeu",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Busca infos da MSR e da Voluntária2",
             "type": "main",
             "index": 0
@@ -265,6 +260,11 @@
         [
           {
             "node": "email MSR - Voluntária não respondeu",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - Voluntária não respondeu",
             "type": "main",
             "index": 0
           }
@@ -1182,30 +1182,6 @@
     },
     {
       "parameters": {
-        "operation": "update",
-        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
-        "updateFields": {
-          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu",
-          "status": "open"
-        }
-      },
-      "id": "6c06d244-b376-4ce6-a53a-5be3a1011723",
-      "name": "ticket Voluntária - Voluntária não respondeu",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        2480,
-        2720
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -1233,7 +1209,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "50090dc7-0c7b-41e2-806b-fbc5ccd42c89",
@@ -1363,6 +1339,28 @@
           "name": "Tally API"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
+        "jsonParameters": true,
+        "updateFieldsJson": "={\n  \"status\": \"open\",\n  \"comment\": {\n    \"public\": true,\n    \"author_id\": 377511446392,\n    \"body\": \"Olá, {{ $json.volunteer_first_name }}! Como você está?!\\n\\nHá um tempo atrás enviamos o seu contato para **{{ $json.msr_first_name}}** e fomos informadas que a mesma está com dificuldade de contatá-la.\\n\\nDiante disso, estamos entrando em contato para saber se está tudo bem? Você se encontra com algum problema tecnológico? **Caso tenha alterado seus dados de contato, é imprescindível que nos mantenha informadas.**\\n\\nPedimos que nos informe se você continua disponível para o atendimento e se segue conosco no projeto. A não resposta deste e-mail será compreendida pela equipe como inatividade e seu cadastro será suspenso.\\n\\nLembramos que as acolhidas são orientadas a entrar em contato via WhatsApp (mensagem de texto ou voz) e também por meio de ligação telefônica. Esteja atenta a essas formas de contato!\\n\\nÉ muito importante contar com a sua participação na nossa rede de voluntárias, obrigada por poder contar com você <3\\n\\nAbraços,\\nEquipe do Mapa do Acolhimento\"\n  }\n}"
+      },
+      "id": "2696720a-bb04-46d7-904d-0e0a813eef21",
+      "name": "ticket Voluntária - Voluntária não respondeu",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        2740
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1375,6 +1373,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-05-01T01:26:39.000Z",
-  "versionId": "962db375-d360-4694-b313-cb1541d73d27"
+  "updatedAt": "2024-05-02T20:05:10.000Z",
+  "versionId": "8c4a83ff-547e-4937-96b5-52a48a475912"
 }
