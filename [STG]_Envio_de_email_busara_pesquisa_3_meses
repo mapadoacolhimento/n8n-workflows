@@ -83,7 +83,7 @@
             "index": 0
           },
           {
-            "node": "Não terminaram a pesquisa",
+            "node": "Não fizeram a pesquisa",
             "type": "main",
             "index": 0
           }
@@ -128,6 +128,33 @@
         ]
       ]
     },
+    "Finalizou a pesquisa?": {
+      "main": [
+        [
+          {
+            "node": "Terminaram a pesquisa",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Não fizeram a pesquisa",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Não fizeram a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Terminaram a pesquisa": {
       "main": [
         [
@@ -139,25 +166,7 @@
         ]
       ]
     },
-    "Finalizou a pesquisa?": {
-      "main": [
-        [
-          {
-            "node": "Terminaram a pesquisa",
-            "type": "main",
-            "index": 1
-          }
-        ],
-        [
-          {
-            "node": "Não terminaram a pesquisa",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Não terminaram a pesquisa": {
+    "Filter": {
       "main": [
         [
           {
@@ -422,17 +431,15 @@
             }
           ]
         },
-        "options": {
-          "multipleMatches": "first"
-        }
+        "options": {}
       },
       "id": "5791a9ff-ae86-4fb5-b917-a35ad62a79a6",
       "name": "Terminaram a pesquisa",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        -1260,
-        1000
+        -1180,
+        980
       ]
     },
     {
@@ -466,8 +473,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -1380,
-        1340
+        -1400,
+        1320
       ]
     },
     {
@@ -496,30 +503,6 @@
     },
     {
       "parameters": {
-        "mode": "combine",
-        "mergeByFields": {
-          "values": [
-            {
-              "field1": "user_id",
-              "field2": "user_id"
-            }
-          ]
-        },
-        "options": {
-          "multipleMatches": "first"
-        }
-      },
-      "id": "1e4c9cfc-8792-405c-bbba-066d61ec7699",
-      "name": "Não terminaram a pesquisa",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        -980,
-        1340
-      ]
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -534,8 +517,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -1000,
-        1000
+        -900,
+        980
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -560,8 +543,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -700,
-        1340
+        -680,
+        1280
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -569,6 +552,62 @@
           "name": "Loops API"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c4527a1f-762c-4a82-b9c9-242e6651fe16",
+              "leftValue": "={{ $json.first_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9359a329-4f59-4166-aa9a-bf04d18665a3",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        -920,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "options": {}
+      },
+      "id": "1e4c9cfc-8792-405c-bbba-066d61ec7699",
+      "name": "Não fizeram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        -1100,
+        1280
+      ]
     }
   ],
   "pinData": {},
@@ -578,6 +617,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-29T20:38:37.000Z",
-  "versionId": "9ff44bf1-a6c4-4b63-ba26-722df5e24d7a"
+  "updatedAt": "2024-05-02T13:16:12.000Z",
+  "versionId": "16e4fd41-61ef-457c-80ef-37f61eb2b804"
 }
