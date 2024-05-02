@@ -215,11 +215,6 @@
         ],
         [
           {
-            "node": "ticket Voluntária - Voluntária não respondeu",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Busca infos da MSR e da Voluntária2",
             "type": "main",
             "index": 0
@@ -270,6 +265,11 @@
         [
           {
             "node": "email MSR - Voluntária não respondeu",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - Voluntária não respondeu",
             "type": "main",
             "index": 0
           }
@@ -1202,18 +1202,16 @@
       "parameters": {
         "operation": "update",
         "id": "={{ $json.volunteer_zendesk_ticket_id }}",
-        "updateFields": {
-          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu",
-          "status": "open"
-        }
+        "jsonParameters": true,
+        "updateFieldsJson": "={\n  \"status\": \"open\",\n  \"comment\": {\n    \"public\": true,\n    \"author_id\": 377511446392,\n    \"body\": \"Olá, {{ $json.volunteer_first_name }}! Como você está?!\\n\\nHá um tempo atrás enviamos o seu contato para **{{ $json.msr_first_name}}** e fomos informadas que a mesma está com dificuldade de contatá-la.\\n\\nDiante disso, estamos entrando em contato para saber se está tudo bem? Você se encontra com algum problema tecnológico? **Caso tenha alterado seus dados de contato, é imprescindível que nos mantenha informadas.**\\n\\nPedimos que nos informe se você continua disponível para o atendimento e se segue conosco no projeto. A não resposta deste e-mail será compreendida pela equipe como inatividade e seu cadastro será suspenso.\\n\\nLembramos que as acolhidas são orientadas a entrar em contato via WhatsApp (mensagem de texto ou voz) e também por meio de ligação telefônica. Esteja atenta a essas formas de contato!\\n\\nÉ muito importante contar com a sua participação na nossa rede de voluntárias, obrigada por poder contar com você <3\\n\\nAbraços,\\nEquipe do Mapa do Acolhimento\"\n  }\n}"
       },
       "id": "9b5a892c-dc93-4a2c-acde-b02653aa11b3",
       "name": "ticket Voluntária - Voluntária não respondeu",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2260,
-        2860
+        2460,
+        2920
       ],
       "credentials": {
         "zendeskApi": {
@@ -1251,7 +1249,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "b91fdf63-fd26-4405-80ba-2f96c2fdf193",
@@ -1460,6 +1458,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-04-29T21:20:17.000Z",
-  "versionId": "93e553b7-110b-40c2-9c47-72cc7ec9650f"
+  "updatedAt": "2024-05-02T20:04:01.000Z",
+  "versionId": "1326ffc3-6190-4886-8180-671846766f5a"
 }
