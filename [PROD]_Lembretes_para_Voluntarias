@@ -1,5 +1,5 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
     "Schedule Trigger": {
       "main": [
@@ -27,7 +27,47 @@
       "main": [
         [
           {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
             "node": "[Voluntaria] Envia email de lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Voluntaria] Envia email de lembrete": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -47,7 +87,7 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 10
+              "triggerAtHour": 9
             }
           ]
         }
@@ -64,7 +104,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '28 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY')",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '28 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY')",
         "options": {}
       },
       "id": "ec0d9625-c5c1-4c8e-8958-a27445022008",
@@ -98,8 +138,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1140,
-        340
+        1540,
+        360
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -111,7 +151,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "f103798d-d5c4-4c39-ac00-2b75117f6b59",
@@ -144,6 +184,44 @@
         320,
         220
       ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e5098bf4-82a7-45dc-aba6-ec89ce593aa6",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "91611b4a-611d-4840-975d-2c2d70e3175d",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        360
+      ],
+      "webhookId": "822e69c1-468a-48b3-8514-51a5bf3a4c6d"
+    },
+    {
+      "parameters": {},
+      "id": "6ab5920c-7a54-411e-beaf-a491f324641c",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        160
+      ]
     }
   ],
   "pinData": {},
@@ -157,6 +235,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-05-01T01:28:21.000Z",
-  "versionId": "cdef6051-8ed3-4b6a-9369-8ce8c31f9a5d"
+  "updatedAt": "2024-05-02T18:57:36.000Z",
+  "versionId": "d890bf1c-e9c9-4130-9a9a-4267e074d824"
 }
