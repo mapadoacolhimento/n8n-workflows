@@ -301,6 +301,11 @@
             "node": "Busca MSRs que se cadastraram há 3 meses",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca matches aguardando contato há 14 ou 28 dias",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -349,17 +354,6 @@
         ]
       ]
     },
-    "Não terminaram a pesquisa": {
-      "main": [
-        [
-          {
-            "node": "[NÃO RESPODERAM]Envia email de pesquisa",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Busca e-mails e hashes1": {
       "main": [
         [
@@ -369,7 +363,7 @@
             "index": 0
           },
           {
-            "node": "Não terminaram a pesquisa",
+            "node": "Não fizeram a pesquisa",
             "type": "main",
             "index": 0
           }
@@ -394,11 +388,9 @@
             "node": "Terminaram a pesquisa",
             "type": "main",
             "index": 1
-          }
-        ],
-        [
+          },
           {
-            "node": "Não terminaram a pesquisa",
+            "node": "Não fizeram a pesquisa",
             "type": "main",
             "index": 1
           }
@@ -420,7 +412,7 @@
       "main": [
         [
           {
-            "node": "[MSR] Envia email de lembrete",
+            "node": "Loop Over Items2",
             "type": "main",
             "index": 0
           }
@@ -450,6 +442,68 @@
         [
           {
             "node": "determina qual a ação dependendo da quantidade de dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Não fizeram a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Filtrar somente as que tem as infos do BD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar somente as que tem as infos do BD": {
+      "main": [
+        [
+          {
+            "node": "[NÃO RESPODERAM]Envia email de pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "[MSR] Envia email de lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[MSR] Envia email de lembrete": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
             "type": "main",
             "index": 0
           }
@@ -955,7 +1009,7 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 13
+              "triggerAtHour": 9
             }
           ]
         }
@@ -1110,30 +1164,6 @@
     },
     {
       "parameters": {
-        "mode": "combine",
-        "mergeByFields": {
-          "values": [
-            {
-              "field1": "user_id",
-              "field2": "user_id"
-            }
-          ]
-        },
-        "options": {
-          "multipleMatches": "first"
-        }
-      },
-      "id": "f259390d-0a5c-458f-bf40-8e41df4abdf8",
-      "name": "Não terminaram a pesquisa",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 2.1,
-      "position": [
-        3860,
-        1280
-      ]
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -1175,7 +1205,7 @@
       "typeVersion": 4.1,
       "position": [
         4140,
-        1280
+        1240
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1257,7 +1287,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3460,
+        3320,
         1280
       ]
     },
@@ -1319,8 +1349,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2460,
-        -580
+        2880,
+        -560
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1495,6 +1525,100 @@
         2040,
         1680
       ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "user_id",
+              "field2": "user_id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "options": {}
+      },
+      "id": "825da843-b111-4760-a06f-897d01c012a0",
+      "name": "Não fizeram a pesquisa",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        3720,
+        1240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c4527a1f-762c-4a82-b9c9-242e6651fe16",
+              "leftValue": "={{ $json.first_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "14d5a22d-89f6-46e3-a2e5-ab43ca48439e",
+      "name": "Filtrar somente as que tem as infos do BD",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        3920,
+        1240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4559e851-2329-4c85-9013-f194637c74f7",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2480,
+        -580
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "ae9cd92f-2143-46f1-a2b6-66eb2b2e5e1f",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2680,
+        -560
+      ],
+      "webhookId": "e9756b7b-f369-472d-859c-2720f0e61c57"
+    },
+    {
+      "parameters": {},
+      "id": "88c657e0-fe44-4e07-bc33-a188458a85ed",
+      "name": "No Operation, do nothing2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        -740
+      ]
     }
   ],
   "pinData": {},
@@ -1514,6 +1638,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-05-01T01:28:14.000Z",
-  "versionId": "89677158-e638-4355-bcee-75fe1b19b4f1"
+  "updatedAt": "2024-05-02T22:49:54.000Z",
+  "versionId": "fd772f21-cada-4a90-96f8-4df8359c0c43"
 }
