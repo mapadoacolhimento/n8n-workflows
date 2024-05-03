@@ -1,0 +1,97 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias e corrige years_of_experience",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias e corrige years_of_experience": {
+      "main": [
+        [
+          {
+            "node": "Atualiza years_of_experience",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-05-02T18:40:28.632Z",
+  "id": "g3GoIdxT3w6jtEc4",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Migração table volunteers - years_of_experience",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "fc3c9c8d-6666-4dc6-a73f-57ec77fff284",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET years_of_experience = '{{ $json.new_years_of_experience }}'\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "8b9fe586-679f-4001-aae4-2b49c518f7f1",
+      "name": "Atualiza years_of_experience",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1180,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id AS volunteer_id,\n  CASE \n    WHEN years_of_experience = 'Não tenho experiência ' THEN 'no_experience'\n    WHEN years_of_experience IN ('Menos de 6 meses', 'Menos de 1 ano') THEN 'less_than_1_year'\n    WHEN years_of_experience IN ('Menos de 2 anos', 'Menos de 5 anos') THEN '1_to_5_years'\n    WHEN years_of_experience IN ('Menos de 10 anos') THEN '5_to_10_years'\n    ELSE years_of_experience\n  END AS new_years_of_experience\nFROM volunteers\nORDER BY 1",
+        "options": {}
+      },
+      "id": "0c071de3-daf9-4a52-82a6-9798368ce277",
+      "name": "Busca voluntárias e corrige years_of_experience",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        960,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-05-03T20:59:34.000Z",
+  "versionId": "f5d569e6-3ae1-46d5-ae35-433bbf4d0854"
+}
