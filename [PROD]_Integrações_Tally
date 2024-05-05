@@ -145,6 +145,11 @@
             "node": "Atualiza status da Voluntária",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca current_matches",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -298,6 +303,28 @@
         [
           {
             "node": "Filtra apenas as infos que importam",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca current_matches": {
+      "main": [
+        [
+          {
+            "node": "Deve atualizar o current_matches?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deve atualizar o current_matches?": {
+      "main": [
+        [
+          {
+            "node": "Atualiza current_matches",
             "type": "main",
             "index": 0
           }
@@ -1361,6 +1388,82 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    zendesk_user_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, zendesk_user_id, current_matches, max_matches, condition",
+        "options": {}
+      },
+      "id": "16c529ac-eb15-40ce-8779-67576fd55441",
+      "name": "Busca current_matches",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        3820,
+        4280
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "40361bb8-ee27-4874-8c13-bbaa181aaece",
+              "leftValue": "={{ $json.current_matches }}",
+              "rightValue": "={{ $json.calculated_current_matches }}",
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "290adaf9-406e-4549-ba30-2e2bfaba23b5",
+      "name": "Deve atualizar o current_matches?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        4040,
+        4280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "ff92d8a3-724a-47e7-9c0b-195cfbd9b982",
+      "name": "Atualiza current_matches",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        4280,
+        4260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1373,6 +1476,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-05-02T20:05:10.000Z",
-  "versionId": "8c4a83ff-547e-4937-96b5-52a48a475912"
+  "updatedAt": "2024-05-05T19:59:16.000Z",
+  "versionId": "c783e496-6259-45bf-8267-672e942d5376"
 }
