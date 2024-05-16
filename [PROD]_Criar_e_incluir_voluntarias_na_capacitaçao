@@ -1,0 +1,849 @@
+{
+  "active": true,
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Atualiza moodle_id da voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criou voluntária no Moodle": {
+      "main": [
+        [
+          {
+            "node": "Inserir voluntária na capacitação",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Forçar trocar senha no primeiro login do Moodle",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inseriu voluntária na capacitação": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cria voluntária no Moodle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria voluntária no Moodle": {
+      "main": [
+        [
+          {
+            "node": "Criou voluntária no Moodle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inserir voluntária na capacitação": {
+      "main": [
+        [
+          {
+            "node": "Inseriu voluntária na capacitação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza moodle_id da voluntária": {
+      "main": [
+        [
+          {
+            "node": "Envia email boas vindas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email boas vindas": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias recadastradas sem moodle_id": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar novas voluntárias sem moodle_id": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Cronjob 9am": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias recadastradas sem moodle_id",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar novas voluntárias sem moodle_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-05-16T20:03:46.522Z",
+  "id": "4zXczrHhxt4gT8kb",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Criar e incluir voluntárias na capacitação",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1eea5e83-fe53-4124-a53d-c451d759a9ba",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "output": "input2"
+      },
+      "id": "d0cb1652-0250-49d2-a525-e4b07a95d59d",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2380,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "9a08b95c-2739-4c64-9143-be105176d83f",
+              "leftValue": "={{ $json.exception }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "81e20c75-8423-41ed-8e5b-e6225680395a",
+      "name": "Criou voluntária no Moodle",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "9a08b95c-2739-4c64-9143-be105176d83f",
+              "leftValue": "={{ $json.exception }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0143d2da-e8b2-4ef1-a821-2884bfd551e4",
+      "name": "Inseriu voluntária na capacitação",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Não foi possível adicionar essa voluntária na capacitação: {{ $json.debuginfo }}"
+      },
+      "id": "af6aef45-8e0b-4155-8d1a-fcfb509fa0ff",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Não foi possível criar essa voluntária no Moodle: {{ $json.debuginfo }}"
+      },
+      "id": "3a6b6238-ef04-4e58-9163-da01efcead96",
+      "name": "Stop and Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 3,
+        "options": {}
+      },
+      "id": "372ce40c-935b-4100-902d-60306e7d68ca",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1380,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.PROD_MOODLE_API_URL }}/webservice/rest/server.php",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"moodlewsrestformat\": \"json\",\n  \"wsfunction\": \"core_user_create_users\",\n  \"users\": [\n    {\n      \"firstname\": \"{{ $json.first_name }}\",\n      \"lastname\": \"{{ $json.last_name }}\",\n      \"email\": \"{{ $json.email.toLowerCase() }}\",\n      \"username\": \"{{ $json.email.toLowerCase() }}\",\n      \"city\": \"{{ $json.city }}\",\n      \"customfields\": [\n        {\n          \"type\": \"occupation\",\n          \"value\": \"{{ $json.occupation === 'psychologist' ? 'Psicóloga' : 'Advogada' }}\"\n        },\n        { \"type\": \"volunteer_id\", \"value\": {{ $json.volunteer_id }} }\n      ],\n      \"auth\": \"manual\",\n      \"password\": \"Mapa2024!\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "id": "68507097-28a6-4e9d-969e-64c455a9b4e2",
+      "name": "Cria voluntária no Moodle",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        300
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "QnzXxPkf8ajWxfnP",
+          "name": "[PROD] Moodle Api Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.PROD_MOODLE_API_URL }}/webservice/rest/server.php",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"moodlewsrestformat\": \"json\",\n  \"wsfunction\": \"enrol_manual_enrol_users\",\n  \"enrolments\": [\n    {\n      \"roleid\": 5,\n      \"userid\": {{ $json.id }},\n      \"courseid\": 2\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "id": "bed3cd2c-3de7-4d27-a234-cc7c4f8aea77",
+      "name": "Inserir voluntária na capacitação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        160
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "QnzXxPkf8ajWxfnP",
+          "name": "[PROD] Moodle Api Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "volunteers",
+          "mode": "list",
+          "cachedResultName": "volunteers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "moodle_id": "={{ $json.id }}",
+            "email": "={{ $json.username }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "condition",
+              "displayName": "condition",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "zipcode",
+              "displayName": "zipcode",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "neighborhood",
+              "displayName": "neighborhood",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "latitude",
+              "displayName": "latitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "longitude",
+              "displayName": "longitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "register_number",
+              "displayName": "register_number",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "birth_date",
+              "displayName": "birth_date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "color",
+              "displayName": "color",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "gender",
+              "displayName": "gender",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "modality",
+              "displayName": "modality",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "fields_of_work",
+              "displayName": "fields_of_work",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "years_of_experience",
+              "displayName": "years_of_experience",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "approach",
+              "displayName": "approach",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "form_data_id",
+              "displayName": "form_data_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "occupation",
+              "displayName": "occupation",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "moodle_id",
+              "displayName": "moodle_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "form_entries_id",
+              "displayName": "form_entries_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "zendesk_user_id",
+              "displayName": "zendesk_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "availability",
+              "displayName": "availability",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "offers_libras_support",
+              "displayName": "offers_libras_support",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "street",
+              "displayName": "street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0b59dbfb-1cdd-4219-bc29-164018ca2c83",
+      "name": "Atualiza moodle_id da voluntária",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2580,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email.toLowerCase() }}\",\n \"transactionalId\": \"clrxm539201hk267xpve25i24\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email.toLowerCase() }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "83043a3a-8cbd-4ae5-b3da-ab4889baa7b4",
+      "name": "Envia email boas vindas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2820,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id as volunteer_id, \n  first_name, \n  last_name, \n  email, \n  occupation, \n  city \nFROM volunteers\nINNER JOIN volunteer_segments ON id = volunteer_id\nWHERE segment_name = 'recadastro_2024'\nAND years_of_experience != 'not_found'\nAND moodle_id IS NULL",
+        "options": {}
+      },
+      "id": "6e5046c5-274c-4252-8bf4-50075c26c468",
+      "name": "Busca voluntárias recadastradas sem moodle_id",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        800,
+        180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "ac9311e9-aa20-4d1d-916e-c0394847769a",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id as volunteer_id, \n  first_name, \n  last_name, \n  email, \n  occupation, \n  city \nFROM volunteers\nWHERE \n  moodle_id IS NULL AND \n  condition = 'cadastrada';",
+        "options": {}
+      },
+      "id": "a0bcd2a6-6010-4c5d-927c-61899565aa29",
+      "name": "Buscar novas voluntárias sem moodle_id",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        800,
+        420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO mdl_user_preferences (name, value, userid)\n  VALUES ('auth_forcepasswordchange', 1, {{ $json.id }});",
+        "options": {}
+      },
+      "id": "a975c985-e000-41bc-9d38-18367898e15e",
+      "name": "Forçar trocar senha no primeiro login do Moodle",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1980,
+        -60
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KHoy20BFgrBIpHYR",
+          "name": "[PROD] Moodle"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "5306d02e-a37c-4099-99d5-c989e3ded5a8",
+      "name": "Cronjob 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": {
+    "node:Cronjob 9am": {
+      "recurrencyRules": []
+    }
+  },
+  "tags": [
+    {
+      "createdAt": "2024-01-24T01:51:54.592Z",
+      "updatedAt": "2024-01-24T01:51:54.592Z",
+      "id": "9qHi7Mg3P0urkBHm",
+      "name": "volunteer"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-05-16T20:55:14.000Z",
+  "versionId": "93e2411b-2eb7-45f9-aa6b-c921e75ec7ca"
+}
