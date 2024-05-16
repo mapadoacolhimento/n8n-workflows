@@ -1,0 +1,843 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias recadastradas sem moodle_id",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar novas voluntárias sem moodle_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Atualiza moodle_id da voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criou voluntária no Moodle": {
+      "main": [
+        [
+          {
+            "node": "Inserir voluntária na capacitação",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Forçar troca de senha",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inseriu voluntária na capacitação": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cria voluntária no Moodle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria voluntária no Moodle": {
+      "main": [
+        [
+          {
+            "node": "Criou voluntária no Moodle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inserir voluntária na capacitação": {
+      "main": [
+        [
+          {
+            "node": "Inseriu voluntária na capacitação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza moodle_id da voluntária": {
+      "main": [
+        [
+          {
+            "node": "Envia email boas vindas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email boas vindas": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias recadastradas sem moodle_id": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar novas voluntárias sem moodle_id": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-05-16T15:58:14.545Z",
+  "id": "Lfi6c5BMDFFtwARc",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Criar e incluir voluntárias na capacitação",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "3b760ebd-d751-4526-abaa-0dbd866ee04b",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        440,
+        280
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "5cef726e-0b1c-4c91-b205-01fa1c28a7e2",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "output": "input2"
+      },
+      "id": "ff222fa0-d887-43a0-b0cb-284d900c2074",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2380,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO mdl_user_preferences (name, value, userid)\n  VALUES ('auth_forcepasswordchange', 1, {{ $json.id }});",
+        "options": {}
+      },
+      "id": "187c2249-dd9c-4553-93f6-b59d47819c38",
+      "name": "Forçar troca de senha",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1980,
+        -60
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "0VxNT807UnLQqzmg",
+          "name": "[STG] Moodle"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "9a08b95c-2739-4c64-9143-be105176d83f",
+              "leftValue": "={{ $json.exception }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bbd90256-8a29-4c80-8b0d-87bd1786983b",
+      "name": "Criou voluntária no Moodle",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "9a08b95c-2739-4c64-9143-be105176d83f",
+              "leftValue": "={{ $json.exception }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "025e4576-dcd6-4e04-a5b9-5573fccaf380",
+      "name": "Inseriu voluntária na capacitação",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Não foi possível adicionar essa voluntária na capacitação: {{ $json.debuginfo }}"
+      },
+      "id": "3cdf5dd5-dd37-4157-91c9-f066128bc09e",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Não foi possível criar essa voluntária no Moodle: {{ $json.debuginfo }}"
+      },
+      "id": "fe5ea4b1-90d0-466b-8fbc-5c8077cd8f15",
+      "name": "Stop and Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 3,
+        "options": {}
+      },
+      "id": "d1b5d1b0-3625-4ba0-8d9d-b8f23fc7b9b6",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1380,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.STG_MOODLE_API_URL }}/webservice/rest/server.php",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"moodlewsrestformat\": \"json\",\n  \"wsfunction\": \"core_user_create_users\",\n  \"users\": [\n    {\n      \"firstname\": \"{{ $json.first_name }}\",\n      \"lastname\": \"{{ $json.last_name }}\",\n      \"email\": \"{{ $json.email }}\",\n      \"username\": \"{{ $json.email }}\",\n      \"city\": \"{{ $json.city }}\",\n      \"customfields\": [\n        {\n          \"type\": \"occupation\",\n          \"value\": \"{{ $json.occupation === 'psychologist' ? 'Psicóloga' : 'Advogada' }}\"\n        },\n        { \"type\": \"volunteer_id\", \"value\": {{ $json.volunteer_id }} }\n      ],\n      \"auth\": \"manual\",\n      \"password\": \"Mapa2024!\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "id": "a48439ae-ae8d-4c12-aa07-f6f2c767a9d6",
+      "name": "Cria voluntária no Moodle",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        300
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "aABokySTCLeu9sbg",
+          "name": "[STG] Moodle Api Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.STG_MOODLE_API_URL }}/webservice/rest/server.php",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"moodlewsrestformat\": \"json\",\n  \"wsfunction\": \"enrol_manual_enrol_users\",\n  \"enrolments\": [\n    {\n      \"roleid\": 5,\n      \"userid\": {{ $json.id }},\n      \"courseid\": 2\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "id": "4219092b-8a64-4522-9e35-3ae5c34f8f50",
+      "name": "Inserir voluntária na capacitação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        160
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "aABokySTCLeu9sbg",
+          "name": "[STG] Moodle Api Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "volunteers",
+          "mode": "list",
+          "cachedResultName": "volunteers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "moodle_id": "={{ $json.id }}",
+            "email": "={{ $json.username }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "condition",
+              "displayName": "condition",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "zipcode",
+              "displayName": "zipcode",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "neighborhood",
+              "displayName": "neighborhood",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "latitude",
+              "displayName": "latitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "longitude",
+              "displayName": "longitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "register_number",
+              "displayName": "register_number",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "birth_date",
+              "displayName": "birth_date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "color",
+              "displayName": "color",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "gender",
+              "displayName": "gender",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "modality",
+              "displayName": "modality",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "fields_of_work",
+              "displayName": "fields_of_work",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "years_of_experience",
+              "displayName": "years_of_experience",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "approach",
+              "displayName": "approach",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "form_data_id",
+              "displayName": "form_data_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "occupation",
+              "displayName": "occupation",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "moodle_id",
+              "displayName": "moodle_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "form_entries_id",
+              "displayName": "form_entries_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "zendesk_user_id",
+              "displayName": "zendesk_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "availability",
+              "displayName": "availability",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "offers_libras_support",
+              "displayName": "offers_libras_support",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "street",
+              "displayName": "street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7f13f669-de10-4278-af17-3c230458a516",
+      "name": "Atualiza moodle_id da voluntária",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2580,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clrxm539201hk267xpve25i24\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email}}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "9becc753-7641-4259-a6c3-7c2846ea5479",
+      "name": "Envia email boas vindas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2820,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id as volunteer_id, \n  first_name, \n  last_name, \n  email, \n  occupation, \n  city \nFROM volunteers\nINNER JOIN volunteer_segments ON id = volunteer_id\nWHERE segment_name = 'recadastro_2024'\nAND years_of_experience != 'not_found'\nAND moodle_id IS NULL",
+        "options": {}
+      },
+      "id": "cddddff9-c1db-46b6-9f37-fe861c3f3e87",
+      "name": "Busca voluntárias recadastradas sem moodle_id",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        800,
+        180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "8d1a61b2-64c1-43ae-8a9d-c8433f3d79e7",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id as volunteer_id, \n  first_name, \n  last_name, \n  email, \n  occupation, \n  city \nFROM volunteers\nWHERE \n  moodle_id IS NULL AND \n  condition = 'cadastrada';",
+        "options": {}
+      },
+      "id": "c2904c0e-fc4c-4c0f-962d-8b8d7a7c5f01",
+      "name": "Buscar novas voluntárias sem moodle_id",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        800,
+        420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When clicking \"Test workflow\"": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-24T01:51:54.592Z",
+      "updatedAt": "2024-01-24T01:51:54.592Z",
+      "id": "9qHi7Mg3P0urkBHm",
+      "name": "volunteer"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-05-16T20:07:26.000Z",
+  "versionId": "4d1288f9-777b-402b-9693-93d8f709501f"
+}
