@@ -1,0 +1,65 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-05-16T22:04:43.575Z",
+  "id": "bRKCnQ3YFFCfbAic",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Match Diário",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "7fab1559-41ff-4810-802b-3fb5794d1aea",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  status,\n  COUNT(*)\nFROM match.support_requests\nGROUP BY 1\n",
+        "options": {}
+      },
+      "id": "d1ca9845-da65-4617-96c9-3935cf22fc97",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-05-16T22:06:37.000Z",
+  "versionId": "4d60a9be-b2ae-4da5-afb7-0f501e094c32"
+}
