@@ -174,7 +174,7 @@
       "main": [
         [
           {
-            "node": "Busca match",
+            "node": "Deve seguir?",
             "type": "main",
             "index": 0
           }
@@ -325,6 +325,24 @@
         [
           {
             "node": "Atualiza current_matches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deve seguir?": {
+      "main": [
+        [
+          {
+            "node": "Busca match",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
             "type": "main",
             "index": 0
           }
@@ -573,8 +591,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        780,
-        2380
+        660,
+        2460
       ]
     },
     {
@@ -1069,15 +1087,15 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfunction getShouldDoSomething(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusText === \"Ela não entrou em contato comigo\" ? false : true\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  const shouldDoSomething = getShouldDoSomething(item);\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus,\n      \"should_do_something\": shouldDoSomething,\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "f73fa1f0-ba78-432c-9862-d06d8af21010",
       "name": "Filtra apenas as infos que importam1",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1020,
-        2620
+        820,
+        2640
       ]
     },
     {
@@ -1333,8 +1351,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
       "position": [
-        800,
-        2620
+        640,
+        2640
       ],
       "webhookId": "2833ff82-a447-4f31-bfc4-1425f4d0f906",
       "credentials": {
@@ -1464,9 +1482,140 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "5b457790-b9c4-40ad-87fd-f5999ca42211",
+              "leftValue": "={{ $json.should_do_something }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "18753206-c1ea-49f0-ab00-bfbbad7eb5cf",
+      "name": "Deve seguir?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        2640
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "83f50f4c-53ad-408f-9cd3-0d47eb514f7a",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        2820
+      ]
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "MSR ou Voluntária preencheu o formulário": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "1245",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "content-type": "application/json",
+            "x-forwarded-for": "35.203.251.14",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-78bdf4fd45-l2mw9",
+            "x-real-ip": "35.203.251.14"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "23e5dcd3-cc75-47c0-bc95-3b58c5efcbc3",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2024-05-16T19:53:38.549Z",
+            "data": {
+              "responseId": "rJJWBR",
+              "submissionId": "rJJWBR",
+              "respondentId": "WP8k0a",
+              "formId": "nrlEq5",
+              "formName": "[VOLUNTÁRIA] Atualização de Status do Acolhimento",
+              "createdAt": "2024-05-16T19:53:38.000Z",
+              "fields": [
+                {
+                  "key": "question_8NR1VO_2eb88c30-c647-4421-9097-f08e5fe4ef98",
+                  "label": "msr_first_name",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "Camila"
+                },
+                {
+                  "key": "question_8NR1VO_cd56fcce-ed5b-4c88-9d56-19831b1a25bb",
+                  "label": "match_id",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "0"
+                },
+                {
+                  "key": "question_8NR1VO_00bd48b6-575a-4139-8852-73a6733b9e1d",
+                  "label": "volunteer_first_name",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "Maria"
+                },
+                {
+                  "key": "question_8NR1VO_af44ba31-1498-4665-9598-4fe7cdb154cd",
+                  "label": "match_status",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "Já iniciamos o atendimento"
+                },
+                {
+                  "key": "question_0VDQzN",
+                  "label": "match_status",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "a449c23a-5301-4ff8-ad79-c28078161f1c"
+                  ],
+                  "options": [
+                    {
+                      "id": "ae177a2c-3e4b-4527-a563-c6c0a5d05a16",
+                      "text": "Já iniciamos o atendimento"
+                    },
+                    {
+                      "id": "8c2f62de-f622-4590-934f-61eb9fc15a20",
+                      "text": "Não conseguirei atendê-la"
+                    },
+                    {
+                      "id": "a449c23a-5301-4ff8-ad79-c28078161f1c",
+                      "text": "Ela não entrou em contato comigo"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/volunteer-update-match-status",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -1476,6 +1625,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-05-05T19:59:16.000Z",
-  "versionId": "c783e496-6259-45bf-8267-672e942d5376"
+  "updatedAt": "2024-05-16T19:55:30.000Z",
+  "versionId": "05c654d3-21f6-426c-b2a7-ed72b18fa2e8"
 }
