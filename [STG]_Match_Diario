@@ -5,7 +5,63 @@
       "main": [
         [
           {
-            "node": "Postgres",
+            "node": "Busca support_requests de 2024 e 2023",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_requests de 2024 e 2023": {
+      "main": [
+        [
+          {
+            "node": "Ordena do mais antigo para o mais recente em cada ano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordena do mais antigo para o mais recente em cada ano": {
+      "main": [
+        [
+          {
+            "node": "Limite de 10 support_requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limite de 10 support_requests": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Chama o endpoint de match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chama o endpoint de match": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -13,8 +69,8 @@
       ]
     }
   },
-  "createdAt": "2024-05-16T22:04:43.575Z",
-  "id": "bRKCnQ3YFFCfbAic",
+  "createdAt": "2024-05-20T14:58:03.301Z",
+  "id": "78n66rJzsrwG7rqr",
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -22,7 +78,7 @@
   "nodes": [
     {
       "parameters": {},
-      "id": "7fab1559-41ff-4810-802b-3fb5794d1aea",
+      "id": "870b0ff0-18ec-4b6f-a273-12acd54947a1",
       "name": "When clicking \"Test workflow\"",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
@@ -33,24 +89,87 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT\n  status,\n  COUNT(*)\nFROM match.support_requests\nGROUP BY 1\n",
+        "maxItems": 10
+      },
+      "id": "cf479c2f-d673-466e-95ed-a3e04941855f",
+      "name": "Limite de 10 support_requests",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "ano",
+              "order": "descending"
+            },
+            {
+              "fieldName": "created_at"
+            }
+          ]
+        },
         "options": {}
       },
-      "id": "d1ca9845-da65-4617-96c9-3935cf22fc97",
-      "name": "Postgres",
+      "id": "5f7b71a0-e3c1-45b1-9947-bd4bc91ffcfa",
+      "name": "Ordena do mais antigo para o mais recente em cada ano",
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  *,\n  DATE_PART('year', created_at) AS ano\nFROM match.support_requests\nWHERE status = 'waiting_for_match'\nAND DATE_PART('year', created_at) IN (2023, 2024)",
+        "options": {}
+      },
+      "id": "e9e8fa31-6b98-4349-b30a-ed44ddf46231",
+      "name": "Busca support_requests de 2024 e 2023",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        940,
+        980,
         340
       ],
       "credentials": {
         "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c51377dc-2c58-4d59-84f2-d37053b9beb5",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1700,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e64a21ea-f81c-4d3a-8f70-d389c304dfb8",
+      "name": "Chama o endpoint de match",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1940,
+        360
+      ]
     }
   ],
   "pinData": {},
@@ -60,6 +179,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-05-16T22:06:37.000Z",
-  "versionId": "4d60a9be-b2ae-4da5-afb7-0f501e094c32"
+  "updatedAt": "2024-05-20T15:12:21.000Z",
+  "versionId": "9d88d63a-64a0-4ef1-a522-4c695627e6dc"
 }
