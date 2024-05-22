@@ -272,6 +272,16 @@
             "node": "ticket Voluntária - Voluntária não respondeu",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "ticket Voluntária - observação interna",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket MSR - observação interna",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1242,7 +1252,7 @@
       "typeVersion": 4.1,
       "position": [
         2700,
-        2960
+        3260
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1254,7 +1264,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "50090dc7-0c7b-41e2-806b-fbc5ccd42c89",
@@ -1398,7 +1408,7 @@
       "typeVersion": 1,
       "position": [
         2700,
-        2740
+        3040
       ],
       "credentials": {
         "zendeskApi": {
@@ -1526,6 +1536,52 @@
         1220,
         2820
       ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
+        }
+      },
+      "id": "2fce373d-cff8-4b4d-8037-40d8062a612b",
+      "name": "ticket Voluntária - observação interna",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        2840
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.msr_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
+        }
+      },
+      "id": "a6c6a0c6-44dc-4cf5-8ce4-e2d62ee67940",
+      "name": "ticket MSR - observação interna",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        3500
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -1625,6 +1681,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-05-16T19:55:30.000Z",
-  "versionId": "05c654d3-21f6-426c-b2a7-ed72b18fa2e8"
+  "updatedAt": "2024-05-22T14:34:16.000Z",
+  "versionId": "c6788925-f2e7-4559-9a9b-787b972dc674"
 }
