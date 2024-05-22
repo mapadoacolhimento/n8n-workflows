@@ -8,15 +8,9 @@
             "node": "Busca support_requests de 2024 e 2023",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca support_requests de 2024 e 2023": {
-      "main": [
-        [
+          },
           {
-            "node": "Ordena do mais antigo para o mais recente em cada ano",
+            "node": "Faz autenticação",
             "type": "main",
             "index": 0
           }
@@ -38,19 +32,29 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Une os dados com a autenticação",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Faz autenticação": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Loop Over Items": {
+    "Busca support_requests de 2024 e 2023": {
       "main": [
-        [],
         [
           {
-            "node": "Chama o endpoint de match",
+            "node": "Ordena do mais antigo para o mais recente em cada ano",
             "type": "main",
             "index": 0
           }
@@ -61,7 +65,25 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envia erro por Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Une os dados com a autenticação": {
+      "main": [
+        [
+          {
+            "node": "Chama o endpoint de match",
             "type": "main",
             "index": 0
           }
@@ -84,19 +106,6 @@
       "typeVersion": 1,
       "position": [
         720,
-        340
-      ]
-    },
-    {
-      "parameters": {
-        "maxItems": 10
-      },
-      "id": "cf479c2f-d673-466e-95ed-a3e04941855f",
-      "name": "Limite de 10 support_requests",
-      "type": "n8n-nodes-base.limit",
-      "typeVersion": 1,
-      "position": [
-        1460,
         340
       ]
     },
@@ -126,8 +135,33 @@
     },
     {
       "parameters": {
+        "url": "={{ $vars.STG_MATCH_LAMBDA_URL }}/sign",
+        "options": {}
+      },
+      "id": "de222349-83e5-4c79-a799-a86117f91cdc",
+      "name": "Faz autenticação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        140
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "cf479c2f-d673-466e-95ed-a3e04941855f",
+      "name": "Limite de 10 support_requests",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        340
+      ]
+    },
+    {
+      "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n  *,\n  DATE_PART('year', created_at) AS ano\nFROM match.support_requests\nWHERE status = 'waiting_for_match'\nAND DATE_PART('year', created_at) IN (2023, 2024)",
+        "query": "SELECT \n  *,\n  DATE_PART('year', created_at) AS ano\nFROM match.support_requests\nWHERE status = 'waiting_for_match'\nAND DATE_PART('year', created_at) IN (2023, 2024)\nAND support_request_id = 224554;",
         "options": {}
       },
       "id": "e9e8fa31-6b98-4349-b30a-ed44ddf46231",
@@ -147,28 +181,89 @@
     },
     {
       "parameters": {
-        "options": {}
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C06H7GA52A1",
+          "mode": "list",
+          "cachedResultName": "alertas-n8n"
+        },
+        "text": "=ERROR: Não foi possível criar um match para esse `support_request` '{{ $json.support_request_id  }}', por conta desse erro: {{ $json.error.message }} \n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
+        "otherOptions": {}
       },
-      "id": "c51377dc-2c58-4d59-84f2-d37053b9beb5",
-      "name": "Loop Over Items",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "id": "f26bb1b8-ea5e-41c3-8901-1d35a1370265",
+      "name": "Envia erro por Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
       "position": [
-        1700,
-        340
+        2620,
+        420
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "7b5e13ec-34c6-4668-ad99-189e21638d50",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        200
       ]
     },
     {
       "parameters": {
-        "options": {}
+        "method": "POST",
+        "url": "={{ $vars.STG_MATCH_LAMBDA_URL }}/handle-match",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n  \"supportRequest\": {\n        \"supportRequestId\": {{ $json.support_request_id }},\n        \"msrId\": {{ $json.msr_id }},\n        \"zendeskTicketId\": {{ $json.zendesk_ticket_id }},\n        \"supportType\": \"{{ $json.support_type }}\",\n        \"status\": \"{{ $json.status }}\",\n        \"supportExpertise\": \"{{ $json.support_expertise }}\",\n        \"priority\": null,\n        \"hasDisability\": null,\n        \"requiresLibras\": null,\n        \"acceptsOnlineSupport\": {{ $json.accepts_online_support || null}},\n        \"lat\": {{ $json.lat }},\n        \"lng\": {{ $json.lng }},\n        \"city\": \"{{ $json.city }}\",\n        \"state\": \"{{ $json.state }}\"\n  },\n  \"matchType\": \"daily\",\n  \"shouldRandomize\": false\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
       },
       "id": "e64a21ea-f81c-4d3a-8f70-d389c304dfb8",
       "name": "Chama o endpoint de match",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1940,
-        360
+        2260,
+        340
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIMsEMUNmopmC6DL",
+          "name": "Lambda Auth Token"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "d51de73b-a28c-48d4-9d93-fb5a01ebd408",
+      "name": "Une os dados com a autenticação",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1920,
+        340
       ]
     }
   ],
@@ -179,6 +274,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-05-20T15:12:21.000Z",
-  "versionId": "9d88d63a-64a0-4ef1-a522-4c695627e6dc"
+  "updatedAt": "2024-05-22T20:22:29.000Z",
+  "versionId": "527daaf6-ec00-47ab-886d-5de3f22cd89e"
 }
