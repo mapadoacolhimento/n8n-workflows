@@ -1,0 +1,271 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca support_request com status = open",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_request com status = special_case": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para waiting_for_match_with_priotity",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status para Aguardando Match: Sem Prioridade1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza status para Aguardando Match: Sem Prioridade": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Atualiza status para Aguardando Match: Sem Prioridade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_request com status = open": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-05-23T15:06:36.030Z",
+  "id": "7di1AyclP8nuAQu3",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Correção de status para o match diário",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "57dda2ef-8e83-4b51-bfc1-c340443dcf98",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        580,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET status = 'waiting_for_match', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'waiting_for_match', NOW());",
+        "options": {}
+      },
+      "id": "5eeab9ae-b716-4501-9f4b-b4475662c8fc",
+      "name": "Atualiza status para waiting_for_match",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1440,
+        -360
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  support_request_id,\n  zendesk_ticket_id\nFROM match.support_requests\nWHERE status = 'special_case'",
+        "options": {}
+      },
+      "id": "6d5a9943-bcd6-40a1-b49c-d0996a87be5a",
+      "name": "Busca support_request com status = special_case",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__com_prioridade"
+              }
+            ]
+          }
+        }
+      },
+      "id": "d1d1c2cf-b9bb-4ef6-ba0b-9c14f90cbada",
+      "name": "Atualiza status para Aguardando Match: Sem Prioridade1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        440
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET status = 'waiting_for_match_with_priority', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'waiting_for_match_with_priority', NOW());",
+        "options": {}
+      },
+      "id": "cb94e25d-5acf-4657-8c9c-b6b7e77cd760",
+      "name": "Atualiza status para waiting_for_match_with_priotity",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1240,
+        220
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__sem_prioridade"
+              }
+            ]
+          }
+        }
+      },
+      "id": "844bd2be-c42c-4d30-b62f-7bb75a760457",
+      "name": "Atualiza status para Aguardando Match: Sem Prioridade",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        -20
+      ],
+      "retryOnFail": false,
+      "maxTries": 2,
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "id": "69b2ce68-57ff-4bff-ab52-7beaf8224eed",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6201b6db-6f92-4ce8-974b-28a1f8c30012",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1240,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  support_request_id,\n  zendesk_ticket_id\nFROM match.support_requests\nWHERE status = 'waiting_for_match'\nAND DATE_PART('year', created_at) IN (2023, 2024);",
+        "options": {}
+      },
+      "id": "6bc7e3be-a33e-432a-8886-22c7b8423218",
+      "name": "Busca support_request com status = open",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        -180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-05-23T18:54:53.000Z",
+  "versionId": "7d44c499-d58c-452c-a88f-f23bbcbc5763"
+}
