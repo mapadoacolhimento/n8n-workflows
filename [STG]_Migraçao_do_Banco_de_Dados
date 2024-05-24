@@ -132,11 +132,16 @@
         ]
       ]
     },
-    "conserta array": {
+    "integrations_logs": {
       "main": [
         [
           {
-            "node": "Update array",
+            "node": "Insert integrations_logs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -148,25 +153,14 @@
         [],
         [
           {
-            "node": "Postgres",
+            "node": "Atualiza coluna data",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "integrations_logs": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Postgres": {
+    "Atualiza coluna data": {
       "main": [
         [
           {
@@ -3859,37 +3853,16 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  \n    item.json.data_string = item.json.data[0]\n  \n  \n}\n\nreturn $input.all();"
-      },
-      "id": "c7b3acec-551b-4b4e-a301-ad4165a2c98b",
-      "name": "conserta array",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1720,
-        -2060
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE mobilization.multipliers\nSET shift_availability = '{ {{ $json.shift_availability_string }} }'\nWHERE multiplier_id = {{ $json.multiplier_id }}",
         "options": {}
       },
-      "id": "ac2218af-8128-4396-b207-f2dbfaa81adf",
-      "name": "Update array",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
+      "id": "3db68bb1-df64-42e3-b6a9-79eb0d10777f",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
       "position": [
-        1880,
-        -2100
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
+        1240,
+        -2280
+      ]
     },
     {
       "parameters": {
@@ -3914,62 +3887,6 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT *\nFROM integrations_logs",
-        "options": {}
-      },
-      "id": "9ade78af-04dd-49d6-8772-c21f45761d38",
-      "name": "Postgres1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        1520,
-        -2340
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "hmtpJos4Dfg11o1T",
-          "name": "[STG] Novo Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "3db68bb1-df64-42e3-b6a9-79eb0d10777f",
-      "name": "Loop Over Items",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        940,
-        -2500
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "INSERT INTO integrations_logs (id, type, created_at, status, error, data, integration, external_id, form_type, internal_id)\nVALUES ({{ $json.id }}, '{{ $json.type }}', '{{ $json.created_at }}', '{{ $json.status }}', '{{ $json.error }}', '{{ $json.string_data }}', '{{ $json.integration }}', {{ $json.external_id }}, '{{ $json.form_type }}', {{ $json.internal_id }})",
-        "options": {}
-      },
-      "id": "b0db6eaa-d393-470b-84ef-6b25d4397919",
-      "name": "Postgres",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        1240,
-        -2480
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "hmtpJos4Dfg11o1T",
-          "name": "[STG] Novo Mapa"
-        }
-      },
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
         "schema": {
           "__rl": true,
           "mode": "list",
@@ -3990,8 +3907,8 @@
             "type": "={{ $json.type }}",
             "created_at": "={{ $json.created_at }}",
             "status": "={{ $json.status }}",
-            "error": "={{ $json.error || \"\" }}",
-            "data": "={{ $json.data }}",
+            "error": "='{{ $json.error }}'",
+            "data": "={{ {} }}",
             "integration": "={{ $json.integration }}",
             "form_type": "={{ $json.form_type }}"
           },
@@ -4099,8 +4016,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1820,
-        -2560
+        1260,
+        -2540
       ],
       "credentials": {
         "postgres": {
@@ -4108,6 +4025,28 @@
           "name": "[STG] Novo Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE integrations_logs\nSET data = {{ $json.string_data }}::JSONB\nWHERE id = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "b0db6eaa-d393-470b-84ef-6b25d4397919",
+      "name": "Atualiza coluna data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1480,
+        -2260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "hmtpJos4Dfg11o1T",
+          "name": "[STG] Novo Mapa"
+        }
+      },
+      "onError": "continueErrorOutput"
     }
   ],
   "pinData": {},
@@ -4117,6 +4056,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-05-23T20:38:27.000Z",
-  "versionId": "e8fc49b4-6283-4c34-94cb-14bb886d9bcf"
+  "updatedAt": "2024-05-24T16:00:40.000Z",
+  "versionId": "8b3c13d3-eb78-43a0-86e4-901272753ef6"
 }
