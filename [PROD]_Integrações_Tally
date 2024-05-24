@@ -111,7 +111,7 @@
       "main": [
         [
           {
-            "node": "ticket MSR - solicitação recebida",
+            "node": "ticket MSR - aguardando match sem prioridade",
             "type": "main",
             "index": 0
           },
@@ -920,42 +920,6 @@
     },
     {
       "parameters": {
-        "operation": "update",
-        "id": "={{ $json.id }}",
-        "updateFields": {
-          "assigneeEmail": "marcia@nossas.org",
-          "customFieldsUi": {
-            "customFieldsValues": [
-              {
-                "id": 360014379412,
-                "value": "solicitação_recebida"
-              }
-            ]
-          },
-          "internalNote": "MSR está aguardando um novo match",
-          "status": "open",
-          "tags": [
-            "nova-voluntaria-sem-prioridade"
-          ]
-        }
-      },
-      "id": "643ce5f4-f06e-466c-8068-950204b3d964",
-      "name": "ticket MSR - solicitação recebida",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        3800,
-        2660
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -1077,7 +1041,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=UPDATE match.support_requests\nSET status = 'open', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'open', NOW());",
+        "query": "=UPDATE match.support_requests\nSET status = 'waiting_for_match', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'waiting_for_match', NOW());",
         "options": {}
       },
       "id": "fd025232-ec3f-4d3b-aa94-4535aed514b5",
@@ -1582,6 +1546,42 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.id }}",
+        "updateFields": {
+          "assigneeEmail": "marcia@nossas.org",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__sem_prioridade"
+              }
+            ]
+          },
+          "internalNote": "MSR está aguardando um novo match",
+          "status": "open",
+          "tags": [
+            "nova-voluntaria-sem-prioridade"
+          ]
+        }
+      },
+      "id": "643ce5f4-f06e-466c-8068-950204b3d964",
+      "name": "ticket MSR - aguardando match sem prioridade",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        3800,
+        2660
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -1681,6 +1681,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-05-22T14:34:16.000Z",
-  "versionId": "c6788925-f2e7-4559-9a9b-787b972dc674"
+  "updatedAt": "2024-05-24T15:53:26.000Z",
+  "versionId": "cc70e114-8534-4e2a-8fa4-23fdb41a2510"
 }
