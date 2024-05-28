@@ -436,7 +436,7 @@
     },
     {
       "parameters": {
-        "functionCode": "// File Returned with Content\nconsole.log(items[0].json)\nif (Object.keys(items[0].json).includes(\"content\")) {\n  // Get JSON Objects\n  var origWorkflow = eval(\"(\"+Buffer.from(items[0].json.content, 'base64').toString()+\")\");\n  var n8nWorkflow = (items[1].json);\n  \n  // Order JSON Objects\n  var orderedOriginal = {}\n  var orderedActual = {}\n  Object.keys(origWorkflow).sort().forEach(function(key) {\n    orderedOriginal[key] = origWorkflow[key];\n  });\n  \n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Determine Difference\n  if ( Buffer.from(JSON.stringify(orderedOriginal, null, 2)).toString('base64') === Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64') ) {\n    items[0].json.github_status = \"same\";\n    items[0].json.content_decoded = orderedOriginal;\n  } else {\n    items[0].json.github_status = \"different\";\n    items[0].json.content_decoded = orderedOriginal;\n    items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n  }\n// No File Returned / New Workflow\n} else {\n \n  // Order JSON Object\n  var n8nWorkflow = (items[1].json);\n  var orderedActual = {}\n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Proper Formatting\n  items[0].json.github_status = \"new\";\n  items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n}\n\n// Return Items\nreturn items;"
+        "functionCode": "// File Returned with Content\nconsole.log(items[0].json)\nif (Object.keys(items[0].json).includes(\"content\") && items[0].json.content) {\n  // Get JSON Objects\n  var origWorkflow = eval(\"(\" + Buffer.from(items[0].json.content, 'base64').toString() + \")\");\n  var n8nWorkflow = (items[1].json);\n  \n  // Order JSON Objects\n  var orderedOriginal = {}\n  var orderedActual = {}\n  Object.keys(origWorkflow).sort().forEach(function(key) {\n    orderedOriginal[key] = origWorkflow[key];\n  });\n  \n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Determine Difference\n  if ( Buffer.from(JSON.stringify(orderedOriginal, null, 2)).toString('base64') === Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64') ) {\n    items[0].json.github_status = \"same\";\n    items[0].json.content_decoded = orderedOriginal;\n  } else {\n    items[0].json.github_status = \"different\";\n    items[0].json.content_decoded = orderedOriginal;\n    items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n  }\n// No File Returned / New Workflow\n} else {\n \n  // Order JSON Object\n  var n8nWorkflow = (items[1].json);\n  var orderedActual = {}\n  Object.keys(n8nWorkflow).sort().forEach(function(key) {\n    orderedActual[key] = n8nWorkflow[key];\n  });\n  \n  // Proper Formatting\n  items[0].json.github_status = \"new\";\n  items[0].json.n8n_data_stringy = Buffer.from(JSON.stringify(orderedActual, null, 2)).toString('base64');\n}\n\n// Return Items\nreturn items;"
       },
       "name": "compare workflow files",
       "type": "n8n-nodes-base.function",
@@ -569,7 +569,13 @@
       "onError": "continueRegularOutput"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Daily cronjob @ 20:13": [
+      {
+        "json": {}
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -579,6 +585,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-02-29T13:09:35.000Z",
-  "versionId": "fa761f7d-b617-45ff-954e-19bcb6ae0b6f"
+  "updatedAt": "2024-05-28T13:18:58.000Z",
+  "versionId": "080d0be7-4bc9-475d-90ce-fa64fc688454"
 }
