@@ -1,0 +1,225 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca support_request com status = open",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca support_request com status = special_case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_request com status = open": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para waiting_for_match",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status para Aguardando Match: Sem Prioridade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_request com status = special_case": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para waiting_for_match_with_priotity",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status para Aguardando Match: Sem Prioridade1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-05-16T22:04:43.575Z",
+  "id": "bRKCnQ3YFFCfbAic",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Correção de status para o match diário",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "7fab1559-41ff-4810-802b-3fb5794d1aea",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        580,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET status = 'waiting_for_match', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'waiting_for_match', NOW());",
+        "options": {}
+      },
+      "id": "07e3df96-a3da-4b30-95d2-a195a917fcef",
+      "name": "Atualiza status para waiting_for_match",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1280,
+        -300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__sem_prioridade"
+              }
+            ]
+          }
+        }
+      },
+      "id": "aad5df73-a283-4cb8-95b9-4c65b5a285b1",
+      "name": "Atualiza status para Aguardando Match: Sem Prioridade",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -80
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  support_request_id,\n  zendesk_ticket_id\nFROM match.support_requests\nWHERE status = 'open'",
+        "options": {}
+      },
+      "id": "abf4c630-29c0-4758-a5d9-0408cf5d25e4",
+      "name": "Busca support_request com status = open",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        -180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  support_request_id,\n  zendesk_ticket_id\nFROM match.support_requests\nWHERE status = 'special_case'",
+        "options": {}
+      },
+      "id": "8d4440fc-fe64-444d-bd15-dcf562571df6",
+      "name": "Busca support_request com status = special_case",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__com_prioridade"
+              }
+            ]
+          }
+        }
+      },
+      "id": "47cb5ee5-7fbc-470f-8443-38e319917dc7",
+      "name": "Atualiza status para Aguardando Match: Sem Prioridade1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        440
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET status = 'waiting_for_match_with_priority', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'waiting_for_match_with_priority', NOW());",
+        "options": {}
+      },
+      "id": "f33b877d-cafa-4a03-8822-90e7d863b0a4",
+      "name": "Atualiza status para waiting_for_match_with_priotity",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1240,
+        220
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-05-20T14:57:25.000Z",
+  "versionId": "919fcf68-845f-4ecd-8193-b0b73da66bf0"
+}
