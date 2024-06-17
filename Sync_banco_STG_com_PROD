@@ -464,7 +464,7 @@
       "main": [
         [
           {
-            "node": "Delete public_services",
+            "node": "Delete busara_ab_experiment",
             "type": "main",
             "index": 0
           }
@@ -717,6 +717,33 @@
           },
           {
             "node": "integrations_logs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busara_ab_experiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete busara_ab_experiment": {
+      "main": [
+        [
+          {
+            "node": "Delete public_services",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busara_ab_experiment": {
+      "main": [
+        [
+          {
+            "node": "Insert busara_ab_experiment",
             "type": "main",
             "index": 0
           }
@@ -4718,7 +4745,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1540,
+        1760,
         -2660
       ],
       "credentials": {
@@ -4888,7 +4915,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1360,
+        1580,
         -2240
       ],
       "credentials": {
@@ -5404,7 +5431,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1380,
+        1600,
         -2020
       ],
       "credentials": {
@@ -5438,7 +5465,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1640,
+        1860,
         -2020
       ],
       "credentials": {
@@ -5511,6 +5538,144 @@
         60,
         1300
       ]
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "value": "match",
+          "mode": "list",
+          "cachedResultName": "match"
+        },
+        "table": {
+          "__rl": true,
+          "value": "busara_ab_experiment",
+          "mode": "list",
+          "cachedResultName": "busara_ab_experiment"
+        },
+        "options": {
+          "cascade": true
+        }
+      },
+      "id": "ce549c8c-3237-4cbd-8267-0eb61f3e10e1",
+      "name": "Delete busara_ab_experiment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1540,
+        -2660
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ar5K4womk0J5nVrf",
+          "name": "[PROD] Novo Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM match.busara_ab_experiment",
+        "options": {}
+      },
+      "id": "497b53ec-cacc-4cc9-a3c4-47d0c8abbc93",
+      "name": "busara_ab_experiment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        920,
+        1000
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ar5K4womk0J5nVrf",
+          "name": "[PROD] Novo Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "match",
+          "mode": "list",
+          "cachedResultName": "match"
+        },
+        "table": {
+          "__rl": true,
+          "value": "busara_ab_experiment",
+          "mode": "list",
+          "cachedResultName": "busara_ab_experiment"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busara_ab_experiment_id",
+              "displayName": "busara_ab_experiment_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "match_id",
+              "displayName": "match_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "support_request_id",
+              "displayName": "support_request_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "msr_id",
+              "displayName": "msr_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "transactional_id",
+              "displayName": "transactional_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9084f0d6-b5b1-42ac-8fd1-825472effe52",
+      "name": "Insert busara_ab_experiment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1300,
+        1000
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "hmtpJos4Dfg11o1T",
+          "name": "[STG] Novo Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -5527,6 +5692,6 @@
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2024-06-05T11:15:17.000Z",
-  "versionId": "33bb0ffb-d5a3-4479-a2ff-180041d9ff8e"
+  "updatedAt": "2024-06-17T22:42:15.000Z",
+  "versionId": "4be37b76-de11-4ea8-a4ea-32cfa7cafa1b"
 }
