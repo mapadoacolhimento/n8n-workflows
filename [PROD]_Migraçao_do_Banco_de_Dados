@@ -128,6 +128,11 @@
             "node": "auth_permission",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "busara_ab_experiment",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -448,126 +453,6 @@
         ]
       ]
     },
-    "Insert django_session": {
-      "main": [
-        []
-      ]
-    },
-    "Insert django_content_type": {
-      "main": [
-        []
-      ]
-    },
-    "Insert auth_user": {
-      "main": [
-        []
-      ]
-    },
-    "Insert auth_permission": {
-      "main": [
-        []
-      ]
-    },
-    "Insert volunteers_formdata": {
-      "main": [
-        []
-      ]
-    },
-    "Insert volunteers": {
-      "main": [
-        []
-      ]
-    },
-    "Insert volunteer_unsubscriptions": {
-      "main": [
-        []
-      ]
-    },
-    "Insert volunteer_segments": {
-      "main": [
-        []
-      ]
-    },
-    "Insert volunteer_training_history": {
-      "main": [
-        []
-      ]
-    },
-    "Insert volunteer_status_history": {
-      "main": [
-        []
-      ]
-    },
-    "Insert volunteer_availability": {
-      "main": [
-        []
-      ]
-    },
-    "Insert cities": {
-      "main": [
-        []
-      ]
-    },
-    "Insert feature_flag": {
-      "main": [
-        []
-      ]
-    },
-    "Insert busara_hashes": {
-      "main": [
-        []
-      ]
-    },
-    "Insert public_services": {
-      "main": [
-        []
-      ]
-    },
-    "Insert support_requests": {
-      "main": [
-        []
-      ]
-    },
-    "Insert support_request_status_history": {
-      "main": [
-        []
-      ]
-    },
-    "Insert matches": {
-      "main": [
-        []
-      ]
-    },
-    "Insert match_status_history": {
-      "main": [
-        []
-      ]
-    },
-    "Insert match_surveys": {
-      "main": [
-        []
-      ]
-    },
-    "Insert multipliers": {
-      "main": [
-        []
-      ]
-    },
-    "Insert multiplier_pii": {
-      "main": [
-        []
-      ]
-    },
-    "Insert multiplier_registration_open_questions": {
-      "main": [
-        []
-      ]
-    },
-    "Insert multiplier_journey_events": {
-      "main": [
-        []
-      ]
-    },
     "Delete django_session": {
       "main": [
         [
@@ -826,6 +711,17 @@
         [
           {
             "node": "Delete multiplier_journey_events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busara_ab_experiment": {
+      "main": [
+        [
+          {
+            "node": "Insert busara_ab_experiment",
             "type": "main",
             "index": 0
           }
@@ -5612,6 +5508,110 @@
         1520,
         3380
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM match.busara_ab_experiment",
+        "options": {}
+      },
+      "id": "012503dd-b49b-4f83-8e25-c144fdb1490b",
+      "name": "busara_ab_experiment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        920,
+        1000
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "match",
+          "mode": "list",
+          "cachedResultName": "match"
+        },
+        "table": {
+          "__rl": true,
+          "value": "busara_ab_experiment",
+          "mode": "list",
+          "cachedResultName": "busara_ab_experiment"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busara_ab_experiment_id",
+              "displayName": "busara_ab_experiment_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "match_id",
+              "displayName": "match_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "support_request_id",
+              "displayName": "support_request_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "msr_id",
+              "displayName": "msr_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "transactional_id",
+              "displayName": "transactional_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7b6c956f-36a5-4f1a-b6fb-c339682b14a1",
+      "name": "Insert busara_ab_experiment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1300,
+        1000
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ar5K4womk0J5nVrf",
+          "name": "[PROD] Novo Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -5621,6 +5621,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-05-28T22:58:02.000Z",
-  "versionId": "b005a30f-8aef-44e1-8396-bda2d2b4496e"
+  "updatedAt": "2024-06-17T22:39:35.000Z",
+  "versionId": "aa756c35-edc1-44be-8f30-cadeb70a8243"
 }
