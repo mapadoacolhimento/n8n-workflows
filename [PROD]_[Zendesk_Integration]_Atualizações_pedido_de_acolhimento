@@ -54,18 +54,7 @@
     },
     "Schedule Trigger": {
       "main": [
-        [
-          {
-            "node": "Fetch matches that should be expired today",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca pedidos de acolhimento sem agendamento",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Fetch matches that should be expired today": {
@@ -355,7 +344,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n\n  if(item.json.body.status_acolhimento === \"solicitação_recebida\" && tags.includes(\"nova-voluntaria-com-prioridade\")){\n     \n    status = \"special_case\";\n  \n  }\n  else {\n    const status_lookup = {\n      \"solicitação_recebida\": \"open\",\n      \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n      \"encaminhamento__realizado\": \"matched\",\n      \"encaminhamento__assistente_social\": \"social_worker\",\n      \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\"\n    }\n\n    status = status_lookup[status_acolhimento]\n    \n  }\n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "efffec30-778b-426b-959e-b97231764c01",
       "name": "Extracts zendesk_ticket_id and support_request_status",
@@ -1462,6 +1451,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2024-05-20T14:56:56.000Z",
-  "versionId": "91362175-7919-4e99-acdf-7be5c74c3675"
+  "updatedAt": "2024-06-17T22:47:45.000Z",
+  "versionId": "13640b2d-fee2-417f-9e37-e5795765910b"
 }
