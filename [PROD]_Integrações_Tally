@@ -222,44 +222,6 @@
         ]
       ]
     },
-    "Qual o novo status?": {
-      "main": [
-        [
-          {
-            "node": "ticket Voluntária - atendimento iniciado",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "ticket MSR - atendimento iniciado2",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca infos da MSR e da Voluntária1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "ticket MSR - encaminhamento interrompido",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca infos da MSR e da Voluntária",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "ticket Voluntária - encaminhamento interrompido",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Busca infos da MSR e da Voluntária2": {
       "main": [
         [
@@ -353,6 +315,44 @@
         [
           {
             "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qual o novo status?": {
+      "main": [
+        [
+          {
+            "node": "ticket Voluntária - atendimento iniciado",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket MSR - atendimento iniciado2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca infos da MSR e da Voluntária1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ticket MSR - encaminhamento interrompido",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca infos da MSR e da Voluntária",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - encaminhamento interrompido",
             "type": "main",
             "index": 0
           }
@@ -629,7 +629,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  support_request_id,\n  support_type,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  zendesk_user_id AS volunteer_zendesk_user_id,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  volunteer_zendesk_ticket_id,\n  status AS current_status,\n  '{{ $json.match_status }}' AS new_status\nFROM match.matches\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE match_id = {{ $json.match_id }}",
+        "query": "SELECT\n  match_id,\n  support_request_id,\n  support_type,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  zendesk_user_id AS volunteer_zendesk_user_id,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  volunteer_zendesk_ticket_id,\n  status AS current_status,\n  '{{ $json.match_status }}' AS new_status,\n  '{{ $json.who_answered }}' AS who_answered\nFROM match.matches\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE match_id = {{ $json.match_id }}",
         "options": {}
       },
       "id": "ccd2102f-94c7-4048-992f-bbf02bf94762",
@@ -719,7 +719,7 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
           "status": "pending",
           "tags": [
             "atualizar-data-atendimento",
@@ -757,7 +757,7 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
           "status": "pending",
           "tags": [
             "atualizar-data-atendimento"
@@ -858,7 +858,7 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o encaminhamento foi interrompido",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
           "status": "open",
           "tags": [
             "atualizar-data-encaminhamento"
@@ -1061,7 +1061,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfunction getShouldDoSomething(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusText === \"Ela não entrou em contato comigo\" ? false : true\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  const shouldDoSomething = getShouldDoSomething(item);\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus,\n      \"should_do_something\": shouldDoSomething,\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfunction getShouldDoSomething(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusText === \"Ela não entrou em contato comigo\" ? false : true\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  const shouldDoSomething = getShouldDoSomething(item);\n  const whoAnswered = item.json.body.data.formId === 'nrlEq5' ? 'Voluntária' : 'MSR'\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus,\n      \"should_do_something\": shouldDoSomething,\n      \"who_answered\": whoAnswered\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "f73fa1f0-ba78-432c-9862-d06d8af21010",
       "name": "Filtra apenas as infos que importam1",
@@ -1134,69 +1134,6 @@
       "position": [
         2160,
         2580
-      ]
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.new_status }}",
-                    "rightValue": "in_contact",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "atendimento iniciado"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "4f3fd665-2742-4831-b7d0-d005e78b34e5",
-                    "leftValue": "={{ $json.new_status }}",
-                    "rightValue": "interrupted_before_support",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "encaminhamento interrompido"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "45f211ea-7f54-4550-a9d1-ee21d210d689",
-      "name": "Qual o novo status?",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
-      "position": [
-        2860,
-        2560
       ]
     },
     {
@@ -1281,7 +1218,7 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o encaminhamento foi interrompido",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
           "status": "pending"
         }
       },
@@ -1582,6 +1519,69 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "in_contact",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "atendimento iniciado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "4f3fd665-2742-4831-b7d0-d005e78b34e5",
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "interrupted_before_support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "encaminhamento interrompido"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45f211ea-7f54-4550-a9d1-ee21d210d689",
+      "name": "Qual o novo status?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2860,
+        2560
+      ]
     }
   ],
   "pinData": {
@@ -1591,31 +1591,32 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Tally Webhooks",
-            "content-length": "1245",
+            "content-length": "1249",
             "accept": "application/json, text/plain, */*",
             "accept-encoding": "gzip, compress, deflate, br",
             "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
             "content-type": "application/json",
-            "x-forwarded-for": "35.203.251.14",
+            "x-forwarded-for": "35.203.255.47",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-78bdf4fd45-l2mw9",
-            "x-real-ip": "35.203.251.14"
+            "x-forwarded-server": "traefik-74984f64cd-bx42m",
+            "x-is-trusted": "no",
+            "x-real-ip": "35.203.255.47"
           },
           "params": {},
           "query": {},
           "body": {
-            "eventId": "23e5dcd3-cc75-47c0-bc95-3b58c5efcbc3",
+            "eventId": "896991ff-5e99-4842-bcf6-108482c3d8f2",
             "eventType": "FORM_RESPONSE",
-            "createdAt": "2024-05-16T19:53:38.549Z",
+            "createdAt": "2024-06-18T17:53:12.243Z",
             "data": {
-              "responseId": "rJJWBR",
-              "submissionId": "rJJWBR",
-              "respondentId": "WP8k0a",
+              "responseId": "7MAx8Z",
+              "submissionId": "7MAx8Z",
+              "respondentId": "QABR6A",
               "formId": "nrlEq5",
               "formName": "[VOLUNTÁRIA] Atualização de Status do Acolhimento",
-              "createdAt": "2024-05-16T19:53:38.000Z",
+              "createdAt": "2024-06-18T17:53:12.000Z",
               "fields": [
                 {
                   "key": "question_8NR1VO_2eb88c30-c647-4421-9097-f08e5fe4ef98",
@@ -1627,7 +1628,7 @@
                   "key": "question_8NR1VO_cd56fcce-ed5b-4c88-9d56-19831b1a25bb",
                   "label": "match_id",
                   "type": "HIDDEN_FIELDS",
-                  "value": "0"
+                  "value": "23580"
                 },
                 {
                   "key": "question_8NR1VO_00bd48b6-575a-4139-8852-73a6733b9e1d",
@@ -1646,7 +1647,7 @@
                   "label": "match_status",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "a449c23a-5301-4ff8-ad79-c28078161f1c"
+                    "ae177a2c-3e4b-4527-a563-c6c0a5d05a16"
                   ],
                   "options": [
                     {
@@ -1670,6 +1671,25 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Busca match": [
+      {
+        "json": {
+          "match_id": 23580,
+          "support_request_id": 57694,
+          "support_type": "legal",
+          "msr_id": "22858077211028",
+          "volunteer_id": 27042,
+          "volunteer_first_name": "Advogada",
+          "volunteer_zendesk_user_id": "423092711812",
+          "volunteer_email": "dev.adv.mapa@gmail.com",
+          "msr_zendesk_ticket_id": "82262",
+          "volunteer_zendesk_ticket_id": "84058",
+          "current_status": "waiting_contact",
+          "new_status": "in_contact",
+          "who_answered": "Voluntária"
+        }
+      }
     ]
   },
   "settings": {
@@ -1681,6 +1701,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-05-24T15:53:26.000Z",
-  "versionId": "cc70e114-8534-4e2a-8fa4-23fdb41a2510"
+  "updatedAt": "2024-06-18T17:58:51.000Z",
+  "versionId": "b2d7e490-5c2c-4962-bd58-0182910b671a"
 }
