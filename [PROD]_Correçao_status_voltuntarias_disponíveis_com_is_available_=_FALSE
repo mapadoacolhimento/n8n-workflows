@@ -1,0 +1,133 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntaria com condition = disponivel e is_available = false",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntaria com condition = disponivel e is_available = false": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status no banco",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-06-19T19:15:02.114Z",
+  "id": "7h8zqFOyVYUg00bn",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Correção status voltuntárias disponíveis com is_available = FALSE",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1952c7a3-afc4-4baa-904e-fff16bfd92f0",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n   id AS volunteer_id,\n   zendesk_user_id\nFROM volunteers\nLEFT JOIN volunteer_availability ON id = volunteer_id\nWHERE \n  condition = 'disponivel' \n  AND is_available = FALSE\n  AND current_matches >= max_matches",
+        "options": {}
+      },
+      "id": "18b6879c-9047-4ad8-89cf-0892650b9f3d",
+      "name": "Busca voluntaria com condition = disponivel e is_available = false",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        960,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = 'indisponivel_sem_vagas', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.volunteer_id }}, 'indisponivel_sem_vagas', NOW());",
+        "options": {}
+      },
+      "id": "726b39b1-951f-44e6-aa86-1ccf3d15ec4c",
+      "name": "Atualiza status no banco",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1440,
+        160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "indisponivel_sem_vagas"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ceab86d5-d6e8-4bcd-a5b6-aab6fb5ca16f",
+      "name": "Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        460
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-06-19T20:12:56.000Z",
+  "versionId": "e95b1103-cd77-490b-813c-fbac8c84967c"
+}
