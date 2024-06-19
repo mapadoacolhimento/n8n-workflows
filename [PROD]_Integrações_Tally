@@ -150,6 +150,16 @@
             "node": "Busca current_matches",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "ticket MSR - encaminhamento interrompido",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - encaminhamento interrompido",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -164,6 +174,16 @@
           },
           {
             "node": "Obtém o transactionaId da Voluntária",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - atendimento iniciado",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket MSR - atendimento iniciado2",
             "type": "main",
             "index": 0
           }
@@ -325,16 +345,6 @@
       "main": [
         [
           {
-            "node": "ticket Voluntária - atendimento iniciado",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "ticket MSR - atendimento iniciado2",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Busca infos da MSR e da Voluntária1",
             "type": "main",
             "index": 0
@@ -342,17 +352,7 @@
         ],
         [
           {
-            "node": "ticket MSR - encaminhamento interrompido",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Busca infos da MSR e da Voluntária",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "ticket Voluntária - encaminhamento interrompido",
             "type": "main",
             "index": 0
           }
@@ -629,7 +629,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  support_request_id,\n  support_type,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  zendesk_user_id AS volunteer_zendesk_user_id,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  volunteer_zendesk_ticket_id,\n  status AS current_status,\n  '{{ $json.match_status }}' AS new_status,\n  '{{ $json.who_answered }}' AS who_answered\nFROM match.matches\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE match_id = {{ $json.match_id }}",
+        "query": "SELECT\n  match_id,\n  support_request_id,\n  support_type,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  zendesk_user_id AS volunteer_zendesk_user_id,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  volunteer_zendesk_ticket_id,\n  status AS current_status,\n  '{{ $json.match_status }}' AS new_status,\n  '{{ $json.who_answered }}' AS who_answered,\n  SUBSTRING(m.created_at::VARCHAR, 0, 11) AS match_created_at,\n  '{{ $json.form_answer }}' AS form_answer\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE match_id = {{ $json.match_id }}",
         "options": {}
       },
       "id": "ccd2102f-94c7-4048-992f-bbf02bf94762",
@@ -719,7 +719,7 @@
               }
             ]
           },
-          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.\n</br>\n</br>\n<strong>Nome da MSR:</strong> {{ $json.msr_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "pending",
           "tags": [
             "atualizar-data-atendimento",
@@ -733,8 +733,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3260,
-        2040
+        3560,
+        1840
       ],
       "credentials": {
         "zendeskApi": {
@@ -757,7 +757,7 @@
               }
             ]
           },
-          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.\n</br>\n</br>\n<strong>Nome da voluntária:</strong> {{ $json.volunteer_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "pending",
           "tags": [
             "atualizar-data-atendimento"
@@ -769,8 +769,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3260,
-        1840
+        3540,
+        1620
       ],
       "credentials": {
         "zendeskApi": {
@@ -858,7 +858,7 @@
               }
             ]
           },
-          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o encaminhamento foi interrompido.\n</br>\n</br>\n<strong>Nome da voluntária:</strong> {{ $json.volunteer_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "open",
           "tags": [
             "atualizar-data-encaminhamento"
@@ -870,8 +870,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3260,
-        2820
+        3700,
+        2740
       ],
       "credentials": {
         "zendeskApi": {
@@ -913,8 +913,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        3520,
-        2820
+        3960,
+        2740
       ],
       "webhookId": "81756717-b55e-4931-8c96-cdb8b400e111"
     },
@@ -947,7 +947,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "bd6257c0-93c2-4dac-abb8-c69996762ace",
@@ -968,7 +968,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "a2b83201-4a6f-4a03-94b7-52c16f8d439a",
@@ -1049,8 +1049,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        4020,
-        2860
+        4460,
+        2780
       ],
       "credentials": {
         "postgres": {
@@ -1061,7 +1061,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfunction getShouldDoSomething(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusText === \"Ela não entrou em contato comigo\" ? false : true\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  const shouldDoSomething = getShouldDoSomething(item);\n  const whoAnswered = item.json.body.data.formId === 'nrlEq5' ? 'Voluntária' : 'MSR'\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus,\n      \"should_do_something\": shouldDoSomething,\n      \"who_answered\": whoAnswered\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfunction getShouldDoSomething(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusText === \"Ela não entrou em contato comigo\" ? false : true\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  const shouldDoSomething = getShouldDoSomething(item);\n  const whoAnswered = item.json.body.data.formId === 'nrlEq5' ? 'Voluntária' : 'MSR'\n\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus,\n      \"should_do_something\": shouldDoSomething,\n      \"who_answered\": whoAnswered,\n      \"form_answer\": matchStatusText\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "f73fa1f0-ba78-432c-9862-d06d8af21010",
       "name": "Filtra apenas as infos que importam1",
@@ -1165,7 +1165,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "50090dc7-0c7b-41e2-806b-fbc5ccd42c89",
@@ -1194,8 +1194,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        3800,
-        2860
+        4240,
+        2780
       ],
       "credentials": {
         "postgres": {
@@ -1218,7 +1218,7 @@
               }
             ]
           },
-          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "={{ $json.who_answered }} informou pelo formulário que o encaminhamento foi interrompido.\n\n</br>\n</br>\n<strong>Nome da MSR:</strong> {{ $json.msr_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "pending"
         }
       },
@@ -1227,8 +1227,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3260,
-        3060
+        3700,
+        2980
       ],
       "credentials": {
         "zendeskApi": {
@@ -1443,7 +1443,7 @@
         "operation": "update",
         "id": "={{ $json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
+          "internalNote": "=MSR informou pelo formulário que a Voluntária não a respondeu\n</br>\n</br>\n<strong>Nome da MSR:</strong> {{ $json.msr_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}"
         }
       },
       "id": "2fce373d-cff8-4b4d-8037-40d8062a612b",
@@ -1466,7 +1466,7 @@
         "operation": "update",
         "id": "={{ $json.msr_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
+          "internalNote": "=MSR informou pelo formulário que a Voluntária não a respondeu.\n</br>\n</br>\n<strong>Nome da voluntária:</strong> {{ $json.volunteer_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n"
         }
       },
       "id": "a6c6a0c6-44dc-4cf5-8ce4-e2d62ee67940",
@@ -1510,8 +1510,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3800,
-        2660
+        4240,
+        2580
       ],
       "credentials": {
         "zendeskApi": {
@@ -1591,76 +1591,82 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Tally Webhooks",
-            "content-length": "1249",
+            "content-length": "1414",
             "accept": "application/json, text/plain, */*",
             "accept-encoding": "gzip, compress, deflate, br",
             "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
             "content-type": "application/json",
-            "x-forwarded-for": "35.203.255.47",
+            "x-forwarded-for": "35.203.251.75",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-74984f64cd-bx42m",
+            "x-forwarded-server": "traefik-b8dcdf845-88mdx",
             "x-is-trusted": "no",
-            "x-real-ip": "35.203.255.47"
+            "x-real-ip": "35.203.251.75"
           },
           "params": {},
           "query": {},
           "body": {
-            "eventId": "896991ff-5e99-4842-bcf6-108482c3d8f2",
+            "eventId": "bd2440da-4729-4cf1-a782-a8356586c5de",
             "eventType": "FORM_RESPONSE",
-            "createdAt": "2024-06-18T17:53:12.243Z",
+            "createdAt": "2024-06-19T22:06:04.991Z",
             "data": {
-              "responseId": "7MAx8Z",
-              "submissionId": "7MAx8Z",
+              "responseId": "zLlgaR",
+              "submissionId": "zLlgaR",
               "respondentId": "QABR6A",
-              "formId": "nrlEq5",
-              "formName": "[VOLUNTÁRIA] Atualização de Status do Acolhimento",
-              "createdAt": "2024-06-18T17:53:12.000Z",
+              "formId": "nPAj6V",
+              "formName": "[MSR] Atualização de Status do Acolhimento",
+              "createdAt": "2024-06-19T22:06:04.000Z",
               "fields": [
                 {
-                  "key": "question_8NR1VO_2eb88c30-c647-4421-9097-f08e5fe4ef98",
+                  "key": "question_ArWrjk_d4ec2659-b661-43e5-8634-f188c7b4c111",
                   "label": "msr_first_name",
                   "type": "HIDDEN_FIELDS",
                   "value": "Camila"
                 },
                 {
-                  "key": "question_8NR1VO_cd56fcce-ed5b-4c88-9d56-19831b1a25bb",
+                  "key": "question_ArWrjk_0b8984ff-7e28-45f0-9ba1-01325248a52a",
                   "label": "match_id",
                   "type": "HIDDEN_FIELDS",
                   "value": "23580"
                 },
                 {
-                  "key": "question_8NR1VO_00bd48b6-575a-4139-8852-73a6733b9e1d",
+                  "key": "question_ArWrjk_542a2b93-9104-41a3-a710-a57ed33b4f72",
                   "label": "volunteer_first_name",
                   "type": "HIDDEN_FIELDS",
                   "value": "Maria"
                 },
                 {
-                  "key": "question_8NR1VO_af44ba31-1498-4665-9598-4fe7cdb154cd",
+                  "key": "question_ArWrjk_a017cb2c-1570-4d42-a72f-ba870e2f7513",
+                  "label": "volunteer_type",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "psicóloga"
+                },
+                {
+                  "key": "question_ArWrjk_9be5437b-c620-439e-9985-1b158ed54f26",
                   "label": "match_status",
                   "type": "HIDDEN_FIELDS",
                   "value": "Já iniciamos o atendimento"
                 },
                 {
-                  "key": "question_0VDQzN",
+                  "key": "question_Nq8qaO",
                   "label": "match_status",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "ae177a2c-3e4b-4527-a563-c6c0a5d05a16"
+                    "128e22d9-4812-4f59-a389-568909eac9f6"
                   ],
                   "options": [
                     {
-                      "id": "ae177a2c-3e4b-4527-a563-c6c0a5d05a16",
+                      "id": "cd3a850f-8151-4db1-8112-cd98ca95d5e5",
                       "text": "Já iniciamos o atendimento"
                     },
                     {
-                      "id": "8c2f62de-f622-4590-934f-61eb9fc15a20",
-                      "text": "Não conseguirei atendê-la"
+                      "id": "128e22d9-4812-4f59-a389-568909eac9f6",
+                      "text": "A voluntária não me respondeu"
                     },
                     {
-                      "id": "a449c23a-5301-4ff8-ad79-c28078161f1c",
-                      "text": "Ela não entrou em contato comigo"
+                      "id": "132e2d65-6135-4d0c-8f8e-a79b77ec0f07",
+                      "text": "A voluntária me respondeu, mas não está disponível para me atender"
                     }
                   ]
                 }
@@ -1669,25 +1675,6 @@
           },
           "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/volunteer-update-match-status",
           "executionMode": "production"
-        }
-      }
-    ],
-    "Busca match": [
-      {
-        "json": {
-          "match_id": 23580,
-          "support_request_id": 57694,
-          "support_type": "legal",
-          "msr_id": "22858077211028",
-          "volunteer_id": 27042,
-          "volunteer_first_name": "Advogada",
-          "volunteer_zendesk_user_id": "423092711812",
-          "volunteer_email": "dev.adv.mapa@gmail.com",
-          "msr_zendesk_ticket_id": "82262",
-          "volunteer_zendesk_ticket_id": "84058",
-          "current_status": "waiting_contact",
-          "new_status": "in_contact",
-          "who_answered": "Voluntária"
         }
       }
     ]
@@ -1701,6 +1688,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-06-18T17:58:51.000Z",
-  "versionId": "b2d7e490-5c2c-4962-bd58-0182910b671a"
+  "updatedAt": "2024-06-19T22:10:00.000Z",
+  "versionId": "2feca57e-2c7b-43f0-bdad-b2a3608e9f03"
 }
