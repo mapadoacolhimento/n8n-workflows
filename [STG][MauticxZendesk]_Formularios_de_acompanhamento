@@ -1,0 +1,877 @@
+{
+  "active": false,
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Formata - Acomp Psicologico 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formata - Acomp Juridico 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formata - Acomp Psicológico 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formata - Acomp Juridico 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Lists": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (acomp juridico 1)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (acomp psicologico)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (acomp juridico 2)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Novo Ticket (Acomp Psic 2)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Item Lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-06-24T19:38:49.741Z",
+  "id": "iLtQ3nXZNGmiDMNt",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG][MauticxZendesk] Formularios de acompanhamento",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e0d0332b-2f92-49fa-b245-9cf77c7ca596",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "value1": "={{$node[\"Item Lists\"].json[\"submission\"][\"form\"][\"id\"]}}",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": 26,
+              "output": 1
+            },
+            {
+              "operation": "equal",
+              "value2": 24
+            },
+            {
+              "operation": "equal",
+              "value2": 27,
+              "output": 3
+            },
+            {
+              "operation": "equal",
+              "value2": 28,
+              "output": 2
+            }
+          ]
+        }
+      },
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        140,
+        740
+      ],
+      "id": "9301e229-8510-4f21-be72-0826e9e9a50f"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "[\"body\"][\"mautic.form_on_submit\"]",
+        "options": {}
+      },
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        740
+      ],
+      "id": "ed5fd54c-f770-4b9d-90a2-1dc4b229a592"
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"acompanhamento-juridico-1\", msr_name: \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (acomp juridico 1)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:360269610652, form_id:{{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\": {{$node[\"Formata - Acomp Juridico 1\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        860,
+        700
+      ],
+      "id": "7d1ebff1-8f9e-4ce1-9156-8d2c72822664",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EmY5oStKEqATsley",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nlet risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n  dados_voluntaria = {\n\t\tnome: results[\"1_nome_completo\"],\n\t\temail_cadastro: results[\"2_email_de_cadastro\"]\n\t}\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"],\n\t}\n\n\tlet contrato = {\n\t\tacolhida_respeita_contrato: results[\"4_a_acolhida_respeita_o_c\"],\n\t\tfrequencia_atendimento_fora_do_horario: results['41_com_qual_frequencia_te'],\n\t\tfrequencia_de_atendimento: results[\"5_quantas_horas_de_atendi\"],\n\t}\n\n\tlet acompanhamento_juridico = {\n\t\tfoi_submetida_novas_violencias: results[\"6_a_acolhida_foi_submetid\"], \n\t\tcomentario_sobre_novas_violencias: results[\"71_caso_queira_comentar_s\"],\n\t\ttipo_atendimento: results[\"8_qual_esta_sendo_o_tipo1\"],\n\t\tquantos_processos: results[\"9__caso_esteja_em_acompan\"],\n\t\trepresentando_civel_familia: results[\"civelfamilia\"],\n\t\trepresentando_criminal: results[\"criminal\"],\n\t\trepresentando_trabalhista: results[\"trabalhista\"],\n\t\trepresentando_digital: results[\"digital\"],\n\t\tacompanhando_civel_familia: results[\"civelfamilia1\"],\n\t\tacompanhando_penal: results[\"penal\"],\n\t\tmedida_protetiva_informada: results[\"12_caso_a_acolhida_ja_ten\"],\n\t\tfixaxao_guarda_provisoria: results[\"13_caso_voce_esteja_acomp\"],\n\t\tpara_quem_foi_fixada_guarda: results[\"13_para_quem_a_guarda_foi\"],\n\t\tqual_regime_da_guarda: results[\"13_em_qual_regime\"],\n\t\targumento_sentenca: results[\"14_caso_a_sentenca_profer\"],\n\t\talguma_das_partes_recorreu: results[\"15_alguma_das_partes_reco\"],\n\t\treferenciou_para_servico_publico: results[\"16_durante_o_atendimento\"],\n\t\tpor_que_servico_publico: results[\"16_por_que\"],\n\t\tquais_instituicoes: results[\"16_qualis\"],\n\t}\n\t\n\tlet aspectos_socioeconomicos = {\n\t\tapresenta_condicao_hipossuficiencia: results[\"17_a_acolhida_ainda_apres\"],\n\t\tmotivo_nao_condicao_hipossuficiencia: results[\"171_informe_aqui_os_motiv\"]\n\t}\n\t\n\tlet redes_apoio = {\n\t\tgrupos_comunitarios_religiosos: results[\"18_a_acolhida_participa_e\"],\n\t\tapoio_pessoas_proximas: results[\"19_a_acolhida_tem_apoio_d\"],\n\t\trelacao_familiares_acolhida: results[\"20_como_e_a_relacao_da_ac\"],\n\t\trelacao_familiares_autor_violencia: results[\"21_como_e_a_relacao_da_ac\"]\n\t}\n\n\tlet doencas_fisicas = {\n\t\tresultante_da_violencia: results[\"22_a_acolhida_tem_algum_d\"],\n\t\tquais: results[\"22_qualis1\"],\n\t\tquanto_tempo: results[\"22_ha_quanto_tempo\"],\n\t\tfaz_acompanhamento_medico: results[\"23_se_sim_a_acolhida_faz\"],\n\t\tonde_faz_acompanhamento_medico: results[\"23_onde\"],\n\t\tquanto_tempo_acompanhamento: results[\"23_ha_quanto_tempo\"],\n\t\tfaz_uso_medicamentos: results[\"24_se_sim_a_acolhida_faz\"],\n\t\tquais_medicamentos: results[\"24_qualis\"],\n\t\tquanto_tempo_medicamentos: results[\"242_ha_quanto_tempo\"],\n\t\trecebe_bpc: results[\"25_caso_seja_pessoa_com_d\"]\n\t}\n\n\tlet doencas_psiquiatricas = {\n\t\tresultante_da_violencia: results[\"26_a_acolhida_tem_algum_d\"],\n\t\tquais: results[\"26_quais\"],\n\t\tquanto_tempo: results[\"26_ha_quanto_tempo\"],\n\t\tfaz_acompanhamento_medico: results[\"27__se_sim_a_acolhida_faz\"],\n\t\tonde_faz_acompanhamento_medico: results[\"27_onde\"],\n\t\tquanto_tempo_acompanhamento: results[\"27_ha_quanto_tempo\"],\n\t\tfaz_uso_medicamentos: results[\"28_se_sim_a_acolhida_faz\"],\n\t\tquais_medicamentos: results[\"28_quais\"],\n\t\tquanto_tempo_medicamento: results[\"28_ha_quanto_tempo\"],\n\t}\n\n\tlet dependencia_quimica = {\n\t\tusa_substancias_por_conta_da_violencia: results[\"29__a_acolhida_faz_uso_de\"],\n\t\tquais: results[\"29_quais\"],\n\t\tquanto_tempo: results[\"29_ha_quanto_tempo\"],\n\t\tassistida_por_algum_serivico: results[\"30_se_sim_a_acolhida_e_as\"],\n\t\tonde: results[\"30_onde\"],\n\t\tquanto_tempo_atendimento: results[\"30_ha_quanto_tempo\"],\n\t}\n\n\tlet advogada_voluntaria = {\n\t\ttem_contato_psicologa: results[\"31_caso_a_acolhida_esteja\"],\n\t\tsolicitou_ajuda_mapa: results[\"32_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada: results[\"32_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida: results[\"32_sentiuse_acolhida_pela\"],\n\t\tparticipa_grupo_discussao: \tresults[\"33__voce_participa_dos_en\"],\n\t\tparticipa_grupo_whatsapp_estado:results[\"34_voce_participa_do_grup\"],\n\t\tcomo_se_sente_atendimento: results[\"35_se_desejar_relate_como\"]\n\t}\n\n\tif (contrato.acolhida_respeita_contrato === 'Não' || \n\t    contrato.frequencia_de_atendimento === 'Mais de 5h'||\n\t\t\tacompanhamento_juridico.referenciou_para_servico_publico === 'Sim' ||\n\t\t\tredes_apoio.relacao_familiares_acolhida !== 'Boa' ||\n\t\t\tdoencas_fisicas.recebe_bpc === 'Não' ||\n\t\t\tdependencia_quimica.assistida_por_algum_serivico == 'Não') {\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\tif (redes_apoio.apoio_pessoas_proximas === 'Não' ||\n\t    doencas_fisicas.resultante_da_violencia === 'Sim' ||\n\t\t\tdoencas_psiquiatricas.resultante_da_violencia === 'Sim' ||\n\t\t\tdoencas_psiquiatricas.faz_acompanhamento_medico == 'Não' ||\n\t\t\tdependencia_quimica.usa_substancias_por_conta_da_violencia === 'Sim') {\n\t\tpriority = 'high'\n\t\trisco = 'grave'\t\n\t}\n\n\tif (acompanhamento_juridico.foi_submetida_novas_violencias) {\n\t\tpriority = 'urgent'\n\t\trisco = 'extremo'\t\n\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, contrato,acompanhamento_juridico,redes_apoio,doencas_fisicas,doencas_psiquiatricas,dependencia_quimica,advogada_voluntaria, risco: risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"] \n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA:\\\\nNome: ' + dados_voluntaria.nome +'\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t'\\\\n\\\\nSOBRE O CONTRATO\\\\nA acolhida respeita o contrato estabelecido relacionado ao atendimento: ' + contrato.acolhida_respeita_contrato + \n\t//condição atendimento alem do horario estabelcido \n\t(contrato.acolhida_respeita_contrato === 'Não'? '\\\\nFrequência que procura além do horário de atendimento: ' + contrato.frequencia_atendimento_fora_do_horario : '' ) +\n\t'\\\\nQuantas horas de atendimento: ' + contrato.frequencia_de_atendimento + \n\t'\\\\n\\\\nACOMPANHAMENTO JURÍDICO\\\\nNovas violências que a acolhida foi submetida: ' + acompanhamento_juridico.foi_submetida_novas_violencias +\n\t//comentou sobre as violencias\n\t(acompanhamento_juridico.comentario_sobre_novas_violencias? '\\\\nComentário sobre novas violências que a acolhida foi submetida: ' + acompanhamento_juridico.comentario_sobre_novas_violencias : '') +\n\t'\\\\nTipo de atendimento prestado à acolhida: ' + acompanhamento_juridico.tipo_atendimento + \n\t//esta representando a acolhida em um ou mais processos\n\t(acompanhamento_juridico.quantos_processos? \n\t\t'\\\\nEm quantos está representando a acolhida: ' + acompanhamento_juridico.quantos_processos + \n\t\t//civel/familia\n\t\t(acompanhamento_juridico.representando_civel_familia? '\\\\nProcesso(s) Cível/Família: ' +acompanhamento_juridico.representando_civel_familia : '') +\n\t\t//Criminal:\n\t\t(acompanhamento_juridico.representando_criminal? '\\\\nProcesso(s) Criminal: ' + acompanhamento_juridico.representando_criminal : '') +\n\t\t//Trabalhista:\n\t\t(acompanhamento_juridico.representando_trabalhista? '\\\\nProcesso(s) Trabalhista:' + acompanhamento_juridico.representando_trabalhista : '') +\n\t\t//Digital:\n\t\t(acompanhamento_juridico.representando_digital? '\\\\nProcesso(s) Digital:' + acompanhamento_juridico.representando_digital : '') +\n\t\t//fase civel/familia\n\t\t(acompanhamento_juridico.acompanhando_civel_familia? '\\\\nProcesso Cível/Família na fase: ' + acompanhamento_juridico.acompanhando_civel_familia : '') + \n\t\t//penal\n\t\t(acompanhamento_juridico.acompanhando_penal? 'Processo Penal na fase: ' + acompanhamento_juridico.acompanhando_penal : '') \n\t\t: '') + \n\t(acompanhamento_juridico.medida_protetiva_informada? '\\\\n Foi informado no processo judicial que a medida protetiva de urgência foi deferida: ' + acompanhamento_juridico.medida_protetiva_informada: '') +\n\t\n\t//Guarda fixada\n\t(acompanhamento_juridico.fixaxao_guarda_provisoria === 'Sim'? \n\t\t'\\\\nHouve fixação de guarda provisória via decisão preliminar: ' + acompanhamento_juridico.fixaxao_guarda_provisoria +\n\t\t'\\\\nPara quem a guarda foi fixada: ' + acompanhamento_juridico.para_quem_foi_fixada_guarda + \n\t\t'\\\\nEm qual regime: ' + acompanhamento_juridico.qual_regime_da_guarda\n\t\t: '') +\n\t// serviço publico\n\t'\\\\nIdentificou necessidade de referenciar a acolhida para algum serviço público da rede de enfrentamento à violência contra as mulheres: ' + acompanhamento_juridico.referenciou_para_servico_publico +\n\t// por que\n\t(acompanhamento_juridico.por_que_servico_publico? '\\\\nMotivo pelo o qual a acolhida foi encaminhada: ' + acompanhamento_juridico.por_que_servico_publico : '') + \n\t// quais serivicos publicos\n\t(acompanhamento_juridico.quais_instituicoes? '\\\\nQual(is) instituição(ões) da rede de serviço público a acolhida foi encaminhada: ' + acompanhamento_juridico.quais_instituicoes : '') +\n\t\n\t'\\\\n\\\\nASPECTOS SOCIOECONÔMICOS\\\\nA acolhida ainda apresenta condição de hipossuficiência para o atendimento: ' + aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia +\n\t//motivos\n\t(aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia === 'Não'? '\\\\nMotivos de não apresentar condição de hipossuficiência para o atendimento: ' + aspectos_socioeconomicos.motivo_nao_condicao_hipossuficiencia : '') +\n\t'\\\\n\\\\nREDES DE APOIO\\\\nA acolhida participa e tem apoio de grupos comunitários ou religiosos: ' + redes_apoio.grupos_comunitarios_religiosos +\n\t'\\\\nA acolhida tem apoio de outras pessoas próximas: ' + redes_apoio.apoio_pessoas_proximas + \n\t'\\\\nRelação da acolhida com seus familiares: ' + redes_apoio.relacao_familiares_acolhida + \n\t'\\\\nRelação da acolhida com a família do(a) autor(a) da violência: ' + redes_apoio.relacao_familiares_autor_violencia +\n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DOENÇA FÍSICA\\\\nA acolhida tem algum diagnóstico de doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.resultante_da_violencia +\n\t\n\t//tem doenças fisicas resultantes da violencia\n\t(doencas_fisicas.resultante_da_violencia === 'Sim'? \n\t\t'\\\\nQuais: ' + doencas_fisicas.quais + '\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo\n\t \t: '') +\n\t(doencas_fisicas.faz_acompanhamento_medico? \n\t\t'\\\\nA acolhida faz algum acompanhamento médico da(s) doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.faz_acompanhamento_medico\n\t\t: '') +\n\t//faz acompanhamento medico\n\t(doencas_fisicas.faz_acompanhamento_medico === 'Sim' ? \n\t\t'\\\\nOnde: ' + doencas_fisicas.onde_faz_acompanhamento_medico + \n\t\t'\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo_acompanhamento\n\t\t: '') +\n\t//faz uso de medicamentos\n\t(doencas_fisicas.faz_uso_medicamentos?  \n\t\t'\\\\nA acolhida faz uso de medicações por conta da(s) doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.faz_uso_medicamentos \n\t: '') +\n\t(doencas_fisicas.faz_acompanhamento_medico === 'Sim'? \t\n\t\t'\\\\nQuais: ' + doencas_fisicas.quais_medicamentos +\n\t\t'\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo_medicamentos\n\t\t:'') +\n\t//bpc\t\n\t(doencas_fisicas.recebe_bpc? '\\\\nA acolhida está recebendo o Benefício de Prestação Continuada (BPC): ' + doencas_fisicas.recebe_bpc : '') + \n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DOENÇAS PSIQUIÁTRICAS\\\\n A acolhida tem algum diagnóstico (verbal ou laudo) de doença(s) psiquiátrica(s) resultante(s) da violência: ' + doencas_psiquiatricas.resultante_da_violencia +\n\t\n\t//doenças psiquiatricas\n\t(doencas_psiquiatricas.resultante_da_violencia === 'Sim'?\n\t\t'\\\\nQuais: ' + doencas_psiquiatricas.quais + \n\t\t'\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo \n\t\t: '') +\n\n\t//acompanhamento medico\t \n\t(doencas_psiquiatricas.faz_acompanhamento_medico?\n\t\t'\\\\nA acolhida faz algum acompanhamento médico do(s) adoecimento(s) psiquiátrico(s) resultante(s) da violência: ' + doencas_psiquiatricas.faz_acompanhamento_medico \n\t: '') +\n\t(doencas_psiquiatricas.faz_acompanhamento_medico === 'Sim'?\n\t\t'\\\\nOnde: ' + doencas_psiquiatricas.onde_faz_acompanhamento_medico + '\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo_acompanhamento\n\t \t: '') +\n\t//uso de medicamento\n\t(doencas_psiquiatricas.faz_uso_medicamentos?\n\t\t'\\\\nA acolhida faz uso de medicações por conta do(s) adoecimento(s) psiquiátrico(s) resultante(s) da violência: ' + doencas_psiquiatricas.faz_uso_medicamentos \n\t: '') +\n\t(doencas_psiquiatricas.faz_uso_medicamentos === 'Sim' ? \n\t\t\t'\\\\nQuais: ' + doencas_psiquiatricas.quais_medicamentos + '\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo_medicamento \n\t: '') +\n\t\n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DEPENDÊNCIA QUÍMICA\\\\nA acolhida faz uso de substâncias por conta da violência: ' + dependencia_quimica.usa_substancias_por_conta_da_violencia + \n\t(dependencia_quimica.usa_substancias_por_conta_da_violencia === 'Sim'? \n\t\t'\\\\nQuais: ' + dependencia_quimica.quais + '\\\\nHá quanto tempo: ' + dependencia_quimica.quanto_tempo +\n\t\t'\\\\nA acolhida é assistida por algum serviço público em decorrência do uso de substância por conta da violência: ' + dependencia_quimica.assistida_por_algum_serivico +\n\t\t'\\\\nOnde: '+ dependencia_quimica.onde + '\\\\nHá quanto tempo: ' + dependencia_quimica.quanto_tempo_atendimento \n\t\t: '') +\n\t'\\\\n\\\\nSOBRE A ADVOGADA VOLUNTARIA' + \n\t(advogada_voluntaria.tem_contato_psicologa? '\\\\nSegue em contato com a psicóloga que está acompanhando-a: ' + advogada_voluntaria.tem_contato_psicologa : '') +\n\t'\\\\nSolicitou ajuda da equipe técnica do Mapa do Acolhimento: ' + advogada_voluntaria.solicitou_ajuda_mapa + \n\t(advogada_voluntaria.solicitou_ajuda_mapa === 'Sim'? \n\t\t'\\\\nSentiu-se orientada: ' + advogada_voluntaria.se_sentiu_orientada +\n\t\t'\\\\nSentiu-se acolhida pela equipe: ' + advogada_voluntaria.se_sentiu_acolhida \n\t: '') + \n\t'\\\\nParticipa dos encontros de Discussão de Caso do projeto: ' + advogada_voluntaria.participa_grupo_discussao + \n\t'\\\\nParticipa do grupo de WhatsApp de seu Estado: ' + advogada_voluntaria.participa_grupo_whatsapp_estado +\n\t(advogada_voluntaria.como_se_sente_atendimento? '\\\\nComo se sente em relação ao atendimento jurídico realizado pelo Mapa do Acolhimento: ' + advogada_voluntaria.como_se_sente_atendimento\n\t: '')\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\titem.json.answers.risco =item.json.answers.risco.toUpperCase();\n}\n\nreturn items[items.length - 1]; "
+      },
+      "name": "Formata - Acomp Juridico 1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        460,
+        700
+      ],
+      "id": "37cf7438-7184-4ef7-939f-014ca8a1d3cc"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Juridico 1\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-1\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 1] {{$node[\"Formata - Acomp Juridico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (acomp juridico 1)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        660,
+        700
+      ],
+      "id": "0eddfa9b-0708-4c49-bc4e-d3e0c8eb49e4",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"acompanhamento-psicologico-1\", msr_name: \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (acomp psicologico)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:360282119532, form_id:{{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\":{{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas2",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        880,
+        460
+      ],
+      "id": "fb03f1ca-0f05-4062-bc42-e8d885596f08",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EmY5oStKEqATsley",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\n\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n\tlet dados_voluntaria = {\n\t\tnome:\tresults[\"1_nome_completo\"], //\"Teste 2022\",\n\t\temail_cadastro: results[\"2_email_de_cadastro\"] //\"teste@teste.br\",\n\t}\n\t\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"] //\"Acholhida teste\",\n\t}\n\t\n\tlet contrato = {\n\t\ttem_assiduidade_atendimentos: results[\"4_a_acolhida_tem_sido_ass\"], //\"Não (Por favor, entre em contato imediatamente com a equipe)\",\n\t\tmotivo_nao_assiduidade: results[\"41_selecione_os_motivos_a\"], //\"Falta sem avisar, O autor da violência impediu\",\n\t\trespeita_combinados_atendimento: results[\"6_a_acolhida_respeita_os\"], //\"Não\",\n\t\tfrequencia_atendimento_fora_do_horario: results[\"51_com_qual_frequencia_te\"] //\"Três ou mais vezes na semana\",\n\t}\n\n\tlet acompanhamento_psicologico = {\n\t\tfoi_submetida_novas_violencias: results[\"6_a_acolhida_foi_submetid\"], //\"Física\",\n\t\tcomentario_sobre_novas_violencias: results[\"7_caso_queira_comentar_so\"], //\"comentar sobre as novas violências que a acolhida foi submetida\",\n\t\tapesctos_psicologicos_trabalhados: results[\"8_aspectos_psicologicos_t\"], //\" Aspectos psicológicos trabalhados durante o processo psicoterapêutico\",\n\t\treferenciou_para_servico_publico: results[\"9_durante_o_atendimento_v\"], //\"Sim\",\n\t\tpor_que_servico_publico: results[\"91_por_que\"], //\"dentificou alguma necessidade de referenciar a acolhida para algum serviço público\",\n\t\tquais_instituicoes: results[\"92_para_qualis_instituica\"], //\"Defensoria pública/ NUDEM\",\n\t \triscos_relacionado_ao_suicidio: results[\"10_voce_se_preocupa_ou_pe\"] //\"Não\",\n\t}\n\n\tlet  aspectos_socioeconomicos = {\n\t\tapresenta_condicao_hipossuficiencia: results[\"11_a_acolhida_ainda_apres\"], //\"Não (acione a equipe imediatamente)\",\n\t\tmotivo_nao_condicao_hipossuficiencia: results[\"111_informe_aqui_os_motiv1\"] //\" apresenta condição de hipossuficiência \",\n\t}\n\n\tlet redes_apoio = {\n\t\tgrupos_comunitarios_religiosos: results[\"12_a_acolhida_participa_e\"], //\"Não\",\n\t\tapoio_pessoas_proximas: results[\"13_como_e_a_relacao_da_ac\"], //\"Sim\",\n\t\trelacao_familiares_acolhida: results[\"14_como_e_a_relacao_da_ac\"], //\"Média (nem sempre pode contar com os familiares, caso precise de apoio)\",\n\t\trelacao_familiares_autor_violencia: results[\"15_como_e_a_relacao_da_ac\"] //\"Ruim (não tem relação com os familiares do(a) autor(a))\",\n\t}\n\n\tlet doencas_fisicas = {\n\t\tresultante_da_violencia: results[\"16_a_acolhida_tem_algum_d\"], //\"Sim\",\t\t\n\t\tquais: results[\"162_qualis\"], //\" doença(s) física(s) \",\n\t\tquanto_tempo: results[\"162_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_acompanhamento_medico: results[\"17_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tonde_faz_acompanhamento_medico: results[\"17_onde\"], //\"Unidade Básica de Saúde (UBS)\",\n\t\tquanto_tempo_acompanhamento: results[\"17_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_uso_medicamentos: results[\"18_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tquais_medicamentos: results[\"18_qualis\"], //\" medicações por conta da(s) doença(s) física(s)\",\n\t\tquanto_tempo_medicamentos: results[\"18_ha_quanto_tempo\"], //\"Entre 2 anos e 10 anos\",\n\t\trecebe_bpc: results[\"19_caso_seja_pessoa_com_d\"] //\"Não\",\n\t}\n\n\tlet doencas_psiquiatricas  = { \n\t\tresultante_da_violencia: results[\"20_a_acolhida_tem_algum_d\"], //\"Sim\",\n\t\tquais: results[\"20_qualis\"], //\"doença(s) psiquiátrica(s) resultante(s) da violência\",\n\t\tquanto_tempo: results[\"20_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_acompanhamento_medico: results[\"21_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tonde_faz_acompanhamento_medico: results[\"21_onde\"], //\"Unidade Básica de Saúde (UBS)\",\n\t\tquanto_tempo_acompanhamento: results[\"21_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_uso_medicamentos: results[\"22_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tquais_medicamentos: results[\"22_qualis\"], //\"medicações por conta do(s) adoecimento(s) psiquiátrico(s) \",\n\t\tquanto_tempo_medicamento: results[\"22_ha_quanto_tempo\"] //\"Mais de 10 anos\",\n\t}\n\n\tlet dependencia_quimica = {\n\t\tusa_substancias_por_conta_da_violencia: results[\"23_a_acolhida_faz_uso_de\"], //\"Sim\",\n\t\tquais: results[\"23_qualis\"], //\"Maconha\",\n\t\tquanto_tempo: results[\"23_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tassistida_por_algum_serivico: results[\"24_se_sim_a_acolhida_e_as\"], //\"Sim\",\n\t\tonde: results[\"24_onde\"], //\"Hospital geral\",\n\t\tquanto_tempo_atendimento: results[\"24_ha_quanto_tempo\"] //\"Entre 1 e 2 anos\",\n\t}\n\n\tlet qualidade_vida = {\n\t\timpacto_sofrido_moderado: results[\"25_quais_impactos_a_acolh\"], //\"Insônia\",\n\t\timpacto_sofrido_grave: results[\"26_quais_impactos_a_acolh\"] //\"Aborto espontâneo\",\n\t}\n\n\tlet psicologa_voluntaria = {\n\t\ttem_contato_advogada: results[\"27_caso_a_acolhida_esteja\"], //\"Sim\",\n\t\tsolicitou_ajuda_mapa: results[\"28_voce_solicitou_ajuda_d\"], //\"Sim\",\n\t\tse_sentiu_orientada: results[\"28_sentiuse_orientada\"], //\"Sim\",\n\t\tse_sentiu_acolhida: results[\"232_sentiuse_acolhida_pel\"], //\"Sim\",\n\t\tparticipa_grupo_discussao: results[\"29_voce_participa_dos_enc\"], //\"Não\",\n\t\tparticipa_grupo_whatsapp_estado: results[\"30_voce_participa_do_grup\"], //\"Sim\",\n\t\tcomo_se_sente_atendimento: results[\"31_se_desejar_relate_como\"] //\"como se sente em relação ao atendimento psicológico realizado pelo Mapa do Acolhimento\"\n\t}\n\n\tif (contrato.tem_assiduidade_atendimentos === 'Não' || \n\t\t\tacompanhamento_psicologico.referenciou_para_servico_publico === 'Sim' ||\n\t\t\tredes_apoio.relacao_familiares_acolhida !== 'Boa' ||\n\t\t\tdoencas_fisicas.recebe_bpc === 'Não' ||\n\t\t\tdependencia_quimica.assistida_por_algum_serivico === 'Não' || \n\t\t\tqualidade_vida.impacto_sofrido_moderado !== 'A acolhida não está sofrendo nenhum dos impactos citados acima'\n\t\t) {\n\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\tif (redes_apoio.apoio_pessoas_proximas === 'Não' || \n\t\t\tdoencas_fisicas.resultante_da_violencia === 'Sim' || \n\t\t\tdoencas_psiquiatricas.resultante_da_violencia === 'Sim' || \n\t\t\tdoencas_psiquiatricas.faz_acompanhamento_medico == 'Não' ||\n\t\t\tdependencia_quimica.usa_substancias_por_conta_da_violencia == 'Sim' ||\n\t\t\tqualidade_vida.impacto_sofrido_grave !== 'A acolhida não está sofrendo nenhum dos impactos citados acima'\n\t\t ) {\n\t\t\t \n\t\tpriority = 'high'\n\t\trisco = 'grave'\n\t}\n\n\tif (acompanhamento_psicologico.foi_submetida_novas_violencias || \n\t    acompanhamento_psicologico.riscos_relacionado_ao_suicidio === 'Sim') {\n\t\tpriority = 'urgent'\n\t\trisco = 'extremo'\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, contrato, acompanhamento_psicologico, aspectos_socioeconomicos, redes_apoio, doencas_fisicas, doencas_psiquiatricas, dependencia_quimica, qualidade_vida, psicologa_voluntaria, risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"]\n\n  let body_ticket = 'RISCO ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + '\\\\n\\\\nSOBRE O CONTRATO\\\\nA acolhida tem sido assídua nos atendimentos: ' +  contrato.tem_assiduidade_atendimentos +\n\t//motivos\n\t(contrato.motivo_nao_assiduidade? '\\\\nMotivos: ' + contrato.motivo_nao_assiduidade : '') + \n\t'\\\\nA acolhida respeita os combinados relacionados ao atendimento: ' + contrato.respeita_combinados_atendimento +\n\t//frequencia fora do horario\n\t(contrato.frequencia_atendimento_fora_do_horario? '\\\\nFrequência que procura além do horário de atendimento: ' + contrato.frequencia_atendimento_fora_do_horario : '') +\n\t'\\\\n\\\\nSOBRE O ACOMPANHAMENTO PSICOLÓGICO' +\n\t(acompanhamento_psicologico.foi_submetida_novas_violencias !== '' ? '\\\\nNovas violências que a acolhida foi submetida: ' + acompanhamento_psicologico.foi_submetida_novas_violencias : '') +\n\t(acompanhamento_psicologico.comentario_sobre_novas_violencias? '\\\\nComentário sobre novas violências que a acolhida foi submetida: ' + acompanhamento_psicologico.comentario_sobre_novas_violencias : '') +\n\t'\\\\nAspectos psicológicos trabalhados durante o processo psicoterapêutico: ' + acompanhamento_psicologico.apesctos_psicologicos_trabalhados + \n\t'\\\\nIdentificou necessidade de referenciar a acolhida para algum serviço público da rede de enfrentamento à violência contra as mulheres: ' + acompanhamento_psicologico.referenciou_para_servico_publico +\n\t//serviço publico\n\t// por que\n\t(acompanhamento_psicologico.por_que_servico_publico? '\\\\nMotivo pelo o qual a acolhida foi encaminhada: ' + acompanhamento_psicologico.por_que_servico_publico : '') + \n\t// quais serivicos publicos\n\t(acompanhamento_psicologico.quais_instituicoes? '\\\\nQual(is) instituição(ões) da rede de serviço público a acolhida foi encaminhada: ' + acompanhamento_psicologico.quais_instituicoes : '') +\n\t'\\\\nPreocupa ou percebe, na condução do processo psicoterapêutico, riscos relacionados ao suicídio: ' + acompanhamento_psicologico.riscos_relacionado_ao_suicidio +\n\t'\\\\n\\\\nASPECTOS SOCIOECONÔMICOS\\\\nA acolhida ainda apresenta condição de hipossuficiência: ' + aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia +\n\t//motivos hipossificiencia \n\t(aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia === 'Não'? '\\\\nMotivos de não apresentar condição de hipossuficiência para o atendimento: ' + aspectos_socioeconomicos.motivo_nao_condicao_hipossuficiencia : '') +\n\t'\\\\n\\\\nREDES DE APOIO\\\\nA acolhida participa e tem apoio de grupos comunitários ou religiosos: ' + redes_apoio.grupos_comunitarios_religiosos +\n\t'\\\\nA acolhida tem apoio de outras pessoas próximas: ' + redes_apoio.apoio_pessoas_proximas + \n\t'\\\\nRelação da acolhida com seus familiares: ' + redes_apoio.relacao_familiares_acolhida + \n\t'\\\\nRelação da acolhida com a família do(a) autor(a) da violência: ' + redes_apoio.relacao_familiares_autor_violencia + \n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DOENÇA FÍSICA\\\\nA acolhida tem algum diagnóstico de doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.resultante_da_violencia +\n\t\n\t//tem doenças fisicas resultantes da violencia\n\t(doencas_fisicas.resultante_da_violencia === 'Sim'? \n\t\t'\\\\nQuais: ' + doencas_fisicas.quais + '\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo\n\t \t: '') +\n\t(doencas_fisicas.faz_acompanhamento_medico? \n\t\t'\\\\nA acolhida faz algum acompanhamento médico da(s) doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.faz_acompanhamento_medico\n\t\t: '') +\n\t//faz acompanhamento medico\n\t(doencas_fisicas.faz_acompanhamento_medico === 'Sim' ? \n\t\t'\\\\nOnde: ' + doencas_fisicas.onde_faz_acompanhamento_medico + \n\t\t'\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo_acompanhamento\n\t\t: '') +\n\t//faz uso de medicamentos\n\t(doencas_fisicas.faz_uso_medicamentos?  \n\t\t'\\\\nA acolhida faz uso de medicações por conta da(s) doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.faz_uso_medicamentos \n\t: '') +\n\t(doencas_fisicas.faz_acompanhamento_medico === 'Sim'? \t\n\t\t'\\\\nQuais: ' + doencas_fisicas.quais_medicamentos +\n\t\t'\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo_medicamentos\n\t\t:'') +\n\t//bpc\t\n\t(doencas_fisicas.recebe_bpc? '\\\\nA acolhida está recebendo o Benefício de Prestação Continuada (BPC): ' + doencas_fisicas.recebe_bpc : '') + \n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DOENÇAS PSIQUIÁTRICAS\\\\n A acolhida tem algum diagnóstico (verbal ou laudo) de doença(s) psiquiátrica(s) resultante(s) da violência: ' + doencas_psiquiatricas.resultante_da_violencia +\n\t\n\t//doenças psiquiatricas\n\t(doencas_psiquiatricas.resultante_da_violencia === 'Sim'?\n\t\t'\\\\nQuais: ' + doencas_psiquiatricas.quais + \n\t\t'\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo \n\t\t: '') +\n\n\t//acompanhamento medico\t \n\t(doencas_psiquiatricas.faz_acompanhamento_medico?\n\t\t'\\\\nA acolhida faz algum acompanhamento médico do(s) adoecimento(s) psiquiátrico(s) resultante(s) da violência: ' + doencas_psiquiatricas.faz_acompanhamento_medico \n\t: '') +\n\t(doencas_psiquiatricas.faz_acompanhamento_medico === 'Sim'?\n\t\t'\\\\nOnde: ' + doencas_psiquiatricas.onde_faz_acompanhamento_medico + '\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo_acompanhamento\n\t \t: '') +\n\t//uso de medicamento\n\t(doencas_psiquiatricas.faz_uso_medicamentos?\n\t\t'\\\\nA acolhida faz uso de medicações por conta do(s) adoecimento(s) psiquiátrico(s) resultante(s) da violência: ' + doencas_psiquiatricas.faz_uso_medicamentos \n\t: '') +\n\t(doencas_psiquiatricas.faz_uso_medicamentos === 'Sim' ? \n\t\t\t'\\\\nQuais: ' + doencas_psiquiatricas.quais_medicamentos + '\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo_medicamento \n\t: '') +\n\t\n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DEPENDÊNCIA QUÍMICA\\\\nA acolhida faz uso de substâncias por conta da violência: ' + dependencia_quimica.usa_substancias_por_conta_da_violencia + \n\t(dependencia_quimica.usa_substancias_por_conta_da_violencia === 'Sim'? \n\t\t'\\\\nQuais: ' + dependencia_quimica.quais + '\\\\nHá quanto tempo: ' + dependencia_quimica.quanto_tempo +\n\t\t'\\\\nA acolhida é assistida por algum serviço público em decorrência do uso de substância por conta da violência: ' + dependencia_quimica.assistida_por_algum_serivico +\n\t\t(dependencia_quimica.assistida_por_algum_serivico === 'Sim'? '\\\\nOnde: '+ dependencia_quimica.onde + '\\\\nHá quanto tempo: ' + dependencia_quimica.quanto_tempo_atendimento: '' ) \n\t\t: '') +\n\t'\\\\n\\\\nQUALIDADE DE VIDA\\\\nImpactos que a acolhida está sofrendo em decorrência da violência (moderado): ' + qualidade_vida.impacto_sofrido_moderado + \n\t'\\\\nImpactos que a acolhida está sofrendo em decorrência da violência (grave):' + qualidade_vida.impacto_sofrido_grave +\n\t'\\\\n\\\\nSOBRE A PSICÓLOGA VOLUNTÁRIA'\t+\n\t(psicologa_voluntaria.tem_contato_advogada? '\\\\nSegue em contato com a advogada que está acompanhando-a: ' + psicologa_voluntaria.tem_contato_advogada: '') +\n\t'\\\\nSolicitou ajuda da equipe técnica do Mapa do Acolhimento: ' + psicologa_voluntaria.solicitou_ajuda_mapa + \n\t(psicologa_voluntaria.solicitou_ajuda_mapa === 'Sim'? \n\t\t'\\\\nSentiu-se orientada: ' + psicologa_voluntaria.se_sentiu_orientada +\n\t\t'\\\\nSentiu-se acolhida pela equipe: ' + psicologa_voluntaria.se_sentiu_acolhida \n\t: '') + \n\t'\\\\nParticipa dos encontros de Discussão de Caso do projeto: ' + psicologa_voluntaria.participa_grupo_discussao + \n\t'\\\\nParticipa do grupo de WhatsApp de seu Estado: ' + psicologa_voluntaria.participa_grupo_whatsapp_estado +\n\t(psicologa_voluntaria.como_se_sente_atendimento? '\\\\nComo se sente em relação ao atendimento jurídico realizado pelo Mapa do Acolhimento: ' + psicologa_voluntaria.como_se_sente_atendimento\n\t: '')\n\t\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+      },
+      "name": "Formata - Acomp Psicologico 1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        460,
+        460
+      ],
+      "id": "d79489c3-de27-49a1-b6d7-6ded4586864a"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Psicologico 1\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-1\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 1] {{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (acomp psicologico)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        680,
+        460
+      ],
+      "id": "88160abe-cc54-4189-98dc-ab4eb365f182",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Juridico 2\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-2\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 2] {{$node[\"Formata - Acomp Juridico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (acomp juridico 2)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        720,
+        1140
+      ],
+      "id": "00ef1c8b-fa37-4b19-bc85-9a0be937c155",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nlet risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n\n\tconst results =  item.json.submission.results; \n\n\tlet dados_voluntaria = {\n\t\tnome: results[\"1_nome_completo\"],  // Teste 2022\",\n\t\temail_cadastro: results[\"2_email_de_cadastro\"],  // teste@teste.com\",\n\t}\n\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"]\n\t}  // Acholhida teste\",\n\n\tlet contrato = {\n\t\tsegue_atendimento_com_acolhida: results[\"4_a_acolhida_segue_em_ate\"],  // Sim\",\n\t\tacolhida_respeita_contrato: results[\"5_a_acolhida_respeita_o_c\"],  // Sim\",\n\t\tquantas_horas_atendimento: results[\"6_quantas_horas_de_atendi\"],  // 3h a 5h\",\n\t}\n\n\tlet acompanhamento_juridico = {\n\t\tfoi_submetida_novas_violencias: results[\"7_a_acolhida_foi_submetid\"],  // Psicológica\",\n\t\tcomentario_sobre_novas_violencias: results[\"71_caso_queira_comentar_s\"],  // ggtr\",\n\t\tprocesso_civel_fase: results[\"civel\"],  // Pedido de medida protetiva de urgência\",\n\t\tprocesso_penal_fase: results[\"penal\"],  // \n\t\tresumo_caso: results[\"9_por_favor_relate_de_man\"],  // gg\",\n\t\treferenciou_para_servico_publico: results[\"10_durante_o_atendimento\"],  // Sim\",\n\t\tmotivo_referenciou_servico_publico: results[\"10_por_que\"],  // trgtrtr\",\n\t\tqual_instituicao: results[\"10_para_qualis_instituica\"],  // CREAS\",\n\t}\n\n\tlet aspectos_socioeconomicos = {\n\t\tapresenta_condicao_hipossuficiencia: results[\"11_a_acolhida_ainda_apres\"],  // Não\",\n\t\tmotivo_nao_condicao_hipossuficiencia: results[\"111_informe_aqui_os_motiv\"],  // trhtrh\",\n\t}\n\n\tlet advogada_voluntaria = {\n\t\ttem_contato_psicologa_mapa: results[\"12_caso_a_acolhida_esteja\"],  // Sim\",\n\t\tsolicitou_ajuda_mapa: results[\"13_voce_solicitou_ajuda_d\"],  // Sim\",\n\t\tse_sentiu_orientada: results[\"13_sentiuse_orientada\"],  // Sim\",\n\t\tse_sentiu_acolhida: results[\"13_se_sentiu_acolhida_pel\"],  // Sim\",\n\t\tparticipa_grupo_discussao: results[\"14_voce_participa_dos_enc\"],  // Sim\",\n\t\tparticipa_grupo_whatsapp_estado: results[\"15_voce_participa_do_grup\"],  // \n\t\tcomo_se_sente_atendimento: results[\"16_se_desejar_relate_como\"]\n\t}\n\n\tif(\tcontrato.acolhida_respeita_contrato === 'Não' ||\n\t\t\tcontrato.quantas_horas_atendimento === 'Mais de 5h' ||\n\t\t\tacompanhamento_juridico.referenciou_para_servico_publico === 'Sim'){\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\tif(acompanhamento_juridico.foi_submetida_novas_violencias){\n\t\tpriority = 'urgent'\n\t\trisco = 'extremo'\n\t}\n\t\n\tlet answers = {dados_voluntaria,dados_acolhida,contrato,aspectos_socioeconomicos,acompanhamento_juridico,advogada_voluntaria,risco}\t\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"] \n \n  let body_ticket = 'RISCO ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome completo: ' + dados_voluntaria.nome +\n\t'\\\\nEmail de cadastro: ' + dados_voluntaria.email_cadastro + '\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome +\n\t'\\\\n\\\\nSOBRE O CONTRATO\\\\nA acolhida segue em atendimento com você: ' + contrato.segue_atendimento_com_acolhida + \n\t'\\\\nA acolhida respeita o contrato estabelecido relacionado ao atendimento: ' + contrato.acolhida_respeita_contrato +\n\t'\\\\nQuantas horas de atendimento estão sendo despendidas em média, por semana para a acolhida: ' + contrato.quantas_horas_atendimento +\n\t'\\\\n\\\\nACOMPANHAMENTO JURÍDICO' + \n\t(acompanhamento_juridico.foi_submetida_novas_violencias? '\\\\nNovas violências que a acolhida foi submetida: ' + acompanhamento_juridico.foi_submetida_novas_violencias  :'') +\n\t(acompanhamento_juridico.comentario_sobre_novas_violencias? '\\\\nComentário sobre novas violências que a acolhida foi submetida: ' + \n\t acompanhamento_juridico.comentario_sobre_novas_violencias :'') +\n\t(acompanhamento_juridico.processo_civel_fase? '\\\\nProcesso Cível na fase: ' + acompanhamento_juridico.processo_civel_fase : '' ) +\n\t(acompanhamento_juridico.processo_penal_fase? '\\\\nProcesso Penal na fase: ' + acompanhamento_juridico.processo_penal_fase : '' ) +\n\t'\\\\nResumo da atualização do caso: ' + acompanhamento_juridico.resumo_caso + \n\t'\\\\nIdentificou alguma necessidade de referenciar a acolhida para algum serviço público da rede de enfrentamento à violência contra as mulheres: ' + acompanhamento_juridico.referenciou_para_servico_publico +\n\t(acompanhamento_juridico.referenciou_para_servico_publico === 'Sim'? \n\t\t'\\\\nMotivo(s) pelo o qual a acolhida foi encaminhada para serviço público: ' + acompanhamento_juridico.motivo_referenciou_servico_publico +\n\t\t'\\\\nQual(is) instituição(ões) da rede de serviço público a acolhida foi encaminhada: ' + acompanhamento_juridico.qual_instituicao\n\t: '') +\n\t'\\\\n\\\\nASPECTOS SOCIOECONÔMICOS\\\\nA acolhida ainda apresenta condição de hipossuficiência para o atendimento: ' + aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia +\n\t'\\\\nMotivos de não apresentar condição de hipossuficiência para o atendimento: ' + aspectos_socioeconomicos.motivo_nao_condicao_hipossuficiencia +\n\t'\\\\n\\\\nSOBRE A ADVOGADA VOLUNTÁRIA\\\\nSegue em contato com a psicóloga que está acompanhando-a: ' + advogada_voluntaria.tem_contato_psicologa_mapa +\n\t'\\\\nSolicitou ajuda da equipe técnica do Mapa do Acolhimento: ' + advogada_voluntaria.solicitou_ajuda_mapa +\n\t(advogada_voluntaria.se_sentiu_orientada? '\\\\nSe sentiu orientada: ' + advogada_voluntaria.se_sentiu_orientada : '') +\n\t(advogada_voluntaria.se_sentiu_acolhida? '\\\\nSe sentiu acolhida: ' + advogada_voluntaria.se_sentiu_acolhida : '') +\n\t'\\\\nParticipa dos encontros de Discussão de Caso do projeto: ' + advogada_voluntaria.participa_grupo_discussao +\n\t'\\\\nParticipa do grupo de WhatsApp de seu Estado: ' + advogada_voluntaria.participa_grupo_whatsapp_estado +\n\t(advogada_voluntaria.como_se_sente_atendimento? '\\\\nComo se sente em relação ao atendimento jurídico realizado pelo Mapa do Acolhimento: ' + advogada_voluntaria.como_se_sente_atendimento : '')\n\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('false se aplica','Não se aplica').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\n}\n\nreturn items; "
+      },
+      "name": "Formata - Acomp Juridico 2",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        480,
+        1140
+      ],
+      "id": "8d0ed33e-98c1-4391-b9fe-e3806bb7bbf4"
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"acompanhamento-juridico-2\", msr_name: \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (acomp juridico 2)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:360269610652, form_id:{{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\": {{$node[\"Formata - Acomp Juridico 2\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas5",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        920,
+        1140
+      ],
+      "id": "0d4c3d70-5878-4a0a-9e3a-15ca8d19b2ea",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EmY5oStKEqATsley",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nlet risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n  dados_voluntaria = {\n\t\tnome: results[\"1_nome_completo\"],\n\t\temail_cadastro: results[\"2_email_de_cadastro\"]\n\t}\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"],\n\t}\n\n\tlet contrato = {\n\t\tacolhida_segue_em_atendimento: results[\"4_a_acolhida_segue_em_ate\"],\n\t\tassidua_atendimentos: results['5_a_acolhida_tem_sido_ass'],\n\t\tmotivo_nao_assidua: results[\"51_selecione_o_motivo_aba\"],\n\t\tacolhida_respeita_contrato: results[\"6_a_acolhida_respeita_os\"],\n\t\tfrequencia_atendimento_fora_do_horario: results[\"61__com_qual_frequencia_t\"]\n\t}\n\n\tlet acompanhamento_psicologico = {\n\t\tsubmetida_novas_violencias: results[\"7_a_acolhida_foi_submetid\"],\n\t\tcomentario_sobre_novas_violencias: results[\"71_caso_queira_comentar_s\"],\n\t\taspectos_psicologicos: results[\"8_aspectos_psicologicos_t\"],\n\t\tnecessidade_servico_publico: results[\"9_durante_o_atendimento_v\"],\n\t\tpor_que_referenciou_servico_publico: results[\"9_por_que\"],\n\t\tquais_instituicoes: results[\"9_para_qualis_instituicao\"],\n\t\triscos_suicidio: results[\"10_voce_se_preocupa_ou_pe\"]\n\t}\n\t\n\tlet aspectos_socioeconomicos = {\n\t\tapresenta_condicao_hipossuficiencia: results[\"11_a_acolhida_ainda_apres\"],\n\t\tmotivo_nao_condicao_hipossuficiencia: results[\"111_informe_aqui_os_motiv\"]\n\t}\n\t\n\tlet psicologa_voluntaria = {\n\t\ttem_contato_advogada: results[\"12_caso_a_acolhida_esteja\"],\n\t\tsolicitou_ajuda_mapa: results[\"13_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada: results[\"13_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida: results[\"13_se_sentiu_acolhida_pel\"],\n\t\tparticipa_encontros_discussao: \tresults[\"14_voce_participa_dos_enc\"],\n\t\tparticipa_grupo_whatsapp_estado:results[\"15_voce_participa_do_grup\"],\n\t\tcomo_se_sente_atendimento: results[\"16_se_desejar_relate_como\"]\n\t}\n\n\t// Seção contrato\n\tif (contrato.assidua_atendimentos === 'Não' ||\n\tcontrato.acolhida_respeita_contrato === 'Não') {\n\t\triority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\t// Seção acompanhamento psicológico\n\tif(acompanhamento_psicologico.necessidade_servico_publico === 'Sim') {\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\t\n\t}\n\n\tif (acompanhamento_psicologico.submetida_novas_violencias || acompanhamento_psicologico.riscos_suicidio === 'Sim' ) {\n\t\tpriority = 'urgent'\n\t\trisco = 'extremo'\t\n\t}\n\t\n\tlet answers = {dados_voluntaria, dados_acolhida, contrato, acompanhamento_psicologico, aspectos_socioeconomicos, psicologa_voluntaria, risco: risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"] \n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA:\\\\nNome: ' + dados_voluntaria.nome +'\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t'\\\\n\\\\nSOBRE O CONTRATO\\\\nA acolhida segue em atendimento: ' + contrato.acolhida_segue_em_atendimento +\t\n\t'\\\\nA acolhida tem sido assidua nos atendimentos: ' + contrato.assidua_atendimentos + \n\t//condição assiduidade nos atendimentos\n\t(contrato.assidua_atendimentos === 'Não' ? '\\\\nMotivo: ' + contrato.motivo_nao_assidua: '') +\n\t//respeito ao contrato\n\t'\\\\nA acolhida respeita o contrato estabelecido relacionado ao atendimento: ' + contrato.acolhida_respeita_contrato + \n\t//condição atendimento alem do horario estabelecido \n\t(contrato.acolhida_respeita_contrato === 'Não'? '\\\\nFrequência que procura além do horário de atendimento: ' + contrato.frequencia_atendimento_fora_do_horario : '' ) +\n\n\n  //acompanhamento_psicologico\n\t'\\\\n\\\\nACOMPANHAMENTO PSICOLÓGICO\\\\nA acolhida foi submetida a novas violências: ' + acompanhamento_psicologico.submetida_novas_violencias +\n\t//comentou sobre as violencias\n\t(acompanhamento_psicologico.comentario_sobre_novas_violencias ? '\\\\nComentário sobre novas violências que a acolhida foi submetida: ' + acompanhamento_psicologico.comentario_sobre_novas_violencias : '') +\n\t//aspectos psicológicos\n\t'\\\\nA Aspectos psicológicos trabalhados: ' + acompanhamento_psicologico.aspectos_psicologicos +\n\t//necessidade de serviço público\n\t'\\\\nNecessidade de referenciar a acolhida para algum serviço público: ' + acompanhamento_psicologico.necessidade_servico_publico +\n\t//se sim, por quê?\n\t(acompanhamento_psicologico.por_que_referenciou_servico_publico ? '\\\\nPor quê?: ' + acompanhamento_psicologico.por_que_referenciou_servico_publico : '') +\n\t//se sim, para qual(is) instituições?\n\t(acompanhamento_psicologico.quais_instituicoes ? '\\\\nNome(s) da(s) instituição(ões) pública(s): ' + acompanhamento_psicologico.quais_instituicoes : '') +\n\t//riscos suicídio\n\t'\\\\nRiscos suicídio: ' + acompanhamento_psicologico.riscos_suicidio +\n\n\t//Aspectos Socioeconomicos\n\t'\\\\n\\\\nASPECTOS SOCIOECONÔMICOS\\\\nA acolhida apresenta condição de hipossuficiência: ' + aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia +\n\t//Se não, motivo\n\t(aspectos_socioeconomicos.motivo_nao_condicao_hipossuficiencia ? '\\\\nMotivos de não apresentar condição de hipossuficiência para o atendimento: ' + aspectos_socioeconomicos.motivo_nao_condicao_hipossuficiencia : '') +\n\n\t//Sobre a psicológa voluntária\n\t'\\\\n\\\\nSOBRE A PSICOLÓGA VOLUNTÁRIA'+ \n\t//Tem contato com advogada\n\t(psicologa_voluntaria.tem_contato_advogada ? '\\\\nCaso haja acompanhamento jurídico, a psicológa segue em contato com a advogada?: ' + psicologa_voluntaria.tem_contato_advogada : '') +\n\t//Solicitou ajuda\n\t'\\\\nSolicitou ajuda da equipe técnica do mapa: ' + psicologa_voluntaria.solicitou_ajuda_mapa +\n\t//Sentiu-se orientada\n\t(psicologa_voluntaria.se_sentiu_orientada ? '\\\\nSentiu-se orientada: ' + psicologa_voluntaria.se_sentiu_orientada : '') +\n\t//Sentiu-se acolhida\n\t(psicologa_voluntaria.se_sentiu_acolhida ? '\\\\nSentiu-se acolhida: ' + psicologa_voluntaria.se_sentiu_acolhida : '') +\n\t//Participa dos encontros de Discussão de Caso do projeto\n\t'\\\\nParticipa dos encontros de Discussão de Caso do projeto: ' + psicologa_voluntaria.participa_encontros_discussao +\n\t//Participa do grupo de Whatsapp\n\t'\\\\nParticipa do grupo de whatsapp: ' + psicologa_voluntaria.participa_grupo_whatsapp_estado +\n\t//Relato de como se sente\n\t(psicologa_voluntaria.como_se_sente_atendimento ? '\\\\nRelato de como se sente em relação ao atendimento psicológico: ' + psicologa_voluntaria.como_se_sente_atendimento : '')\n\t\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\titem.json.answers.risco =item.json.answers.risco.toUpperCase();\n}\n\nreturn items[items.length - 1]; "
+      },
+      "name": "Formata - Acomp Psicológico 2",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        480,
+        920
+      ],
+      "id": "edba768d-8afa-4b15-8387-bba2aa76df4b"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Psicológico 2\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-2\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 2] {{$node[\"Formata - Acomp Psicológico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}",
+        "options": {}
+      },
+      "id": "8b4dffd3-1c07-44e2-9eed-0b0ea7f92071",
+      "name": "Criar Novo Ticket (Acomp Psic 2)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        720,
+        920
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation InsertMDAFormAnswers ($answers: json) {\n\tinsert_mda_forms_answers(objects: {answers: $answers, form: \"acompanhamento-psicologico-2\", msr_name: \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", volunteer_email: \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\", organization_id: 360282119532, form_id: {{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}, ticket_id: {{$node[\"Criar Novo Ticket (Acomp Psic 2)\"].json[\"ticket\"][\"id\"]}}}){\n\taffected_rows\t\n}\n}",
+        "variables": "={\n\t\"answers\": {{$node[\"Formata - Acomp Psicológico 2\"].json[\"answers_txt\"]}}\t\t\n}"
+      },
+      "id": "d715e52d-8f99-45b1-831b-fd4d532cc4b9",
+      "name": "Salvar Respostas 6",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        920,
+        920
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EmY5oStKEqATsley",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mda-form-acompanhamento",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        740
+      ],
+      "webhookId": "48de521b-f126-4630-a2d3-9d07ad0b1125",
+      "id": "ee974dca-3aee-4548-8682-33195ce6ba2b"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "GuzzleHttp/7",
+            "content-length": "14397",
+            "content-type": "application/json",
+            "webhook-signature": "RoUO9vx9HyBHiOm5RR3okYoGsWD+HRacieSaOEIY4Qo=",
+            "x-forwarded-for": "54.85.56.248",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-78bdf4fd45-2kg56",
+            "x-origin-base-url": "https://mautic.nossas.org",
+            "x-real-ip": "54.85.56.248",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "mautic.form_on_submit": [
+              {
+                "submission": {
+                  "id": 8717,
+                  "ipAddress": {
+                    "ipAddress": "186.204.58.83",
+                    "id": 61452,
+                    "ipDetails": {
+                      "city": "",
+                      "region": "",
+                      "zipcode": "",
+                      "country": "",
+                      "latitude": "",
+                      "longitude": "",
+                      "isp": "",
+                      "organization": "",
+                      "timezone": "",
+                      "extra": ""
+                    }
+                  },
+                  "form": {
+                    "id": 24,
+                    "name": "Instrumental de Acompanhamento 1: Psicólogas",
+                    "alias": "formulario",
+                    "category": null
+                  },
+                  "lead": {
+                    "id": 36319,
+                    "points": 0,
+                    "color": null,
+                    "fields": {
+                      "core": {
+                        "organization_id": {
+                          "id": "61",
+                          "label": "Zendesk Organization ID",
+                          "alias": "organization_id",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "360282119532",
+                          "normalizedValue": "360282119532"
+                        },
+                        "firstname": {
+                          "id": "2",
+                          "label": "First Name",
+                          "alias": "firstname",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "Selma Vettori",
+                          "normalizedValue": "Selma Vettori"
+                        },
+                        "data_de_inscricao_no_bond1": {
+                          "id": "60",
+                          "label": "Data de Inscrição no BONDE",
+                          "alias": "data_de_inscricao_no_bond1",
+                          "type": "date",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "2020-10-27",
+                          "normalizedValue": "2020-10-27"
+                        },
+                        "lastname": {
+                          "id": "3",
+                          "label": "Last Name",
+                          "alias": "lastname",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "state1": {
+                          "id": "58",
+                          "label": "Estado",
+                          "alias": "state1",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:1:{s:4:\"list\";a:28:{i:0;a:2:{s:5:\"label\";s:2:\"AC\";s:5:\"value\";s:2:\"ac\";}i:1;a:2:{s:5:\"label\";s:2:\"AL\";s:5:\"value\";s:2:\"al\";}i:2;a:2:{s:5:\"label\";s:2:\"AM\";s:5:\"value\";s:2:\"am\";}i:3;a:2:{s:5:\"label\";s:2:\"AP\";s:5:\"value\";s:2:\"ap\";}i:4;a:2:{s:5:\"label\";s:2:\"BA\";s:5:\"value\";s:2:\"ba\";}i:5;a:2:{s:5:\"label\";s:2:\"CE\";s:5:\"value\";s:2:\"ce\";}i:6;a:2:{s:5:\"label\";s:2:\"DF\";s:5:\"value\";s:2:\"df\";}i:7;a:2:{s:5:\"label\";s:2:\"ES\";s:5:\"value\";s:2:\"es\";}i:8;a:2:{s:5:\"label\";s:2:\"GO\";s:5:\"value\";s:2:\"go\";}i:9;a:2:{s:5:\"label\";s:2:\"MA\";s:5:\"value\";s:2:\"ma\";}i:10;a:2:{s:5:\"label\";s:2:\"MG\";s:5:\"value\";s:2:\"mg\";}i:11;a:2:{s:5:\"label\";s:2:\"MS\";s:5:\"value\";s:2:\"ms\";}i:12;a:2:{s:5:\"label\";s:2:\"MT\";s:5:\"value\";s:2:\"mt\";}i:13;a:2:{s:5:\"label\";s:2:\"PA\";s:5:\"value\";s:2:\"pa\";}i:14;a:2:{s:5:\"label\";s:2:\"PB\";s:5:\"value\";s:2:\"pb\";}i:15;a:2:{s:5:\"label\";s:2:\"PE\";s:5:\"value\";s:2:\"pe\";}i:16;a:2:{s:5:\"label\";s:2:\"PI\";s:5:\"value\";s:2:\"pi\";}i:17;a:2:{s:5:\"label\";s:2:\"PR\";s:5:\"value\";s:2:\"pr\";}i:18;a:2:{s:5:\"label\";s:2:\"RJ\";s:5:\"value\";s:2:\"rj\";}i:19;a:2:{s:5:\"label\";s:2:\"RN\";s:5:\"value\";s:2:\"rn\";}i:20;a:2:{s:5:\"label\";s:2:\"RO\";s:5:\"value\";s:2:\"ro\";}i:21;a:2:{s:5:\"label\";s:2:\"RR\";s:5:\"value\";s:2:\"rr\";}i:22;a:2:{s:5:\"label\";s:2:\"RS\";s:5:\"value\";s:2:\"rs\";}i:23;a:2:{s:5:\"label\";s:2:\"SC\";s:5:\"value\";s:2:\"sc\";}i:24;a:2:{s:5:\"label\";s:2:\"SE\";s:5:\"value\";s:2:\"se\";}i:25;a:2:{s:5:\"label\";s:2:\"SP\";s:5:\"value\";s:2:\"sp\";}i:26;a:2:{s:5:\"label\";s:2:\"TO\";s:5:\"value\";s:2:\"to\";}i:27;a:2:{s:5:\"label\";s:3:\"INT\";s:5:\"value\";s:3:\"int\";}}}",
+                          "default_value": null,
+                          "value": "sp",
+                          "normalizedValue": "SP"
+                        },
+                        "cor": {
+                          "id": "59",
+                          "label": "Cor",
+                          "alias": "cor",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:1:{s:4:\"list\";a:5:{i:0;a:2:{s:5:\"label\";s:5:\"Preta\";s:5:\"value\";s:5:\"preta\";}i:1;a:2:{s:5:\"label\";s:5:\"Parda\";s:5:\"value\";s:5:\"parda\";}i:2;a:2:{s:5:\"label\";s:9:\"Indígena\";s:5:\"value\";s:8:\"indigena\";}i:3;a:2:{s:5:\"label\";s:7:\"Amarela\";s:5:\"value\";s:7:\"amarela\";}i:4;a:2:{s:5:\"label\";s:6:\"Branca\";s:5:\"value\";s:6:\"branca\";}}}",
+                          "default_value": null,
+                          "value": "branca",
+                          "normalizedValue": "Branca"
+                        },
+                        "address": {
+                          "id": "57",
+                          "label": "Endereço",
+                          "alias": "address",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "R. Gaivota - Moema, São Paulo - SP, 04522-033, Brazil",
+                          "normalizedValue": "R. Gaivota - Moema, São Paulo - SP, 04522-033, Brazil"
+                        },
+                        "user_id": {
+                          "id": "55",
+                          "label": "Zendesk User ID",
+                          "alias": "user_id",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "email": {
+                          "id": "6",
+                          "label": "Email",
+                          "alias": "email",
+                          "type": "email",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "selmavettori@gmail.com",
+                          "normalizedValue": "selmavettori@gmail.com"
+                        },
+                        "tipo_de_acolhimento": {
+                          "id": "50",
+                          "label": "Tipo de Acolhimento",
+                          "alias": "tipo_de_acolhimento",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "mobile": {
+                          "id": "7",
+                          "label": "Mobile",
+                          "alias": "mobile",
+                          "type": "tel",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "phone": {
+                          "id": "8",
+                          "label": "Phone",
+                          "alias": "phone",
+                          "type": "tel",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "11 972080288",
+                          "normalizedValue": "11 972080288"
+                        },
+                        "website": {
+                          "id": "22",
+                          "label": "Website",
+                          "alias": "website",
+                          "type": "url",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "whatsapp": {
+                          "id": "49",
+                          "label": "Whatsapp",
+                          "alias": "whatsapp",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "11 972080288",
+                          "normalizedValue": "11 972080288"
+                        },
+                        "f_condition": {
+                          "id": "48",
+                          "label": "Status da Mulher",
+                          "alias": "f_condition",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:1:{s:4:\"list\";a:16:{i:0;a:2:{s:5:\"label\";s:11:\"Anti-ética\";s:5:\"value\";s:10:\"anti-etica\";}i:1;a:2:{s:5:\"label\";s:8:\"Aprovada\";s:5:\"value\";s:8:\"aprovada\";}i:2;a:2:{s:5:\"label\";s:30:\"Reprovada - Registro inválido\";s:5:\"value\";s:28:\"reprovada_registro_inválido\";}i:3;a:2:{s:5:\"label\";s:30:\"Reprovada - Diretrizes do Mapa\";s:5:\"value\";s:28:\"reprovada_diretrizes_do_mapa\";}i:4;a:2:{s:5:\"label\";s:26:\"Reprovada - Estudo de Caso\";s:5:\"value\";s:24:\"reprovada_estudo_de_caso\";}i:5;a:2:{s:5:\"label\";s:13:\"Descadastrada\";s:5:\"value\";s:13:\"descadastrada\";}i:6;a:2:{s:5:\"label\";s:12:\"Desabilitada\";s:5:\"value\";s:12:\"desabilitada\";}i:7;a:2:{s:5:\"label\";s:25:\"Dados incompletos - Email\";s:5:\"value\";s:23:\"dados_incompletos_email\";}i:8;a:2:{s:5:\"label\";s:28:\"Dados incompletos - Telefone\";s:5:\"value\";s:26:\"dados_incompletos_telefone\";}i:9;a:2:{s:5:\"label\";s:29:\"Dados incompletos - Endereço\";s:5:\"value\";s:27:\"dados_incompletos_endereço\";}i:10;a:2:{s:5:\"label\";s:28:\"Indisponível - Sem Resposta\";s:5:\"value\";s:27:\"indisponível_-sem_resposta\";}i:11;a:2:{s:5:\"label\";s:22:\"Indisponível - Agenda\";s:5:\"value\";s:20:\"indisponível_agenda\";}i:12;a:2:{s:5:\"label\";s:27:\"Indisponível - Maternidade\";s:5:\"value\";s:25:\"indisponível_maternidade\";}i:13;a:2:{s:5:\"label\";s:23:\"Indisponível - Férias\";s:5:\"value\";s:21:\"indisponível_férias\";}i:14;a:2:{s:5:\"label\";s:11:\"Disponível\";s:5:\"value\";s:10:\"disponivel\";}i:15;a:2:{s:5:\"label\";s:12:\"MSR-Inscrita\";s:5:\"value\";s:8:\"inscrita\";}}}",
+                          "default_value": "desabilitada",
+                          "value": "disponivel",
+                          "normalizedValue": "Disponível"
+                        },
+                        "city": {
+                          "id": "13",
+                          "label": "City",
+                          "alias": "city",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "São Paulo",
+                          "normalizedValue": "São Paulo"
+                        },
+                        "country": {
+                          "id": "16",
+                          "label": "Country",
+                          "alias": "country",
+                          "type": "country",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "last_active": {
+                          "id": "19",
+                          "label": "Date Last Active",
+                          "alias": "last_active",
+                          "type": "datetime",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "2024-05-22 19:25:04",
+                          "normalizedValue": "2024-05-22 19:25:04"
+                        }
+                      },
+                      "social": {
+                        "facebook": {
+                          "id": "23",
+                          "label": "Facebook",
+                          "alias": "facebook",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "foursquare": {
+                          "id": "24",
+                          "label": "Foursquare",
+                          "alias": "foursquare",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "instagram": {
+                          "id": "25",
+                          "label": "Instagram",
+                          "alias": "instagram",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "linkedin": {
+                          "id": "26",
+                          "label": "LinkedIn",
+                          "alias": "linkedin",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "skype": {
+                          "id": "27",
+                          "label": "Skype",
+                          "alias": "skype",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "twitter": {
+                          "id": "28",
+                          "label": "Twitter",
+                          "alias": "twitter",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        }
+                      },
+                      "personal": [],
+                      "professional": []
+                    }
+                  },
+                  "trackingId": "cjl0e1c1s23297xk520x2kp",
+                  "dateSubmitted": "2024-05-28T16:27:32+00:00",
+                  "referer": "https://mautic.nossas.org/acompanhamento-psi-1",
+                  "page": null,
+                  "results": {
+                    "1_nome_completo": "Selma Vettori",
+                    "2_email_de_cadastro": "selmavettori@gmail.com",
+                    "3_nome_da_acolhida": "Cristina Gomes",
+                    "4_a_acolhida_tem_sido_ass": "Sim",
+                    "6_a_acolhida_respeita_os": "Sim",
+                    "6_a_acolhida_foi_submetid": "Física, Psicológica, Moral",
+                    "7_caso_queira_comentar_so": "Cristina conseguiu se separar do marido agressor, retomamos a terapia quando ela já estava morando em um apartamento alugado (aluguel inicialmente pago pelo ex-marido), com os dois filhos mais novos (ela tem quatro). Concluiu um curso de pós-gradução em arteterapia (pago pela filha Bianca) e prestou dois concursos para dar aula em escolas públicas, um na prefeitura e outro no estado. Foi aprovada nos dois e chamada pela prefeitura, não como concursada. Seu salário não é muito alto e insuficiente para cobrir todas as despesas da casa e dos filhos que moram com ela e que não trabalham. Foi obrigada a se mudar novamente devido à proximidade com a residência do ex marido que a importunava diariamente com mensagens ofensivas e a obrigava a deixá-lo entrar em seu apartamento. Mudou-se para outro apartamento menor e mais em conta e desde então, conta com a ajuda de seus dois filhos mais velhos. Enquanto ainda morava no outro imóvel, passou a ser agredida pela filha mais nova, Isabela, no período que antecedia seu período menstrual. As agressões eram de cunho psicológico e moral, mas, passaram a ser físicas desde que se mudaram para o novo imóvel. Há cerca de três meses, Cristina começou a enviar mensagens dizendo que tinha apanhado muito da filha e estava toda machucada; depois de tudo isso, a filha tomou uma overdose de medicações psiquiátricas e por isso, sugeri que ela chamasse o ex marido e os dois a levassem a um hospital. Assim eles fizeram, Isabela ficou três dias internada em observação, mas, esse tipo de evento continua acontecendo causando grande pavor em Cristina com medo das agressões e também com possível risco de suicídio da filha. Esta se consultava com uma psiquiatra, mas a médica a orientou muito mal e por isso, ela não está mais em atendimento psiquiátrico e nem psicológico. ",
+                    "8_aspectos_psicologicos_t": "Cristina recuperou sua autoestima, está mais resiliente, tem recuperado sua vida social saindo com alguns colegas da escola, mas, ainda precisa se fortalecer para enfrentar os problemas familiares com mais firmeza. Ela não quer denunciar a filha por violência doméstica, porém, a deixa escolher se vai em busca de tratamento psquiátrico. Nossas sessões têm girado muito em torno desse problema familiar e sua tendência em querer se envolver com os problemas dos alunos extremamente carentes da escola onde está lecionando como professora substituta. ",
+                    "92_para_qualis_instituica": "Delegacia especializada da Mulher, Delegacia civil, Defensoria pública/ NUDEM, Ministério público",
+                    "91_por_que": "Por causa das agressões sofridas por Cristina praticadas por sua filha Isabela. Além disso, Cristina tem 60 anos e se enquadra nos direitos adquiridos no Estatuto do idoso.",
+                    "9_durante_o_atendimento_v": "Sim",
+                    "10_voce_se_preocupa_ou_pe": "Não",
+                    "11_a_acolhida_ainda_apres": "Sim",
+                    "12_a_acolhida_participa_e": "Não",
+                    "13_como_e_a_relacao_da_ac": "Sim",
+                    "14_como_e_a_relacao_da_ac": "Média",
+                    "15_como_e_a_relacao_da_ac": "Ruim",
+                    "16_a_acolhida_tem_algum_d": "Não",
+                    "17_se_sim_a_acolhida_faz": "Não",
+                    "18_se_sim_a_acolhida_faz": "Não",
+                    "19_caso_seja_pessoa_com_d": "Não",
+                    "20_a_acolhida_tem_algum_d": "Não",
+                    "21_se_sim_a_acolhida_faz": "Não",
+                    "22_se_sim_a_acolhida_faz": "Não",
+                    "23_a_acolhida_faz_uso_de": "Não",
+                    "24_se_sim_a_acolhida_e_as": "Não",
+                    "25_quais_impactos_a_acolh": "Insônia, Distorção dos pensamentos e crenças de desvalia, Autodepreciação, interferindo muito no bem estar e na saúde psicológica da mulher, Sentimentos de culpa, Dependência afetiva e financeira",
+                    "26_quais_impactos_a_acolh": "Sérios impactos na saúde mental como: depressão, ansiedade e/ou síndrome do pânico",
+                    "27_caso_a_acolhida_esteja": "Não",
+                    "28_voce_solicitou_ajuda_d": "Não",
+                    "29_voce_participa_dos_enc": "Não",
+                    "30_voce_participa_do_grup": "Não",
+                    "31_se_desejar_relate_como": "Acredito que o atendimento proporcionado pelo Mapa tem ajudado a muitas mulheres reconstruírem sua vida, autonomia, autoestima e desejo de se desenvolverem cada vez em todos os aspectos importantes de suas vidas. "
+                  }
+                },
+                "timestamp": "2024-05-28T16:27:35+00:00"
+              }
+            ]
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/mda-form-acompanhamento",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-16T17:41:58.269Z",
+      "updatedAt": "2024-01-16T17:41:58.269Z",
+      "id": "E3Tnq8M430hgCQfP",
+      "name": "Mapa do acolhimento"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-06-24T19:58:38.000Z",
+  "versionId": "1e828df6-fa55-4a27-86f2-4f0b8433ce77"
+}
