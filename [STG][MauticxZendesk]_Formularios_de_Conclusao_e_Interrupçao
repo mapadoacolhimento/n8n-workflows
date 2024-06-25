@@ -1,0 +1,1032 @@
+{
+  "active": false,
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Formata - Conclusão Jurídico",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formata - Conclusão Psicológico",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formata - Interrupção Atendimento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formata - Interrupção Encaminhamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Lists": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Conclusão Jurídico": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Conclusão Psicológico": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (conclusao juridico)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (conclusao psicologico)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Interrupção Atendimento": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Interrupção Encaminhamento": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (interrupcao encaminhamento)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (interrupcao atendimento)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Item Lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (conclusao psicologico)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID2": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (conclusao juridico)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID3": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (interrupcao atendimento)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID1": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (interrupcao encaminhamento)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-06-25T14:15:03.837Z",
+  "id": "OmLylbxtPYc7U4ro",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG][MauticxZendesk] Formularios de Conclusão e Interrupção",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2994c421-21af-4d2c-bfa5-af73d049d5f8",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "value1": "={{$node[\"Item Lists\"].json[\"submission\"][\"form\"][\"id\"]}}",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": 29
+            },
+            {
+              "operation": "equal",
+              "value2": 30,
+              "output": 1
+            },
+            {
+              "operation": "equal",
+              "value2": 32,
+              "output": 2
+            },
+            {
+              "operation": "equal",
+              "value2": 31,
+              "output": 3
+            }
+          ]
+        }
+      },
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        80,
+        800
+      ],
+      "id": "f7a40da0-f4e5-4b57-88cf-fe86b59f8cdb"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "[\"body\"][\"mautic.form_on_submit\"]",
+        "options": {}
+      },
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        800
+      ],
+      "id": "ec81d55b-a9c0-473f-9f25-f0a2a40aabcb"
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"conclusao-psicologico\", msr_name: \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (conclusao psicologico)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:360282119532, form_id:{{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\": {{$node[\"Formata - Conclusão Psicológico\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        700
+      ],
+      "id": "9490684e-951f-4c9f-8b7e-d7dee2d81b9c",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EmY5oStKEqATsley",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"conclusao-juridico\", msr_name: \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (conclusao juridico)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:360269610652, form_id:{{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\":{{$node[\"Formata - Conclusão Jurídico\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas2",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        460
+      ],
+      "id": "f934d451-63e1-4c76-a81b-0dbc5efcc1f8",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EmY5oStKEqATsley",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n\n\tlet dados_voluntaria = {\n\t\tnome:\tresults[\"1_nome_completo\"], //\"Teste 2022\",\n\t\temail_cadastro: results[\"2_email_de_cadastro\"] //\"teste@teste.br\",\n\t}\n\t\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"] //\"Acholhida teste\",\n\t}\n\t\n\tlet atendimento = {\n\t\tdata_encerramento: results[\"4_data_de_encerramento_do\"], //11/11/2022\n\t\tatraves_do_atendimento: results[\"5_atraves_do_atendimento\"],\n\t\tprocessos_acolhida: results[\"7_caso_se_aplique_existem\"],\n\t\tstatus_processo: results[\"61_selecione_o_status_dos\"],\n\t\tdescricao_processo_juridico: results[\"7_descreva_sucintamente_o\"]\n\t}\n\n\tlet experiencia_voluntaria = {\n\t\tdescricao_experiencia: results[\"8_se_desejar_descreva_sua\"],\n\t\taprendizagens: results[\"9_quais_aprendizagens_est\"],\n\t\tdesafios: results[\"10_e_quais_os_desafios\"],\n\t\tsolicitou_ajuda_mapa: results[\"11_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_mapa: results[\"111_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_mapa: results[\"112_sentiuse_acolhida_pel\"],\n\t\tsolicitou_ajuda_voluntaria: results[\"12_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_volutaria: results[\"121_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_volutaria: results[\"122_sentiuse_acolhida_pel\"]\n\t}\n\n\tlet melhorias = {\n\t\tmelhorias: results[\"13_se_desejar_deixe_suges1\"]\n\t}\n\n\n\tlet answers = {dados_voluntaria, dados_acolhida, atendimento, experiencia_voluntaria, melhorias, risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"]\n\t\n\tlet data = new Date(atendimento.data_encerramento)\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData de encerramento: ' + ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear() +\n\t'\\\\nAtravés do atendimento, a acolhida: ' + atendimento.atraves_do_atendimento +\n\t(atendimento.processos_acolhida ? '\\\\nA voluntária atuou em algum processo: ' + atendimento.processos_acolhida : '') +\n\t(atendimento.status_processo ? '\\\\nStatus do processo: ' + atendimento.status_processo : '') +\n\t'\\\\nDescrição do desfecho do processo: ' + atendimento.descricao_processo_juridico +\n\t//experiência como voluntária\n\t'\\\\n\\\\nEXPERIÊNCIA COMO VOLUNTÁRIA' +\n\t//TODO\n\t(experiencia_voluntaria.descricao_experiencia ? '\\\\nDescrição da experiência como voluntária: ' + experiencia_voluntaria.descricao_experiencia : '') +\n\t'\\\\nAprendizagens: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios: ' + experiencia_voluntaria.desafios +\n\t'\\\\nSolicitou ajuda da equipe do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa +\n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim'?\n\t\t(experiencia_voluntaria.se_sentiu_orientada_mapa ? '\\\\nSe sentiu orientada pela equipe: ' + experiencia_voluntaria.se_sentiu_orientada_mapa : '') +\n\t(experiencia_voluntaria.se_sentiu_acolhida_mapa ? '\\\\nSe sentiu acolhida pela equipe: ' + experiencia_voluntaria.se_sentiu_acolhida_mapa : '') : ''\t\n\t) +\n\t'\\\\nSolicitou ajuda de uma colega voluntária: ' + experiencia_voluntaria.solicitou_ajuda_voluntaria +\n\t(experiencia_voluntaria.solicitou_ajuda_voluntaria === 'Sim' ?\n\t\t(experiencia_voluntaria.se_sentiu_orientada_volutaria ? '\\\\nSe sentiu orientada pela voluntária: ' + experiencia_voluntaria.se_sentiu_orientada_volutaria : '') +\n\t(experiencia_voluntaria.se_sentiu_acolhida_volutaria ? '\\\\nSe sentiu acolhida pela voluntária: ' + experiencia_voluntaria.se_sentiu_acolhida_volutaria : '') : ''\n\t) +\n\t'\\\\n\\\\nMELHORIAS' +\n\t(melhorias.melhorias ? '\\\\nMelhorias: ' + melhorias.melhorias : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+      },
+      "name": "Formata - Conclusão Jurídico",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        460,
+        460
+      ],
+      "id": "ed6c8108-d294-4b59-be82-8e4162c67052"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nlet risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n  dados_voluntaria = {\n\t\tnome: results[\"1_nome_completo\"],\n\t\temail_cadastro: results[\"2_email_de_cadastro\"]\n\t}\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"],\n\t}\n\n\tlet sobre_o_atendimento = {\n\t\tdata_do_encerramento: results[\"4_data_de_encerramento_do\"],\n\t\tseguirao_em_atendimento: results[\"5_voce_e_a_acolhida_segui\"],\n\t\tatraves_do_atendimento: results['5_atraves_do_atendimento'],\n\t\timpactos_sofrendo_acolhida_moderado: results[\"7_quais_impactos_a_acolhi\"],\n\t\timpactos_sofrendo_acolhida_grave: results[\"8_quais_impactos_a_acolhi\"],\n\t\timpactos_superados: results[\"9_quais_impactos_em_decor\"],\n\t\tdesfecho_psicoterapia: results[\"10_descreva_sucintamente\"]\n\t}\n\n\tlet experiencia_voluntaria = {\n\t\texperiencia_psicologa: results[\"11_se_desejar_descreva_su\"], \n\t\taprendizagens: results[\"12_quais_aprendizagens_es\"],\n\t\tdesafios: results[\"13_e_os_desafios\"],\n\t\tsolicitou_ajuda_mapa: results[\"14_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_mapa: results[\"141_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_mapa: results[\"142_sentiuse_acolhida_pel\"],\n\t\tsolicitou_ajuda_voluntaria: results[\"15_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_voluntaria: results[\"151_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_voluntaria: results[\"152_sentiuse_acolhida_pel\"]\n\t}\n\t\n\tlet melhorias = {\n\t\tmelhorias: results[\"16_se_desejar_deixe_suges\"],\n\t}\t\n\n\tif(sobre_o_atendimento.impactos_sofrendo_acolhida_moderado !== 'A acolhida não está sofrendo nenhum dos impactos citados acima') {\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\tif(sobre_o_atendimento.impactos_sofrendo_acolhida_grave !== 'A acolhida não está sofrendo nenhum dos impactos citados acima') {\n\t\tpriority = 'high'\n\t\trisco = 'grave'\t\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, sobre_o_atendimento, experiencia_voluntaria, melhorias, risco: risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"] \n\n\tlet data = new Date(sobre_o_atendimento.data_do_encerramento)\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA:\\\\nNome: ' + dados_voluntaria.nome +'\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome:' + dados_acolhida.nome + \n\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData de encerramento do atendimento: ' +  ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear() +\n\t'\\\\nVoluntária e acolhida seguirão em atendimento: ' + sobre_o_atendimento.seguirao_em_atendimento +\n\t'\\\\nAtravés do atendimento, resultados da acolhida: ' + sobre_o_atendimento.atraves_do_atendimento +\n\t'\\\\nImpactos moderados que a acolhida ainda está sofrendo: ' + sobre_o_atendimento.impactos_sofrendo_acolhida_moderado +\n\t'\\\\nImpactos graves que a acolhida ainda está sofrendo: ' + sobre_o_atendimento.impactos_sofrendo_acolhida_grave +\n\t'\\\\nImpactos superados: ' + sobre_o_atendimento.impactos_superados +\n\t'\\\\nDesfecho do processo psicoterapêutico: ' + sobre_o_atendimento.desfecho_psicoterapia\n\n\t'\\\\n\\\\nSOBRE A EXPERIÊNCIA DA VOLUNTÁRIA' +\n\t(experiencia_voluntaria.experiencia_psicologa ? '\\\\nDescrição da experiência: ' + experiencia_voluntaria.experiencia_psicologa : '') +\n\t'\\\\nAprendizagens da psicóloga: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios da psicóloga: ' + experiencia_voluntaria.desafios +\n\t'\\\\nSolicitou ajuda do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa + \n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim' ? \n\t'\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada_mapa +\n\t'\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida_mapa : ''\n\t) +\n\t'\\\\nSolicitou ajuda voluntária: ' + experiencia_voluntaria.solicitou_ajuda_voluntaria +\n\t(experiencia_voluntaria.solicitou_ajuda_voluntaria === 'Sim' ?\n\t'\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada_voluntaria +\n\t'\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida_voluntaria : ''\n\t) +\n\n\t(melhorias.melhorias ? '\\\\n\\\\MELHORIAS E SUGESTÕES\\\\nSugestões de melhoridas: ' + melhorias.melhorias : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\titem.json.answers.risco =item.json.answers.risco.toUpperCase();\n}\n\nreturn items[items.length - 1]; "
+      },
+      "name": "Formata - Conclusão Psicológico",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        440,
+        700
+      ],
+      "id": "d213c69e-24ce-4ff6-8455-803a95e440f2"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"conclusao\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Conclusão] {{$node[\"Formata - Conclusão Jurídico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (conclusao juridico)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        900,
+        480
+      ],
+      "id": "d644cd57-5f2c-4b76-93f4-0e9ed961c179",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"conclusao\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Conclusão] {{$node[\"Formata - Conclusão Psicológico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (conclusao psicologico)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        840,
+        700
+      ],
+      "id": "5a6792d5-7f56-4f5f-8d7a-91410892916c",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n\n\tlet dados_voluntaria = {\n\t\tnome:\tresults[\"1_seu_nome_completo\"], //\"Teste 2022\",\n\t\temail_cadastro: results[\"2_seu_email_de_cadastro\"] //\"teste@teste.br\",\n\t}\n\t\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"] //\"Acholhida teste\",\n\t}\n\t\n\tlet atendimento = {\n\t\tdata_inicio_atendimento: results[\"4_data_de_inicio_do_atend\"],\n\t\tdata_encerramento: results[\"5_data_de_interrupcao_do\"], //11/11/2022\n\t\tdemanda_atendimento: results[\"6_qual_a_demanda_da_acolh\"],\n\t\tmotivo_interrupcao: results[\"7_qual_o_motivo_da_interr\"],\n\t\tprofissionais_reencaminhamento: results[\"8_caso_o_motivo_da_interr\"],\n\t\tequipes_servico_publico: results[\"9_caso_o_motivo_da_interr\"],\n\t\tatendimento_fora_do_projeto: results[\"10_voce_e_a_acolhida_segu\"]\n\t}\n\n\t\tlet disponibilidade = {\n\t\tcontinuara_disponivel: results[\"11_voce_continuara_dispon\"],\n\t\tvoce_deseja: results[\"111_voce_deseja\"],\n\t\tcategoria_suspensao_cadastro: results[\"112_caso_deseje_suspender\"]\n\t}\n\n\tlet experiencia_voluntaria = {\t\n\t\tsolicitou_ajuda_mapa: results[\"12_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada: results[\"121_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida: results[\"122_sentiuse_acolhida_pel\"],\n\t\taprendizagens: results[\"13_quais_aprendizagens_es\"],\n\t\tdesafios: results[\"14_quais_desafios_voce_en\"],\n\t\tdescricao_experiencia: results[\"15_se_desejar_descreva_su\"]\n\t}\n\n\n\tlet answers = {dados_voluntaria, dados_acolhida, atendimento, disponibilidade, experiencia_voluntaria, risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"]\n\tconst organization_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"organization_id\"][\"value\"]\n\tlet data_inicio = new Date(atendimento.data_inicio_atendimento)\n\tlet data_encerramento = new Date(atendimento.data_encerramento)\n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData do início: ' + ((data_inicio.getDate() )) + \"/\" + ((data_inicio.getMonth() + 1)) + \"/\" + data_inicio.getFullYear() +\n\t'\\\\nData do encerramento: ' + ((data_encerramento.getDate() )) + \"/\" + ((data_encerramento.getMonth() + 1)) + \"/\" + data_encerramento.getFullYear() +\n\t'\\\\nDemanda da acolhida: ' + atendimento.demanda_atendimento +\n\t'\\\\nMotivo da interrupção: ' + atendimento.motivo_interrupcao +\n\t(atendimento.profissionais_reencaminhamento ? '\\\\nÁrea de profissionais para reencaminhamento da acolhida: ' + atendimento.profissionais_reencaminhamento : '') +\n\t(atendimento.equipes_servico_publico ? '\\\\nServiços públicos para reencaminhamento da acolhida: ' + atendimento.equipes_servico_publico : '') +\n\t'\\\\nVoluntária e acolhida seguirão em atendimento fora do projeto: ' + atendimento.atendimento_fora_do_projeto +\n\n\t//Disponibilidade\n\t'\\\\n\\\\nSOBRE A DISPONIBILIDADE\\\\nVoluntária continuará disponível: ' + disponibilidade.continuara_disponivel +\n\t(disponibilidade.continuara_disponivel === 'Não' ?\n\t(disponibilidade.voce_deseja ? '\\\\nVocê deseja: ' + disponibilidade.voce_deseja : '') +\n\t(disponibilidade.categoria_suspensao_cadastro ? '\\\\nCategoria da suspensão: ' + disponibilidade.categoria_suspensao_cadastro : '')\n\t: '')\t+\n\n\t//Experiência como voluntária\n\t'\\\\n\\\\nEXPERIÊNCIA COMO VOLUNTÁRIA\\\\nSolicitou ajuda da equipe do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa +\n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim'?\n\t(experiencia_voluntaria.se_sentiu_orientada ? '\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada : '')+\n\t(experiencia_voluntaria.se_sentiu_acolhida ? '\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida : '')\n\t: '') +\n\t'\\\\nAprendizagens do atendimento: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios do atendimento: ' + experiencia_voluntaria.desafios +\n\t(experiencia_voluntaria.descricao_experiencia ? '\\\\nDescrição da experiência como voluntária: ' + experiencia_voluntaria.descricao_experiencia : '')\t\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n\t\t\t\t\t\t\torganization_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+      },
+      "name": "Formata - Interrupção Atendimento",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        440,
+        940
+      ],
+      "id": "489fa046-e714-4163-8694-2e86b80704d0"
+    },
+    {
+      "parameters": {
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n\n\tlet dados_voluntaria = {\n\t\tnome:\tresults[\"1_nome_completo\"], //\"Teste 2022\",\n\t\temail_cadastro: results[\"2_email_de_cadastro\"] //\"teste@teste.br\",\n\t}\n\t\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"] //\"Acholhida teste\",\n\t}\n\t\n\tlet encaminhamento = {\n\t\tacolhida_estabeleceu_contato: results[\"4_a_acolhida_chegou_a_est\"],\n\t\tdata_primeiro_contato: results[\"41_qual_foi_a_data_do_pri\"],\n\t\tteve_conhecimento_demanda: results[\"5_voce_teve_conhecimento\"],\n\t\tdemanda: results[\"51_qual_a_demanda_da_acol\"],\n\t\tdata_interrupcao: results[\"6_data_da_interrupcao_do\"], //11/11/2022\n\t\tmotivo_interrupcao: results[\"7_qual_o_motivo_da_interr\"],\n\t\tprofissionais_reencaminhamento: results[\"8_caso_a_area_de_atuacao\"],\n\t\tequipes_servico_publico: results[\"9_caso_o_motivo_da_interr\"],\n\t}\n\n\t\tlet disponibilidade = {\n\t\tcontinuara_disponivel: results[\"10_voce_continuara_dispon\"],\n\t\tvoce_deseja: results[\"101_voce_deseja\"],\n\t\tcategoria_suspensao_cadastro: results[\"11_caso_deseje_suspender\"]\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, encaminhamento, disponibilidade, risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"]\n\tconst organization_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"organization_id\"][\"value\"]\n\tlet data_contato = new Date(encaminhamento.data_primeiro_contato)\n\tlet data_interrupcao = new Date(encaminhamento.data_interrupcao)\n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\t'\\\\n\\\\nSOBRE O ENCAMINHAMENTO\\\\nAcolhida estabeleu contato: ' + encaminhamento.acolhida_estabeleceu_contato +\n\t(encaminhamento.acolhida_estabeleceu_contato === 'Sim' ?\n\t(encaminhamento.data_primeiro_contato ? '\\\\nData do primeiro contato: ' + ((data_contato.getDate() )) + \"/\" + ((data_contato.getMonth() + 1)) + \"/\" + data_contato.getFullYear()  : '')\n\t: '')\t+\n\t'\\\\nTeve conhecimento da demanda da acolhida: ' + encaminhamento.teve_conhecimento_demanda +\n\t(encaminhamento.teve_conhecimento_demanda === 'Sim'?\n\t(encaminhamento.demanda ? '\\\\nDemanda da acolhida: ' + encaminhamento.demanda : '')\n\t: '') +\t\n\t'\\\\nData de interrupção: ' + \t((data_interrupcao.getDate() )) + \"/\" + ((data_interrupcao.getMonth() + 1)) + \"/\" + data_interrupcao.getFullYear() +\t\n\t'\\\\nMotivo da interrupção: ' + encaminhamento.motivo_interrupcao +\n\t(encaminhamento.profissionais_reencaminhamento ? '\\\\nÁrea de profissionais para reencaminhamento da acolhida: ' + encaminhamento.profissionais_reencaminhamento : '') +\n\t(encaminhamento.equipes_servico_publico ? \t'\\\\nServiços públicos para reencaminhamento da acolhida: ' + encaminhamento.equipes_servico_publico : '') +\n\n\t//Disponibilidade\n\t'\\\\n\\\\nSOBRE A DISPONIBILIDADE\\\\nVoluntária continuará disponível: ' + disponibilidade.continuara_disponivel +\n\t(disponibilidade.continuara_disponivel === 'Não' ?\n\t(disponibilidade.voce_deseja ? '\\\\nVocê deseja: ' + disponibilidade.voce_deseja : '') \n\t: '')\t+\n\t(disponibilidade.categoria_suspensao_cadastro ? '\\\\nCategoria da suspensão: ' + disponibilidade.categoria_suspensao_cadastro : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n\t\t\t\t\t\t\torganization_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+      },
+      "name": "Formata - Interrupção Encaminhamento",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        440,
+        1180
+      ],
+      "id": "3f05db55-0a9f-45ac-b30b-4acad4934c4b"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": {{$node[\"Formata - Interrupção Encaminhamento\"].json[\"organization_id\"]}},\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"encaminhamento-interrupção\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Enc. Interrupção] {{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (interrupcao encaminhamento)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        820,
+        1180
+      ],
+      "id": "0ea317a4-91f2-4fed-b0c6-69e0e81e4215",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={\n\"ticket\":{\n\"requester_id\":{{ $json.zendesk_user_id }}\n\"organization_id\": {{$node[\"Formata - Interrupção Atendimento\"].json[\"organization_id\"]}},\n\"description\": \"Importado via N8N\",\n\"tags\": [\"atendimento-interrupção\"],\n\"status\": \"new\",\n\"priority\": \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"priority\"]}}\",\n\"subject\": \"[Atend. Interrupção] {{$node[\"Formata - Interrupção Atendimento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n\"comment\": {\n\"body\": \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"body_ticket\"]}}\",\n\"public\": false\n}\n}\n}"
+      },
+      "name": "Criar novo ticket (interrupcao atendimento)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        820,
+        920
+      ],
+      "id": "40b05c23-eb5a-4c57-8b6e-4720bc62abf6",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"interrupcao-encaminhamento\", msr_name: \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (interrupcao encaminhamento)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"organization_id\"]}}, form_id:{{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\": {{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas1",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        1160
+      ],
+      "id": "54be996d-8933-48bb-b727-7d31c3c4b5f1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nhq3GDSBeWJ5XE1l",
+          "name": "[PROD] BONDE api-graphql"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"interrupcao-atendimento\", msr_name: \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (interrupcao atendimento)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:{{$node[\"Formata - Interrupção Atendimento\"].json[\"organization_id\"]}}, form_id:{{$node[\"Webhook\"].json[\"body\"][\"mautic.form_on_submit\"][0][\"submission\"][\"form\"][\"id\"]}}\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\":{{$node[\"Formata - Interrupção Atendimento\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas3",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        940
+      ],
+      "id": "9ac42c3e-a299-436c-be3d-a71919f70c05",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nhq3GDSBeWJ5XE1l",
+          "name": "[PROD] BONDE api-graphql"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "=mda-form-conclusao",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        800
+      ],
+      "webhookId": "881e6821-b5be-475c-af76-72baf4f90694",
+      "id": "2838ae6a-c805-452c-88ad-af065151dc82"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "b3026a6f-8e3a-48ad-a0bc-0cfb136eeb1b",
+      "name": "Busca Zendesk User ID",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        600,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "b6634d1d-5684-415c-898f-471d3b63cd96",
+      "name": "Busca Zendesk User ID1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        640,
+        1180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "ef6c2218-08de-4fc6-a78e-923851c0b14c",
+      "name": "Busca Zendesk User ID2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        660,
+        460
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "fc5710c8-5586-4ff5-ba6b-10aeac897237",
+      "name": "Busca Zendesk User ID3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        620,
+        940
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "GuzzleHttp/7",
+            "content-length": "12498",
+            "content-type": "application/json",
+            "webhook-signature": "wRxJ8KsPBerfCo+QxPupVZHPGoRIz/tTM/VTPe38H6E=",
+            "x-forwarded-for": "54.85.56.248",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-78bdf4fd45-hfllq",
+            "x-origin-base-url": "https://mautic.nossas.org",
+            "x-real-ip": "54.85.56.248",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "mautic.form_on_submit": [
+              {
+                "submission": {
+                  "id": 8712,
+                  "ipAddress": {
+                    "ipAddress": "189.82.174.159",
+                    "id": 65646,
+                    "ipDetails": {
+                      "city": "",
+                      "region": "",
+                      "zipcode": "",
+                      "country": "",
+                      "latitude": "",
+                      "longitude": "",
+                      "isp": "",
+                      "organization": "",
+                      "timezone": "",
+                      "extra": ""
+                    }
+                  },
+                  "form": {
+                    "id": 30,
+                    "name": "Instrumental de Conclusão dos Atendimentos Psicológicos",
+                    "alias": "instrument",
+                    "category": null
+                  },
+                  "lead": {
+                    "id": 32868,
+                    "points": 0,
+                    "color": null,
+                    "fields": {
+                      "core": {
+                        "organization_id": {
+                          "id": "61",
+                          "label": "Zendesk Organization ID",
+                          "alias": "organization_id",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "360282119532",
+                          "normalizedValue": "360282119532"
+                        },
+                        "firstname": {
+                          "id": "2",
+                          "label": "First Name",
+                          "alias": "firstname",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "Marcella Nobrega",
+                          "normalizedValue": "Marcella Nobrega"
+                        },
+                        "data_de_inscricao_no_bond1": {
+                          "id": "60",
+                          "label": "Data de Inscrição no BONDE",
+                          "alias": "data_de_inscricao_no_bond1",
+                          "type": "date",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "2020-09-30",
+                          "normalizedValue": "2020-09-30"
+                        },
+                        "lastname": {
+                          "id": "3",
+                          "label": "Last Name",
+                          "alias": "lastname",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "state1": {
+                          "id": "58",
+                          "label": "Estado",
+                          "alias": "state1",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:1:{s:4:\"list\";a:28:{i:0;a:2:{s:5:\"label\";s:2:\"AC\";s:5:\"value\";s:2:\"ac\";}i:1;a:2:{s:5:\"label\";s:2:\"AL\";s:5:\"value\";s:2:\"al\";}i:2;a:2:{s:5:\"label\";s:2:\"AM\";s:5:\"value\";s:2:\"am\";}i:3;a:2:{s:5:\"label\";s:2:\"AP\";s:5:\"value\";s:2:\"ap\";}i:4;a:2:{s:5:\"label\";s:2:\"BA\";s:5:\"value\";s:2:\"ba\";}i:5;a:2:{s:5:\"label\";s:2:\"CE\";s:5:\"value\";s:2:\"ce\";}i:6;a:2:{s:5:\"label\";s:2:\"DF\";s:5:\"value\";s:2:\"df\";}i:7;a:2:{s:5:\"label\";s:2:\"ES\";s:5:\"value\";s:2:\"es\";}i:8;a:2:{s:5:\"label\";s:2:\"GO\";s:5:\"value\";s:2:\"go\";}i:9;a:2:{s:5:\"label\";s:2:\"MA\";s:5:\"value\";s:2:\"ma\";}i:10;a:2:{s:5:\"label\";s:2:\"MG\";s:5:\"value\";s:2:\"mg\";}i:11;a:2:{s:5:\"label\";s:2:\"MS\";s:5:\"value\";s:2:\"ms\";}i:12;a:2:{s:5:\"label\";s:2:\"MT\";s:5:\"value\";s:2:\"mt\";}i:13;a:2:{s:5:\"label\";s:2:\"PA\";s:5:\"value\";s:2:\"pa\";}i:14;a:2:{s:5:\"label\";s:2:\"PB\";s:5:\"value\";s:2:\"pb\";}i:15;a:2:{s:5:\"label\";s:2:\"PE\";s:5:\"value\";s:2:\"pe\";}i:16;a:2:{s:5:\"label\";s:2:\"PI\";s:5:\"value\";s:2:\"pi\";}i:17;a:2:{s:5:\"label\";s:2:\"PR\";s:5:\"value\";s:2:\"pr\";}i:18;a:2:{s:5:\"label\";s:2:\"RJ\";s:5:\"value\";s:2:\"rj\";}i:19;a:2:{s:5:\"label\";s:2:\"RN\";s:5:\"value\";s:2:\"rn\";}i:20;a:2:{s:5:\"label\";s:2:\"RO\";s:5:\"value\";s:2:\"ro\";}i:21;a:2:{s:5:\"label\";s:2:\"RR\";s:5:\"value\";s:2:\"rr\";}i:22;a:2:{s:5:\"label\";s:2:\"RS\";s:5:\"value\";s:2:\"rs\";}i:23;a:2:{s:5:\"label\";s:2:\"SC\";s:5:\"value\";s:2:\"sc\";}i:24;a:2:{s:5:\"label\";s:2:\"SE\";s:5:\"value\";s:2:\"se\";}i:25;a:2:{s:5:\"label\";s:2:\"SP\";s:5:\"value\";s:2:\"sp\";}i:26;a:2:{s:5:\"label\";s:2:\"TO\";s:5:\"value\";s:2:\"to\";}i:27;a:2:{s:5:\"label\";s:3:\"INT\";s:5:\"value\";s:3:\"int\";}}}",
+                          "default_value": null,
+                          "value": "rj",
+                          "normalizedValue": "RJ"
+                        },
+                        "cor": {
+                          "id": "59",
+                          "label": "Cor",
+                          "alias": "cor",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:1:{s:4:\"list\";a:5:{i:0;a:2:{s:5:\"label\";s:5:\"Preta\";s:5:\"value\";s:5:\"preta\";}i:1;a:2:{s:5:\"label\";s:5:\"Parda\";s:5:\"value\";s:5:\"parda\";}i:2;a:2:{s:5:\"label\";s:9:\"Indígena\";s:5:\"value\";s:8:\"indigena\";}i:3;a:2:{s:5:\"label\";s:7:\"Amarela\";s:5:\"value\";s:7:\"amarela\";}i:4;a:2:{s:5:\"label\";s:6:\"Branca\";s:5:\"value\";s:6:\"branca\";}}}",
+                          "default_value": null,
+                          "value": "branca",
+                          "normalizedValue": "Branca"
+                        },
+                        "address": {
+                          "id": "57",
+                          "label": "Endereço",
+                          "alias": "address",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "Rua Joana Angélica, Ipanema, Rio de Janeiro - RJ, 22410, Brazil",
+                          "normalizedValue": "Rua Joana Angélica, Ipanema, Rio de Janeiro - RJ, 22410, Brazil"
+                        },
+                        "user_id": {
+                          "id": "55",
+                          "label": "Zendesk User ID",
+                          "alias": "user_id",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "email": {
+                          "id": "6",
+                          "label": "Email",
+                          "alias": "email",
+                          "type": "email",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "dev.psi.mapa@gmail.com",
+                          "normalizedValue": "dev.psi.mapa@gmail.com"
+                        },
+                        "tipo_de_acolhimento": {
+                          "id": "50",
+                          "label": "Tipo de Acolhimento",
+                          "alias": "tipo_de_acolhimento",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "mobile": {
+                          "id": "7",
+                          "label": "Mobile",
+                          "alias": "mobile",
+                          "type": "tel",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "phone": {
+                          "id": "8",
+                          "label": "Phone",
+                          "alias": "phone",
+                          "type": "tel",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "+18582619594",
+                          "normalizedValue": "+18582619594"
+                        },
+                        "website": {
+                          "id": "22",
+                          "label": "Website",
+                          "alias": "website",
+                          "type": "url",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "whatsapp": {
+                          "id": "49",
+                          "label": "Whatsapp",
+                          "alias": "whatsapp",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "+18582619594",
+                          "normalizedValue": "+18582619594"
+                        },
+                        "f_condition": {
+                          "id": "48",
+                          "label": "Status da Mulher",
+                          "alias": "f_condition",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:1:{s:4:\"list\";a:16:{i:0;a:2:{s:5:\"label\";s:11:\"Anti-ética\";s:5:\"value\";s:10:\"anti-etica\";}i:1;a:2:{s:5:\"label\";s:8:\"Aprovada\";s:5:\"value\";s:8:\"aprovada\";}i:2;a:2:{s:5:\"label\";s:30:\"Reprovada - Registro inválido\";s:5:\"value\";s:28:\"reprovada_registro_inválido\";}i:3;a:2:{s:5:\"label\";s:30:\"Reprovada - Diretrizes do Mapa\";s:5:\"value\";s:28:\"reprovada_diretrizes_do_mapa\";}i:4;a:2:{s:5:\"label\";s:26:\"Reprovada - Estudo de Caso\";s:5:\"value\";s:24:\"reprovada_estudo_de_caso\";}i:5;a:2:{s:5:\"label\";s:13:\"Descadastrada\";s:5:\"value\";s:13:\"descadastrada\";}i:6;a:2:{s:5:\"label\";s:12:\"Desabilitada\";s:5:\"value\";s:12:\"desabilitada\";}i:7;a:2:{s:5:\"label\";s:25:\"Dados incompletos - Email\";s:5:\"value\";s:23:\"dados_incompletos_email\";}i:8;a:2:{s:5:\"label\";s:28:\"Dados incompletos - Telefone\";s:5:\"value\";s:26:\"dados_incompletos_telefone\";}i:9;a:2:{s:5:\"label\";s:29:\"Dados incompletos - Endereço\";s:5:\"value\";s:27:\"dados_incompletos_endereço\";}i:10;a:2:{s:5:\"label\";s:28:\"Indisponível - Sem Resposta\";s:5:\"value\";s:27:\"indisponível_-sem_resposta\";}i:11;a:2:{s:5:\"label\";s:22:\"Indisponível - Agenda\";s:5:\"value\";s:20:\"indisponível_agenda\";}i:12;a:2:{s:5:\"label\";s:27:\"Indisponível - Maternidade\";s:5:\"value\";s:25:\"indisponível_maternidade\";}i:13;a:2:{s:5:\"label\";s:23:\"Indisponível - Férias\";s:5:\"value\";s:21:\"indisponível_férias\";}i:14;a:2:{s:5:\"label\";s:11:\"Disponível\";s:5:\"value\";s:10:\"disponivel\";}i:15;a:2:{s:5:\"label\";s:12:\"MSR-Inscrita\";s:5:\"value\";s:8:\"inscrita\";}}}",
+                          "default_value": "desabilitada",
+                          "value": "disponivel",
+                          "normalizedValue": "Disponível"
+                        },
+                        "city": {
+                          "id": "13",
+                          "label": "City",
+                          "alias": "city",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "Rio de Janeiro",
+                          "normalizedValue": "Rio de Janeiro"
+                        },
+                        "country": {
+                          "id": "16",
+                          "label": "Country",
+                          "alias": "country",
+                          "type": "country",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "last_active": {
+                          "id": "19",
+                          "label": "Date Last Active",
+                          "alias": "last_active",
+                          "type": "datetime",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "2024-05-26 19:10:19",
+                          "normalizedValue": "2024-05-26 19:10:19"
+                        }
+                      },
+                      "social": {
+                        "facebook": {
+                          "id": "23",
+                          "label": "Facebook",
+                          "alias": "facebook",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "foursquare": {
+                          "id": "24",
+                          "label": "Foursquare",
+                          "alias": "foursquare",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "instagram": {
+                          "id": "25",
+                          "label": "Instagram",
+                          "alias": "instagram",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "linkedin": {
+                          "id": "26",
+                          "label": "LinkedIn",
+                          "alias": "linkedin",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "skype": {
+                          "id": "27",
+                          "label": "Skype",
+                          "alias": "skype",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "twitter": {
+                          "id": "28",
+                          "label": "Twitter",
+                          "alias": "twitter",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        }
+                      },
+                      "personal": [],
+                      "professional": []
+                    }
+                  },
+                  "trackingId": "b4eah1sprd60nuvw83dy4bu",
+                  "dateSubmitted": "2024-05-26T19:33:38+00:00",
+                  "referer": "https://mautic.nossas.org/conclusao-psicologico",
+                  "page": null,
+                  "results": {
+                    "1_nome_completo": "Psi Teste",
+                    "2_email_de_cadastro": "dev.psi.mapa@gmail.com",
+                    "3_nome_da_acolhida": "MSR Teste ",
+                    "4_data_de_encerramento_do": "2020-08-26",
+                    "5_voce_e_a_acolhida_segui": "Não",
+                    "6_atraves_do_atendimento": "kddokpodkfofk",
+                    "7_quais_impactos_a_acolhi": "A acolhida não está sofrendo nenhum dos impactos citados acima",
+                    "8_quais_impactos_a_acolhi": "A acolhida não está sofrendo nenhum dos impactos citados acima",
+                    "9_quais_impactos_em_decor": "Comprometimento da autoestima, Autodepreciação, interferindo muito no bem estar e na saúde psicológica da mulher, Sentimentos de culpa, Dependência afetiva e financeira",
+                    "10_descreva_sucintamente": "Resumo",
+                    "11_se_desejar_descreva_su": "csdkodskfopfkprofkporfc.",
+                    "12_quais_aprendizagens_es": "Reforçou meu olhar de como a escuta, o olhar atento ao outro e o apoio emocional são transformadores! ",
+                    "13_e_os_desafios": "dokjopdjewodkjeo.",
+                    "14_voce_solicitou_ajuda_d": "Não",
+                    "15_voce_solicitou_ajuda_d": "Não",
+                    "16_se_desejar_deixe_suges": ""
+                  }
+                },
+                "timestamp": "2024-05-26T19:33:39+00:00"
+              }
+            ]
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/mda-form-conclusao",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-16T17:41:58.269Z",
+      "updatedAt": "2024-01-16T17:41:58.269Z",
+      "id": "E3Tnq8M430hgCQfP",
+      "name": "Mapa do acolhimento"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-06-25T14:25:41.000Z",
+  "versionId": "1b1c599a-0668-4d9b-9131-c1e5eb04a299"
+}
