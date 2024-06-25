@@ -222,36 +222,6 @@
         ]
       ]
     },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "Check city, state and zipcode1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ],
-        [
-          {
-            "node": "Updates volunteer personal data",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Updates volunteer availability",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Busca as coordenadas do endereço1": {
       "main": [
         [
@@ -282,6 +252,36 @@
         [
           {
             "node": "Add null lat/lng1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Check city, state and zipcode1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Updates volunteer personal data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Updates volunteer availability",
             "type": "main",
             "index": 0
           }
@@ -460,7 +460,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT AND '{{ $json.body.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  '{{ $json.body.email }}' AS new_email,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT AND '{{ $json.body.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' OR\n      email != '{{ $json.body.email }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
         "options": {}
       },
       "id": "5f1be305-e048-468e-9c7e-cd2f0aff1236",
@@ -729,7 +729,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET \n  first_name = '{{ $json.new_first_name }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "query": "UPDATE volunteers\nSET \n  first_name = '{{ $json.new_first_name }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  email = '{{ $json.new_email }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
         "options": {}
       },
       "id": "9aaa0c13-89ef-4ba0-a154-c90a413d2854",
@@ -812,6 +812,70 @@
         900,
         -100
       ]
+    },
+    {
+      "parameters": {
+        "url": "=https://voluntaria.mapadoacolhimento.org/address",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "city",
+              "value": "={{ $json.new_city }}"
+            },
+            {
+              "name": "state",
+              "value": "={{ $json.new_state }}"
+            },
+            {
+              "name": "zipcode",
+              "value": "={{ $json.new_zipcode === 'not_found' ? '' : $json.new_zipcode  }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "58781a46-1711-4c9d-8d74-8fb3e3d3c5d8",
+      "name": "Busca as coordenadas do endereço1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1200,
+        -320
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://voluntaria.mapadoacolhimento.org/address",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "city",
+              "value": "={{ $json.new_city }}"
+            },
+            {
+              "name": "state",
+              "value": "={{ $json.new_state }}"
+            },
+            {
+              "name": "zipcode",
+              "value": "={{ $json.new_zipcode === 'not_found' ? '' : $json.new_zipcode  }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f3071ecc-ecdb-41f9-89a7-12c8f6fbd913",
+      "name": "Busca as coordenadas do endereço2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        920,
+        240
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -902,113 +966,9 @@
         460,
         800
       ]
-    },
-    {
-      "parameters": {
-        "url": "=https://voluntaria.mapadoacolhimento.org/address",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "city",
-              "value": "={{ $json.new_city }}"
-            },
-            {
-              "name": "state",
-              "value": "={{ $json.new_state }}"
-            },
-            {
-              "name": "zipcode",
-              "value": "={{ $json.new_zipcode === 'not_found' ? '' : $json.new_zipcode  }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "58781a46-1711-4c9d-8d74-8fb3e3d3c5d8",
-      "name": "Busca as coordenadas do endereço1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        1200,
-        -320
-      ],
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "url": "=https://voluntaria.mapadoacolhimento.org/address",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "city",
-              "value": "={{ $json.new_city }}"
-            },
-            {
-              "name": "state",
-              "value": "={{ $json.new_state }}"
-            },
-            {
-              "name": "zipcode",
-              "value": "={{ $json.new_zipcode === 'not_found' ? '' : $json.new_zipcode  }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "f3071ecc-ecdb-41f9-89a7-12c8f6fbd913",
-      "name": "Busca as coordenadas do endereço2",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        920,
-        240
-      ],
-      "onError": "continueErrorOutput"
     }
   ],
   "pinData": {
-    "Webhook Volunteer": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Zendesk Webhook",
-            "content-length": "224",
-            "accept-encoding": "gzip",
-            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
-            "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-0000000000000000481c5d5a10b19b1c-481c5d5a10b19b1c-00",
-            "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.195",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-5666bddbdb-8gs7p",
-            "x-real-ip": "216.198.2.195",
-            "x-request-id": "971c5a00-41e7-44aa-b6d1-fc06a9aa55bc",
-            "x-zendesk-account-id": "9040899",
-            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01HVEWCG3N5J1PS5W5ATQ1V0H9",
-            "x-zendesk-webhook-signature": "Ld5Q2jWKop6gSBMFaM8oMG5vnV2Jt3GFdbw1TOYduaA=",
-            "x-zendesk-webhook-signature-timestamp": "2024-04-14T18:02:21Z"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "volunteer_zendesk_user_id": "423729681392",
-            "city": "Rio de Janeiro",
-            "state": "RJ",
-            "first_name": "Michelle",
-            "availability": "2",
-            "zipcode": "21515-370",
-            "phone": "(21) 978802094",
-            "register_number": "0562172"
-          }
-        }
-      }
-    ],
     "Webhook MSR": [
       {
         "json": {
@@ -1046,6 +1006,50 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Webhook Volunteer": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "258",
+            "accept-encoding": "gzip",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-00000000000000000524381e8a01d79a-0524381e8a01d79a-00",
+            "tracestate": "dd=s:-1",
+            "x-forwarded-for": "216.198.2.146",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-b8dcdf845-fv7rg",
+            "x-is-trusted": "no",
+            "x-real-ip": "216.198.2.146",
+            "x-request-id": "4e9a6584-7197-4b34-9bbc-31d6dcc0b187",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
+            "x-zendesk-webhook-invocation-id": "01J18MQ9KHWGFRDMFWCB2R8939",
+            "x-zendesk-webhook-signature": "VvGtxn7WiICMdpWIwVwPR3oDmFuYKYEAY9lM/eiPCbo=",
+            "x-zendesk-webhook-signature-timestamp": "2024-06-25T21:27:10Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "volunteer_zendesk_user_id": "412308249572",
+            "city": "Divinópolis",
+            "state": "MG",
+            "first_name": "Emilly",
+            "availability": "2",
+            "zipcode": "35500001",
+            "phone": "(37) 9 8404-8004",
+            "register_number": "207989",
+            "email": "advemillymoura@gmail.com"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-volunteer-info",
+          "executionMode": "production"
+        }
+      }
     ]
   },
   "settings": {
@@ -1064,6 +1068,6 @@
     }
   ],
   "triggerCount": 2,
-  "updatedAt": "2024-05-18T13:46:10.000Z",
-  "versionId": "3636657d-5cac-4394-bd8a-f5db34f9e776"
+  "updatedAt": "2024-06-25T21:30:01.000Z",
+  "versionId": "ef8d61ac-2ffc-4e63-8920-263446b67ec5"
 }
