@@ -59,7 +59,7 @@
       "main": [
         [
           {
-            "node": "Criar novo ticket (conclusao juridico)",
+            "node": "Busca Zendesk User ID",
             "type": "main",
             "index": 0
           }
@@ -70,7 +70,7 @@
       "main": [
         [
           {
-            "node": "Criar novo ticket (conclusao psicologico)",
+            "node": "Busca Zendesk User ID1",
             "type": "main",
             "index": 0
           }
@@ -103,7 +103,7 @@
       "main": [
         [
           {
-            "node": "Criar novo ticket (interrupcao atendimento)",
+            "node": "Busca Zendesk User ID2",
             "type": "main",
             "index": 0
           }
@@ -114,7 +114,7 @@
       "main": [
         [
           {
-            "node": "Criar novo ticket (interrupcao encaminhamento)",
+            "node": "Busca Zendesk User ID3",
             "type": "main",
             "index": 0
           }
@@ -137,6 +137,50 @@
         [
           {
             "node": "Salvar Respostas3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (conclusao juridico)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID1": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (conclusao psicologico)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID2": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (interrupcao atendimento)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID3": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (interrupcao encaminhamento)",
             "type": "main",
             "index": 0
           }
@@ -240,7 +284,7 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        900,
+        1020,
         700
       ],
       "id": "84730c65-8595-45db-8f49-c05afb138f5f",
@@ -263,7 +307,7 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        900,
+        1040,
         460
       ],
       "id": "f35e5ba0-7651-4282-81c6-a2df3de317d5",
@@ -309,13 +353,13 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Conclusão Jurídico\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"conclusao\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Conclusão] {{$node[\"Formata - Conclusão Jurídico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"conclusao\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Conclusão] {{$node[\"Formata - Conclusão Jurídico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Conclusão Jurídico\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (conclusao juridico)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        680,
+        820,
         460
       ],
       "id": "8564933e-93ac-478c-a0b9-1f2abb782698",
@@ -335,13 +379,13 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Conclusão Psicológico\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"conclusao\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Conclusão] {{$node[\"Formata - Conclusão Psicológico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"conclusao\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Conclusão] {{$node[\"Formata - Conclusão Psicológico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Conclusão Psicológico\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (conclusao psicologico)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        680,
+        800,
         700
       ],
       "id": "811cceb1-a1a0-4091-9dac-fb923a06b60c",
@@ -387,13 +431,13 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"user_id\"]}},\n \t\t\"organization_id\": {{$node[\"Formata - Interrupção Encaminhamento\"].json[\"organization_id\"]}},\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"encaminhamento-interrupção\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Enc. Interrupção] {{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": {{$node[\"Formata - Interrupção Encaminhamento\"].json[\"organization_id\"]}},\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"encaminhamento-interrupção\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Enc. Interrupção] {{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (interrupcao encaminhamento)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        680,
+        840,
         1180
       ],
       "id": "f516d6f9-8f0c-499c-908b-bb968dc2aaaa",
@@ -413,13 +457,13 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={\n\"ticket\":{\n\"requester_id\":{{$node[\"Formata - Interrupção Atendimento\"].json[\"user_id\"]}},\n\"organization_id\": {{$node[\"Formata - Interrupção Atendimento\"].json[\"organization_id\"]}},\n\"description\": \"Importado via N8N\",\n\"tags\": [\"atendimento-interrupção\"],\n\"status\": \"new\",\n\"priority\": \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"priority\"]}}\",\n\"subject\": \"[Atend. Interrupção] {{$node[\"Formata - Interrupção Atendimento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n\"comment\": {\n\"body\": \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"body_ticket\"]}}\",\n\"public\": false\n}\n}\n}"
+        "bodyParametersJson": "={\n\"ticket\":{\n\"requester_id\":{{ $json.zendesk_user_id }},\n\"organization_id\": {{$node[\"Formata - Interrupção Atendimento\"].json[\"organization_id\"]}},\n\"description\": \"Importado via N8N\",\n\"tags\": [\"atendimento-interrupção\"],\n\"status\": \"new\",\n\"priority\": \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"priority\"]}}\",\n\"subject\": \"[Atend. Interrupção] {{$node[\"Formata - Interrupção Atendimento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n\"comment\": {\n\"body\": \"{{$node[\"Formata - Interrupção Atendimento\"].json[\"body_ticket\"]}}\",\n\"public\": false\n}\n}\n}"
       },
       "name": "Criar novo ticket (interrupcao atendimento)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        680,
+        840,
         940
       ],
       "id": "c3f86fea-d62b-4490-aaf7-052981bc78f7",
@@ -442,7 +486,7 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        900,
+        1040,
         1180
       ],
       "id": "2ce1240b-c924-465f-8c10-d735f4578ee1",
@@ -465,7 +509,7 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        900,
+        1040,
         940
       ],
       "id": "0087fbbe-8d38-437c-9400-18eb7684a68c",
@@ -473,6 +517,90 @@
         "httpHeaderAuth": {
           "id": "nhq3GDSBeWJ5XE1l",
           "name": "[PROD] BONDE api-graphql"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "0260e208-8522-4815-adea-06212e06b217",
+      "name": "Busca Zendesk User ID",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        640,
+        460
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "9587955b-af3d-400f-8b0d-a53a140f85aa",
+      "name": "Busca Zendesk User ID1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        640,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "e9d6845d-6654-4bcc-af2a-4b530295d687",
+      "name": "Busca Zendesk User ID2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        640,
+        940
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.answers.dados_voluntaria.email_cadastro }}'",
+        "options": {}
+      },
+      "id": "8bd09853-bd08-4875-8189-4d72d31d24fe",
+      "name": "Busca Zendesk User ID3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        640,
+        1180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     }
@@ -494,6 +622,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-02-08T14:29:36.000Z",
-  "versionId": "d7cd4f54-f098-49f8-a7f6-502536126502"
+  "updatedAt": "2024-06-25T14:29:39.000Z",
+  "versionId": "fe43d27e-af7e-45fc-a413-751273e0d699"
 }
