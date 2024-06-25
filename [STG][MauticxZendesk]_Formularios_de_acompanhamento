@@ -98,6 +98,94 @@
           }
         ]
       ]
+    },
+    "Formata - Acomp Psicologico 1": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID3": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (acomp psicologico)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Acomp Juridico 1": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (acomp juridico 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Acomp Psicológico 2": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID1": {
+      "main": [
+        [
+          {
+            "node": "Criar Novo Ticket (Acomp Psic 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Acomp Juridico 2": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID2": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (acomp juridico 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-06-24T19:38:49.741Z",
@@ -107,17 +195,6 @@
   },
   "name": "[STG][MauticxZendesk] Formularios de acompanhamento",
   "nodes": [
-    {
-      "parameters": {},
-      "id": "e0d0332b-2f92-49fa-b245-9cf77c7ca596",
-      "name": "Start",
-      "type": "n8n-nodes-base.start",
-      "typeVersion": 1,
-      "position": [
-        -40,
-        500
-      ]
-    },
     {
       "parameters": {
         "value1": "={{$node[\"Item Lists\"].json[\"submission\"][\"form\"][\"id\"]}}",
@@ -149,7 +226,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 1,
       "position": [
-        140,
+        40,
         740
       ],
       "id": "9301e229-8510-4f21-be72-0826e9e9a50f"
@@ -163,7 +240,7 @@
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        -60,
+        -160,
         740
       ],
       "id": "ed5fd54c-f770-4b9d-90a2-1dc4b229a592"
@@ -180,8 +257,8 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        860,
-        700
+        1120,
+        720
       ],
       "id": "7d1ebff1-8f9e-4ce1-9156-8d2c72822664",
       "credentials": {
@@ -213,13 +290,13 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Juridico 1\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-1\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 1] {{$node[\"Formata - Acomp Juridico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-1\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 1] {{$node[\"Formata - Acomp Juridico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Juridico 1\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (acomp juridico 1)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        660,
+        880,
         700
       ],
       "id": "0eddfa9b-0708-4c49-bc4e-d3e0c8eb49e4",
@@ -242,7 +319,7 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        880,
+        1100,
         460
       ],
       "id": "fb03f1ca-0f05-4062-bc42-e8d885596f08",
@@ -275,13 +352,13 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Psicologico 1\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-1\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 1] {{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-1\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 1] {{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (acomp psicologico)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        680,
+        900,
         460
       ],
       "id": "88160abe-cc54-4189-98dc-ab4eb365f182",
@@ -301,13 +378,13 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Juridico 2\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-2\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 2] {{$node[\"Formata - Acomp Juridico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-2\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 2] {{$node[\"Formata - Acomp Juridico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Juridico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (acomp juridico 2)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        720,
+        880,
         1140
       ],
       "id": "00ef1c8b-fa37-4b19-bc85-9a0be937c155",
@@ -343,7 +420,7 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        920,
+        1120,
         1140
       ],
       "id": "0d4c3d70-5878-4a0a-9e3a-15ca8d19b2ea",
@@ -375,7 +452,7 @@
         "genericAuthType": "httpBasicAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{$node[\"Formata - Acomp Psicológico 2\"].json[\"user_id\"]}},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-2\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 2] {{$node[\"Formata - Acomp Psicológico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}",
+        "jsonBody": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-2\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 2] {{$node[\"Formata - Acomp Psicológico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Psicológico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}",
         "options": {}
       },
       "id": "8b4dffd3-1c07-44e2-9eed-0b0ea7f92071",
@@ -383,7 +460,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        720,
+        900,
         920
       ],
       "credentials": {
@@ -406,7 +483,7 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        920,
+        1100,
         920
       ],
       "credentials": {
@@ -426,11 +503,106 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        -280,
+        -400,
         740
       ],
       "webhookId": "48de521b-f126-4630-a2d3-9d07ad0b1125",
       "id": "ee974dca-3aee-4548-8682-33195ce6ba2b"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "options": {}
+      },
+      "id": "f70c278c-9f79-413b-b642-da68a905f1c1",
+      "name": "Busca Zendesk User ID3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        680,
+        460
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "78b43a02-0c55-4d21-a03f-7a8b4ef5ee55",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "options": {}
+      },
+      "id": "d57290cf-94ae-4860-8db4-5fa5757b32a0",
+      "name": "Busca Zendesk User ID",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        680,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "options": {}
+      },
+      "id": "da5ba461-8569-4ca5-9960-361bb9761e4a",
+      "name": "Busca Zendesk User ID1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        680,
+        920
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "options": {}
+      },
+      "id": "905afb34-74ea-44a6-861b-b97d3d63160c",
+      "name": "Busca Zendesk User ID2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        680,
+        1140
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
     }
   ],
   "pinData": {
@@ -601,8 +773,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "selmavettori@gmail.com",
-                          "normalizedValue": "selmavettori@gmail.com"
+                          "value": "dev.adv.mapa@gmail.com",
+                          "normalizedValue": "dev.psi.mapa@gmail.com"
                         },
                         "tipo_de_acolhimento": {
                           "id": "50",
@@ -640,8 +812,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "11 972080288",
-                          "normalizedValue": "11 972080288"
+                          "value": "11999999998",
+                          "normalizedValue": "11 99999999"
                         },
                         "website": {
                           "id": "22",
@@ -811,14 +983,14 @@
                   "referer": "https://mautic.nossas.org/acompanhamento-psi-1",
                   "page": null,
                   "results": {
-                    "1_nome_completo": "Selma Vettori",
-                    "2_email_de_cadastro": "selmavettori@gmail.com",
+                    "1_nome_completo": "MSR Teste",
+                    "2_email_de_cadastro": "dev.psi.mapa@gmail.com",
                     "3_nome_da_acolhida": "Cristina Gomes",
                     "4_a_acolhida_tem_sido_ass": "Sim",
                     "6_a_acolhida_respeita_os": "Sim",
                     "6_a_acolhida_foi_submetid": "Física, Psicológica, Moral",
-                    "7_caso_queira_comentar_so": "Cristina conseguiu se separar do marido agressor, retomamos a terapia quando ela já estava morando em um apartamento alugado (aluguel inicialmente pago pelo ex-marido), com os dois filhos mais novos (ela tem quatro). Concluiu um curso de pós-gradução em arteterapia (pago pela filha Bianca) e prestou dois concursos para dar aula em escolas públicas, um na prefeitura e outro no estado. Foi aprovada nos dois e chamada pela prefeitura, não como concursada. Seu salário não é muito alto e insuficiente para cobrir todas as despesas da casa e dos filhos que moram com ela e que não trabalham. Foi obrigada a se mudar novamente devido à proximidade com a residência do ex marido que a importunava diariamente com mensagens ofensivas e a obrigava a deixá-lo entrar em seu apartamento. Mudou-se para outro apartamento menor e mais em conta e desde então, conta com a ajuda de seus dois filhos mais velhos. Enquanto ainda morava no outro imóvel, passou a ser agredida pela filha mais nova, Isabela, no período que antecedia seu período menstrual. As agressões eram de cunho psicológico e moral, mas, passaram a ser físicas desde que se mudaram para o novo imóvel. Há cerca de três meses, Cristina começou a enviar mensagens dizendo que tinha apanhado muito da filha e estava toda machucada; depois de tudo isso, a filha tomou uma overdose de medicações psiquiátricas e por isso, sugeri que ela chamasse o ex marido e os dois a levassem a um hospital. Assim eles fizeram, Isabela ficou três dias internada em observação, mas, esse tipo de evento continua acontecendo causando grande pavor em Cristina com medo das agressões e também com possível risco de suicídio da filha. Esta se consultava com uma psiquiatra, mas a médica a orientou muito mal e por isso, ela não está mais em atendimento psiquiátrico e nem psicológico. ",
-                    "8_aspectos_psicologicos_t": "Cristina recuperou sua autoestima, está mais resiliente, tem recuperado sua vida social saindo com alguns colegas da escola, mas, ainda precisa se fortalecer para enfrentar os problemas familiares com mais firmeza. Ela não quer denunciar a filha por violência doméstica, porém, a deixa escolher se vai em busca de tratamento psquiátrico. Nossas sessões têm girado muito em torno desse problema familiar e sua tendência em querer se envolver com os problemas dos alunos extremamente carentes da escola onde está lecionando como professora substituta. ",
+                    "7_caso_queira_comentar_so": "Comentario ",
+                    "8_aspectos_psicologicos_t": "Aspectos ",
                     "92_para_qualis_instituica": "Delegacia especializada da Mulher, Delegacia civil, Defensoria pública/ NUDEM, Ministério público",
                     "91_por_que": "Por causa das agressões sofridas por Cristina praticadas por sua filha Isabela. Além disso, Cristina tem 60 anos e se enquadra nos direitos adquiridos no Estatuto do idoso.",
                     "9_durante_o_atendimento_v": "Sim",
@@ -843,7 +1015,7 @@
                     "28_voce_solicitou_ajuda_d": "Não",
                     "29_voce_participa_dos_enc": "Não",
                     "30_voce_participa_do_grup": "Não",
-                    "31_se_desejar_relate_como": "Acredito que o atendimento proporcionado pelo Mapa tem ajudado a muitas mulheres reconstruírem sua vida, autonomia, autoestima e desejo de se desenvolverem cada vez em todos os aspectos importantes de suas vidas. "
+                    "31_se_desejar_relate_como": "Resudom da demanda "
                   }
                 },
                 "timestamp": "2024-05-28T16:27:35+00:00"
@@ -872,6 +1044,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-06-24T19:58:38.000Z",
-  "versionId": "1e828df6-fa55-4a27-86f2-4f0b8433ce77"
+  "updatedAt": "2024-06-25T14:05:43.000Z",
+  "versionId": "1dcb8040-4ccf-4a76-8479-73fefe60a1c9"
 }
