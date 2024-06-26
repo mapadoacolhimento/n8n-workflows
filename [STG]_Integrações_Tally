@@ -50,17 +50,6 @@
         ]
       ]
     },
-    "Busca voluntária no BD": {
-      "main": [
-        [
-          {
-            "node": "Possui match?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Voluntária deseja se descadastrar": {
       "main": [
         [
@@ -199,13 +188,7 @@
     },
     "O status atual é waiting_contact?": {
       "main": [
-        [
-          {
-            "node": "Devemos atualizar o status?",
-            "type": "main",
-            "index": 0
-          }
-        ],
+        [],
         [
           {
             "node": "No Operation, do nothing1",
@@ -358,6 +341,197 @@
         [
           {
             "node": "Filtra apenas as infos que importam1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica se precisa de atendimento e qual": {
+      "main": [
+        [
+          {
+            "node": "legal & psy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verifica se precisa de atendimento e qual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza support_request": {
+      "main": [
+        [
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk1": {
+      "main": [
+        [
+          {
+            "node": "Zendesk2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk2": {
+      "main": [
+        [
+          {
+            "node": "Zendesk3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza status para waiting_for_match": {
+      "main": [
+        [
+          {
+            "node": "status: Aguardando Match: Sem Prioridade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca legal support_request": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para waiting_for_match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza status para waiting_for_match1": {
+      "main": [
+        [
+          {
+            "node": "status: Aguardando Match: Sem Prioridade1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca psy support_request1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para waiting_for_match1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "legal & psy": {
+      "main": [
+        [
+          {
+            "node": "Busca legal support_request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca psy support_request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If legal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If legal": {
+      "main": [
+        [
+          {
+            "node": "Busca legal support_request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If psy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If psy": {
+      "main": [
+        [
+          {
+            "node": "Busca psy support_request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Atualizar ticket para solicitação encerrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar ticket para solicitação encerrada": {
+      "main": [
+        [
+          {
+            "node": "MSR desabilitada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSR desabilitada": {
+      "main": [
+        [
+          {
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -1544,6 +1718,29 @@
     },
     {
       "parameters": {
+        "operation": "update",
+        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
+        }
+      },
+      "id": "81d57be1-6a3d-487a-b251-b21a7d72ab86",
+      "name": "ticket Voluntária - observação interna",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        2920
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
         "httpMethod": "POST",
         "path": "volunteer-update-match-status",
         "authentication": "headerAuth",
@@ -1567,19 +1764,133 @@
     },
     {
       "parameters": {
-        "operation": "update",
-        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
-        "updateFields": {
-          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
-        }
+        "jsCode": "const body = items[0].json.body;\n// TODO: buscar support_request_id;\nconst fields = body.data.fields;\n\nlet legalSupportRequest = null;\nlet psychologicalSupportRequest = null;\nlet legalSupportResponseText = '';\nlet psychologicalSupportResponseText = '';\nconst supportRequestId = items[0].json.support_request_id;\n\nfields.forEach(field => {\n  if (field.label === 'legal_support_request' && field.value) {\n    legalSupportRequest = field.value[0];\n    const legalSupportOptions = field.options;\n    const legalSupportOption = legalSupportOptions.find(option => option.id === legalSupportRequest);\n    if (legalSupportOption) {\n      legalSupportResponseText = legalSupportOption.text;\n    }\n  }\n  if (field.label === 'psychological_support_request' && field.value) {\n    psychologicalSupportRequest = field.value[0];\n    const psychologicalSupportOptions = field.options;\n    const psychologicalSupportOption = psychologicalSupportOptions.find(option => option.id === psychologicalSupportRequest);\n    if (psychologicalSupportOption) {\n      psychologicalSupportResponseText = psychologicalSupportOption.text;\n    }\n  }\n});\n\nreturn [\n  {\n    json: {\n      legalSupportRequest,\n      legalSupportResponseText,\n      psychologicalSupportRequest,\n      psychologicalSupportResponseText,\n      supportRequestId,\n    },\n  },\n];\n"
       },
-      "id": "81d57be1-6a3d-487a-b251-b21a7d72ab86",
-      "name": "ticket Voluntária - observação interna",
+      "id": "aef8f2f0-bece-4939-aeea-4cb4f974b335",
+      "name": "Verifica se precisa de atendimento e qual",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        4779
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Verifica quais MSRs de 2022/2021 irão para fila do Match Diário\n",
+        "height": 124.36523996505218,
+        "width": 340.2325169896819
+      },
+      "id": "fe873cb3-5c2a-498b-b412-40d7401420f8",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        4560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "0a79a25f-b4e1-475a-a9ea-632d5a512e61",
+              "leftValue": "={{ $json.legalSupportResponseText }}",
+              "rightValue": "Sim, ainda preciso",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fe54e5a7-b658-45b9-9c39-275e3353e202",
+      "name": "If legal",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        4959
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "2128f198-1e44-452c-a69e-e4c7fc7b3eeb",
+              "leftValue": "={{ $json.psychologicalSupportResponseText }}",
+              "rightValue": "Sim, ainda preciso",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "007d9ce9-1998-4ed3-8151-368475d6c3dc",
+      "name": "If psy",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        4979
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6c236e14-2adb-4e84-8e18-ab9a5313c52a",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "5b911d16-c1b3-4fd4-b4e9-b8faf7306695",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        460,
+        4779
+      ],
+      "webhookId": "6c236e14-2adb-4e84-8e18-ab9a5313c52a",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "updateFields": {}
+      },
+      "id": "58308af7-6564-4f74-a11d-ffa5add5f06f",
+      "name": "Zendesk",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2500,
-        2920
+        4040,
+        3080
       ],
       "credentials": {
         "zendeskApi": {
@@ -1587,6 +1898,400 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "Solicitação Encerrada"
+              }
+            ]
+          },
+          "status": "solved"
+        }
+      },
+      "id": "d868f884-57fe-4528-842c-67744f2cd0c8",
+      "name": "Zendesk1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4260,
+        3080
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "updateFields": {}
+      },
+      "id": "674024c3-438a-429e-a952-04b4d1f98e23",
+      "name": "Zendesk2",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4480,
+        3080
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "Solicitação Encerrada"
+              }
+            ]
+          },
+          "status": "solved"
+        }
+      },
+      "id": "d1a778b1-399b-4ca9-abb1-1d44f3b719bc",
+      "name": "Zendesk3",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4700,
+        3080
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'waiting_for_match'\nWHERE \n  support_request_id = $1;\n",
+        "options": {
+          "queryReplacement": "{{$json[\"legal_support_request_id\"]}}"
+        }
+      },
+      "id": "3d32094c-1cce-4acf-9466-950d9d8bc928",
+      "name": "Atualiza status para waiting_for_match",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1920,
+        4579
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "solicitacao_encerrada"
+              }
+            ]
+          }
+        }
+      },
+      "id": "12807a87-6932-4cf2-8db1-a18bd95e98da",
+      "name": "Atualizar ticket para solicitação encerrada",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        5019
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__sem_prioridade"
+              }
+            ]
+          }
+        }
+      },
+      "id": "3cbb4be3-bd64-48ec-a77e-3cb627e9dce9",
+      "name": "status: Aguardando Match: Sem Prioridade",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        4579
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "2128f198-1e44-452c-a69e-e4c7fc7b3eeb",
+              "leftValue": "={{ $json.psychologicalSupportResponseText }}",
+              "rightValue": "Sim, ainda preciso",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "5773e3dd-c93e-4e85-bf0d-171969b0cb8b",
+              "leftValue": "{{ $json.legalSupportResponseText }}",
+              "rightValue": "Sim, ainda preciso",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "cb298176-2cba-4a61-9f47-2802b5a1c78c",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e1c37e3a-5ec5-40dc-8324-706e480f4aa6",
+      "name": "legal & psy",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        900,
+        4779
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  *\nFROM \n  match.support_requests\nWHERE \n  support_request_id = $1;\n",
+        "options": {
+          "queryReplacement": "{{$json[\"legal_support_request_id\"]}}"
+        }
+      },
+      "id": "6c49a504-0985-4e1f-b351-c7981238bc57",
+      "name": "Busca legal support_request",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1680,
+        4579
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'waiting_for_match'\nWHERE \n  support_request_id = $1;\n",
+        "options": {
+          "queryReplacement": "{{$json[\"psychological_support_request_id\"]}}"
+        }
+      },
+      "id": "e4792130-7f94-4891-9f19-c4e13456e8fe",
+      "name": "Atualiza status para waiting_for_match1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1920,
+        4780
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__sem_prioridade"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a54e37a0-3ffd-47e2-9ca8-6be9ec0a4169",
+      "name": "status: Aguardando Match: Sem Prioridade1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        4779
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  *\nFROM \n  match.support_requests\nWHERE \n  support_request_id = $1;\n",
+        "options": {
+          "queryReplacement": "{{$json[\"psychological_support_request_id\"]}}"
+        }
+      },
+      "id": "52f4e44e-63ef-4030-a291-d49c9b3e2ee0",
+      "name": "Busca psy support_request1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1680,
+        4779
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "\n\nAtualiza support_request e ticket no zendesk",
+        "height": 80,
+        "width": 340.2325169896819
+      },
+      "id": "77948c43-3ba2-4fb4-b23c-4f154fdbbb89",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        4460
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "desabilitada"
+              }
+            ]
+          }
+        }
+      },
+      "id": "174eb3b3-cbf4-4496-a195-6f520123fb6b",
+      "name": "MSR desabilitada",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        5020
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "debc627e-94d9-4a0c-aca8-ec53ec516f0e",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2120,
+        5020
+      ]
     }
   ],
   "pinData": {
@@ -1687,6 +2392,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-05-22T17:02:27.000Z",
-  "versionId": "749b035a-e598-489d-af91-754ac0586c66"
+  "updatedAt": "2024-06-26T22:23:53.000Z",
+  "versionId": "6fbbc134-d557-47c8-af1d-4ed60e96045d"
 }
