@@ -1,22 +1,6 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
-    "When clicking \"Test workflow\"": {
-      "main": [
-        [
-          {
-            "node": "Capitais - busca disponibilidade",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Disponibilidade total - busca disponibilidade",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Capitais - busca disponibilidade": {
       "main": [
         [
@@ -54,7 +38,61 @@
       "main": [
         [
           {
+            "node": "Une as mensagens1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cidades com mais match online": {
+      "main": [
+        [
+          {
+            "node": "Cidades com mais match online - constroi mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cidades com mais match online - constroi mensagem": {
+      "main": [
+        [
+          {
+            "node": "Une as mensagens1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Une as mensagens1": {
+      "main": [
+        [
+          {
             "node": "Envia mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Disponibilidade total - busca disponibilidade",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Capitais - busca disponibilidade",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cidades com mais match online",
             "type": "main",
             "index": 0
           }
@@ -70,20 +108,9 @@
   "name": "[PROD] Monitoramento da disponibilidade de Voluntárias",
   "nodes": [
     {
-      "parameters": {},
-      "id": "f5fcabf4-8959-4aff-8430-bfc1e27fc5bb",
-      "name": "When clicking \"Test workflow\"",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        740,
-        200
-      ]
-    },
-    {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH capital_nao_capital AS (\n    SELECT\n        city_value AS city,\n        state,\n        CASE\n            WHEN state IN ('AM', 'PA', 'AC', 'RR', 'RO', 'AP', 'TO') THEN 'norte'\n            WHEN state IN ('MA', 'PI', 'CE', 'RN', 'PB', 'PE', 'AL', 'SE', 'BA') THEN 'nordeste'\n            WHEN state IN ('SP', 'RJ', 'MG', 'ES') THEN 'sudeste'\n            WHEN state IN ('MT', 'MS', 'GO', 'DF') THEN 'centro-oeste'\n            WHEN state IN ('PR', 'SC', 'RS') THEN 'sul'\n            ELSE 'não encontrado'\n        END AS region,\n        CASE \n            WHEN city_value = 'RIO BRANCO' AND state = 'AC' THEN 'capital'\n            WHEN city_value = 'MACEIO' AND state = 'AL' THEN 'capital'\n            WHEN city_value = 'MACAPA' AND state = 'AP' THEN 'capital'\n            WHEN city_value = 'MANAUS' AND state = 'AM' THEN 'capital'\n            WHEN city_value = 'SALVADOR' AND state = 'BA' THEN 'capital'\n            WHEN city_value = 'FORTALEZA' AND state = 'CE' THEN 'capital'\n            WHEN city_value = 'BRASILIA' AND state = 'DF' THEN 'capital'\n            WHEN city_value = 'VITORIA' AND state = 'ES' THEN 'capital'\n            WHEN city_value = 'GOIANIA' AND state = 'GO' THEN 'capital'\n            WHEN city_value = 'SAO LUIS' AND state = 'MA' THEN 'capital'\n            WHEN city_value = 'CUIABA' AND state = 'MT' THEN 'capital'\n            WHEN city_value = 'CAMPO GRANDE' AND state = 'MS' THEN 'capital'\n            WHEN city_value = 'BELO HORIZONTE' AND state = 'BH' THEN 'capital'\n            WHEN city_value = 'BELEM' AND state = 'PA' THEN 'capital'\n            WHEN city_value = 'JOAO PESSOA' AND state = 'PB' THEN 'capital'\n            WHEN city_value = 'CURITIBA' AND state = 'PR' THEN 'capital'\n            WHEN city_value = 'RECIFE' AND state = 'PE' THEN 'capital'\n            WHEN city_value = 'TERESINA' AND state = 'PI' THEN 'capital'\n            WHEN city_value = 'RIO DE JANEIRO' AND state = 'RJ' THEN 'capital'\n            WHEN city_value = 'NATAL' AND state = 'RN' THEN 'capital'\n            WHEN city_value = 'PORTO ALEGRE' AND state = 'RS' THEN 'capital'\n            WHEN city_value = 'PORTO VELHO' AND state = 'RO' THEN 'capital'\n            WHEN city_value = 'BOA VISTA' AND state = 'RR' THEN 'capital'\n            WHEN city_value = 'FLORIANOPOLIS' AND state = 'SC' THEN 'capital'\n            WHEN city_value = 'SAO PAULO' AND state = 'SP' THEN 'capital'\n            WHEN city_value = 'ARACAJU' AND state = 'SE' THEN 'capital'\n            WHEN city_value = 'PALMAS' AND state = 'TO' THEN 'capital'\n        ELSE 'não capital'\n        END AS capital\n    FROM cities\n),\navailable_volunteers AS (\n    SELECT\n        volunteer_id,\n        support_type,\n        city,\n        state\n    FROM volunteer_availability\n    WHERE\n        is_available = TRUE\n)\nSELECT \n    INITCAP(region) AS region,\n    INITCAP(city) AS city,\n    state,\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS available_psychologists,\n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS available_lawyers\nFROM capital_nao_capital\nLEFT JOIN available_volunteers USING(city, state)\nWHERE \n    capital = 'capital'\nGROUP BY region, city, state\nORDER BY region, city, state",
+        "query": "WITH capital_nao_capital AS (\n    SELECT\n        city_value AS city,\n        state,\n        CASE\n            WHEN state IN ('AM', 'PA', 'AC', 'RR', 'RO', 'AP', 'TO') THEN 'norte'\n            WHEN state IN ('MA', 'PI', 'CE', 'RN', 'PB', 'PE', 'AL', 'SE', 'BA') THEN 'nordeste'\n            WHEN state IN ('SP', 'RJ', 'MG', 'ES') THEN 'sudeste'\n            WHEN state IN ('MT', 'MS', 'GO', 'DF') THEN 'centro-oeste'\n            WHEN state IN ('PR', 'SC', 'RS') THEN 'sul'\n            ELSE 'não encontrado'\n        END AS region,\n        CASE \n            WHEN city_value = 'RIO BRANCO' AND state = 'AC' THEN 'capital'\n            WHEN city_value = 'MACEIO' AND state = 'AL' THEN 'capital'\n            WHEN city_value = 'MACAPA' AND state = 'AP' THEN 'capital'\n            WHEN city_value = 'MANAUS' AND state = 'AM' THEN 'capital'\n            WHEN city_value = 'SALVADOR' AND state = 'BA' THEN 'capital'\n            WHEN city_value = 'FORTALEZA' AND state = 'CE' THEN 'capital'\n            WHEN city_value = 'BRASILIA' AND state = 'DF' THEN 'capital'\n            WHEN city_value = 'VITORIA' AND state = 'ES' THEN 'capital'\n            WHEN city_value = 'GOIANIA' AND state = 'GO' THEN 'capital'\n            WHEN city_value = 'SAO LUIS' AND state = 'MA' THEN 'capital'\n            WHEN city_value = 'CUIABA' AND state = 'MT' THEN 'capital'\n            WHEN city_value = 'CAMPO GRANDE' AND state = 'MS' THEN 'capital'\n            WHEN city_value = 'BELO HORIZONTE' AND state = 'MG' THEN 'capital'\n            WHEN city_value = 'BELEM' AND state = 'PA' THEN 'capital'\n            WHEN city_value = 'JOAO PESSOA' AND state = 'PB' THEN 'capital'\n            WHEN city_value = 'CURITIBA' AND state = 'PR' THEN 'capital'\n            WHEN city_value = 'RECIFE' AND state = 'PE' THEN 'capital'\n            WHEN city_value = 'TERESINA' AND state = 'PI' THEN 'capital'\n            WHEN city_value = 'RIO DE JANEIRO' AND state = 'RJ' THEN 'capital'\n            WHEN city_value = 'NATAL' AND state = 'RN' THEN 'capital'\n            WHEN city_value = 'PORTO ALEGRE' AND state = 'RS' THEN 'capital'\n            WHEN city_value = 'PORTO VELHO' AND state = 'RO' THEN 'capital'\n            WHEN city_value = 'BOA VISTA' AND state = 'RR' THEN 'capital'\n            WHEN city_value = 'FLORIANOPOLIS' AND state = 'SC' THEN 'capital'\n            WHEN city_value = 'SAO PAULO' AND state = 'SP' THEN 'capital'\n            WHEN city_value = 'ARACAJU' AND state = 'SE' THEN 'capital'\n            WHEN city_value = 'PALMAS' AND state = 'TO' THEN 'capital'\n        ELSE 'não capital'\n        END AS capital\n    FROM cities\n),\navailable_volunteers AS (\n    SELECT\n        volunteer_id,\n        support_type,\n        city,\n        state\n    FROM volunteer_availability\n    WHERE\n        is_available = TRUE\n)\nSELECT \n    INITCAP(region) AS region,\n    INITCAP(city) AS city,\n    state,\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS available_psychologists,\n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS available_lawyers\nFROM capital_nao_capital\nLEFT JOIN available_volunteers USING(city, state)\nWHERE \n    capital = 'capital'\nGROUP BY region, city, state\nORDER BY region, city, state",
         "options": {}
       },
       "id": "6ae1660d-b06c-4a42-a510-c41f8381a40e",
@@ -104,7 +131,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH month_year AS (\n  SELECT\n    DATE_PART('month', CURRENT_DATE) AS month,\n    DATE_PART('year', CURRENT_DATE) AS year\n),\navailable_volunteers AS (\n  SELECT \n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS available_psychologists,\n  SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS available_lawyers\n  FROM volunteer_availability \n  WHERE is_available = TRUE\n),\nidle_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_psychologists, \n    SUM(CASE WHEN support_type = 'legal' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_lawyers\n  FROM volunteer_availability\n  WHERE is_available = TRUE\n),\nnew_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS new_psychologists, \n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS new_lawyers\n  FROM\n    volunteer_availability\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    \n)\nSELECT *\nFROM month_year\nCROSS JOIN available_volunteers\nCROSS JOIN idle_volunteers\nCROSS JOIN new_volunteers",
+        "query": "WITH month_year AS (\n  SELECT\n    DATE_PART('month', CURRENT_DATE) AS month,\n    DATE_PART('year', CURRENT_DATE) AS year\n),\navailable_volunteers AS (\n  SELECT \n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS available_psychologists,\n    SUM(CASE WHEN support_type = 'psychological' THEN (max_matches - current_matches) ELSE 0 END) AS psychological_availability,\n  SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS available_lawyers,\n  SUM(CASE WHEN support_type = 'legal' THEN (max_matches - current_matches) ELSE 0 END) AS legal_availability\n  FROM volunteer_availability \n  WHERE is_available = TRUE\n),\nidle_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_psychologists, \n    SUM(CASE WHEN support_type = 'legal' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_lawyers\n  FROM volunteer_availability\n  WHERE is_available = TRUE\n),\nnew_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS new_psychologists, \n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS new_lawyers\n  FROM\n    volunteer_availability\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    \n),\nnew_available_volunteers AS (\n  SELECT\n    COALESCE(SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END), 0) AS new_available_psychologists, \n    COALESCE(SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END), 0) AS new_available_lawyers\n  FROM\n    volunteer_availability\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    AND is_available = TRUE\n),\nnew_support_requests AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS psychological_support_requests,\n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS legal_support_requests\n  FROM match.support_requests\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n),\nunsubscripted_volunteers AS (\n  SELECT\n    SUM(CASE WHEN occupation = 'psychologist' THEN 1 ELSE 0 END) AS unsubscripted_psychologists,\n    SUM(CASE WHEN occupation = 'lawyer' THEN 1 ELSE 0 END) AS unsubscripted_lawyers\n  FROM volunteers\n  WHERE \n    condition = 'descadastrada'\n    AND updated_at >= CURRENT_DATE - INTERVAL '30 DAY'\n)\nSELECT *\nFROM month_year\nCROSS JOIN available_volunteers\nCROSS JOIN idle_volunteers\nCROSS JOIN new_volunteers\nCROSS JOIN new_support_requests\nCROSS JOIN new_available_volunteers\nCROSS JOIN unsubscripted_volunteers",
         "options": {}
       },
       "id": "ebe83a9e-04d8-4152-91dd-d52ae5d152e6",
@@ -124,7 +151,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const output = [];\n\nlet lawyersMessage = \"*Capitais em que precisamos de mais advogadas* :scales: \\n\";\n\nlet psychologistsMessage = \"*Capitais em que precisamos de mais psicólogas* :trident: \\n\";\n\nvar lawyersRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nvar psychologistRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nfor (const item of $input.all()) {\n\n  const region = item.json.region;\n  const city = item.json.city;\n  const state = item.json.state;\n  const availableLawyers = item.json.available_lawyers;\n  const availablePsychologists = item.json.available_psychologists;\n  \n  if (availableLawyers < 10) {\n    lawyersRegions[region] += city + \" (\" + state + \"), \";\n  }\n\n  if (availablePsychologists < 10) {\n    psychologistRegions[region] += city + \" (\" + state + \"), \";\n  }\n}\n\nfor (const [region, value] of Object.entries(lawyersRegions)) {\n  \n  lawyersMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      lawyersMessage += value + \"\\n\"\n    }\n    else {\n      lawyersMessage += \"- \\n\"\n    }\n}\n\nfor (const [region, value] of Object.entries(psychologistRegions)) {\n  \n  psychologistsMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      psychologistsMessage += value + \"\\n\"\n    }\n    else {\n      psychologistsMessage += \"- \\n\"\n    }\n}\n  \n\noutput.push({\n  capitals_lawyers_message: lawyersMessage,\n  capitals_psychologists_message: psychologistsMessage\n})\n\nreturn output;"
+        "jsCode": "const output = [];\n\nlet psychologistsMessage = \"*1. Capitais sem psicólogas disponíveis* :trident: \\n\";\n\nlet lawyersMessage = \"*2. Capitais sem advogadas disponíveis* :scales: \\n\";\n\nvar lawyersRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nvar psychologistRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nfor (const item of $input.all()) {\n\n  const region = item.json.region;\n  const city = item.json.city;\n  const state = item.json.state;\n  const availableLawyers = item.json.available_lawyers;\n  const availablePsychologists = item.json.available_psychologists;\n  \n  if (availableLawyers == 0) {\n    lawyersRegions[region] += city + \" (\" + state + \"), \";\n  }\n\n  if (availablePsychologists == 0) {\n    psychologistRegions[region] += city + \" (\" + state + \"), \";\n  }\n}\n\nfor (const [region, value] of Object.entries(lawyersRegions)) {\n  \n  lawyersMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      lawyersMessage += value + \"\\n\"\n    }\n    else {\n      lawyersMessage += \"- \\n\"\n    }\n}\n\nfor (const [region, value] of Object.entries(psychologistRegions)) {\n  \n  psychologistsMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      psychologistsMessage += value + \"\\n\"\n    }\n    else {\n      psychologistsMessage += \"- \\n\"\n    }\n}\n  \n\noutput.push({\n  capitals_lawyers_message: lawyersMessage,\n  capitals_psychologists_message: psychologistsMessage\n})\n\nreturn output;"
       },
       "id": "75dd7bb7-1a9d-4bd1-a8ad-e07f73478bfa",
       "name": "Capitais - constroi mensagens",
@@ -156,11 +183,11 @@
         "select": "channel",
         "channelId": {
           "__rl": true,
-          "value": "C06H7GA52A1",
+          "value": "C079UQQUNF7",
           "mode": "list",
-          "cachedResultName": "alertas-n8n"
+          "cachedResultName": "monitoramento-voluntarias"
         },
-        "text": "=:chart_with_upwards_trend: *MONITORAMENTO MENSAL DA DISPONIBILIDADE DE VOLUNTÁRIAS* :chart_with_upwards_trend: \n\n\nOlá! :wave:\nEssa é a visão geral da disponibilidade de Voluntárias no mês *{{ $json.month }}/{{ $json.year }}*\n\n\n*Voluntárias Disponíveis :white_check_mark:*\n- {{ $json.available_psychologists }} psicólogas\n- {{ $json.available_lawyers }} advogadas\n\n\n*Voluntárias Ociosas :zzz:*\n- {{ $json.idle_psychologists }} psicólogas\n- {{ $json.idle_lawyers }} advogadas\n\n\n*Novos cadastros no último mês :writing_hand:*\n- {{ $json.new_psychologists }} novas psicólogas\n- {{ $json.new_lawyers }} novas advogadas\n\n\n\n{{ $json.capitals_psychologists_message }}\n\n\n{{ $json.capitals_lawyers_message }}\n\n",
+        "text": "=:chart_with_upwards_trend: *MONITORAMENTO MENSAL DA DISPONIBILIDADE DE VOLUNTÁRIAS* :chart_with_upwards_trend: \n\n\nOlá! :wave:\nEssa é a visão geral da disponibilidade de Voluntárias no mês *{{ $json.month }}/{{ $json.year }}*\n\n\n\n*Voluntárias Disponíveis :white_check_mark:*\n- {{ $json.available_psychologists }} psicólogas / {{ $json.psychological_availability }} vagas para match\n- {{ $json.available_lawyers }} advogadas / {{ $json.legal_availability }} vagas para match\n\n\n*Pedidos de acolhimento recebidos no último mês :point_up:*\n- {{ $json.psychological_support_requests }} psicológicos\n- {{ $json.legal_support_requests }} jurídicos\n\n\n*Novos cadastros de Voluntárias no último mês :writing_hand:*\n- {{ $json.new_psychologists }} novas psicólogas\n- {{ $json.new_lawyers }} novas advogadas\n\n\n*Descadastro de Voluntárias no último mês :no_entry_sign:*\n- {{ $json.unsubscripted_psychologists }} psicólogas\n- {{ $json.unsubscripted_lawyers }} advogadas\n\n\n\n*Territórios prioritários para captação de Voluntárias :earth_americas: *\n\n\n{{ $json.capitals_psychologists_message }}\n\n{{ $json.capitals_lawyers_message }}\n\n{{ $json.cities_with_online_match }}\n\n",
         "otherOptions": {}
       },
       "id": "3649ceb0-2a8e-4b52-93db-d4d558fd92d7",
@@ -168,8 +195,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        1960,
-        20
+        2300,
+        340
       ],
       "credentials": {
         "slackOAuth2Api": {
@@ -177,15 +204,88 @@
           "name": "Slack account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    INITCAP(city) AS city,\n    state,\n    COUNT(*)\nFROM match.support_requests s\nLEFT JOIN match.matches m USING(support_request_id)\nWHERE \n    (s.status = 'public_service' OR s.status::VARCHAR LIKE '%social_worker%' OR match_stage = 'online')\n    AND s.created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    AND city NOT IN ('not_found', 'INT')\n    AND state NOT IN ('not_found', 'INT')\nGROUP BY city, state\nORDER BY 3 DESC\nLIMIT 5",
+        "options": {}
+      },
+      "id": "701c34b2-966b-4e86-9dcd-2c467165f995",
+      "name": "Cidades com mais match online",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1260,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nlet message = \"*3. Cidades com mais matches online/serviço público/assistente social no último mês* \\n\";\n\nfor (const item of $input.all()) {\n\n  const city = item.json.city;\n  const state = item.json.state;\n  const count = item.json.count;\n\n  if(!!count) {\n    message += \"> \" + city + \" (\" +  state + \"): \" + count +  \"\\n\";\n  }\n  \n  \n}\n\noutput.push({\n  cities_with_online_match: message,\n})\n\nreturn output;"
+      },
+      "id": "85b421cd-4925-4430-b9d2-1300e3d056c6",
+      "name": "Cidades com mais match online - constroi mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "9be3e8bb-415c-4126-83e8-31de69157ed7",
+      "name": "Une as mensagens1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2120,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "id": "e09dfcf8-710a-4269-a8fe-68a1a8153cd9",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        420
+      ]
     }
   ],
   "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    }
+  },
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-06-25T21:59:13.000Z",
-  "versionId": "968ca4ec-fe6d-4136-b9f8-c5e9f58e5571"
+  "triggerCount": 1,
+  "updatedAt": "2024-06-26T20:00:15.000Z",
+  "versionId": "0c4a6aaf-97fc-4991-939b-3ea214a4d594"
 }
