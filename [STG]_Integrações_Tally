@@ -347,28 +347,6 @@
         ]
       ]
     },
-    "Verifica se precisa de atendimento e qual": {
-      "main": [
-        [
-          {
-            "node": "legal & psy",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Verifica se precisa de atendimento e qual",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Atualiza support_request": {
       "main": [
         [
@@ -413,125 +391,173 @@
         ]
       ]
     },
-    "Atualiza status para waiting_for_match": {
+    "Verifica se precisa de atendimento e qual1": {
       "main": [
         [
           {
-            "node": "status: Aguardando Match: Sem Prioridade",
+            "node": "jurídico e psi1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Busca legal support_request": {
+    "Webhook1": {
       "main": [
         [
           {
-            "node": "Atualiza status para waiting_for_match",
+            "node": "Verifica se precisa de atendimento e qual1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Atualiza status para waiting_for_match1": {
+    "Atualiza status para waiting_for_match2": {
       "main": [
         [
           {
-            "node": "status: Aguardando Match: Sem Prioridade1",
+            "node": "status: Aguardando Match: Sem Prioridade2",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Busca psy support_request1": {
+    "Atualiza status para waiting_for_match3": {
       "main": [
         [
           {
-            "node": "Atualiza status para waiting_for_match1",
+            "node": "status: Aguardando Match: Sem Prioridade3",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "legal & psy": {
+    "notlegal & notpsy1": {
       "main": [
         [
           {
-            "node": "Busca legal support_request",
+            "node": "Atualiza support_request para closed4",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Busca psy support_request1",
+            "node": "Atualiza support_request para closed5",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "If legal",
+            "node": "Switch1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If legal": {
+    "Atualizar ticket para solicitação encerrada5": {
       "main": [
         [
           {
-            "node": "Busca legal support_request",
+            "node": "MSR desabilitada4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "jurídico e psi1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para waiting_for_match2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status para waiting_for_match3",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "If psy",
+            "node": "notlegal & notpsy1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If psy": {
+    "Atualiza support_request para closed4": {
       "main": [
         [
           {
-            "node": "Busca psy support_request1",
+            "node": "Atualizar ticket para solicitação encerrada5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza support_request para closed5": {
+      "main": [
+        [
+          {
+            "node": "Atualizar ticket para solicitação encerrada6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza support_request para closed6": {
+      "main": [
+        [
+          {
+            "node": "Atualizar ticket para solicitação encerrada4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza support_request para closed7": {
+      "main": [
+        [
+          {
+            "node": "Atualizar ticket para solicitação encerrada7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para waiting_for_match2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza support_request para closed6",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Atualizar ticket para solicitação encerrada",
+            "node": "Atualiza status para waiting_for_match3",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualizar ticket para solicitação encerrada": {
-      "main": [
-        [
+          },
           {
-            "node": "MSR desabilitada",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "MSR desabilitada": {
-      "main": [
-        [
-          {
-            "node": "Switch",
+            "node": "Atualiza support_request para closed7",
             "type": "main",
             "index": 0
           }
@@ -1764,123 +1790,6 @@
     },
     {
       "parameters": {
-        "jsCode": "const body = items[0].json.body;\n// TODO: buscar support_request_id;\nconst fields = body.data.fields;\n\nlet legalSupportRequest = null;\nlet psychologicalSupportRequest = null;\nlet legalSupportResponseText = '';\nlet psychologicalSupportResponseText = '';\nconst supportRequestId = items[0].json.support_request_id;\n\nfields.forEach(field => {\n  if (field.label === 'legal_support_request' && field.value) {\n    legalSupportRequest = field.value[0];\n    const legalSupportOptions = field.options;\n    const legalSupportOption = legalSupportOptions.find(option => option.id === legalSupportRequest);\n    if (legalSupportOption) {\n      legalSupportResponseText = legalSupportOption.text;\n    }\n  }\n  if (field.label === 'psychological_support_request' && field.value) {\n    psychologicalSupportRequest = field.value[0];\n    const psychologicalSupportOptions = field.options;\n    const psychologicalSupportOption = psychologicalSupportOptions.find(option => option.id === psychologicalSupportRequest);\n    if (psychologicalSupportOption) {\n      psychologicalSupportResponseText = psychologicalSupportOption.text;\n    }\n  }\n});\n\nreturn [\n  {\n    json: {\n      legalSupportRequest,\n      legalSupportResponseText,\n      psychologicalSupportRequest,\n      psychologicalSupportResponseText,\n      supportRequestId,\n    },\n  },\n];\n"
-      },
-      "id": "aef8f2f0-bece-4939-aeea-4cb4f974b335",
-      "name": "Verifica se precisa de atendimento e qual",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        660,
-        4779
-      ]
-    },
-    {
-      "parameters": {
-        "content": "## Verifica quais MSRs de 2022/2021 irão para fila do Match Diário\n",
-        "height": 124.36523996505218,
-        "width": 340.2325169896819
-      },
-      "id": "fe873cb3-5c2a-498b-b412-40d7401420f8",
-      "name": "Sticky Note4",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        460,
-        4560
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "0a79a25f-b4e1-475a-a9ea-632d5a512e61",
-              "leftValue": "={{ $json.legalSupportResponseText }}",
-              "rightValue": "Sim, ainda preciso",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "fe54e5a7-b658-45b9-9c39-275e3353e202",
-      "name": "If legal",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        1120,
-        4959
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "2128f198-1e44-452c-a69e-e4c7fc7b3eeb",
-              "leftValue": "={{ $json.psychologicalSupportResponseText }}",
-              "rightValue": "Sim, ainda preciso",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
-      },
-      "id": "007d9ce9-1998-4ed3-8151-368475d6c3dc",
-      "name": "If psy",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        1440,
-        4979
-      ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "6c236e14-2adb-4e84-8e18-ab9a5313c52a",
-        "authentication": "headerAuth",
-        "options": {}
-      },
-      "id": "5b911d16-c1b3-4fd4-b4e9-b8faf7306695",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        460,
-        4779
-      ],
-      "webhookId": "6c236e14-2adb-4e84-8e18-ab9a5313c52a",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "BhcubpnINJanuVaZ",
-          "name": "Tally API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "operation": "update",
         "updateFields": {}
       },
@@ -1981,30 +1890,65 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'waiting_for_match'\nWHERE \n  support_request_id = $1;\n",
-        "options": {
-          "queryReplacement": "{{$json[\"legal_support_request_id\"]}}"
-        }
+        "jsCode": "const body = items[0].json.body;\n// TODO: buscar support_request_id;\nconst fields = body.data.fields;\n\nlet legalSupportRequest = null;\nlet psychologicalSupportRequest = null;\nlet legalSupportResponseText = '';\nlet psychologicalSupportResponseText = '';\nlet supportRequestId = items[0].json.support_request_id;\nlet psychological_support_request_id = items[0].json.body.data.fields[1].value;\nlet legal_support_request_id = items[0].json.body.data.fields[2].value;\n\n\nfields.forEach(field => {\n  if (field.label === 'legal_support_request' && field.value) {\n    legalSupportRequest = field.value[0];\n    const legalSupportOptions = field.options;\n    const legalSupportOption = legalSupportOptions.find(option => option.id === legalSupportRequest);\n    if (legalSupportOption) {\n      legalSupportResponseText = legalSupportOption.text;\n    }\n  }\n  if (field.label === 'psychological_support_request' && field.value) {\n    psychologicalSupportRequest = field.value[0];\n    const psychologicalSupportOptions = field.options;\n    const psychologicalSupportOption = psychologicalSupportOptions.find(option => option.id === psychologicalSupportRequest);\n    if (psychologicalSupportOption) {\n      psychologicalSupportResponseText = psychologicalSupportOption.text;\n    }\n  }\n});\n\nreturn [\n  {\n    json: {\n      legal_support_request_id,\n      psychological_support_request_id,\n      legalSupportRequest,\n      legalSupportResponseText,\n      psychologicalSupportRequest,\n      psychologicalSupportResponseText,\n      supportRequestId,\n    },\n  },\n];\n"
       },
-      "id": "3d32094c-1cce-4acf-9466-950d9d8bc928",
-      "name": "Atualiza status para waiting_for_match",
+      "id": "59cdd823-7ae9-48cf-8104-dc1d703a0ad6",
+      "name": "Verifica se precisa de atendimento e qual1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        4820
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6c236e14-2adb-4e84-8e18-ab9a5313c52a",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "85861115-89d1-4d3f-a1f6-e3e48e16b111",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        300,
+        4819
+      ],
+      "webhookId": "6c236e14-2adb-4e84-8e18-ab9a5313c52a",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET status = 'waiting_for_match'\nWHERE support_request_id = {{$json.legal_support_request_id}};\nSELECT \n  zendesk_ticket_id\nFROM \n  match.support_requests\nWHERE \n  support_request_id = {{$json.legal_support_request_id}};\n",
+        "options": {}
+      },
+      "id": "e46c5dd6-83ca-448d-bb0e-9814dbaaa4cc",
+      "name": "Atualiza status para waiting_for_match2",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1920,
-        4579
+        1520,
+        4560
       ],
       "credentials": {
         "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
     },
     {
       "parameters": {
         "operation": "update",
+        "id": "={{$json[\"zendesk_ticket_id\"]}}",
         "updateFields": {
           "customFieldsUi": {
             "customFieldsValues": [
@@ -2013,16 +1957,17 @@
                 "value": "solicitacao_encerrada"
               }
             ]
-          }
+          },
+          "status": "solved"
         }
       },
-      "id": "12807a87-6932-4cf2-8db1-a18bd95e98da",
-      "name": "Atualizar ticket para solicitação encerrada",
+      "id": "7b50aeab-0b3c-4e0b-a435-04d1943df710",
+      "name": "Atualizar ticket para solicitação encerrada4",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1680,
-        5019
+        1720,
+        5020
       ],
       "credentials": {
         "zendeskApi": {
@@ -2034,6 +1979,7 @@
     {
       "parameters": {
         "operation": "update",
+        "id": "={{$json[\"zendesk_ticket_id\"]}}",
         "updateFields": {
           "customFieldsUi": {
             "customFieldsValues": [
@@ -2045,13 +1991,181 @@
           }
         }
       },
-      "id": "3cbb4be3-bd64-48ec-a77e-3cb627e9dce9",
-      "name": "status: Aguardando Match: Sem Prioridade",
+      "id": "a42de79c-8769-41ad-bca1-47cc2381a2e2",
+      "name": "status: Aguardando Match: Sem Prioridade2",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2100,
-        4579
+        1720,
+        4560
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "\nUPDATE match.support_requests\nSET status = 'waiting_for_match'\nWHERE support_request_id = {{$json.psychological_support_request_id}};\nSELECT \n  zendesk_ticket_id\nFROM \n  match.support_requests\nWHERE \n  support_request_id = {{$json.psychological_support_request_id}};\n",
+        "options": {
+          "queryReplacement": ""
+        }
+      },
+      "id": "0aed8f87-dbf1-4003-bdc5-a5d8a060d65d",
+      "name": "Atualiza status para waiting_for_match3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1520,
+        4760
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{$json[\"zendesk_ticket_id\"]}}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__sem_prioridade"
+              }
+            ]
+          }
+        }
+      },
+      "id": "4782df7e-9b1f-4004-bf83-e0bd8d878897",
+      "name": "status: Aguardando Match: Sem Prioridade3",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        4760
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "2128f198-1e44-452c-a69e-e4c7fc7b3eeb",
+              "leftValue": "={{ $json.psychologicalSupportResponseText }}",
+              "rightValue": "Não preciso mais de atendimento",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "5773e3dd-c93e-4e85-bf0d-171969b0cb8b",
+              "leftValue": "={{ $json.legalSupportResponseText }}",
+              "rightValue": "Não preciso mais de atendimento",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "cb298176-2cba-4a61-9f47-2802b5a1c78c",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b7f99cbd-111c-4945-a61e-d574b22978ac",
+      "name": "notlegal & notpsy1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        940,
+        5000
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{$json[\"zendesk_ticket_id\"]}}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "solicitacao_encerrada"
+              }
+            ]
+          },
+          "status": "solved"
+        }
+      },
+      "id": "e71d4822-cf02-4995-8c8e-20f61e11bed0",
+      "name": "Atualizar ticket para solicitação encerrada5",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        5500
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{$json[\"requester_id\"]}}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "desabilitada"
+              }
+            ]
+          }
+        }
+      },
+      "id": "dc2b4450-0e10-4985-8d6c-1867ff47cb32",
+      "name": "MSR desabilitada4",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        5500
       ],
       "credentials": {
         "zendeskApi": {
@@ -2081,7 +2195,7 @@
             },
             {
               "id": "5773e3dd-c93e-4e85-bf0d-171969b0cb8b",
-              "leftValue": "{{ $json.legalSupportResponseText }}",
+              "leftValue": "={{ $json.legalSupportResponseText }}",
               "rightValue": "Sim, ainda preciso",
               "operator": {
                 "type": "string",
@@ -2104,82 +2218,38 @@
         },
         "options": {}
       },
-      "id": "e1c37e3a-5ec5-40dc-8324-706e480f4aa6",
-      "name": "legal & psy",
+      "id": "438f9239-f137-4651-9b0d-7cb0988adc26",
+      "name": "jurídico e psi1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        900,
-        4779
+        740,
+        4819
       ]
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT \n  *\nFROM \n  match.support_requests\nWHERE \n  support_request_id = $1;\n",
-        "options": {
-          "queryReplacement": "{{$json[\"legal_support_request_id\"]}}"
-        }
-      },
-      "id": "6c49a504-0985-4e1f-b351-c7981238bc57",
-      "name": "Busca legal support_request",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        1680,
-        4579
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'waiting_for_match'\nWHERE \n  support_request_id = $1;\n",
-        "options": {
-          "queryReplacement": "{{$json[\"psychological_support_request_id\"]}}"
-        }
-      },
-      "id": "e4792130-7f94-4891-9f19-c4e13456e8fe",
-      "name": "Atualiza status para waiting_for_match1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        1920,
-        4780
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
         "operation": "update",
+        "id": "={{$json[\"zendesk_ticket_id\"]}}",
         "updateFields": {
           "customFieldsUi": {
             "customFieldsValues": [
               {
                 "id": 360014379412,
-                "value": "aguardando_match__sem_prioridade"
+                "value": "solicitacao_encerrada"
               }
             ]
-          }
+          },
+          "status": "solved"
         }
       },
-      "id": "a54e37a0-3ffd-47e2-9ca8-6be9ec0a4169",
-      "name": "status: Aguardando Match: Sem Prioridade1",
+      "id": "abfcc1ec-dbe2-40c0-9c3e-39a8e4205c91",
+      "name": "Atualizar ticket para solicitação encerrada6",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2100,
-        4779
+        1780,
+        5720
       ],
       "credentials": {
         "zendeskApi": {
@@ -2190,26 +2260,221 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT \n  *\nFROM \n  match.support_requests\nWHERE \n  support_request_id = $1;\n",
-        "options": {
-          "queryReplacement": "{{$json[\"psychological_support_request_id\"]}}"
+        "content": "\nPsicológico",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "id": "e186a06a-1b36-4dac-957b-732cefabb9cf",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        4780
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{$json[\"zendesk_ticket_id\"]}}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "solicitacao_encerrada"
+              }
+            ]
+          },
+          "status": "solved"
         }
       },
-      "id": "52f4e44e-63ef-4030-a291-d49c9b3e2ee0",
-      "name": "Busca psy support_request1",
+      "id": "24b786e0-649d-45af-a310-1741168f6a4f",
+      "name": "Atualizar ticket para solicitação encerrada7",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        5220
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "\nPsicológico",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "id": "aa06b9f0-fb8d-411e-962b-f12973157f92",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        5020
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\nJurídico",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "id": "b7c4bbd7-5cf3-489b-8711-2bfd4824e4cd",
+      "name": "Sticky Note17",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        5240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\nJurídico",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "id": "6ba9c1c4-733d-4399-9553-51e35d5a2334",
+      "name": "Sticky Note18",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        5500
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\nPsicológico",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "id": "7bd400d9-e544-40e5-90ec-b4a44c3d7fe8",
+      "name": "Sticky Note19",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        5720
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'closed'\nWHERE \n  support_request_id = {{$json[\"legal_support_request_id\"]}};\nSELECT \n  zendesk_ticket_id\nFROM \n  match.support_requests\nWHERE \n  support_request_id = {{$json[\"legal_support_request_id\"]}};\n",
+        "options": {
+          "queryReplacement": ""
+        }
+      },
+      "id": "f97bfc16-9027-4e3b-8339-224ce49643bc",
+      "name": "Atualiza support_request para closed4",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1680,
-        4779
+        1560,
+        5500
       ],
       "credentials": {
         "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'closed'\nWHERE \n  support_request_id = {{$json[\"psychological_support_request_id\"]}};\nSELECT \n  zendesk_ticket_id\nFROM \n  match.support_requests\nWHERE \n  support_request_id = {{$json[\"psychological_support_request_id\"]}};\n\n",
+        "options": {
+          "queryReplacement": ""
+        }
+      },
+      "id": "ae113cee-ee51-4ff4-ad2d-9b34576fc904",
+      "name": "Atualiza support_request para closed5",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1560,
+        5720
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'closed'\nWHERE \n  support_request_id = {{$json[\"psychological_support_request_id\"]}};\nSELECT \n  zendesk_ticket_id\nFROM \n  match.support_requests\nWHERE \n  support_request_id = {{$json[\"psychological_support_request_id\"]}};\n\n",
+        "options": {
+          "queryReplacement": ""
+        }
+      },
+      "id": "5a42c9cf-ccd9-476f-83a4-4ca5865adaf5",
+      "name": "Atualiza support_request para closed6",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1540,
+        5020
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \n  match.support_requests\nSET \n  status = 'closed'\nWHERE \n  support_request_id = {{$json[\"legal_support_request_id\"]}};\nSELECT \n  zendesk_ticket_id\nFROM \n  match.support_requests\nWHERE \n  support_request_id = {{$json[\"legal_support_request_id\"]}};\n\n",
+        "options": {
+          "queryReplacement": ""
+        }
+      },
+      "id": "fe4e7dff-fd19-4e4b-b255-d5e88d0a43d2",
+      "name": "Atualiza support_request para closed7",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1540,
+        5220
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Verifica quais MSRs de 2022/2021 irão para fila do Match Diário\n",
+        "height": 124.36523996505218,
+        "width": 340.2325169896819
+      },
+      "id": "f405277c-ad99-4440-b7e0-e763859af208",
+      "name": "Sticky Note22",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        4580
+      ]
     },
     {
       "parameters": {
@@ -2217,44 +2482,30 @@
         "height": 80,
         "width": 340.2325169896819
       },
-      "id": "77948c43-3ba2-4fb4-b23c-4f154fdbbb89",
-      "name": "Sticky Note5",
+      "id": "768e1ba9-5d0a-4d06-8d70-0497f5ae233d",
+      "name": "Sticky Note23",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1680,
-        4460
+        1500,
+        4440
       ]
     },
     {
       "parameters": {
-        "resource": "user",
-        "operation": "update",
-        "updateFields": {
-          "userFieldsUi": {
-            "userFieldValues": [
-              {
-                "field": "condition",
-                "value": "desabilitada"
-              }
-            ]
-          }
-        }
+        "content": "\nJurídico",
+        "height": 80,
+        "width": 150,
+        "color": 4
       },
-      "id": "174eb3b3-cbf4-4496-a195-6f520123fb6b",
-      "name": "MSR desabilitada",
-      "type": "n8n-nodes-base.zendesk",
+      "id": "8c912b9c-3139-41ba-a60b-0030260eecf8",
+      "name": "Sticky Note24",
+      "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1900,
-        5020
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
+        2000,
+        4580
+      ]
     },
     {
       "parameters": {
@@ -2269,8 +2520,8 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "",
-                    "rightValue": "",
+                    "leftValue": "={{ $json.legalSupportResponseText }}",
+                    "rightValue": "Sim, ainda preciso",
                     "operator": {
                       "type": "string",
                       "operation": "equals"
@@ -2278,19 +2529,157 @@
                   }
                 ],
                 "combinator": "and"
-              }
+              },
+              "renameOutput": true,
+              "outputKey": "Legal"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1ce57399-ae35-4d0e-87ff-f836fbeed8f0",
+                    "leftValue": "={{ $json.psychologicalSupportResponseText }}",
+                    "rightValue": "Sim, ainda preciso",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Psy"
             }
           ]
         },
         "options": {}
       },
-      "id": "debc627e-94d9-4a0c-aca8-ec53ec516f0e",
-      "name": "Switch",
+      "id": "1772bcf6-683c-40c2-84ad-145f0fe28719",
+      "name": "Switch1",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        2120,
+        1260,
+        5000
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\nTem psi e juridico e vai querer apenas juridico",
+        "height": 80,
+        "width": 340.2325169896819,
+        "color": 4
+      },
+      "id": "61d80e5a-cbea-4a42-9407-26ce6c66f65e",
+      "name": "Sticky Note20",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        5440
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\nSó tem um juridico e vai querer\n",
+        "height": 80,
+        "width": 340.2325169896819,
+        "color": 4
+      },
+      "id": "31574307-51f6-4fd1-ab33-b95fcdb71a4f",
+      "name": "Sticky Note21",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        5140
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\nCasos de testes",
+        "height": 80,
+        "width": 340.2325169896819,
+        "color": 6
+      },
+      "id": "fe74f936-3531-4533-8fea-ea943879aa27",
+      "name": "Sticky Note14",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
         5020
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\nSó tem um psicológico e vai querer\n",
+        "height": 80,
+        "width": 340.2325169896819,
+        "color": 4
+      },
+      "id": "0c98a76b-f886-4211-ad0d-67ab5d6ab254",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        5240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\nTem psi e juridico e vai querer os dois",
+        "height": 80,
+        "width": 340.2325169896819,
+        "color": 4
+      },
+      "id": "990eec84-a0cb-4cab-b6a1-f9a84b107dff",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        5340
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\nTem psi e juridico e vai querer apenas psi",
+        "height": 80,
+        "width": 340.2325169896819,
+        "color": 4
+      },
+      "id": "a24a4c66-b2b5-4b25-87ac-c8f8fb3ca0ae",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        5540
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\nTem psi e juridico e vai querer nenhum",
+        "height": 80,
+        "width": 340.2325169896819,
+        "color": 4
+      },
+      "id": "e230293f-1ab3-4fa8-8829-907696f24307",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        5640
       ]
     }
   ],
@@ -2392,6 +2781,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-06-26T22:23:53.000Z",
-  "versionId": "6fbbc134-d557-47c8-af1d-4ed60e96045d"
+  "updatedAt": "2024-06-27T20:50:37.000Z",
+  "versionId": "744ec42f-4d59-4459-894c-5f70cd505273"
 }
