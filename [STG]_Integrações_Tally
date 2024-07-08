@@ -514,6 +514,62 @@
         ]
       ]
     },
+    "Atualiza o status da voluntária?": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status da Voluntária1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Status da Mulher = Disponivel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Busca infos da MSR e da Voluntária3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra apenas as infos que importam1": {
+      "main": [
+        [
+          {
+            "node": "Deve seguir?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSR ou Voluntária preencheu o formulário": {
+      "main": [
+        [
+          {
+            "node": "Filtra apenas as infos que importam1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Qual o novo status?": {
       "main": [
         [
@@ -573,62 +629,6 @@
           },
           {
             "node": "Wait2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualiza o status da voluntária?": {
-      "main": [
-        [
-          {
-            "node": "Atualiza status da Voluntária1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Status da Mulher = Disponivel",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Wait2": {
-      "main": [
-        [
-          {
-            "node": "Busca infos da MSR e da Voluntária3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filtra apenas as infos que importam1": {
-      "main": [
-        [
-          {
-            "node": "Deve seguir?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "MSR ou Voluntária preencheu o formulário": {
-      "main": [
-        [
-          {
-            "node": "Filtra apenas as infos que importam1",
             "type": "main",
             "index": 0
           }
@@ -1208,8 +1208,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        4220,
-        3520
+        4460,
+        3500
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1282,8 +1282,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        4220,
-        3300
+        4440,
+        3340
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1303,8 +1303,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        3640,
-        3300
+        4320,
+        3140
       ],
       "credentials": {
         "postgres": {
@@ -1355,8 +1355,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        4220,
-        3720
+        4620,
+        3760
       ],
       "credentials": {
         "zendeskApi": {
@@ -1376,8 +1376,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        4220,
-        3920
+        4660,
+        3900
       ],
       "credentials": {
         "postgres": {
@@ -1618,8 +1618,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4200,
-        4140
+        4700,
+        4120
       ],
       "credentials": {
         "postgres": {
@@ -2444,7 +2444,7 @@
             "customFieldsValues": [
               {
                 "id": 360014379412,
-                "value": "encaminhamento__msr_desistiu"
+                "value": "desistencia"
               }
             ]
           },
@@ -2478,7 +2478,7 @@
             "customFieldsValues": [
               {
                 "id": 360014379412,
-                "value": "encaminhamento__msr_desistiu"
+                "value": "desistencia"
               }
             ]
           },
@@ -2597,93 +2597,6 @@
           "name": "[STG] Mapa"
         }
       }
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.new_status }}",
-                    "rightValue": "in_contact",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "atendimento iniciado"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "4f3fd665-2742-4831-b7d0-d005e78b34e5",
-                    "leftValue": "={{ $json.new_status }}",
-                    "rightValue": "interrupted_before_support",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "encaminhamento interrompido"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "1d428e95-5a6c-472c-aa09-230138cdf584",
-                    "leftValue": "={{ $json.new_status }}",
-                    "rightValue": "waived",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "msr_desistiu"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "15e5f1bc-f79c-4ca0-9486-875e8d70c8cc",
-      "name": "Qual o novo status?",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
-      "position": [
-        2420,
-        2800
-      ]
     },
     {
       "parameters": {
@@ -2924,6 +2837,93 @@
           "name": "Tally API"
         }
       }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "in_contact",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "atendimento iniciado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "4f3fd665-2742-4831-b7d0-d005e78b34e5",
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "interrupted_before_support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "encaminhamento interrompido"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1d428e95-5a6c-472c-aa09-230138cdf584",
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "waived",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "msr_desistiu"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "15e5f1bc-f79c-4ca0-9486-875e8d70c8cc",
+      "name": "Qual o novo status?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2420,
+        2780
+      ]
     }
   ],
   "pinData": {
@@ -3028,6 +3028,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-07-04T19:10:36.000Z",
-  "versionId": "b2be47b8-0fb4-4a14-a1ba-14d02e08d9e8"
+  "updatedAt": "2024-07-08T13:33:31.000Z",
+  "versionId": "71546043-8373-41db-a0f9-db3879e5630c"
 }
