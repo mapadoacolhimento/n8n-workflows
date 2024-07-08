@@ -1,6 +1,68 @@
 {
   "active": false,
-  "connections": {},
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias desengajadas dos grupos 4, 5, 6 e 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias desengajadas dos grupos 4, 5, 6 e 7": {
+      "main": [
+        [
+          {
+            "node": "Realiza Descadastro no banco de dados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Realiza Descadastro no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia e-mail avisando sobre o Descadastro": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envia e-mail avisando sobre o Descadastro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "createdAt": "2024-07-05T18:49:09.444Z",
   "id": "ReiKQSf5FiBIZHfc",
   "meta": {
@@ -18,6 +80,130 @@
         720,
         340
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        first_name,\n        email,\n        zendesk_user_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    LEFT JOIN volunteers ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        email,\n        first_name,\n        zendesk_user_id,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT DISTINCT \n    volunteer_id,\n    INITCAP(first_name) AS first_name,\n    email,\n    zendesk_user_id\nFROM total\nLEFT JOIN match.matches USING(volunteer_id)\nWHERE engajou = 'não engajou'\nAND (status IS NULL OR status NOT IN ('waiting_contact', 'in_contact'))\nAND grupo IN ('group_4', 'group_5', 'group_6', 'group_7')\nAND email IN ('flaviarv2@yahoo.com.br', 'psicoterapiapimentel@gmail.com', 'elen.dc1@live.com', 'gabrielawilde.psicologia@gmail.com', 'psicologia.luanamachado@gmail.com', 'mmherdy@gmail.com', 'josi.rocha256@gmail.com', 'joannaxavier.adv@gmail.com', 'vdacoelho@hotmail.com', 'eugeniagee28@gmail.com', 'sorayademourafreire@gmail.com', 'psicologakassianemendes@gmail.com', 'idalvaf.adv@hotmail.com', 'eliaomadaleno@gmail.com', 'samanthasalla.psi@outlook.com', 'alessandra2012@yahoo.com.br', 'roblanco1@gmail.com', 'amandamhauck@gmail.com', 'kiihl33@gmail.com', 'binhaaaca@hotmail.com', 'keryribeiropsico@gmail.com', 'olgatalmeida7@gmail.com', 'victoria.cabrallima@gmail.com', 'fernandamribeiro@yahoo.com.br', 'adv.lsarzedas@gmail.com', 'mirbruper@gmail.com', 'advcrismec@gmail.com', 'flavia.perez.rino@gmail.com', 'ribeirovieiramariana@gmail.com', 'masilbat@gmail.com', 'claricerlr@gmail.com')",
+        "options": {}
+      },
+      "id": "0438ce3f-8e9e-40d0-8801-de95df50637c",
+      "name": "Busca voluntárias desengajadas dos grupos 4, 5, 6 e 7",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1240,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clyd1yoot00l05pjbuazhadx8\",\n \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "14477c39-6c80-4176-9372-3519bb41da4f",
+      "name": "Envia e-mail avisando sobre o Descadastro",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2020,
+        100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = 'descadastrada', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.volunteer_id }}, 'descadastrada', NOW());\n\nUPDATE volunteer_availability\nSET is_available = FALSE, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
+        "options": {}
+      },
+      "id": "48d329fd-601c-43e0-b8aa-3e43c4203892",
+      "name": "Realiza Descadastro no banco de dados",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1740,
+        660
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "descadastrada"
+              }
+            ]
+          }
+        }
+      },
+      "id": "d9175adb-1d22-4505-8f02-db279c41f25f",
+      "name": "Realiza Descadastro no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        960
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8dd284ba-a69c-4f08-8c80-0d950074372e",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1620,
+        80
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "eaa007ac-bab9-45c5-9116-dca064f8af60",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1820,
+        100
+      ],
+      "webhookId": "dcd94051-e414-4100-b25c-b178adcc24f1"
     }
   ],
   "pinData": {},
@@ -27,6 +213,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-07-05T18:49:09.444Z",
-  "versionId": "e24244ed-6706-4d4c-8423-6a6237bc4233"
+  "updatedAt": "2024-07-08T22:44:40.000Z",
+  "versionId": "a42c9e11-ff12-403a-83bb-25525f160360"
 }
