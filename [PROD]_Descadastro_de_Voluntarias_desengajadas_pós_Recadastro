@@ -24,6 +24,11 @@
             "node": "Realiza Descadastro no Zendesk",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -84,7 +89,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        first_name,\n        email,\n        zendesk_user_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    LEFT JOIN volunteers ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        email,\n        first_name,\n        zendesk_user_id,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT DISTINCT \n    volunteer_id,\n    INITCAP(first_name) AS first_name,\n    email,\n    zendesk_user_id\nFROM total\nLEFT JOIN match.matches USING(volunteer_id)\nWHERE engajou = 'não engajou'\nAND (status IS NULL OR status NOT IN ('waiting_contact', 'in_contact'))\nAND grupo IN ('group_4', 'group_5', 'group_6', 'group_7')\nAND email IN ('flaviarv2@yahoo.com.br', 'psicoterapiapimentel@gmail.com', 'elen.dc1@live.com', 'gabrielawilde.psicologia@gmail.com', 'psicologia.luanamachado@gmail.com', 'mmherdy@gmail.com', 'josi.rocha256@gmail.com', 'joannaxavier.adv@gmail.com', 'vdacoelho@hotmail.com', 'eugeniagee28@gmail.com', 'sorayademourafreire@gmail.com', 'psicologakassianemendes@gmail.com', 'idalvaf.adv@hotmail.com', 'eliaomadaleno@gmail.com', 'samanthasalla.psi@outlook.com', 'alessandra2012@yahoo.com.br', 'roblanco1@gmail.com', 'amandamhauck@gmail.com', 'kiihl33@gmail.com', 'binhaaaca@hotmail.com', 'keryribeiropsico@gmail.com', 'olgatalmeida7@gmail.com', 'victoria.cabrallima@gmail.com', 'fernandamribeiro@yahoo.com.br', 'adv.lsarzedas@gmail.com', 'mirbruper@gmail.com', 'advcrismec@gmail.com', 'flavia.perez.rino@gmail.com', 'ribeirovieiramariana@gmail.com', 'masilbat@gmail.com', 'claricerlr@gmail.com')",
+        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        first_name,\n        email,\n        zendesk_user_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    LEFT JOIN volunteers ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        email,\n        first_name,\n        zendesk_user_id,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT DISTINCT \n    volunteer_id,\n    INITCAP(first_name) AS first_name,\n    email,\n    zendesk_user_id\nFROM total\nLEFT JOIN match.matches USING(volunteer_id)\nWHERE engajou = 'não engajou'\nAND (status IS NULL OR status NOT IN ('waiting_contact', 'in_contact'))\nAND grupo IN ('group_4', 'group_5', 'group_6', 'group_7')\nAND email IN ('thaynayaredy@gmail.com', 'nascimento.c.mariana@gmail.com')",
         "options": {}
       },
       "id": "0438ce3f-8e9e-40d0-8801-de95df50637c",
@@ -213,6 +218,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-07-08T22:44:40.000Z",
-  "versionId": "a42c9e11-ff12-403a-83bb-25525f160360"
+  "updatedAt": "2024-07-10T18:04:50.000Z",
+  "versionId": "461b4a47-4aea-400e-ba4b-fae190bc06ba"
 }
