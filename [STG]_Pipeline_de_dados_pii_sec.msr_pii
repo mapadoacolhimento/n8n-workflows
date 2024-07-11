@@ -56,7 +56,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    user_id AS msr_id,\n    CASE \n      WHEN name = 'sem nome'  THEN NULL\n      WHEN name = 'X'  THEN NULL\n      WHEN name IS NULL  THEN NULL\n      ELSE INITCAP((STRING_TO_ARRAY(BTRIM(name), ' '))[1])\n    END AS first_name,\n    CASE \n      WHEN name = 'sem nome'  THEN NULL\n      WHEN name = 'X'  THEN NULL\n      WHEN name IS NULL  THEN NULL\n      ELSE INITCAP(ARRAY_TO_STRING((STRING_TO_ARRAY(BTRIM(name), ' '))[2:], ' '))\n    END AS last_name,\n    email,\n    CASE \n        WHEN BTRIM(phone) = '' THEN 'not_found'\n        ELSE COALESCE(BTRIM(whatsapp), BTRIM(phone), 'not_found') \n    END AS phone,\n    NULL AS date_of_birth,\n    COALESCE(created_at, NOW()) AS created_at,\n    COALESCE(updated_at, NOW()) AS updated_at\nFROM solidarity_users\nWHERE \n    organization_id = 360273031591\n    AND user_id = {{ $json.msr_id }}\nORDER BY phone",
+        "query": "SELECT \n    user_id AS msr_id,\n    CASE \n      WHEN name = 'sem nome'  THEN NULL\n      WHEN name = 'X'  THEN NULL\n      WHEN name IS NULL  THEN NULL\n      ELSE INITCAP((STRING_TO_ARRAY(BTRIM(name), ' '))[1])\n    END AS first_name,\n    email,\n    CASE \n        WHEN BTRIM(phone) = '' THEN 'not_found'\n        ELSE COALESCE(BTRIM(whatsapp), BTRIM(phone), 'not_found') \n    END AS phone,\n    NULL AS date_of_birth,\n    COALESCE(created_at, NOW()) AS created_at,\n    COALESCE(updated_at, NOW()) AS updated_at\nFROM solidarity_users\nWHERE \n    organization_id = 360273031591\n    AND user_id = {{ $json.msr_id }}\nORDER BY phone",
         "options": {}
       },
       "id": "5bb20888-645c-4beb-b069-8e10a785bc6b",
@@ -215,6 +215,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-07-10T20:33:30.000Z",
-  "versionId": "3664b58d-e80d-4cbb-aff9-e957837f6ae6"
+  "updatedAt": "2024-07-11T19:13:05.000Z",
+  "versionId": "c6c52da7-3038-4731-95e3-74f5ae63813d"
 }
