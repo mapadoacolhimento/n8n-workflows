@@ -1,0 +1,297 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias com status Cadastrada ou Capacitação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias com status Cadastrada ou Capacitação": {
+      "main": [
+        [
+          {
+            "node": "Participou do Recadastro?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envia e-mail para as que participaram do Recadastro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia e-mail para as que participaram do Recadastro": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Envia e-mail para as que não participaram do Recadastro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia e-mail para as que não participaram do Recadastro": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Participou do Recadastro?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-07-11T13:14:37.324Z",
+  "id": "35jjEah8NUYr7CaU",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Lembrete para Voluntárias que não terminaram a Capacitação",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "cb9d937c-5deb-448e-81f7-58fe24519da8",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH volunteers_from_recadastro AS (\n  SELECT\n    volunteer_id,\n    TRUE AS is_in_recadastro\n  FROM volunteer_segments\n  WHERE segment_name = 'recadastro_2024'\n)\nSELECT \n  email,\n  INITCAP(first_name) AS first_name,\n  condition,\n  is_in_recadastro\nFROM volunteers\nLEFT JOIN volunteers_from_recadastro ON id = volunteer_id\nWHERE condition IN ('cadastrada', 'capacitacao')",
+        "options": {}
+      },
+      "id": "ea2de1f9-6046-416d-8cdd-af10f26a8feb",
+      "name": "Busca voluntárias com status Cadastrada ou Capacitação",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "6762d79a-556c-43c1-ab54-78d1a2c4c84a",
+              "leftValue": "={{ $json.is_in_recadastro }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6d707eb6-52fa-4040-93e5-5cdc91615ce4",
+      "name": "Participou do Recadastro?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5ba73099-9b53-4e37-905d-d8532f0eee0d",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        120
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3f176953-f443-4152-9ebc-421f9a4779fe",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1880,
+        140
+      ],
+      "webhookId": "dcd94051-e414-4100-b25c-b178adcc24f1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clyhao8ew00bacclodp4j3y9p\",\n \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "ac484816-dad7-489f-b74e-71eca4bcb771",
+      "name": "Envia e-mail para as que participaram do Recadastro",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2080,
+        140
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "69b1fbfd-d0a3-4c7d-9652-d27f88e5a033",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1660,
+        500
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "1d3809a2-0163-46f6-b917-656dafedcfb5",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1860,
+        520
+      ],
+      "webhookId": "dcd94051-e414-4100-b25c-b178adcc24f1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clyhj24gx00ojdk34g47v47kg\",\n \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "a9bd4402-58a9-416d-9a79-a67c12323dd8",
+      "name": "Envia e-mail para as que não participaram do Recadastro",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2060,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-07-11T17:23:21.000Z",
+  "versionId": "591bb448-af88-4120-8cd3-987139932abf"
+}
