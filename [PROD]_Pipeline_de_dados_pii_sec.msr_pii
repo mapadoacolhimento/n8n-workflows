@@ -1,0 +1,220 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca msrs na tabela msr.msrs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca dados PII das MSRs": {
+      "main": [
+        [
+          {
+            "node": "Insere na tabela msr_pii",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca msrs na tabela msr.msrs": {
+      "main": [
+        [
+          {
+            "node": "Busca dados PII das MSRs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-07-15T19:17:49.977Z",
+  "id": "zm7UqW2g63cmUgGt",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Pipeline de dados pii_sec.msr_pii",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "77b70126-9034-4f4d-8ddf-db58b52613c7",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    user_id AS msr_id,\n    CASE \n      WHEN name = 'sem nome'  THEN NULL\n      WHEN name = 'X'  THEN NULL\n      WHEN name IS NULL  THEN NULL\n      ELSE INITCAP((STRING_TO_ARRAY(BTRIM(name), ' '))[1])\n    END AS first_name,\n    email,\n    CASE \n        WHEN BTRIM(phone) = '' THEN 'not_found'\n        ELSE COALESCE(BTRIM(whatsapp), BTRIM(phone), 'not_found') \n    END AS phone,\n    NULL AS date_of_birth,\n    COALESCE(created_at, NOW()) AS created_at,\n    COALESCE(updated_at, NOW()) AS updated_at\nFROM solidarity_users\nWHERE \n    organization_id = 360273031591\n    AND user_id = {{ $json.msr_id }}\nORDER BY phone",
+        "options": {}
+      },
+      "id": "948243b6-b465-42e3-ba24-e974ff6afd02",
+      "name": "Busca dados PII das MSRs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1180,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "pii_sec",
+          "mode": "list",
+          "cachedResultName": "pii_sec"
+        },
+        "table": {
+          "__rl": true,
+          "value": "msr_pii",
+          "mode": "list",
+          "cachedResultName": "msr_pii"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "msr_id",
+              "displayName": "msr_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_of_birth",
+              "displayName": "date_of_birth",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "replaceEmptyStrings": true
+        }
+      },
+      "id": "058c76d1-67e3-4a26-9789-5af6f4dc13cc",
+      "name": "Insere na tabela msr_pii",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1420,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  msr_id\nFROM msr.msrs",
+        "options": {}
+      },
+      "id": "6df39e3f-379e-4454-ac07-8697f87e33b3",
+      "name": "Busca msrs na tabela msr.msrs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-07-15T19:18:04.000Z",
+  "versionId": "d49e741a-a936-4c63-a2f3-a9c604fec590"
+}
