@@ -255,7 +255,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
         "options": {}
       },
       "id": "95729d29-e775-477e-b6a2-f06150f79970",
@@ -276,7 +276,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type,\n    '{{ $json.msr_zendesk_ticket_id }}' AS msr_zendesk_ticket_id\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "33465dd0-d1ed-4822-9b8d-50c225c2e6a7",
@@ -302,7 +302,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_zendesk_ticket_id\": \"{{ $json.msr_zendesk_ticket_id }}\",\n  }\n}",
         "options": {}
       },
       "id": "50b20e30-2cc9-4164-ba00-3dea94d34dd8",
@@ -462,6 +462,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-07-02T19:47:07.000Z",
-  "versionId": "41a21b13-0c51-4c5d-906b-4f712137c5db"
+  "updatedAt": "2024-07-18T21:37:15.000Z",
+  "versionId": "c52d1c3a-4ed3-48ed-a19d-e8085ac9556f"
 }
