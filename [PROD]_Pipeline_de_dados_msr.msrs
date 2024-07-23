@@ -316,7 +316,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    user_id AS msr_id,\n    email,\n    'not_found' AS gender,\n    CASE \n      WHEN cor = 'amarela'  THEN 'yellow'\n      WHEN cor = 'branca'  THEN 'white'\n      WHEN cor = 'indigena'  THEN 'indigenous'\n      WHEN cor = 'parda'  THEN 'brown'\n      WHEN cor = 'preta'  THEN 'black'\n      ELSE 'not_found'\n    END AS race_color,\n    NULL AS has_disability,\n    TRUE AS accepts_online_support,\n    REGEXP_REPLACE(cep, '-', '', 'g') AS zipcode,\n    CASE \n      WHEN LENGTH(INITCAP(REGEXP_REPLACE(fields::TEXT, '\\\\u0000', '', 'g')::json->6->>'value'::TEXT)) > 100 THEN 'not_found'\n      ELSE COALESCE(INITCAP(REGEXP_REPLACE(fields::TEXT, '\\\\u0000', '', 'g')::json->6->>'value'::TEXT), 'not_found')\n  END AS neighborhood,\n  \nBTRIM(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(UPPER(city), 'À|Á|Â|Ã|Ä|Å', 'A', 'g'), 'È|É|Ê|Ë', 'E', 'g'), 'Í|Ì|Î|Ĩ|Ï ', 'I', 'g'), 'Ò|Ó|Ô|Õ|Ö', 'O', 'g'),'Ù|Ú|Û|Ü', 'U', 'g'), 'Ç', 'C', 'g')) AS city,\n    BTRIM(UPPER(state)) AS state,\n    CASE\n        WHEN condition = 'inscrita' THEN 'registered'\n        ELSE 'unregistered'\n    END AS status,\n    COALESCE(u.created_at, NOW()) AS created_at,\n    COALESCE(u.updated_at, NOW()) AS updated_at\nFROM solidarity_users u\nLEFT JOIN form_entries f ON u.external_id = f.id\nWHERE \n  organization_id = 360273031591\n  AND email IS NOT NULL\n  AND email != ''",
+        "query": "SELECT DISTINCT\n    user_id AS msr_id,\n    email,\n    'not_found' AS gender,\n    CASE \n      WHEN cor = 'amarela'  THEN 'yellow'\n      WHEN cor = 'branca'  THEN 'white'\n      WHEN cor = 'indigena'  THEN 'indigenous'\n      WHEN cor = 'parda'  THEN 'brown'\n      WHEN cor = 'preta'  THEN 'black'\n      ELSE 'not_found'\n    END AS race_color,\n    NULL AS has_disability,\n    TRUE AS accepts_online_support,\n    REGEXP_REPLACE(cep, '-', '', 'g') AS zipcode,\n    CASE \n      WHEN LENGTH(INITCAP(REGEXP_REPLACE(fields::TEXT, '\\\\u0000', '', 'g')::json->6->>'value'::TEXT)) > 100 THEN 'not_found'\n      ELSE COALESCE(INITCAP(REGEXP_REPLACE(fields::TEXT, '\\\\u0000', '', 'g')::json->6->>'value'::TEXT), 'not_found')\n  END AS neighborhood,\n  \nBTRIM(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(UPPER(city), 'À|Á|Â|Ã|Ä|Å', 'A', 'g'), 'È|É|Ê|Ë', 'E', 'g'), 'Í|Ì|Î|Ĩ|Ï ', 'I', 'g'), 'Ò|Ó|Ô|Õ|Ö', 'O', 'g'),'Ù|Ú|Û|Ü', 'U', 'g'), 'Ç', 'C', 'g')) AS city,\n    BTRIM(UPPER(state)) AS state,\n    CASE\n        WHEN condition = 'inscrita' THEN 'registered'\n        ELSE 'unregistered'\n    END AS status,\n    COALESCE(u.created_at, NOW()) AS created_at,\n    COALESCE(u.updated_at, NOW()) AS updated_at\nFROM solidarity_users u\nLEFT JOIN form_entries f ON u.external_id = f.id\nWHERE \n  organization_id = 360273031591\n  AND email IS NOT NULL\n  AND email != ''\n  AND (f.created_at IS NULL OR f.created_at < '2024-07-22T16:22:30.449000+00:00')",
         "options": {}
       },
       "id": "11b19716-3fb5-4440-b81f-87821bfc7b5f",
@@ -1752,6 +1752,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-07-18T20:46:44.000Z",
-  "versionId": "77dc9099-293d-42cb-a394-19b6752be083"
+  "updatedAt": "2024-07-23T17:58:52.000Z",
+  "versionId": "5cbc42b0-e793-4a65-8e80-c7acdf60fa57"
 }
