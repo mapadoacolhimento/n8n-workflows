@@ -463,51 +463,6 @@
         ]
       ]
     },
-    "Qual o novo status?": {
-      "main": [
-        [
-          {
-            "node": "Busca infos da MSR e da Voluntária1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Atualiza status do match",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Busca infos da MSR e da Voluntária",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Atualiza status do match1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "ticket MSR - MSR desistiu do atendimento",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Atualiza status do match2",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Wait2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Wait1": {
       "main": [
         [
@@ -619,6 +574,51 @@
         [
           {
             "node": "Busca infos da MSR e da Voluntária3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qual o novo status?": {
+      "main": [
+        [
+          {
+            "node": "Busca infos da MSR e da Voluntária1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do match",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Busca infos da MSR e da Voluntária",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do match1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ticket MSR - MSR desistiu do atendimento",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do match2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait2",
             "type": "main",
             "index": 0
           }
@@ -2374,93 +2374,6 @@
     },
     {
       "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.new_status }}",
-                    "rightValue": "in_contact",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "atendimento iniciado"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "4f3fd665-2742-4831-b7d0-d005e78b34e5",
-                    "leftValue": "={{ $json.new_status }}",
-                    "rightValue": "interrupted_before_support",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "encaminhamento interrompido"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "e5b7eb66-f482-42f0-acd1-b39f3fa869f3",
-                    "leftValue": "{{ $json.new_status }}",
-                    "rightValue": "waived",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "msr_desistiu"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "45f211ea-7f54-4550-a9d1-ee21d210d689",
-      "name": "Qual o novo status?",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
-      "position": [
-        2560,
-        2560
-      ]
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
         "query": "UPDATE match.matches\nSET status = 'interrupted_before_support', updated_at = NOW()\nWHERE match_id = {{ $json.match_id }};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{ $json.match_id }}, 'interrupted_before_support', NOW());",
         "options": {}
@@ -2899,6 +2812,93 @@
         3400,
         3740
       ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "in_contact",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "atendimento iniciado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "4f3fd665-2742-4831-b7d0-d005e78b34e5",
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "interrupted_before_support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "encaminhamento interrompido"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "e5b7eb66-f482-42f0-acd1-b39f3fa869f3",
+                    "leftValue": "={{ $json.new_status }}",
+                    "rightValue": "waived",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "msr_desistiu"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45f211ea-7f54-4550-a9d1-ee21d210d689",
+      "name": "Qual o novo status?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2560,
+        2560
+      ]
     }
   ],
   "pinData": {
@@ -3005,6 +3005,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2024-07-08T13:15:24.000Z",
-  "versionId": "6aa58f51-8c73-426d-9ac6-2c22ca1f5d20"
+  "updatedAt": "2024-07-24T19:07:14.000Z",
+  "versionId": "88b0f4f2-a6fe-4636-965f-4a1d1ac47b2d"
 }
