@@ -151,7 +151,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const output = [];\n\nlet psychologistsMessage = \"*1. Capitais sem psicólogas disponíveis* :trident: \\n\";\n\nlet lawyersMessage = \"*2. Capitais sem advogadas disponíveis* :scales: \\n\";\n\nvar lawyersRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nvar psychologistRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nfor (const item of $input.all()) {\n\n  const region = item.json.region;\n  const city = item.json.city;\n  const state = item.json.state;\n  const availableLawyers = item.json.available_lawyers;\n  const availablePsychologists = item.json.available_psychologists;\n  \n  if (availableLawyers == 0) {\n    lawyersRegions[region] += city + \" (\" + state + \"), \";\n  }\n\n  if (availablePsychologists == 0) {\n    psychologistRegions[region] += city + \" (\" + state + \"), \";\n  }\n}\n\nfor (const [region, value] of Object.entries(lawyersRegions)) {\n  \n  lawyersMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      lawyersMessage += value + \"\\n\"\n    }\n    else {\n      lawyersMessage += \"- \\n\"\n    }\n}\n\nfor (const [region, value] of Object.entries(psychologistRegions)) {\n  \n  psychologistsMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      psychologistsMessage += value + \"\\n\"\n    }\n    else {\n      psychologistsMessage += \"- \\n\"\n    }\n}\n  \n\noutput.push({\n  capitals_lawyers_message: lawyersMessage,\n  capitals_psychologists_message: psychologistsMessage\n})\n\nreturn output;"
+        "jsCode": "const output = [];\n\nlet psychologistsMessage = \"*1. Capitais com menos de 10 psicólogas disponíveis* :trident: \\n\";\n\nlet lawyersMessage = \"*2. Capitais com menos de 10 advogadas disponíveis* :scales: \\n\";\n\nvar lawyersRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nvar psychologistRegions = {\n  \"Norte\": \"\", \n  \"Nordeste\": \"\", \n  \"Centro-Oeste\": \"\", \n  \"Sudeste\": \"\",\n  \"Sul\": \"\"\n}\n\nfor (const item of $input.all()) {\n\n  const region = item.json.region;\n  const city = item.json.city;\n  const state = item.json.state;\n  const availableLawyers = item.json.available_lawyers;\n  const availablePsychologists = item.json.available_psychologists;\n  \n  if (availableLawyers < 10) {\n    lawyersRegions[region] += city + \" (\" + state + \"), \";\n  }\n\n  if (availablePsychologists < 10) {\n    psychologistRegions[region] += city + \" (\" + state + \"), \";\n  }\n}\n\nfor (const [region, value] of Object.entries(lawyersRegions)) {\n  \n  lawyersMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      lawyersMessage += value + \"\\n\"\n    }\n    else {\n      lawyersMessage += \"- \\n\"\n    }\n}\n\nfor (const [region, value] of Object.entries(psychologistRegions)) {\n  \n  psychologistsMessage += \"> *\" + region + \"*: \" \n  \n    if(!!value) {\n      psychologistsMessage += value + \"\\n\"\n    }\n    else {\n      psychologistsMessage += \"- \\n\"\n    }\n}\n  \n\noutput.push({\n  capitals_lawyers_message: lawyersMessage,\n  capitals_psychologists_message: psychologistsMessage\n})\n\nreturn output;"
       },
       "id": "75dd7bb7-1a9d-4bd1-a8ad-e07f73478bfa",
       "name": "Capitais - constroi mensagens",
@@ -195,7 +195,7 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        2300,
+        2360,
         340
       ],
       "credentials": {
@@ -286,6 +286,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-07-15T13:49:09.000Z",
-  "versionId": "2a8bedaf-8687-4f4f-af48-fa1e043c599b"
+  "updatedAt": "2024-07-24T17:30:27.000Z",
+  "versionId": "670767bd-07d4-408f-9f96-e0670601e211"
 }
