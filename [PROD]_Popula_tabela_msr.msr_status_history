@@ -1,0 +1,97 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca status": {
+      "main": [
+        [
+          {
+            "node": "Insere na tabela msr.msr_status_history",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-07-25T19:01:36.044Z",
+  "id": "A2TxOLZHTLuOE8MS",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Popula tabela msr.msr_status_history",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1387616d-1b19-4ec1-879f-261cecd28b55",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  msr_id, \n  status\nFROM msr.msrs",
+        "options": {}
+      },
+      "id": "45586652-0f01-4cd4-bc7f-e9015c6d11cd",
+      "name": "Busca status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO msr.msr_status_history (msr_id, status, created_at)\nVALUES ({{ $json.msr_id }}, '{{ $json.status }}', NOW())",
+        "options": {}
+      },
+      "id": "d0e7ecbd-1455-4621-9ffe-737e12081231",
+      "name": "Insere na tabela msr.msr_status_history",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1160,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-07-25T19:05:09.000Z",
+  "versionId": "d4eb0207-6ac8-4f6b-9b50-78dbb3c7dcc9"
+}
