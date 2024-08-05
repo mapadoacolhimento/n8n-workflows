@@ -1,17 +1,6 @@
 {
   "active": false,
   "connections": {
-    "Filtra apenas as infos que importam": {
-      "main": [
-        [
-          {
-            "node": "Busca voluntária no BD",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Possui match?": {
       "main": [
         [
@@ -38,11 +27,6 @@
             "index": 0
           },
           {
-            "node": "Avisa o time de provisão de serviços",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Salva os dados do descadastro na tabela volunteer_unsubscriptions",
             "type": "main",
             "index": 0
@@ -50,11 +34,22 @@
         ]
       ]
     },
-    "Voluntária deseja se descadastrar": {
+    "Busca voluntária no BD": {
       "main": [
         [
           {
-            "node": "Filtra apenas as infos que importam",
+            "node": "Possui match?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra apenas as infos que importam": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntária no BD",
             "type": "main",
             "index": 0
           }
@@ -116,7 +111,7 @@
       "main": [
         [
           {
-            "node": "ticket MSR - solicitação recebida",
+            "node": "ticket MSR - aguardando match sem prioridade",
             "type": "main",
             "index": 0
           },
@@ -155,6 +150,16 @@
             "node": "Busca current_matches",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "ticket MSR - encaminhamento interrompido",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - encaminhamento interrompido",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -169,6 +174,27 @@
           },
           {
             "node": "Obtém o transactionaId da Voluntária",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - atendimento iniciado",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket MSR - atendimento iniciado2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra apenas as infos que importam1": {
+      "main": [
+        [
+          {
+            "node": "Deve seguir?",
             "type": "main",
             "index": 0
           }
@@ -225,12 +251,12 @@
             "index": 0
           },
           {
-            "node": "ticket MSR - observação interna",
+            "node": "ticket Voluntária - observação interna",
             "type": "main",
             "index": 0
           },
           {
-            "node": "ticket Voluntária - observação interna",
+            "node": "ticket MSR - observação interna",
             "type": "main",
             "index": 0
           }
@@ -242,6 +268,17 @@
         [
           {
             "node": "Atualiza support_request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voluntária deseja se descadastrar": {
+      "main": [
+        [
+          {
+            "node": "Filtra apenas as infos que importam",
             "type": "main",
             "index": 0
           }
@@ -282,22 +319,6 @@
         [
           {
             "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Verifica se precisa de atendimento e qual": {
-      "main": [
-        [
-          {
-            "node": "Tem SR jurídico",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Tem SR psicológico",
             "type": "main",
             "index": 0
           }
@@ -464,6 +485,22 @@
         ]
       ]
     },
+    "Busca infos da MSR e da Voluntária3": {
+      "main": [
+        [
+          {
+            "node": "Busca current_matches1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ticket Voluntária - msr desistiu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Busca current_matches1": {
       "main": [
         [
@@ -492,22 +529,6 @@
         [
           {
             "node": "No Operation, do nothing5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca infos da MSR e da Voluntária3": {
-      "main": [
-        [
-          {
-            "node": "Busca current_matches1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "ticket Voluntária - msr desistiu",
             "type": "main",
             "index": 0
           }
@@ -548,11 +569,45 @@
         ]
       ]
     },
-    "Filtra apenas as infos que importam1": {
+    "Qual o novo status?": {
       "main": [
         [
           {
-            "node": "Deve seguir?",
+            "node": "Busca infos da MSR e da Voluntária1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do match",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Busca infos da MSR e da Voluntária",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do match1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ticket MSR - MSR desistiu do atendimento",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status do match2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait2",
             "type": "main",
             "index": 0
           }
@@ -570,65 +625,108 @@
         ]
       ]
     },
-    "Qual o novo status?": {
+    "Quer continuar na fila?": {
       "main": [
         [
           {
-            "node": "ticket Voluntária - atendimento iniciado",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "ticket MSR - atendimento iniciado2",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca infos da MSR e da Voluntária1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Atualiza status do match",
+            "node": "No Operation, do nothing6",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "ticket MSR - encaminhamento interrompido",
+            "node": "Busca MSR",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Busca infos da MSR e da Voluntária",
+            "node": "Atualiza o support_request",
             "type": "main",
             "index": 0
           },
           {
-            "node": "ticket Voluntária - encaminhamento interrompido",
+            "node": "Atualiza o ticket no Zendesk",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Busca support_request": {
+      "main": [
+        [
           {
-            "node": "Atualiza status do match1",
+            "node": "Encontrou o support_request?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra apenas as infos que importam2": {
+      "main": [
+        [
+          {
+            "node": "Busca support_request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou o support_request?": {
+      "main": [
+        [
+          {
+            "node": "Quer continuar na fila?",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Atualiza status do match2",
+            "node": "Stop and Error1",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "MSR preencheu o formulário": {
+      "main": [
+        [
           {
-            "node": "ticket MSR - MSR desistiu do atendimento",
+            "node": "Filtra apenas as infos que importam2",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Busca MSR": {
+      "main": [
+        [
           {
-            "node": "Wait2",
+            "node": "Encontrou a MSR?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou a MSR?": {
+      "main": [
+        [
+          {
+            "node": "Envia e-mail de Encaminhamento para Serviço Público",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error2",
             "type": "main",
             "index": 0
           }
@@ -636,26 +734,13 @@
       ]
     }
   },
-  "createdAt": "2024-03-25T18:42:56.185Z",
-  "id": "KsVSUbQgGiUd5U1m",
+  "createdAt": "2024-08-05T13:58:34.529Z",
+  "id": "XUNdm8ZZX8AG4G0c",
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "name": "[STG] Integrações Tally",
   "nodes": [
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfor (const item of $input.all()) {\n  const volunteerEmail = item.json.body.data.fields[1].value;\n  const unsubscriptionReasonValue = item.json.body.data.fields[2].value;\n\n  const unsubscriptionReasonLabel = item.json.body.data.fields[2].options.find((element) => element.id == unsubscriptionReasonValue).text;\n\n  const unsubscriptionDescription = item.json.body.data.fields[3].value;\n  \n  output.push(\n    {\n      \"email\": volunteerEmail,\n      \"unsubscription_reason\": unsubscriptionReasonLabel,\n      \"unsubscription_description\": unsubscriptionDescription\n    }\n  )\n}\n\nreturn output;"
-      },
-      "id": "5c1bc8c7-7add-4b31-83ea-a9e04548d6a8",
-      "name": "Filtra apenas as infos que importam",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        940,
-        340
-      ]
-    },
     {
       "parameters": {
         "conditions": {
@@ -681,7 +766,7 @@
           "looseTypeValidation": true
         }
       },
-      "id": "1803e4f8-a9ea-4b00-9dfe-7ef47c0ba33b",
+      "id": "c40865db-e4e8-4b9b-8714-5e5888a15c54",
       "name": "Possui match?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
@@ -696,7 +781,7 @@
         "query": "UPDATE volunteers \nSET condition = 'descadastrada', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.volunteer_id }}, 'descadastrada', NOW());\n\nUPDATE volunteer_availability\nSET is_available = FALSE\nWHERE volunteer_id = {{ $json.volunteer_id }}\n",
         "options": {}
       },
-      "id": "859eabed-5197-47b0-a5dd-ee79a5cf0f8e",
+      "id": "af4b2801-faec-4d9b-9427-0de71b4ec14a",
       "name": "Descadastra a voluntária no BD",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
@@ -706,8 +791,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -717,7 +802,7 @@
         "query": "SELECT \n  id AS volunteer_id,\n  email,\n  first_name,\n  phone,\n  zendesk_user_id,\n  COALESCE(current_matches, 0) AS current_matches,\n  '{{ $json.unsubscription_reason }}' AS unsubscription_reason,\n  '{{ $json.unsubscription_description }}' AS unsubscription_description\nFROM volunteers\nLEFT JOIN volunteer_availability ON id = volunteer_id\nWHERE email = '{{ $json.email }}'",
         "options": {}
       },
-      "id": "7d74cd4d-378c-4219-a096-ed0715c82bfe",
+      "id": "ca5676fc-f1ae-48f4-a2b3-6d49a9b5bae1",
       "name": "Busca voluntária no BD",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
@@ -727,8 +812,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -748,7 +833,7 @@
           }
         }
       },
-      "id": "5fa7bc69-646d-4879-9820-34849cc99adb",
+      "id": "ee555da4-3f5e-428c-8b22-faec8cc81707",
       "name": "Atualiza status da voluntária no Zendesk",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
@@ -774,7 +859,7 @@
         "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clu8sn93v003e145jlfb9gf67\",\n \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "161117ab-be21-494c-8121-18a8910fa05f",
+      "id": "e5120b2c-ec82-437f-8395-9c026d73d317",
       "name": "Envia e-mail pedindo que ela entre em contato",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
@@ -800,7 +885,7 @@
         "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"clu8up5lj0005iyhgjmq7qtqi\",\n \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "4c2d91c5-9759-4ef2-8110-c44ccadec867",
+      "id": "73041378-e55e-444d-bc18-0ecc380420a8",
       "name": "Envia e-mail confirmando o descadastro",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
@@ -830,7 +915,7 @@
           "mrkdwn": true
         }
       },
-      "id": "1760aaca-c9c0-4301-8aba-fcd0ead8ce85",
+      "id": "722a652b-62b4-45e0-bb92-1bc1595e0b8b",
       "name": "Avisa o time de provisão de serviços",
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
@@ -851,7 +936,7 @@
         "query": "INSERT INTO volunteer_unsubscriptions (volunteer_id, unsubscription_reason, unsubscription_description, created_at, updated_at)\nVALUES ({{ $json.volunteer_id }}, '{{ $json.unsubscription_reason }}', '{{ $json.unsubscription_description }}', NOW(), NOW())",
         "options": {}
       },
-      "id": "2871c0fd-1121-475c-bd15-d14c9f4a8b9a",
+      "id": "b40b536f-2493-40ca-93e1-ac79b4c97135",
       "name": "Salva os dados do descadastro na tabela volunteer_unsubscriptions",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
@@ -861,46 +946,23 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
     {
       "parameters": {
-        "content": "## Descadastro de Voluntárias"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfor (const item of $input.all()) {\n  const volunteerEmail = item.json.body.data.fields[1].value;\n  const unsubscriptionReasonValue = item.json.body.data.fields[2].value;\n\n  const unsubscriptionReasonLabel = item.json.body.data.fields[2].options.find((element) => element.id == unsubscriptionReasonValue).text;\n\n  const unsubscriptionDescription = item.json.body.data.fields[3].value;\n  \n  output.push(\n    {\n      \"email\": volunteerEmail,\n      \"unsubscription_reason\": unsubscriptionReasonLabel,\n      \"unsubscription_description\": unsubscriptionDescription\n    }\n  )\n}\n\nreturn output;"
       },
-      "id": "7c71fcd7-574a-4dbf-82b3-e0d3d949e7eb",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
+      "id": "4ef952b7-0336-4dd1-bd12-461883616aff",
+      "name": "Filtra apenas as infos que importam",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        720,
-        140
-      ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "volunteer-unsubscribe-test",
-        "authentication": "headerAuth",
-        "options": {}
-      },
-      "id": "c2608960-015e-4971-b93d-dfb5495a0b12",
-      "name": "Voluntária deseja se descadastrar",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1.1,
-      "position": [
-        720,
+        920,
         340
-      ],
-      "webhookId": "b540b2fd-8c69-4b91-be68-dd44229eb4f7",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "BhcubpnINJanuVaZ",
-          "name": "Tally API"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -908,13 +970,13 @@
         "height": 125.37595776585795,
         "width": 340.2325169896819
       },
-      "id": "8c3cddb6-d721-4af8-8657-d489e7413d2d",
+      "id": "8993b828-11f6-4ef1-ae0f-31cd01f60a0d",
       "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        460,
-        2680
+        660,
+        2460
       ]
     },
     {
@@ -923,40 +985,40 @@
         "query": "UPDATE match.matches\nSET status = '{{ $json.new_status }}', updated_at = NOW()\nWHERE match_id = {{ $json.match_id }};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{ $json.match_id }}, '{{ $json.new_status }}', NOW());",
         "options": {}
       },
-      "id": "74d3c9cf-3e6d-4615-a59c-d32357daebb1",
+      "id": "02497d1e-7209-4cde-be8d-10abbd9ff1f9",
       "name": "Atualiza status do match",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        2840,
-        1980
+        3180,
+        2020
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  support_request_id,\n  support_type,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  zendesk_user_id AS volunteer_zendesk_user_id,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  volunteer_zendesk_ticket_id,\n  status AS current_status,\n  '{{ $json.match_status }}' AS new_status\nFROM match.matches\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE match_id = {{ $json.match_id }}",
+        "query": "SELECT\n  match_id,\n  support_request_id,\n  support_type,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  zendesk_user_id AS volunteer_zendesk_user_id,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  volunteer_zendesk_ticket_id,\n  status AS current_status,\n  '{{ $json.match_status }}' AS new_status,\n  '{{ $json.who_answered }}' AS who_answered,\n  SUBSTRING(m.created_at::VARCHAR, 0, 11) AS match_created_at,\n  '{{ $json.form_answer }}' AS form_answer\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE match_id = {{ $json.match_id }}",
         "options": {}
       },
-      "id": "59a4503e-a914-4481-af47-7a605dea6c63",
+      "id": "b9cf9f1f-b79b-4c33-90e0-e9371c440654",
       "name": "Busca match",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1020,
-        2840
+        1220,
+        2620
       ],
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -984,37 +1046,37 @@
         },
         "options": {}
       },
-      "id": "23dd87e1-8e09-4c7b-9d72-53f46426f4c2",
+      "id": "bca13b60-6ebc-49da-b1bd-b28d88b864fb",
       "name": "Encontrou o match?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1220,
-        2840
+        1420,
+        2620
       ]
     },
     {
       "parameters": {
         "errorMessage": "match não encontrado"
       },
-      "id": "7d9a29ae-8cf7-41d0-8026-5cf760e961f8",
+      "id": "ee4f6424-67d6-4966-9ba5-a9df92f850a3",
       "name": "Stop and Error",
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1440,
-        3140
+        1700,
+        2800
       ]
     },
     {
       "parameters": {},
-      "id": "8ac9b48c-6fd3-45ba-92d9-693f017c29cd",
+      "id": "e4fd261d-33f7-42e5-b47a-2736992d2492",
       "name": "No Operation, do nothing1",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1700,
-        3040
+        1880,
+        2860
       ]
     },
     {
@@ -1031,7 +1093,7 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "=<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\n{{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.\n</br>\n</br>\n<strong>Nome da MSR:</strong> {{ $json.msr_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "pending",
           "tags": [
             "atualizar-data-atendimento",
@@ -1040,13 +1102,13 @@
           ]
         }
       },
-      "id": "e12be172-1670-4ddf-9f19-2247e25cb432",
+      "id": "d2afb5d7-cafc-422c-a618-00adc40f9afb",
       "name": "ticket Voluntária - atendimento iniciado",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3060,
-        2260
+        3560,
+        1840
       ],
       "credentials": {
         "zendeskApi": {
@@ -1069,20 +1131,20 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o atendimento foi iniciado.",
+          "internalNote": "=<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\n{{ $json.who_answered }} informou pelo formulário que o atendimento foi iniciado.\n</br>\n</br>\n<strong>Nome da voluntária:</strong> {{ $json.volunteer_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "pending",
           "tags": [
             "atualizar-data-atendimento"
           ]
         }
       },
-      "id": "ddf1aac7-6d3b-4853-8d62-d227accee956",
+      "id": "146ad2db-e28e-472c-adfd-4d317faf1c3f",
       "name": "ticket MSR - atendimento iniciado2",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3060,
-        2060
+        3540,
+        1620
       ],
       "credentials": {
         "zendeskApi": {
@@ -1102,13 +1164,13 @@
         "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clve8mcba01ehw7t4j7z3pswx\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "28a44a3f-3224-4907-9dab-aa5ba5f08c53",
+      "id": "f4edf44f-b2ae-447e-9b9e-7e625e7e1156",
       "name": "email MSR - atendimento iniciado",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        3360,
-        2260
+        3560,
+        2040
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1128,13 +1190,13 @@
         "jsonBody": "={\n \"email\": \"{{ $json.volunteer_email }}\",\n \"transactionalId\": \"{{ $json.transactional_id }}\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "34f9f099-ba7f-47dc-a71a-01ca673fbc23",
+      "id": "b7622dc7-1d72-4731-8bbf-a69d296c6397",
       "name": "email Voluntária - atendimento iniciado",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        3620,
-        2500
+        3820,
+        2280
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1147,13 +1209,13 @@
       "parameters": {
         "jsCode": "for (const item of $input.all()) {\n\n  const supportType = item.json.support_type;\n  const transactionalId = supportType === 'legal' ? 'clve91yrh006zn5kbfmaeabcv' : 'clve9g19d00h2lk7s7uh7510h';\n\n  item.json.transactional_id = transactionalId;\n\n}\n\nreturn $input.all();"
       },
-      "id": "a94ec2ae-a62b-49cb-9000-a743b51bab82",
+      "id": "065e8475-57f2-466b-8dc2-15ba11525298",
       "name": "Obtém o transactionaId da Voluntária",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3360,
-        2500
+        3560,
+        2280
       ]
     },
     {
@@ -1170,20 +1232,20 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o encaminhamento foi interrompido",
+          "internalNote": "=<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\n{{ $json.who_answered }} informou pelo formulário que o encaminhamento foi interrompido.\n</br>\n</br>\n<strong>Nome da voluntária:</strong> {{ $json.volunteer_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "open",
           "tags": [
             "atualizar-data-encaminhamento"
           ]
         }
       },
-      "id": "ce18f3d1-31c9-476b-af40-3caa7eb19f11",
+      "id": "cc284e10-c0df-42f2-9e37-788c8910220a",
       "name": "ticket MSR - encaminhamento interrompido",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3480,
-        2940
+        4200,
+        2480
       ],
       "credentials": {
         "zendeskApi": {
@@ -1203,13 +1265,13 @@
         "jsonBody": "={\n \"email\": \"{{ $json.volunteer_email }}\",\n \"transactionalId\": \"clvh3x98300621fpkx8is5zyj\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"volunteer_email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
         "options": {}
       },
-      "id": "2f16a772-33e9-4e9d-b3f9-089d6003613e",
+      "id": "4b4edfc0-04c1-4ab3-9592-b8208f457d4b",
       "name": "email Voluntária - encaminhamento interrompido",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        4460,
-        3500
+        4320,
+        3300
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1220,51 +1282,15 @@
     },
     {
       "parameters": {},
-      "id": "40fe11fe-58a4-4acb-a44d-e10c84be22da",
+      "id": "829a4bfe-5f4f-4298-b0c0-31e601ac7c42",
       "name": "Wait",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        3700,
-        2940
+        4460,
+        2480
       ],
-      "webhookId": "81756717-b55e-4931-8c96-cdb8b400e111"
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "id": "={{ $json.id }}",
-        "updateFields": {
-          "assigneeEmail": "marcia@nossas.org",
-          "customFieldsUi": {
-            "customFieldsValues": [
-              {
-                "id": 360014379412,
-                "value": "solicitação_recebida"
-              }
-            ]
-          },
-          "internalNote": "MSR está aguardando um novo match",
-          "status": "open",
-          "tags": [
-            "nova-voluntaria-sem-prioridade"
-          ]
-        }
-      },
-      "id": "75dc78d8-3a5a-4bda-811c-d8b05c000592",
-      "name": "ticket MSR - solicitação recebida",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        4060,
-        2740
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
+      "webhookId": "71380159-4d32-4d3e-8b62-ea546183627f"
     },
     {
       "parameters": {
@@ -1277,13 +1303,13 @@
         "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clvjzaan500moauwib4clwqah\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "681b889b-54d8-4a35-9f5b-26d6cc2e5450",
+      "id": "13b0a335-89cb-4d87-a20c-6f64b5bd15af",
       "name": "email MSR - nova voluntária sem prioridade",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        4440,
-        3340
+        4320,
+        3060
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1295,42 +1321,42 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
-      "id": "a70a840a-fe9d-43f1-a446-cf34c8193d44",
+      "id": "6f2f6a1c-543b-4604-bf90-190c8f9419f3",
       "name": "Busca infos da MSR e da Voluntária",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        4320,
-        3140
+        3880,
+        2900
       ],
       "credentials": {
         "postgres": {
-          "id": "bNRm9reAeAU1uKu5",
-          "name": "[STG] Bonde"
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
         }
       }
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
-      "id": "e1ef6e55-d71b-46b4-9649-060f0c2213d9",
+      "id": "6f33e0ab-577d-4265-a7ce-adfc347fd81c",
       "name": "Busca infos da MSR e da Voluntária1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        3060,
-        2500
+        3260,
+        2280
       ],
       "credentials": {
         "postgres": {
-          "id": "bNRm9reAeAU1uKu5",
-          "name": "[STG] Bonde"
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
         }
       }
     },
@@ -1350,13 +1376,13 @@
           }
         }
       },
-      "id": "494d8ecf-c859-4dd9-a8da-d81ff406acb4",
+      "id": "b3f14ab9-4ef7-4f59-a907-c6777e7c6e3c",
       "name": "Status da Mulher = Indisponivel - Agenda",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        4620,
-        3760
+        4320,
+        3600
       ],
       "credentials": {
         "zendeskApi": {
@@ -1371,53 +1397,53 @@
         "query": "=UPDATE public.volunteers\nSET condition = 'indisponível_agenda', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'indisponível_agenda', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = FALSE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
         "options": {}
       },
-      "id": "dc2571ba-1116-4141-aced-4071713c9176",
+      "id": "478b662c-d307-4fdf-bd0b-dd95356e1eea",
       "name": "Atualiza status da Voluntária",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        4660,
-        3900
+        4320,
+        3800
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=UPDATE match.support_requests\nSET status = 'open', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'open', NOW());",
+        "query": "=UPDATE match.support_requests\nSET status = 'waiting_for_match', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'waiting_for_match', NOW());",
         "options": {}
       },
-      "id": "33672c24-0a92-4b16-8e15-6dbdfff5afdd",
+      "id": "fb204a84-caf7-412b-aad2-78d7366c3682",
       "name": "Atualiza support_request",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        4240,
-        2940
+        4960,
+        2520
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\",\n    \"Escolho não seguir com o atendimento\": \"waived\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfunction getShouldDoSomething(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusText === \"Ela não entrou em contato comigo\" ? false : true\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  const shouldDoSomething = getShouldDoSomething(item);\n\n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus,\n      \"should_do_something\": shouldDoSomething\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\noutput = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getMatchStatus(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusLookUp = {\n    \"Já iniciamos o atendimento\": \"in_contact\",\n    \"A voluntária não me respondeu\": \"waiting_contact\",\n    \"A voluntária me respondeu, mas não está disponível para me atender\": \"interrupted_before_support\",\n    \"Não conseguirei atendê-la\": \"interrupted_before_support\",\n    \"Escolho não seguir com o atendimento\": \"waived\"\n  }\n  \n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusLookUp[matchStatusText]\n}\n\nfunction getShouldDoSomething(item){\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n\n  if(!matchStatusField.value) return null\n\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n\n  return matchStatusText === \"Ela não entrou em contato comigo\" ? false : true\n}\n\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, 'match_id');\n  const matchStatus = getMatchStatus(item);\n  const shouldDoSomething = getShouldDoSomething(item);\n  const whoAnswered = item.json.body.data.formId === 'nrlEq5' ? 'Voluntária' : 'MSR'\n\n  const matchStatusField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'match_status'\n  );\n  const matchStatusText = matchStatusField.options.find(\n    (element) => element.id == matchStatusField.value\n  ).text;\n  \n  output.push(\n    {\n      \"match_id\": matchId,\n      \"match_status\": matchStatus,\n      \"should_do_something\": shouldDoSomething,\n      \"who_answered\": whoAnswered,\n      \"form_answer\": matchStatusText\n    }\n  )\n}\n\nreturn output;"
       },
-      "id": "e09ebbee-0b8e-49d7-8b08-eda480bb1add",
+      "id": "b78c6717-02ea-4cbe-a860-ea2b5f44a333",
       "name": "Filtra apenas as infos que importam1",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        620,
-        2860
+        820,
+        2640
       ]
     },
     {
@@ -1443,13 +1469,13 @@
         },
         "options": {}
       },
-      "id": "83c83996-66ab-4b9b-bfd9-3240327cf82a",
+      "id": "9e8e7044-1aba-4202-ade7-ce4303bdc592",
       "name": "O status atual é waiting_contact?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1500,
-        2820
+        1700,
+        2600
       ]
     },
     {
@@ -1475,13 +1501,13 @@
         },
         "options": {}
       },
-      "id": "d92e4ba5-075e-4e6e-80f7-95f10cc79bc4",
+      "id": "bb6cef76-8c3c-4ae8-85b5-c17ce5cf8ebf",
       "name": "Devemos atualizar o status?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1820,
-        2800
+        2020,
+        2580
       ]
     },
     {
@@ -1495,13 +1521,13 @@
         "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clvldhxm001hy7b5dbbi8oprs\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "38666c3f-db1e-4c55-920e-40dde4ea3245",
+      "id": "77872c36-fbb0-4bc4-9858-bd7785ad267b",
       "name": "email MSR - Voluntária não respondeu",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2180,
-        3460
+        2400,
+        3340
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1513,16 +1539,16 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
-      "id": "f2b65201-17c7-4948-9453-cddd86fe8f53",
+      "id": "58248b4b-7ad5-4482-ba1c-13bf8ad2e500",
       "name": "Busca infos da MSR e da Voluntária2",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1960,
-        3300
+        2180,
+        2780
       ],
       "credentials": {
         "postgres": {
@@ -1537,18 +1563,18 @@
         "query": "SELECT\n  support_request_id\nFROM match.matches\nWHERE msr_zendesk_ticket_id = {{ $json.id }}",
         "options": {}
       },
-      "id": "679d1d67-dbaf-4172-9278-693bbbf6891e",
+      "id": "f9ceee42-8efb-45b6-81e1-2eac37281923",
       "name": "Busca support_request_id",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        3940,
-        2940
+        4740,
+        2520
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -1566,17 +1592,17 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que o encaminhamento foi interrompido",
+          "internalNote": "=<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\n{{ $json.who_answered }} informou pelo formulário que o encaminhamento foi interrompido.\n\n</br>\n</br>\n<strong>Nome da MSR:</strong> {{ $json.msr_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n",
           "status": "pending"
         }
       },
-      "id": "86f6040f-32f9-4801-bfff-0d0dd23046a0",
+      "id": "8944bca7-0b00-4831-8420-2d5bdc9f1b05",
       "name": "ticket Voluntária - encaminhamento interrompido",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3620,
-        3120
+        4200,
+        2720
       ],
       "credentials": {
         "zendeskApi": {
@@ -1587,18 +1613,54 @@
     },
     {
       "parameters": {
+        "content": "## Descadastro de Voluntárias"
+      },
+      "id": "009b2a6e-ad9f-4b98-9c67-52a394ffabc5",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "volunteer-unsubscribe",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "00531a2b-c038-47ee-b8b5-74dc0cd9236c",
+      "name": "Voluntária deseja se descadastrar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        340
+      ],
+      "webhookId": "85a30c72-b875-4395-acb8-ca10777baa9b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
         "operation": "update",
         "id": "={{ $json.volunteer_zendesk_ticket_id }}",
         "jsonParameters": true,
         "updateFieldsJson": "={\n  \"status\": \"open\",\n  \"comment\": {\n    \"public\": true,\n    \"author_id\": 377511446392,\n    \"body\": \"Olá, {{ $json.volunteer_first_name }}! Como você está?!\\n\\nHá um tempo atrás enviamos o seu contato para **{{ $json.msr_first_name}}** e fomos informadas que a mesma está com dificuldade de contatá-la.\\n\\nDiante disso, estamos entrando em contato para saber se está tudo bem? Você se encontra com algum problema tecnológico? **Caso tenha alterado seus dados de contato, é imprescindível que nos mantenha informadas.**\\n\\nPedimos que nos informe se você continua disponível para o atendimento e se segue conosco no projeto. A não resposta deste e-mail será compreendida pela equipe como inatividade e seu cadastro será suspenso.\\n\\nLembramos que as acolhidas são orientadas a entrar em contato via WhatsApp (mensagem de texto ou voz) e também por meio de ligação telefônica. Esteja atenta a essas formas de contato!\\n\\nÉ muito importante contar com a sua participação na nossa rede de voluntárias, obrigada por poder contar com você <3\\n\\nAbraços,\\nEquipe do Mapa do Acolhimento\"\n  }\n}"
       },
-      "id": "f24199fc-0350-4f99-8e77-48c8766451f8",
+      "id": "f722ce7c-7165-4daa-a30a-d686a01b7391",
       "name": "ticket Voluntária - Voluntária não respondeu",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2180,
-        3240
+        2440,
+        3120
       ],
       "credentials": {
         "zendeskApi": {
@@ -1613,18 +1675,18 @@
         "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    zendesk_user_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, zendesk_user_id, current_matches, max_matches, condition",
         "options": {}
       },
-      "id": "56acc307-f401-4e1b-b948-83a38bb79c42",
+      "id": "9bd760e0-6035-498f-b10b-0a1988f646cb",
       "name": "Busca current_matches",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4700,
-        4120
+        4300,
+        4100
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -1653,13 +1715,13 @@
           "looseTypeValidation": true
         }
       },
-      "id": "5b43e0e9-dadb-4f25-b570-795895cbe151",
+      "id": "1f5ff049-7d59-4d34-b497-1c8caba3d7f5",
       "name": "Deve atualizar o current_matches?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        4460,
-        4160
+        4520,
+        4100
       ]
     },
     {
@@ -1668,18 +1730,18 @@
         "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
         "options": {}
       },
-      "id": "6fc00203-8ba2-4484-963c-4f0321cbf9ae",
+      "id": "a83485cc-a73c-4455-b36c-045bf9af85fd",
       "name": "Atualiza current_matches",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4680,
-        4140
+        4760,
+        4080
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -1707,41 +1769,41 @@
         },
         "options": {}
       },
-      "id": "58057d21-8ef8-41a9-9d97-06cb47b1527f",
+      "id": "3acd769a-3e97-4f98-9f36-2715add32758",
       "name": "Deve seguir?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        800,
-        2860
+        1000,
+        2640
       ]
     },
     {
       "parameters": {},
-      "id": "3aab1ef2-6748-4655-9062-e4f2dd4b328d",
+      "id": "ec3e061d-396f-4655-a256-2bef169c50b4",
       "name": "No Operation, do nothing",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1020,
-        3040
+        1220,
+        2820
       ]
     },
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $json.msr_zendesk_ticket_id }}",
+        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
+          "internalNote": "=<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\nMSR informou pelo formulário que a Voluntária não a respondeu\n</br>\n</br>\n<strong>Nome da MSR:</strong> {{ $json.msr_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}"
         }
       },
-      "id": "6ec1cc8b-5248-48a3-86b7-55e54c95f65b",
-      "name": "ticket MSR - observação interna",
+      "id": "424a2536-7060-4ab1-b878-0755a2e29dff",
+      "name": "ticket Voluntária - observação interna",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2180,
-        3680
+        2420,
+        2820
       ],
       "credentials": {
         "zendeskApi": {
@@ -1753,18 +1815,54 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
+        "id": "={{ $json.msr_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "MSR informou pelo formulário que a Voluntária não a respondeu"
+          "internalNote": "=<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\nMSR informou pelo formulário que a Voluntária não a respondeu.\n</br>\n</br>\n<strong>Nome da voluntária:</strong> {{ $json.volunteer_first_name }} </br>\n<strong>Contato:</strong> <a href=\"https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}\">https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.volunteer_zendesk_ticket_id }}</a></br>\n<strong>Data de encaminhamento:</strong> {{ $json.match_created_at }} </br>\n<strong>Resposta do formulário:</strong> {{ $json.form_answer }}\n"
         }
       },
-      "id": "81d57be1-6a3d-487a-b251-b21a7d72ab86",
-      "name": "ticket Voluntária - observação interna",
+      "id": "a0ca703b-94b5-4a48-9265-7bb7ad692050",
+      "name": "ticket MSR - observação interna",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2180,
-        3040
+        2320,
+        3580
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.id }}",
+        "updateFields": {
+          "assigneeEmail": "marcia@nossas.org",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "aguardando_match__sem_prioridade"
+              }
+            ]
+          },
+          "internalNote": "MSR está aguardando um novo match",
+          "status": "open",
+          "tags": [
+            "nova-voluntaria-sem-prioridade"
+          ]
+        }
+      },
+      "id": "26f877cf-dc97-4b34-b73b-0e39ec94027b",
+      "name": "ticket MSR - aguardando match sem prioridade",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4680,
+        2320
       ],
       "credentials": {
         "zendeskApi": {
@@ -1777,13 +1875,13 @@
       "parameters": {
         "jsCode": "const body = items[0].json.body;\n// TODO: buscar support_request_id;\nconst fields = body.data.fields;\n\nlet legalSupportRequest = null;\nlet psychologicalSupportRequest = null;\nlet legalSupportResponseText = '';\nlet psychologicalSupportResponseText = '';\nlet supportRequestId = items[0].json.support_request_id;\nlet psychological_support_request_id = items[0].json.body.data.fields[1].value;\nlet legal_support_request_id = items[0].json.body.data.fields[2].value;\n\n\nfields.forEach(field => {\n  if (field.label === 'legal_support_request' && field.value) {\n    legalSupportRequest = field.value[0];\n    const legalSupportOptions = field.options;\n    const legalSupportOption = legalSupportOptions.find(option => option.id === legalSupportRequest);\n    if (legalSupportOption) {\n      legalSupportResponseText = legalSupportOption.text;\n    }\n  }\n  if (field.label === 'psychological_support_request' && field.value) {\n    psychologicalSupportRequest = field.value[0];\n    const psychologicalSupportOptions = field.options;\n    const psychologicalSupportOption = psychologicalSupportOptions.find(option => option.id === psychologicalSupportRequest);\n    if (psychologicalSupportOption) {\n      psychologicalSupportResponseText = psychologicalSupportOption.text;\n    }\n  }\n});\n\nreturn [\n  {\n    json: {\n      legal_support_request_id,\n      psychological_support_request_id,\n      legalSupportRequest,\n      legalSupportResponseText,\n      psychologicalSupportRequest,\n      psychologicalSupportResponseText,\n      supportRequestId,\n    },\n  },\n];\n"
       },
-      "id": "8979f14d-7b3e-475c-ae4b-0b8f498814fe",
+      "id": "b0dd902c-c03f-49ae-a3db-5652c2033665",
       "name": "Verifica se precisa de atendimento e qual",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        860,
-        5060
+        1080,
+        5000
       ]
     },
     {
@@ -1792,13 +1890,13 @@
         "height": 124.36523996505218,
         "width": 340.2325169896819
       },
-      "id": "6c445c27-e486-49e4-bb02-fd3d9d29d68a",
+      "id": "4a7a4024-9599-4650-8dd0-8db92d21c2a2",
       "name": "Sticky Note29",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        640,
-        4820
+        860,
+        4760
       ]
     },
     {
@@ -1808,13 +1906,13 @@
         "width": 340.2325169896819,
         "color": 4
       },
-      "id": "97d05074-0c24-4f97-959e-95a128dea5ad",
+      "id": "295647df-d779-4c4c-8769-4481eb240b1e",
       "name": "Sticky Note32",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        5680
+        840,
+        5620
       ]
     },
     {
@@ -1824,13 +1922,13 @@
         "width": 340.2325169896819,
         "color": 4
       },
-      "id": "1bb096e7-e3f2-44c8-b543-1f7b4b8fd87e",
+      "id": "eff36371-f34f-4ee2-8ee2-e7afaa8ef18a",
       "name": "Sticky Note33",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        5380
+        840,
+        5320
       ]
     },
     {
@@ -1840,13 +1938,13 @@
         "width": 340.2325169896819,
         "color": 6
       },
-      "id": "8d6c2ccf-3b7c-410a-8110-da64f0f2bdb3",
+      "id": "73036a5f-76b3-4bb0-969c-339925108dc7",
       "name": "Sticky Note34",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        5260
+        840,
+        5200
       ]
     },
     {
@@ -1856,13 +1954,13 @@
         "width": 340.2325169896819,
         "color": 4
       },
-      "id": "81730c07-3e92-4348-a270-fad9d4591261",
+      "id": "753e8e64-12e2-428f-8551-b192d1035075",
       "name": "Sticky Note35",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        5780
+        840,
+        5720
       ]
     },
     {
@@ -1872,13 +1970,13 @@
         "width": 340.2325169896819,
         "color": 4
       },
-      "id": "a6093dbd-8b8d-4a97-9b55-81926f4308f7",
+      "id": "a04f0e03-d1e1-4751-bece-2ab3d91bca35",
       "name": "Sticky Note36",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        5880
+        840,
+        5820
       ]
     },
     {
@@ -1905,13 +2003,13 @@
         },
         "options": {}
       },
-      "id": "8c241b40-7811-45dd-8d7f-49343e731498",
+      "id": "16824af3-72b7-430e-91ea-58dc08133ebf",
       "name": "Tem SR jurídico",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1080,
-        4960
+        1300,
+        4900
       ]
     },
     {
@@ -1938,13 +2036,13 @@
         },
         "options": {}
       },
-      "id": "7580a001-a549-4bfe-9ade-c242d78df000",
+      "id": "5574f17b-21c1-45e0-9b41-78c024221e87",
       "name": "Tem SR psicológico",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1100,
-        5260
+        1320,
+        5200
       ]
     },
     {
@@ -1954,15 +2052,15 @@
         "authentication": "headerAuth",
         "options": {}
       },
-      "id": "4349b660-6fd2-425b-967b-44d8e80120ac",
+      "id": "7e3047c9-dbbd-4389-b7fc-cc36dc975228",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        660,
-        5060
+        880,
+        5000
       ],
-      "webhookId": "6c236e14-2adb-4e84-8e18-ab9a5313c52a",
+      "webhookId": "a1a5d8d3-ed0f-4e09-a1f8-6020c900577e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "BhcubpnINJanuVaZ",
@@ -1994,13 +2092,13 @@
         },
         "options": {}
       },
-      "id": "d882b55c-69ba-46d2-8d53-ae1d1090f2f3",
+      "id": "daa42b5f-64af-4c4c-a7e5-1c466e2b25a6",
       "name": "ainda quer",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1320,
-        4800
+        1540,
+        4740
       ]
     },
     {
@@ -2027,13 +2125,13 @@
         },
         "options": {}
       },
-      "id": "dab5dd59-551c-48eb-8567-ca00f982f809",
+      "id": "08038679-0e39-4640-8d77-c851cc129dfa",
       "name": "ainda quer1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1340,
-        5220
+        1560,
+        5160
       ]
     },
     {
@@ -2042,18 +2140,18 @@
         "query": "UPDATE match.support_requests\nSET status = 'waiting_for_match'\nWHERE support_request_id = {{$json.legal_support_request_id}};\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{$json.legal_support_request_id}}, 'waiting_for_match', NOW());  \nSELECT \n  zendesk_ticket_id\nFROM \n  match.support_requests\nWHERE \n  support_request_id = {{$json.legal_support_request_id}};\n\n",
         "options": {}
       },
-      "id": "8fa03bba-de9d-4ccd-95a9-6ff11f50f719",
+      "id": "3a163812-f5f6-48e3-a314-c58280897014",
       "name": "Atualiza status para waiting_for_match",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1680,
-        4640
+        1900,
+        4580
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2073,13 +2171,13 @@
           "internalNote": "MSR sinalizou que quer entrar na fila do match diário"
         }
       },
-      "id": "e1ebee78-0bcb-45f0-87c1-f41cc3198361",
+      "id": "6feffbe2-e209-4453-a08f-55c2154ac5f6",
       "name": "status: Aguardando Match: Sem Prioridade",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1860,
-        4640
+        2080,
+        4580
       ],
       "credentials": {
         "zendeskApi": {
@@ -2096,18 +2194,18 @@
           "queryReplacement": ""
         }
       },
-      "id": "a4fbda8a-100f-4da8-a90d-75ab534be827",
+      "id": "d6c7758d-fd0a-4a79-8f50-d05c39c5e858",
       "name": "Atualiza status para waiting_for_match4",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1680,
-        5200
+        1900,
+        5140
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2127,13 +2225,13 @@
           "internalNote": "MSR sinalizou que quer entrar na fila do match diário"
         }
       },
-      "id": "27210731-c14a-41bd-aad7-d757e297c952",
+      "id": "6febc49c-e295-4302-8fd1-b695caf6a1d7",
       "name": "status: Aguardando Match: Sem Prioridade4",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1880,
-        5200
+        2100,
+        5140
       ],
       "credentials": {
         "zendeskApi": {
@@ -2159,13 +2257,13 @@
           "status": "solved"
         }
       },
-      "id": "fbaf11fc-4693-4e1c-bbe6-2c96e1874528",
+      "id": "051d8453-7527-49d3-b8f6-426bac508e5d",
       "name": "Atualizar ticket para solicitação encerrada",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1880,
-        5420
+        2100,
+        5360
       ],
       "credentials": {
         "zendeskApi": {
@@ -2182,18 +2280,18 @@
           "queryReplacement": ""
         }
       },
-      "id": "fa09d41b-9131-475c-9337-d7c0cd648b40",
+      "id": "6cf38fa5-82d2-4bdf-9611-fdc16d844932",
       "name": "Atualiza support_request para closed",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1700,
-        5420
+        1920,
+        5360
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2214,13 +2312,13 @@
           "status": "solved"
         }
       },
-      "id": "81825e97-8360-4fd0-bde2-7d636272bec0",
+      "id": "bc054823-009b-4441-b4f0-d4ba9f7fcebc",
       "name": "Atualizar ticket para solicitação encerrada8",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1880,
-        4840
+        2100,
+        4780
       ],
       "credentials": {
         "zendeskApi": {
@@ -2237,18 +2335,18 @@
           "queryReplacement": ""
         }
       },
-      "id": "f58397aa-2965-4d0d-9887-20ff08d77896",
+      "id": "bee5f6f1-ad25-4bc7-ae6a-e159d3d109fd",
       "name": "Atualiza support_request para closed8",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1680,
-        4840
+        1900,
+        4780
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2259,13 +2357,13 @@
         "width": 150,
         "color": 4
       },
-      "id": "5244aa17-ce8e-4710-afd7-09ed281b474f",
+      "id": "614eb6f0-360c-41d1-b49e-600a0cc88ed4",
       "name": "Sticky Note25",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2220,
-        5340
+        2440,
+        5280
       ]
     },
     {
@@ -2275,35 +2373,35 @@
         "width": 340.2325169896819,
         "color": 4
       },
-      "id": "2ab290c2-eff5-49b6-af85-8a1ca5bc070d",
+      "id": "62cb18fe-cbcd-4564-8dc6-4a74035b5b22",
       "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        5480
+        840,
+        5420
       ]
     },
     {
       "parameters": {},
-      "id": "6469b09d-f354-4f02-a39a-2ecc4c7a5b8a",
+      "id": "ef5e3935-ba0b-43cb-81bc-1025e7528be6",
       "name": "No Operation, do nothing2",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1380,
-        4980
+        1600,
+        4920
       ]
     },
     {
       "parameters": {},
-      "id": "e6430dcc-9d8d-457e-a006-73cc31da5d25",
+      "id": "474ae0ba-097b-4176-adfa-361c23e0beaa",
       "name": "No Operation, do nothing3",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1360,
-        5480
+        1580,
+        5420
       ]
     },
     {
@@ -2313,13 +2411,13 @@
         "width": 150,
         "color": 4
       },
-      "id": "ccebe738-533a-416f-af8a-e566f89e8465",
+      "id": "df3e377b-2a4a-4149-ac75-e8a5eef42078",
       "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2200,
-        4740
+        2420,
+        4680
       ]
     },
     {
@@ -2329,13 +2427,13 @@
         "width": 340.2325169896819,
         "color": 4
       },
-      "id": "154c42aa-6129-4ead-afb6-49d8305c3817",
+      "id": "414c5dfe-b4b1-4f4c-a0f5-a1dd8bb4a605",
       "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        5580
+        840,
+        5520
       ]
     },
     {
@@ -2344,18 +2442,18 @@
         "query": "UPDATE match.matches\nSET status = '{{ $json.new_status }}', updated_at = NOW()\nWHERE match_id = {{ $json.match_id }};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{ $json.match_id }}, '{{ $json.new_status }}', NOW());",
         "options": {}
       },
-      "id": "926cfab7-433c-495f-a1a9-547ebc8a8ab2",
+      "id": "892ce276-097b-4e3b-88c0-d20149369b00",
       "name": "Atualiza status do match1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3140,
-        2720
+        3420,
+        2480
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2365,32 +2463,32 @@
         "query": "UPDATE match.matches\nSET status = 'interrupted_before_support', updated_at = NOW()\nWHERE match_id = {{ $json.match_id }};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{ $json.match_id }}, 'interrupted_before_support', NOW());",
         "options": {}
       },
-      "id": "00fe76db-5d93-48a1-befd-3fb82510f984",
+      "id": "4da0f50a-c568-43f9-851d-f0d707188e31",
       "name": "Atualiza status do match2",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        2780,
-        3720
+        2960,
+        3300
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
     {
       "parameters": {},
-      "id": "c61da27e-8b0c-41e8-9872-c94f21484f3f",
+      "id": "749bf310-784f-4afd-9fdd-06157c4f9648",
       "name": "Wait1",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        3060,
-        3460
+        3120,
+        3020
       ],
-      "webhookId": "81756717-b55e-4931-8c96-cdb8b400e111"
+      "webhookId": "477e459b-967a-4102-834a-0e52954b7c24"
     },
     {
       "parameters": {
@@ -2398,18 +2496,18 @@
         "query": "SELECT\n  support_request_id\nFROM match.matches\nWHERE msr_zendesk_ticket_id = {{ $json.id }}",
         "options": {}
       },
-      "id": "53c7a70e-c561-4c9b-85a1-4b57c5180fc6",
+      "id": "b2637b22-f605-45d0-ba24-7e320412295a",
       "name": "Busca support_request_id1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        3220,
-        3460
+        3280,
+        3020
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2419,18 +2517,18 @@
         "query": "=UPDATE match.support_requests\nSET status = 'waived', updated_at = NOW()\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'waived', NOW());",
         "options": {}
       },
-      "id": "a62969ae-50a2-42c2-8659-76c83e26d735",
+      "id": "5458b54b-92f5-41c8-afe5-55cae053e5d5",
       "name": "Atualiza support_request1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        3400,
-        3460
+        3460,
+        3020
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2448,18 +2546,18 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que a MSR desistiu do atendimento",
+          "internalNote": "<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\nFomos informadas pelo formulário que a MSR desistiu do atendimento",
           "publicReply": "=Olá {{ $json.volunteer_first_name }}​, espero que esteja bem na medida do possível!\n\nEstamos entrando em contato para informar que a acolhida {{ $json.msr_first_name }} encaminhada a você optou, neste momento, por não seguir nos atendimentos com o Mapa.\n\nInfelizmente, não é raro que haja desistência, pois o caminho para romper o ciclo da violência muitas vezes acontece a passos lentos. Esperamos que ela se cadastre novamente em breve ou que já tenha encontrado outra forma de se fortalecer.\n\nDesta forma, estamos liberando esta vaga para outra mulher que está aguardando na fila de pedidos de ajuda. Voltaremos a entrar em contato caso haja outro encaminhamento. Agradecemos pela participação e disponibilidade!\n\nForte abraço,\nEquipe do Mapa do Acolhimento <3",
           "status": "pending"
         }
       },
-      "id": "5a68e2f5-f72c-4f12-b160-117312303ea7",
+      "id": "1a229ab7-7cf5-4d51-8184-0ab5ad53bae5",
       "name": "ticket Voluntária - msr desistiu",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3020,
-        4260
+        3080,
+        3820
       ],
       "credentials": {
         "zendeskApi": {
@@ -2482,17 +2580,17 @@
               }
             ]
           },
-          "internalNote": "Fomos informadas pelo formulário que a MSR desistiu do atendimento",
+          "internalNote": "<strong>Formulário de Atualização do Status do Acolhimento</strong>\n</br>\n</br>\nFomos informadas pelo formulário que a MSR desistiu do atendimento",
           "status": "pending"
         }
       },
-      "id": "6dc3de24-0da2-4b31-b1df-db0776e2c971",
+      "id": "1c318f3c-258a-4433-a52b-cdabf5febe99",
       "name": "ticket MSR - MSR desistiu do atendimento",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2880,
-        3460
+        2940,
+        3020
       ],
       "credentials": {
         "zendeskApi": {
@@ -2507,18 +2605,18 @@
         "query": "SELECT \n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
         "options": {}
       },
-      "id": "9619228a-34e8-4ec0-8694-2c6c0d950f74",
+      "id": "bd162e7d-b634-459c-8513-3692af2685b7",
       "name": "Busca infos da MSR e da Voluntária3",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        2860,
-        4100
+        2880,
+        3480
       ],
       "credentials": {
         "postgres": {
-          "id": "bNRm9reAeAU1uKu5",
-          "name": "[STG] Bonde"
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
         }
       }
     },
@@ -2528,18 +2626,18 @@
         "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    zendesk_user_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id)::INT AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, zendesk_user_id, current_matches, max_matches, condition",
         "options": {}
       },
-      "id": "ee5aeaf9-8c12-4b9c-a7d3-55c8ac4cea5a",
+      "id": "51b186f7-de66-467e-a58b-4a4f82d21b53",
       "name": "Busca current_matches1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3020,
-        3940
+        3080,
+        3480
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2568,13 +2666,13 @@
           "looseTypeValidation": true
         }
       },
-      "id": "219c576f-2328-4caf-8ee2-38d79b20a211",
+      "id": "75dc0cd2-151f-43de-85fa-dc0cca2de0ad",
       "name": "Deve atualizar o current_matches?1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3200,
-        3940
+        3260,
+        3480
       ]
     },
     {
@@ -2583,18 +2681,18 @@
         "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
         "options": {}
       },
-      "id": "07977683-6867-4933-9b01-a3b32fdeb029",
+      "id": "e8b40441-a879-417f-9c86-314955a44af2",
       "name": "Atualiza current_matches1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3520,
-        3820
+        3540,
+        3380
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2630,13 +2728,13 @@
         },
         "options": {}
       },
-      "id": "e8fcbd4b-2298-4cdb-842a-464226d6ff39",
+      "id": "7c154c67-fad3-4f58-9f6a-1bf7b16f43c8",
       "name": "Atualiza o status da voluntária?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3540,
-        4000
+        3560,
+        3560
       ]
     },
     {
@@ -2645,18 +2743,18 @@
         "query": "=UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
         "options": {}
       },
-      "id": "b4862028-76f4-4b41-99f1-35e77209727e",
+      "id": "3019ef4e-b723-4da3-9934-2b0942cfe9d2",
       "name": "Atualiza status da Voluntária1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
         3780,
-        3980
+        3540
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -2666,28 +2764,13 @@
         "height": 80,
         "width": 150
       },
-      "id": "3abfe6e8-d7aa-44dc-b1e2-f821dc5b3000",
+      "id": "b4945a14-f3b8-408e-88be-a2c944261e30",
       "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2720,
-        4300
-      ]
-    },
-    {
-      "parameters": {
-        "content": "Atualiza status do ticket",
-        "height": 80,
-        "width": 150
-      },
-      "id": "474ef6be-afc0-49c8-b5c9-89cc149ad6e9",
-      "name": "Sticky Note6",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        4440,
-        3080
+        3240,
+        3980
       ]
     },
     {
@@ -2696,13 +2779,13 @@
         "height": 80,
         "width": 310.0031552352676
       },
-      "id": "b316a24d-4516-403c-93f6-e307660f07be",
+      "id": "6fa65f86-883f-4a96-850d-7c91e6bcaa6c",
       "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        3540,
-        3560
+        3600,
+        3120
       ]
     },
     {
@@ -2711,13 +2794,13 @@
         "height": 80,
         "width": 150
       },
-      "id": "c0bc5740-060f-475b-ae97-57a875dee129",
+      "id": "be6112f9-7de9-49dc-a5e5-852b356ab8df",
       "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2980,
-        3740
+        3200,
+        3300
       ]
     },
     {
@@ -2726,13 +2809,13 @@
         "height": 80,
         "width": 150
       },
-      "id": "2e652cf3-3b16-46bd-a5cb-43f80ef9908c",
+      "id": "2ceca594-b3c5-4a11-8e43-6b95da994330",
       "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        3700,
-        3820
+        3760,
+        3380
       ]
     },
     {
@@ -2741,20 +2824,20 @@
         "height": 80,
         "width": 304.92368998970363
       },
-      "id": "77ac91bf-b113-4d2b-8fad-2eb788ba3673",
+      "id": "7d53a379-5ef6-4e06-aacb-00864a89c342",
       "name": "Sticky Note10",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        3760,
-        4360
+        3720,
+        3940
       ]
     },
     {
       "parameters": {
         "resource": "user",
         "operation": "update",
-        "id": "={{ $json.volunteer_zendesk_user_id }}",
+        "id": "={{ $json.zendesk_user_id }}",
         "updateFields": {
           "userFieldsUi": {
             "userFieldValues": [
@@ -2766,13 +2849,13 @@
           }
         }
       },
-      "id": "d0f1c333-9d9d-4140-a78b-5697e7f92515",
+      "id": "e9306292-b465-48ea-a2ee-2d7db50e134e",
       "name": "Status da Mulher = Disponivel",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        3820,
-        4180
+        3760,
+        3740
       ],
       "credentials": {
         "zendeskApi": {
@@ -2783,60 +2866,37 @@
     },
     {
       "parameters": {},
-      "id": "000bd2cc-9c78-43f2-809d-628e2cac11e2",
+      "id": "df7a0d88-b3e8-4c5e-a84e-3f64d16863f4",
       "name": "No Operation, do nothing4",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3720,
-        4500
+        3700,
+        4040
       ]
     },
     {
       "parameters": {},
-      "id": "1ca8b214-bf26-4d2d-96ca-a9f14483247f",
+      "id": "9372831b-de54-4bd7-b70f-391b463c6b79",
       "name": "Wait2",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2680,
-        4100
+        2720,
+        3480
       ],
-      "webhookId": "81756717-b55e-4931-8c96-cdb8b400e111"
+      "webhookId": "edc3a91f-4944-4bd3-b6eb-0498f7d70ded"
     },
     {
       "parameters": {},
-      "id": "68103696-bb48-4fca-ab39-ca332ee8436b",
+      "id": "0d28e6fe-01bd-47b6-a387-f6e71bf51adf",
       "name": "No Operation, do nothing5",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3380,
-        4160
+        3400,
+        3740
       ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "volunteer-update-match-status-test",
-        "authentication": "headerAuth",
-        "options": {}
-      },
-      "id": "283bcc68-e426-49c4-a7d9-c5c8ebe9e1f8",
-      "name": "MSR ou Voluntária preencheu o formulário",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1.1,
-      "position": [
-        340,
-        2860
-      ],
-      "webhookId": "2833ff82-a447-4f31-bfc4-1425f4d0f906",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "BhcubpnINJanuVaZ",
-          "name": "Tally API"
-        }
-      }
     },
     {
       "parameters": {
@@ -2897,7 +2957,7 @@
                 },
                 "conditions": [
                   {
-                    "id": "1d428e95-5a6c-472c-aa09-230138cdf584",
+                    "id": "e5b7eb66-f482-42f0-acd1-b39f3fa869f3",
                     "leftValue": "={{ $json.new_status }}",
                     "rightValue": "waived",
                     "operator": {
@@ -2916,13 +2976,347 @@
         },
         "options": {}
       },
-      "id": "15e5f1bc-f79c-4ca0-9486-875e8d70c8cc",
+      "id": "1727f4ac-953d-4086-b945-beb35383393a",
       "name": "Qual o novo status?",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        2420,
-        2780
+        2560,
+        2560
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "volunteer-update-match-status",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "6a753c23-c2dd-416b-bc66-3b6f936ec820",
+      "name": "MSR ou Voluntária preencheu o formulário",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        2640
+      ],
+      "webhookId": "1a5604df-b004-431d-be1c-86da1e58b3f7",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getContinueInQueue(item){\n  const continueInQueueField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'continue_in_queue'\n  );\n\n  if(!continueInQueueField.value) return null\n  \n  const continueInQueueText = continueInQueueField.options.find(\n    (element) => element.id == continueInQueueField.value\n  ).text;\n\n  const shouldContinueInQueue = continueInQueueText === \"Não, prefiro não seguir com o atendimento\" ? false : true\n\n  return shouldContinueInQueue\n}\n\nfor (const item of $input.all()) {\n  \n  const supportResquestId = getHiddenFieldValue(item, 'support_request_id');\n  const shouldContinueInQueue = getContinueInQueue(item);\n  \n  output.push(\n    {\n      \"support_request_id\": supportResquestId,\n      \"should_continue_in_queue\": shouldContinueInQueue,\n    }\n  )\n}\n\nreturn output;"
+      },
+      "id": "68e4ff63-94b5-43fb-966e-639ec121a365",
+      "name": "Filtra apenas as infos que importam2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        6880
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Formulário para MSRs indicarem se querem continuar na fila",
+        "width": 415.2146730852694
+      },
+      "id": "d3504380-8274-4bd3-bb58-250e612c5b11",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        920,
+        6660
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "e6b63e14-7e39-444b-a44a-68a042efa1a8",
+              "leftValue": "={{ $json.should_continue_in_queue }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "02aeb34f-b5aa-4c9e-af0d-120f8a8867cb",
+      "name": "Quer continuar na fila?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        6860
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b37f300e-21a9-4609-b5c2-856a3f1b516e",
+      "name": "No Operation, do nothing6",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        6600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "0f96e552-d3ed-48e2-90f3-ed6b021d69ad",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "46e0aee8-c2e2-44a4-b6c8-ef4afa04a91a",
+      "name": "Encontrou a MSR?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2320,
+        6880
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  support_request_id,\n  msr_id,\n  zendesk_ticket_id,\n  {{ $json.should_continue_in_queue }} AS should_continue_in_queue\nFROM match.support_requests\nWHERE support_request_id = {{ $json.support_request_id }}",
+        "options": {}
+      },
+      "id": "eb8b60df-3e37-4247-8bae-b5fdd0251a38",
+      "name": "Busca support_request",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1380,
+        6880
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "f7f74bcf-9b9f-444b-8838-fd09b810b055",
+              "leftValue": "={{ $json.support_request_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "54c2bb4a-d6f3-4291-853a-d2e587baf9ac",
+      "name": "Encontrou o support_request?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1580,
+        6880
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "support_request não encontrado"
+      },
+      "id": "28b90e7b-1356-40c8-bed9-3a93937898c5",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        7220
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "msr-daily-match-queue",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "3aff8586-fcd5-4108-a1ae-0ba9df27308d",
+      "name": "MSR preencheu o formulário",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        940,
+        6880
+      ],
+      "webhookId": "85a30c72-b875-4395-acb8-ca10777baa9b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  first_name,\n  email\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "efe0c96c-8f90-404b-81d6-d92245f788f2",
+      "name": "Busca MSR",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2120,
+        6880
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"\",\n \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "b701a431-bae9-49e7-bc94-cb56eaa53a02",
+      "name": "Envia e-mail de Encaminhamento para Serviço Público",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2620,
+        6860
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET status = 'public_service'\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'public_service', NOW())",
+        "options": {}
+      },
+      "id": "d77004b6-28eb-4fd2-b56c-5ae9fe20af10",
+      "name": "Atualiza o support_request",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2120,
+        7120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "encaminhamento__realizado_para_serviço_público"
+              }
+            ]
+          },
+          "internalNote": "<strong>Formulário \"Você quer continuar na fila?\"</strong>\n</br>\n</br>\nMSR sinalizou pelo formulário que não quer continuar na fila e foi encaminhada para Serviço Público."
+        }
+      },
+      "id": "a1c9ef5e-7eca-4a1a-8478-9c4d08e37f73",
+      "name": "Atualiza o ticket no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        7360
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "MSR não encontrada"
+      },
+      "id": "84a5cd8d-9dd2-403c-a1a8-55f61534474e",
+      "name": "Stop and Error2",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        7100
       ]
     }
   ],
@@ -2933,82 +3327,94 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Tally Webhooks",
-            "content-length": "1245",
+            "content-length": "1507",
             "accept": "application/json, text/plain, */*",
-            "accept-encoding": "gzip, compress, deflate, br",
+            "accept-encoding": "gzip, br",
             "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "baggage": "sentry-environment=production,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=47d37d9df7f646af92e394f27d8afd3b",
+            "cdn-loop": "cloudflare; subreqs=1",
+            "cf-connecting-ip": "34.96.41.35",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "8abf852141d3bd74-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
             "content-type": "application/json",
-            "x-forwarded-for": "35.203.251.14",
+            "sentry-trace": "47d37d9df7f646af92e394f27d8afd3b-947d5b04abc6a155",
+            "x-forwarded-for": "34.96.41.35, 172.70.85.5",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-78bdf4fd45-l2mw9",
-            "x-real-ip": "35.203.251.14"
+            "x-forwarded-server": "traefik-fb6d78f9-vtwd5",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.35"
           },
           "params": {},
           "query": {},
           "body": {
-            "eventId": "23e5dcd3-cc75-47c0-bc95-3b58c5efcbc3",
+            "eventId": "8a76a4b9-cebb-4acc-9ec8-4a9c2f4a4c9e",
             "eventType": "FORM_RESPONSE",
-            "createdAt": "2024-05-16T19:53:38.549Z",
+            "createdAt": "2024-07-31T18:06:02.292Z",
             "data": {
-              "responseId": "rJJWBR",
-              "submissionId": "rJJWBR",
-              "respondentId": "WP8k0a",
-              "formId": "nrlEq5",
-              "formName": "[VOLUNTÁRIA] Atualização de Status do Acolhimento",
-              "createdAt": "2024-05-16T19:53:38.000Z",
+              "responseId": "9x4jEV",
+              "submissionId": "9x4jEV",
+              "respondentId": "QABR6A",
+              "formId": "nPAj6V",
+              "formName": "[MSR] Atualização de Status do Acolhimento",
+              "createdAt": "2024-07-31T18:06:02.000Z",
               "fields": [
                 {
-                  "key": "question_8NR1VO_2eb88c30-c647-4421-9097-f08e5fe4ef98",
+                  "key": "question_ArWrjk_d4ec2659-b661-43e5-8634-f188c7b4c111",
                   "label": "msr_first_name",
                   "type": "HIDDEN_FIELDS",
                   "value": "Camila"
                 },
                 {
-                  "key": "question_8NR1VO_cd56fcce-ed5b-4c88-9d56-19831b1a25bb",
+                  "key": "question_ArWrjk_0b8984ff-7e28-45f0-9ba1-01325248a52a",
                   "label": "match_id",
                   "type": "HIDDEN_FIELDS",
-                  "value": "66439"
+                  "value": "16191"
                 },
                 {
-                  "key": "question_8NR1VO_00bd48b6-575a-4139-8852-73a6733b9e1d",
+                  "key": "question_ArWrjk_542a2b93-9104-41a3-a710-a57ed33b4f72",
                   "label": "volunteer_first_name",
                   "type": "HIDDEN_FIELDS",
                   "value": "Maria"
                 },
                 {
-                  "key": "question_8NR1VO_af44ba31-1498-4665-9598-4fe7cdb154cd",
+                  "key": "question_ArWrjk_a017cb2c-1570-4d42-a72f-ba870e2f7513",
+                  "label": "volunteer_type",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "psicóloga"
+                },
+                {
+                  "key": "question_ArWrjk_9be5437b-c620-439e-9985-1b158ed54f26",
                   "label": "match_status",
                   "type": "HIDDEN_FIELDS",
                   "value": "Já iniciamos o atendimento"
                 },
                 {
-                  "key": "question_0VDQzN",
+                  "key": "question_Nq8qaO",
                   "label": "match_status",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "test"
+                    "cd3a850f-8151-4db1-8112-cd98ca95d5e5"
                   ],
                   "options": [
                     {
-                      "id": "ae177a2c-3e4b-4527-a563-c6c0a5d05a16",
+                      "id": "cd3a850f-8151-4db1-8112-cd98ca95d5e5",
                       "text": "Já iniciamos o atendimento"
                     },
                     {
-                      "id": "8c2f62de-f622-4590-934f-61eb9fc15a20",
-                      "text": "Não conseguirei atendê-la"
-                    },
-                    {
-                      "id": "a449c23a-5301-4ff8-ad79-c28078161f1c",
-                      "text": "Ela não entrou em contato comigo"
-                    },
-                    {
-                      "id": "testgdfgfh",
+                      "id": "128e22d9-4812-4f59-a389-568909eac9f6",
                       "text": "A voluntária não me respondeu"
                     },
                     {
-                      "id": "test",
+                      "id": "132e2d65-6135-4d0c-8f8e-a79b77ec0f07",
+                      "text": "A voluntária me respondeu, mas não está disponível para me atender"
+                    },
+                    {
+                      "id": "a39aca20-6f0f-4784-82a2-0fa89519673c",
                       "text": "Escolho não seguir com o atendimento"
                     }
                   ]
@@ -3020,14 +3426,38 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Busca match": [
+      {
+        "json": {
+          "match_id": 16191,
+          "support_request_id": 57694,
+          "support_type": "legal",
+          "msr_id": "22858077211028",
+          "volunteer_id": 27042,
+          "volunteer_first_name": "Advogada",
+          "volunteer_zendesk_user_id": "423092711812",
+          "volunteer_email": "dev.adv.mapa@gmail.com",
+          "msr_zendesk_ticket_id": "82262",
+          "volunteer_zendesk_ticket_id": "86222",
+          "current_status": "waiting_contact",
+          "new_status": "waiting_contact",
+          "who_answered": "MSR",
+          "match_created_at": "2024-01-16",
+          "form_answer": "Já iniciamos o atendimento"
+        }
+      }
     ]
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
   },
   "staticData": null,
   "tags": [],
-  "triggerCount": 2,
-  "updatedAt": "2024-07-08T13:33:31.000Z",
-  "versionId": "71546043-8373-41db-a0f9-db3879e5630c"
+  "triggerCount": 3,
+  "updatedAt": "2024-08-05T14:49:59.000Z",
+  "versionId": "05351361-4f65-46f4-b091-511e3b0fbdc0"
 }
