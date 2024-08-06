@@ -55,17 +55,6 @@
         ]
       ]
     },
-    "Busca informações da MSR e da Voluntária": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items2": {
       "main": [
         [
@@ -158,8 +147,8 @@
       ]
     }
   },
-  "createdAt": "2024-02-19T21:33:47.993Z",
-  "id": "ywgaun6WRfaHDn2k",
+  "createdAt": "2024-07-24T18:15:05.042Z",
+  "id": "PmzVbulsO99IhiJ6",
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -175,7 +164,7 @@
           ]
         }
       },
-      "id": "ff86116c-5547-41a9-8eb9-42aa802da7b4",
+      "id": "f1b9e6cb-b18b-4df1-939e-5bc10c766af0",
       "name": "Schedule Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
@@ -195,7 +184,7 @@
         "jsonBody": "={\n  \"transactionalId\": \"{{ $json.task === 5 ? \"clv3xb3pn000d11rym0ubqrmb\" : \"clv48sew90040eqxes3p8eouu\" }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "d781ec3d-e0b0-44b9-acc9-3d9df7637e6d",
+      "id": "45789eb3-ffd7-41f3-8876-b42ade79819c",
       "name": "[5] Envia email de lembrete para agendamento",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
@@ -216,7 +205,7 @@
         "query": "SELECT \n  CASE \n      WHEN created_at::date = CURRENT_DATE - interval '5 day' THEN 5\n      ELSE 9\n  END task,  \n  support_request_id,\n  zendesk_ticket_id,\n  msr_id\nFROM \"match\".support_requests\nWHERE \n  status = 'social_worker' AND \n  (created_at::date = CURRENT_DATE - interval '5 day' OR \n   created_at::date = CURRENT_DATE - interval '9 day');",
         "options": {}
       },
-      "id": "51aab6d4-6e4b-4876-9db1-a6c1017c52af",
+      "id": "0b7264dc-890e-4782-88af-cc52c13e82ad",
       "name": "Busca pedidos de acolhimento sem agendamento",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
@@ -237,7 +226,7 @@
         "operation": "get",
         "id": "={{ $json.msr_id }}"
       },
-      "id": "63962c2d-cff2-4542-a9c8-968cf3747dd7",
+      "id": "b7b7377e-2714-4d50-9dff-f735cff59fa5",
       "name": "Busca MSR",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
@@ -258,7 +247,7 @@
         "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
         "options": {}
       },
-      "id": "95729d29-e775-477e-b6a2-f06150f79970",
+      "id": "8b02403f-7387-47d3-b148-ea5df4d264f7",
       "name": "Busca matches aguardando contato há 14 ou 28 dias",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
@@ -276,10 +265,10 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type,\n    '{{ $json.msr_zendesk_ticket_id }}' AS msr_zendesk_ticket_id\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    first_name AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type,\n    '{{ $json.msr_zendesk_ticket_id }}' AS msr_zendesk_ticket_id\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}",
         "options": {}
       },
-      "id": "33465dd0-d1ed-4822-9b8d-50c225c2e6a7",
+      "id": "426cacd7-08d4-4be5-b71e-6e24c2ee385a",
       "name": "Busca informações da MSR e da Voluntária",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
@@ -289,8 +278,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "GPnWI2OL5IjBv3zm",
-          "name": "[PROD] Bonde"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -305,7 +294,7 @@
         "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_zendesk_ticket_id\": \"{{ $json.msr_zendesk_ticket_id }}\"\n  }\n}",
         "options": {}
       },
-      "id": "50b20e30-2cc9-4164-ba00-3dea94d34dd8",
+      "id": "08c3c42f-48c7-41fe-93b8-13b7ad1e7547",
       "name": "[MSR] Envia email de lembrete",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
@@ -327,7 +316,7 @@
         "width": 484.19607189456474,
         "color": 6
       },
-      "id": "fee61ad8-05e0-4a4f-92e9-7bf8434fedcf",
+      "id": "fbe296a1-1dce-4519-a214-d967547e2675",
       "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -343,7 +332,7 @@
         "width": 386.9498485737204,
         "color": 6
       },
-      "id": "77f646a5-7aa1-484c-9e0b-005ce8b5424e",
+      "id": "d3836fa1-9cce-4f6f-8368-87a14c71b015",
       "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -356,7 +345,7 @@
       "parameters": {
         "options": {}
       },
-      "id": "4559e851-2329-4c85-9013-f194637c74f7",
+      "id": "34c95a53-8b44-4406-944d-e36b5aa146a5",
       "name": "Loop Over Items2",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
@@ -369,7 +358,7 @@
       "parameters": {
         "amount": 2
       },
-      "id": "ae9cd92f-2143-46f1-a2b6-66eb2b2e5e1f",
+      "id": "7b07b716-a177-4879-98fe-f63f170edadf",
       "name": "Wait",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
@@ -377,11 +366,11 @@
         2540,
         -100
       ],
-      "webhookId": "e9756b7b-f369-472d-859c-2720f0e61c57"
+      "webhookId": "40038c57-453f-4319-a0bb-60ecdb153133"
     },
     {
       "parameters": {},
-      "id": "88c657e0-fe44-4e07-bc33-a188458a85ed",
+      "id": "7e56dcbe-47df-4c22-bf7a-ae969360c8cd",
       "name": "No Operation, do nothing2",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
@@ -395,7 +384,7 @@
         "amount": 5,
         "unit": "seconds"
       },
-      "id": "d6a98237-3632-40d4-818d-8e7eeea43bea",
+      "id": "b3cd1dc1-03d0-43a6-815f-4f979504e58a",
       "name": "Espera 5 segundos5",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
@@ -403,13 +392,13 @@
         2780,
         960
       ],
-      "webhookId": "afb516d7-14e2-46db-891a-61ce74732683"
+      "webhookId": "f12e8ff1-9ff6-4407-990b-55a79f376f6d"
     },
     {
       "parameters": {
         "options": {}
       },
-      "id": "427be80b-57a0-4f01-905e-623f09429393",
+      "id": "68460385-2e97-47a9-a5a1-aa1bb020c45d",
       "name": "Loop Over Items5",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
@@ -420,7 +409,7 @@
     },
     {
       "parameters": {},
-      "id": "d1ab4d5b-02a8-473d-a1a3-a249300d54f3",
+      "id": "75b55ca1-5677-49e3-8c7b-d8dfe72853c7",
       "name": "No Operation, do nothing5",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
@@ -435,7 +424,7 @@
         "combinationMode": "multiplex",
         "options": {}
       },
-      "id": "4add4469-e23d-41d3-afbd-f3639c6ab352",
+      "id": "bbc4f0ca-567d-4707-97a6-90ac89373efb",
       "name": "Merge",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
@@ -462,6 +451,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-07-19T18:10:51.000Z",
-  "versionId": "d0c26e4e-0336-4a02-9729-69435a230e7a"
+  "updatedAt": "2024-08-06T13:11:50.000Z",
+  "versionId": "e9b01396-01a6-48a5-b8bf-5bdf0c38542c"
 }
