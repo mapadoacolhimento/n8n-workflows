@@ -1,0 +1,859 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get all volunteers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Filter deleted users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checks if we need to update volunteer": {
+      "main": [
+        [
+          {
+            "node": "Volunteer exists in our DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check city, state and zipcode1": {
+      "main": [
+        [
+          {
+            "node": "Busca as coordenadas do endereço2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add null lat/lng1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add null lat/lng1": {
+      "main": [
+        [
+          {
+            "node": "Updates volunteer geolocation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Updates volunteer_availability geolocation": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Volunteer exists in our DB": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Zendesk input from volunteer": {
+      "main": [
+        [
+          {
+            "node": "Checks if we need to update volunteer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Updates volunteer geolocation": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Updates volunteer personal data": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Updates volunteer_availability geolocation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Updates volunteer geolocation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all volunteers": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if volunteer is available": {
+      "main": [
+        [
+          {
+            "node": "Updates volunteer availability",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Updates volunteer availability": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter deleted users": {
+      "main": [
+        [
+          {
+            "node": "Normalize Zendesk input from volunteer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca as coordenadas do endereço2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add null lat/lng1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Check city, state and zipcode1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Updates volunteer personal data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check if volunteer is available",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-03-19T12:20:10.497Z",
+  "id": "gVrKlqoHtNDIPk3G",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD-OLD] Cronjob Integração Zendesk/BD",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 13
+            }
+          ]
+        }
+      },
+      "id": "84bae160-d2fe-452f-9fbd-51c7a777e116",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2540,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.zendesk_user_id }}"
+      },
+      "id": "d31405af-ae93-437b-9e76-a8a695befef3",
+      "name": "Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -1780,
+        980
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.user_fields.city }}' AS new_city,\n  '{{ $json.user_fields.state }}' AS new_state,\n  '{{ $json.user_fields.zipcode }}' AS new_zipcode,\n  '{{ $json.user_fields.first_name }}' AS new_first_name,\n  '{{ $json.user_fields.availability }}'::INT AS new_availability,\n  '{{ $json.phone }}' AS new_phone,\n  '{{ $json.user_fields.registration_number }}' AS new_register_number,\n  '{{ $json.user_fields.condition }}' AS new_volunteer_status,\n  CASE \n    WHEN \n      city != '{{ $json.user_fields.city }}' OR \n      state != '{{ $json.user_fields.state }}' OR \n      zipcode != '{{ $json.user_fields.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.user_fields.availability }}'::INT AND '{{ $json.user_fields.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.user_fields.first_name }}' OR \n      phone != '{{ $json.phone }}' OR \n      register_number != '{{ $json.user_fields.registration_number }}' \n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal,\n  CASE WHEN condition != '{{ $json.user_fields.condition }}' THEN TRUE ELSE FALSE END AS should_update_status\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "ac6df5a5-e16d-4e77-b4e3-721d72eebe46",
+      "name": "Checks if we need to update volunteer",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        -1000,
+        980
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cd3132a5-7821-49ae-a080-957a931cb612",
+              "leftValue": "={{ $json.new_city }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "e0a033c3-38d5-4583-943e-43fffb34b624",
+              "leftValue": "={{ $json.new_state }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "f95c4be6-693b-4809-b28c-a583b7c813ca",
+              "leftValue": "={{ $json.new_zipcode }}",
+              "rightValue": "=not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "e813e732-17fb-486f-bfbe-14a35ffec3c0",
+      "name": "Check city, state and zipcode1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        60,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"coordinates\": {\n    \"lat\": null,\n    \"lng\": null\n  }\n}\n",
+        "options": {}
+      },
+      "id": "8d46bd8c-c0ff-481d-981a-2fd7101b44f4",
+      "name": "Add null lat/lng1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        600,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteer_availability\nSET \n  city = '{{ $json.city }}', \n  state = '{{ $json.state }}', \n  lat = {{ $json.coordinates.lat }}, \n  lng = {{ $json.coordinates.lng }}, \n  updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "5c4a9be2-d32a-40a8-a4f6-0f7bc6c5555b",
+      "name": "Updates volunteer_availability geolocation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        940
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "93753f6a-58ca-4ad5-a9ce-0b173efe7565",
+              "leftValue": "={{ $json.volunteer_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "22428311-c417-42a5-aab4-7387bb84882b",
+      "name": "Volunteer exists in our DB",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -760,
+        980
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "errorMessage": "=A voluntária com Zendesk User ID '{{$node[\"Webhook Volunteer\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados."
+      },
+      "id": "bce2146a-67e2-4c24-a671-f835ce318146",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        1260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city = item.json.user_fields?.city || \"\";\n  const new_city = !city || city === 'ZERO_RESULTS'\n      ? 'not_found'\n      : city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.user_fields.cep?.replace(/[^0-9\\\\.]+/g, '').slice(0,8)\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.user_fields.city = new_city;\n  item.json.user_fields.zipcode = zipcode;\n  item.json.user_fields.state = item.json.user_fields?.state || 'not_found';\n\n  const first_name = item.json.name.split(\" \")[0];\n  item.json.user_fields.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  const whatsapp = item.json.user_fields.whatsapp?.replace(/[^0-9\\\\.]+/g, '');\n  const phone = item.json.phone?.replace(/[^0-9\\\\.]+/g, '')\n  item.json.phone = phone || whatsapp;\n  item.json.user_fields.registration_number = item.json.user_fields.registration_number?.replace(/[^0-9\\\\.]+/g, '');\n  item.json.user_fields.availability = Number(item.json.user_fields?.disponibilidade_de_atendimentos || 0);\n  item.json.user_fields.condition = item.json.user_fields?.condition || \"not_found\";\n}\n\nreturn $input.all();\n"
+      },
+      "id": "a04496c1-6b29-45b4-a63a-eeeecd758c0d",
+      "name": "Normalize Zendesk input from volunteer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1280,
+        980
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "9589b11d-9669-4fff-a31c-0f14748f9765",
+      "name": "Updates volunteer geolocation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        520
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET \n  first_name = '{{ $json.new_first_name }}',\n  phone = '{{ $json.new_phone }}',\n  register_number = '{{ $json.new_register_number }}',\n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "e9297dc5-913b-4f33-806c-6e7c8f227dae",
+      "name": "Updates volunteer personal data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        940,
+        1120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "7802944b-8f68-4da8-9f74-0148d61fea0f",
+      "name": "Merge2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        920,
+        740
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "id": "f6140c27-bfbe-42a5-ad10-bd9e847faa15",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        1540
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM volunteers \nWHERE \n  zendesk_user_id IS NOT null AND \n  condition NOT IN ('anti-etica', 'descadastrada')",
+        "options": {}
+      },
+      "id": "dfd40b77-cade-4db7-88da-badb9c7ce639",
+      "name": "Get all volunteers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        -2260,
+        960
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 100,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "eb76e69f-2844-4d6e-8ee9-142538a6c6fc",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2040,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const is_available_lookup = {\n      \"disponivel\": 1,\n      \"indisponível_férias\": 0,\n      \"indisponível_maternidade\": 0,\n      \"indisponível_saude\": 0,\n      \"indisponível_trabalho_e_estudo\": 0,\n      \"indisponível_outros_motivos\": 0,\n      \"indisponível_agenda\": 0,\n      \"indisponível_-sem_resposta\": 0,\n      \"dados_incompletos_endereço\": 0,\n      \"dados_incompletos_telefone\": 0,\n      \"dados_incompletos_email\": 0,\n      \"descadastrada\": 0,\n      \"reprovada_estudo_de_caso\": 0,\n      \"reprovada_diretrizes_do_mapa\": 0,\n      \"reprovada_registro_inválido\": 0,\n      \"aprovada\": 0,\n      \"anti-etica\": 0,\n      \"capacitacao\": 0,\n      \"indisponivel_sem_vagas\": 0,\n      \"desabilitada\": 0,\n      \"cadastrada\": 0,\n      \"not_found\": 0\n  }\n \n  const volunteer_id = item.json.volunteer_id;\n  const status = item.json.new_volunteer_status;\n  \n  const is_available = is_available_lookup[status];\n    \n  const newItem = {\n    \"volunteer_id\": volunteer_id,\n    \"new_status\": status,\n    \"is_available\": !!is_available,\n    \"max_matches\": item.json.new_availability\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+      },
+      "id": "eced8603-7e35-4901-a931-79f480473fb8",
+      "name": "Check if volunteer is available",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        1140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE public.volunteers\nSET \n  condition = '{{ $json.new_status }}',\n  availability = {{ $json.max_matches }}, \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET \n  is_available = {{$json[\"is_available\"]}}::boolean, \n  max_matches = {{ $json.max_matches }},\n  updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
+        "options": {}
+      },
+      "id": "8c51964e-839d-4384-9760-718697d61471",
+      "name": "Updates volunteer availability",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        80,
+        1140
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "708e9845-f73e-4644-b3a8-ee9e4d63da2e",
+              "leftValue": "={{ $json.active }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1ccd2b1c-7826-4669-9b12-a64b964d39b0",
+      "name": "Filter deleted users",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        -1540,
+        980
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://voluntaria.mapadoacolhimento.org/address",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "city",
+              "value": "={{ $json.new_city }}"
+            },
+            {
+              "name": "state",
+              "value": "={{ $json.new_state }}"
+            },
+            {
+              "name": "zipcode",
+              "value": "={{ $json.new_zipcode === 'not_found' ? '' : $json.new_zipcode  }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "df383f7c-0eec-4142-957b-b03e4aebd8f4",
+      "name": "Busca as coordenadas do endereço2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        440,
+        320
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.should_update_geolocation }}",
+                    "rightValue": "{{ true }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "geolocation"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1206305f-a715-4cb0-990a-d942246a7212",
+                    "leftValue": "={{ $json.should_update_personal }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "personal"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "26fd6c46-a2eb-4299-a425-e7978d0102fd",
+                    "leftValue": "={{ $json.should_update_availability || $json.should_update_status  }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "availability"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "43b488d5-2622-4a12-b917-0abd92ccdc49",
+                    "leftValue": "={{ $json.should_update_geolocation && $json.should_update_personal && $json.should_update_availability || $json.should_update_status }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "no_update"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "id": "9c969a29-86cd-48d7-9c5b-72af2cf04e25",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -460,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C06H7GA52A1",
+          "mode": "list",
+          "cachedResultName": "alertas-n8n"
+        },
+        "text": "Cronjob de atualização do Zendesk concluído com sucesso!",
+        "otherOptions": {}
+      },
+      "id": "93bcc940-87c3-4db1-8779-4bddc7d6db7f",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        -1780,
+        760
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    }
+  },
+  "tags": [
+    {
+      "createdAt": "2024-08-06T13:10:50.919Z",
+      "updatedAt": "2024-08-06T13:10:50.919Z",
+      "id": "8GQ5J6PYvIrQkMCa",
+      "name": "deprecated"
+    },
+    {
+      "createdAt": "2024-01-09T22:32:23.916Z",
+      "updatedAt": "2024-01-09T22:32:23.916Z",
+      "id": "JnlufCPRnot361zL",
+      "name": "zendesk integration"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-08-06T13:15:52.000Z",
+  "versionId": "b95b17d3-5374-4f52-a556-7e64703daeab"
+}
