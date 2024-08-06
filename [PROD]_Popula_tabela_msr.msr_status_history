@@ -45,7 +45,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n  msr_id, \n  status\nFROM msr.msrs",
+        "query": "WITH status_history AS (\n    SELECT DISTINCT msr_id, 'sim' AS esta_no_status_history\n    FROM msr.msr_status_history\n)\nSELECT msr_id, status, created_at\nFROM msr.msrs\nLEFT JOIN status_history USING(msr_id)\nWHERE esta_no_status_history IS NULL",
         "options": {}
       },
       "id": "45586652-0f01-4cd4-bc7f-e9015c6d11cd",
@@ -66,7 +66,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO msr.msr_status_history (msr_id, status, created_at)\nVALUES ({{ $json.msr_id }}, '{{ $json.status }}', NOW())",
+        "query": "INSERT INTO msr.msr_status_history (msr_id, status, created_at)\nVALUES ({{ $json.msr_id }}, '{{ $json.status }}', '{{ $json.created_at }}')",
         "options": {}
       },
       "id": "d0e7ecbd-1455-4621-9ffe-737e12081231",
@@ -92,6 +92,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-07-25T19:05:09.000Z",
-  "versionId": "d4eb0207-6ac8-4f6b-9b50-78dbb3c7dcc9"
+  "updatedAt": "2024-08-06T14:56:38.000Z",
+  "versionId": "6904ae3b-b91e-4ec3-9b57-f4f9058db59f"
 }
