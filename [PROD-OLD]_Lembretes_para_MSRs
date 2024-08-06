@@ -1,0 +1,474 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca pedidos de acolhimento sem agendamento",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca matches aguardando contato há 14 ou 28 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca pedidos de acolhimento sem agendamento": {
+      "main": [
+        [
+          {
+            "node": "Busca MSR",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Busca MSR": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca matches aguardando contato há 14 ou 28 dias": {
+      "main": [
+        [
+          {
+            "node": "Busca informações da MSR e da Voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca informações da MSR e da Voluntária": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "[MSR] Envia email de lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[MSR] Envia email de lembrete": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 5 segundos5": {
+      "main": [
+        [
+          {
+            "node": "[5] Envia email de lembrete para agendamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera 5 segundos5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[5] Envia email de lembrete para agendamento": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-02-19T21:33:47.993Z",
+  "id": "ywgaun6WRfaHDn2k",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD-OLD] Lembretes para MSRs",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "ff86116c-5547-41a9-8eb9-42aa802da7b4",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.task === 5 ? \"clv3xb3pn000d11rym0ubqrmb\" : \"clv48sew90040eqxes3p8eouu\" }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "d781ec3d-e0b0-44b9-acc9-3d9df7637e6d",
+      "name": "[5] Envia email de lembrete para agendamento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3000,
+        960
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  CASE \n      WHEN created_at::date = CURRENT_DATE - interval '5 day' THEN 5\n      ELSE 9\n  END task,  \n  support_request_id,\n  zendesk_ticket_id,\n  msr_id\nFROM \"match\".support_requests\nWHERE \n  status = 'social_worker' AND \n  (created_at::date = CURRENT_DATE - interval '5 day' OR \n   created_at::date = CURRENT_DATE - interval '9 day');",
+        "options": {}
+      },
+      "id": "51aab6d4-6e4b-4876-9db1-a6c1017c52af",
+      "name": "Busca pedidos de acolhimento sem agendamento",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        920
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.msr_id }}"
+      },
+      "id": "63962c2d-cff2-4542-a9c8-968cf3747dd7",
+      "name": "Busca MSR",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        800
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
+        "options": {}
+      },
+      "id": "95729d29-e775-477e-b6a2-f06150f79970",
+      "name": "Busca matches aguardando contato há 14 ou 28 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1900,
+        -120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type,\n    '{{ $json.msr_zendesk_ticket_id }}' AS msr_zendesk_ticket_id\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "33465dd0-d1ed-4822-9b8d-50c225c2e6a7",
+      "name": "Busca informações da MSR e da Voluntária",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2100,
+        -120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_zendesk_ticket_id\": \"{{ $json.msr_zendesk_ticket_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "50b20e30-2cc9-4164-ba00-3dea94d34dd8",
+      "name": "[MSR] Envia email de lembrete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2740,
+        -100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Lembretes para atualização do status do acolhimento (3, 10, 14 dias)",
+        "height": 80,
+        "width": 484.19607189456474,
+        "color": 6
+      },
+      "id": "fee61ad8-05e0-4a4f-92e9-7bf8434fedcf",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        -220
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Lembretes agendamento assistente social (5 e 9 dias)",
+        "height": 80,
+        "width": 386.9498485737204,
+        "color": 6
+      },
+      "id": "77f646a5-7aa1-484c-9e0b-005ce8b5424e",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4559e851-2329-4c85-9013-f194637c74f7",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2340,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "ae9cd92f-2143-46f1-a2b6-66eb2b2e5e1f",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2540,
+        -100
+      ],
+      "webhookId": "e9756b7b-f369-472d-859c-2720f0e61c57"
+    },
+    {
+      "parameters": {},
+      "id": "88c657e0-fe44-4e07-bc33-a188458a85ed",
+      "name": "No Operation, do nothing2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "d6a98237-3632-40d4-818d-8e7eeea43bea",
+      "name": "Espera 5 segundos5",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2780,
+        960
+      ],
+      "webhookId": "afb516d7-14e2-46db-891a-61ce74732683"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "427be80b-57a0-4f01-905e-623f09429393",
+      "name": "Loop Over Items5",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2560,
+        940
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d1ab4d5b-02a8-473d-a1a3-a249300d54f3",
+      "name": "No Operation, do nothing5",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2780,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "4add4469-e23d-41d3-afbd-f3639c6ab352",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2340,
+        940
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    },
+    "node:Schedule Trigger1": {
+      "recurrencyRules": []
+    }
+  },
+  "tags": [
+    {
+      "createdAt": "2024-08-06T13:10:50.919Z",
+      "updatedAt": "2024-08-06T13:10:50.919Z",
+      "id": "8GQ5J6PYvIrQkMCa",
+      "name": "deprecated"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-08-06T13:11:41.000Z",
+  "versionId": "d93415de-0e88-44dc-8e0e-2853f50925b3"
+}
