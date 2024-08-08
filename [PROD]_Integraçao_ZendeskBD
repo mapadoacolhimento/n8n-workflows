@@ -429,8 +429,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1680,
-        1280
+        1840,
+        1140
       ],
       "credentials": {
         "postgres": {
@@ -536,7 +536,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.new_city }}', \n  state = '{{ $json.new_state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.city }}', \n  state = '{{ $json.state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  neighborhood = '{{ $json.neighborhood }},\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
         "options": {}
       },
       "id": "a2d09abc-0122-4dba-824b-12a6e377e34d",
@@ -544,8 +544,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1680,
-        1600
+        1860,
+        1580
       ],
       "credentials": {
         "postgres": {
@@ -577,9 +577,7 @@
     },
     {
       "parameters": {
-        "mode": "combine",
-        "combinationMode": "multiplex",
-        "options": {}
+        "mode": "chooseBranch"
       },
       "id": "85357540-f47f-4f3a-bc52-5821221d4c1a",
       "name": "Merge",
@@ -881,8 +879,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        1780,
-        460
+        1680,
+        340
       ],
       "alwaysOutputData": true
     },
@@ -897,8 +895,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        2100,
-        560
+        2000,
+        520
       ],
       "credentials": {
         "postgres": {
@@ -918,8 +916,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.2,
       "position": [
-        1400,
-        280
+        1300,
+        140
       ]
     },
     {
@@ -969,7 +967,7 @@
       "typeVersion": 2,
       "position": [
         880,
-        60
+        -100
       ]
     },
     {
@@ -999,8 +997,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1160,
-        40
+        1180,
+        -120
       ],
       "onError": "continueErrorOutput"
     },
@@ -1015,8 +1013,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        2100,
-        340
+        2000,
+        140
       ],
       "credentials": {
         "postgres": {
@@ -1097,50 +1095,6 @@
     }
   ],
   "pinData": {
-    "Webhook Volunteer": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Zendesk Webhook",
-            "content-length": "258",
-            "accept-encoding": "gzip",
-            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
-            "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-00000000000000000524381e8a01d79a-0524381e8a01d79a-00",
-            "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.146",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-b8dcdf845-fv7rg",
-            "x-is-trusted": "no",
-            "x-real-ip": "216.198.2.146",
-            "x-request-id": "4e9a6584-7197-4b34-9bbc-31d6dcc0b187",
-            "x-zendesk-account-id": "9040899",
-            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01J18MQ9KHWGFRDMFWCB2R8939",
-            "x-zendesk-webhook-signature": "VvGtxn7WiICMdpWIwVwPR3oDmFuYKYEAY9lM/eiPCbo=",
-            "x-zendesk-webhook-signature-timestamp": "2024-06-25T21:27:10Z"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "volunteer_zendesk_user_id": "412308249572",
-            "city": "Divinópolis",
-            "state": "MG",
-            "first_name": "Emilly",
-            "availability": "2",
-            "zipcode": "35500001",
-            "phone": "(37) 9 8404-8004",
-            "register_number": "207989",
-            "email": "advemillymoura@gmail.com"
-          },
-          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-volunteer-info",
-          "executionMode": "production"
-        }
-      }
-    ],
     "Webhook MSR": [
       {
         "json": {
@@ -1188,6 +1142,57 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Webhook Volunteer": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "247",
+            "accept-encoding": "gzip, br",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "cdn-loop": "cloudflare; subreqs=1",
+            "cf-connecting-ip": "216.198.2.146",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "8b01b804805f27fc-SEA",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-00000000000000004c2a0d9ec48e7d8c-4c2a0d9ec48e7d8c-00",
+            "tracestate": "dd=s:-1",
+            "x-forwarded-for": "216.198.2.146, 172.71.147.155",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-fb6d78f9-f48nt",
+            "x-is-trusted": "yes",
+            "x-real-ip": "216.198.2.146",
+            "x-request-id": "cf88ac8c-7cb6-4e87-8475-2d652b175149",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
+            "x-zendesk-webhook-invocation-id": "01J4SNGFCM9AYZ28FS3YX26HFJ",
+            "x-zendesk-webhook-signature": "dcx3xTO8tr/aI9DeHMRpDljRm2T6nTDBJGtxVB8e/Vo=",
+            "x-zendesk-webhook-signature-timestamp": "2024-08-08T18:55:06Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "volunteer_zendesk_user_id": "377567545071",
+            "city": "PORTO ALEGRE",
+            "state": "RS",
+            "first_name": "Marina",
+            "availability": "1",
+            "zipcode": "12070620",
+            "phone": "51992690430",
+            "register_number": "106909",
+            "email": "mappezzi@gmail.com"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-volunteer-info",
+          "executionMode": "production"
+        }
+      }
     ]
   },
   "settings": {
@@ -1206,6 +1211,6 @@
     }
   ],
   "triggerCount": 2,
-  "updatedAt": "2024-08-06T14:35:15.000Z",
-  "versionId": "6ae64071-314b-4511-beec-ee812b2ca28e"
+  "updatedAt": "2024-08-08T19:54:38.000Z",
+  "versionId": "d32439ec-105b-43ed-96aa-68b317cd9854"
 }
