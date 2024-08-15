@@ -1,17 +1,6 @@
 {
   "active": true,
   "connections": {
-    "Webhook Volunteer": {
-      "main": [
-        [
-          {
-            "node": "Normalize Zendesk input from volunteer",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Checks if we need to update volunteer": {
       "main": [
         [
@@ -96,12 +85,12 @@
       "main": [
         [
           {
-            "node": "Updates volunteer_availability geolocation",
+            "node": "Updates volunteer geolocation",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Updates volunteer geolocation",
+            "node": "Updates volunteer_availability geolocation",
             "type": "main",
             "index": 0
           }
@@ -120,36 +109,6 @@
         [
           {
             "node": "Add null lat/lng1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "Check city, state and zipcode1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ],
-        [
-          {
-            "node": "Updates volunteer personal data",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Updates volunteer availability",
             "type": "main",
             "index": 0
           }
@@ -296,11 +255,52 @@
         ]
       ]
     },
+    "Webhook Volunteer": {
+      "main": [
+        [
+          {
+            "node": "Normalize Zendesk input from volunteer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Webhook MSR": {
       "main": [
         [
           {
             "node": "Normalize Zendesk input from MSR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Check city, state and zipcode1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Updates volunteer personal data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Updates volunteer availability",
             "type": "main",
             "index": 0
           }
@@ -315,22 +315,6 @@
   },
   "name": "[PROD] Integração Zendesk/BD",
   "nodes": [
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "update-volunteer-info",
-        "options": {}
-      },
-      "id": "7156bf61-4f0e-44c8-93e5-3504f590e14f",
-      "name": "Webhook Volunteer",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1.1,
-      "position": [
-        -620,
-        1540
-      ],
-      "webhookId": "643ff536-dbec-4912-b1b8-83301d8b17f6"
-    },
     {
       "parameters": {
         "operation": "executeQuery",
@@ -536,7 +520,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.city }}', \n  state = '{{ $json.state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  neighborhood = '{{ $json.neighborhood }},\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
+        "query": "UPDATE volunteers\nSET \n  city = '{{ $json.city }}', \n  state = '{{ $json.state }}', \n  zipcode = '{{ $json.new_zipcode }}',\n  neighborhood = '{{ $json.neighborhood }}',\n  latitude = {{ $json.coordinates.lat }}, \n  longitude = {{ $json.coordinates.lng }}, \n  \n  updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }}",
         "options": {}
       },
       "id": "a2d09abc-0122-4dba-824b-12a6e377e34d",
@@ -577,7 +561,9 @@
     },
     {
       "parameters": {
-        "mode": "chooseBranch"
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
       },
       "id": "85357540-f47f-4f3a-bc52-5821221d4c1a",
       "name": "Merge",
@@ -620,96 +606,6 @@
         1180
       ],
       "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.should_update_geolocation }}",
-                    "rightValue": "{{ true }}",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "geolocation"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "1206305f-a715-4cb0-990a-d942246a7212",
-                    "leftValue": "={{ $json.should_update_personal }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "personal"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict"
-                },
-                "conditions": [
-                  {
-                    "id": "26fd6c46-a2eb-4299-a425-e7978d0102fd",
-                    "leftValue": "={{ $json.should_update_availability }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "availability"
-            }
-          ]
-        },
-        "options": {
-          "allMatchingOutputs": true
-        }
-      },
-      "id": "0b94890f-6ffd-46d7-9107-5628c16675fa",
-      "name": "Switch",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
-      "position": [
-        380,
-        1520
-      ]
     },
     {
       "parameters": {
@@ -1092,6 +988,112 @@
         -320
       ],
       "webhookId": "1beb64b3-a520-46a9-8440-51404375a823"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "update-volunteer-info",
+        "options": {}
+      },
+      "id": "7156bf61-4f0e-44c8-93e5-3504f590e14f",
+      "name": "Webhook Volunteer",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -620,
+        1540
+      ],
+      "webhookId": "643ff536-dbec-4912-b1b8-83301d8b17f6"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.should_update_geolocation }}",
+                    "rightValue": "{{ true }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "geolocation"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1206305f-a715-4cb0-990a-d942246a7212",
+                    "leftValue": "={{ $json.should_update_personal }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "personal"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "26fd6c46-a2eb-4299-a425-e7978d0102fd",
+                    "leftValue": "={{ $json.should_update_availability }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "availability"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "id": "0b94890f-6ffd-46d7-9107-5628c16675fa",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        380,
+        1520
+      ]
     }
   ],
   "pinData": {
@@ -1149,45 +1151,45 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Zendesk Webhook",
-            "content-length": "247",
+            "content-length": "263",
             "accept-encoding": "gzip, br",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
             "cdn-loop": "cloudflare; subreqs=1",
-            "cf-connecting-ip": "216.198.2.146",
+            "cf-connecting-ip": "216.198.2.158",
             "cf-ew-via": "15",
             "cf-ipcountry": "US",
-            "cf-ray": "8b01b804805f27fc-SEA",
+            "cf-ray": "8b211f9c646e9b59-SEA",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-00000000000000004c2a0d9ec48e7d8c-4c2a0d9ec48e7d8c-00",
+            "traceparent": "00-0000000000000000181c76850d007f77-181c76850d007f77-00",
             "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.146, 172.71.147.155",
+            "x-forwarded-for": "216.198.2.158, 172.71.147.209",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-fb6d78f9-f48nt",
+            "x-forwarded-server": "traefik-fb6d78f9-msbll",
             "x-is-trusted": "yes",
-            "x-real-ip": "216.198.2.146",
-            "x-request-id": "cf88ac8c-7cb6-4e87-8475-2d652b175149",
+            "x-real-ip": "216.198.2.158",
+            "x-request-id": "8155fbb1-f731-41d5-b4d8-b8eca831b8b0",
             "x-zendesk-account-id": "9040899",
             "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01J4SNGFCM9AYZ28FS3YX26HFJ",
-            "x-zendesk-webhook-signature": "dcx3xTO8tr/aI9DeHMRpDljRm2T6nTDBJGtxVB8e/Vo=",
-            "x-zendesk-webhook-signature-timestamp": "2024-08-08T18:55:06Z"
+            "x-zendesk-webhook-invocation-id": "01J53FHZ3EXHVXKJXE00M73NAA",
+            "x-zendesk-webhook-signature": "Z4Ur+UWPB77Rb/197bfSX52KetG+XT95FpjKAk6YYRk=",
+            "x-zendesk-webhook-signature-timestamp": "2024-08-12T14:23:28Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "volunteer_zendesk_user_id": "377567545071",
-            "city": "PORTO ALEGRE",
-            "state": "RS",
-            "first_name": "Marina",
-            "availability": "1",
-            "zipcode": "12070620",
-            "phone": "51992690430",
-            "register_number": "106909",
-            "email": "mappezzi@gmail.com"
+            "volunteer_zendesk_user_id": "22019136695060",
+            "city": "São Caetano do Sul",
+            "state": "SP",
+            "first_name": "Sofia",
+            "availability": "2",
+            "zipcode": "09550-180",
+            "phone": "11999475668",
+            "register_number": "506750",
+            "email": "tangerino.sofia@gmail.com"
           },
           "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-volunteer-info",
           "executionMode": "production"
@@ -1211,6 +1213,6 @@
     }
   ],
   "triggerCount": 2,
-  "updatedAt": "2024-08-08T19:54:38.000Z",
-  "versionId": "d32439ec-105b-43ed-96aa-68b317cd9854"
+  "updatedAt": "2024-08-14T16:51:25.000Z",
+  "versionId": "5bf61b62-5813-4d40-9cf9-67de2f82a33b"
 }
