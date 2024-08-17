@@ -1,0 +1,85 @@
+{
+  "active": true,
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-08-17T22:56:52.469Z",
+  "id": "RX966MZcgtl1saDm",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] whatsapp test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9f2524b4-a511-4f4a-9eea-c4998b4094e3",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        340
+      ],
+      "webhookId": "e84d5c4e-97ff-4bb3-b00e-e92b6be4bda9"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "id": "37429d2a-6cda-4b0a-a5d2-008655828a8d",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "310902ba-eaea-48cf-803e-05fcc8dd055f",
+        "options": {}
+      },
+      "id": "a17689cf-0060-4eca-b3e1-3836c5d1978b",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        780,
+        340
+      ],
+      "webhookId": "77d19a09-d3e4-456d-8416-e747d5c36660"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-08-17T22:58:59.000Z",
+  "versionId": "21e8d45d-1da7-445e-bf48-e52f8f5fa9da"
+}
