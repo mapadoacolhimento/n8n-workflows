@@ -3,9 +3,14 @@
   "connections": {
     "Wait": {
       "main": [
+        []
+      ]
+    },
+    "n8n": {
+      "main": [
         [
           {
-            "node": "Code",
+            "node": "Existe uma execução em andamento?",
             "type": "main",
             "index": 0
           }
@@ -16,7 +21,36 @@
       "main": [
         [
           {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existe uma execução em andamento?": {
+      "main": [
+        [
+          {
             "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "n8n",
             "type": "main",
             "index": 0
           }
@@ -38,8 +72,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1000,
-        340
+        1460,
+        560
       ],
       "webhookId": "e84d5c4e-97ff-4bb3-b00e-e92b6be4bda9"
     },
@@ -52,8 +86,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1180,
-        340
+        1460,
+        360
       ]
     },
     {
@@ -67,10 +101,96 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        780,
+        660,
         340
       ],
       "webhookId": "77d19a09-d3e4-456d-8416-e747d5c36660"
+    },
+    {
+      "parameters": {
+        "resource": "execution",
+        "filters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "RX966MZcgtl1saDm",
+            "mode": "list",
+            "cachedResultName": "[STG] whatsapp test (#RX966MZcgtl1saDm)"
+          }
+        },
+        "options": {}
+      },
+      "id": "dd9e7bc8-a32c-4c10-bb30-82c045558dd5",
+      "name": "n8n",
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        340
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "n8nApi": {
+          "id": "7BqUjv3Vc4V09x0u",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "4c2edc70-c16f-4e5c-838c-25b25462e25f",
+              "leftValue": "={{ $json.finished }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4b15971b-e960-4bd9-a8a5-4fe2e07f38de",
+              "leftValue": "={{ $json.mode }}",
+              "rightValue": "webhook",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "39ce334c-6093-4726-871b-47ab39860986",
+      "name": "Existe uma execução em andamento?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "9cca5e9b-eb22-4c28-baad-84c1c685bbca",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        840,
+        340
+      ],
+      "webhookId": "bb31431b-8468-4277-b8e2-f46f1195eddc"
     }
   ],
   "pinData": {},
@@ -80,6 +200,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-08-17T22:58:59.000Z",
-  "versionId": "21e8d45d-1da7-445e-bf48-e52f8f5fa9da"
+  "updatedAt": "2024-08-17T23:27:07.000Z",
+  "versionId": "d3f26cb8-f450-4451-a1fb-bb744ed8ebb5"
 }
