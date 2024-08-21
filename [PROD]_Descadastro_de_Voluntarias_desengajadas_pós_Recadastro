@@ -5,28 +5,7 @@
       "main": [
         [
           {
-            "node": "Busca voluntárias desengajadas dos grupos 4, 5, 6 e 7",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca voluntárias desengajadas dos grupos 4, 5, 6 e 7": {
-      "main": [
-        [
-          {
-            "node": "Realiza Descadastro no banco de dados",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Realiza Descadastro no Zendesk",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Loop Over Items",
+            "node": "Busca voluntárias desengajadas do grupo 8",
             "type": "main",
             "index": 0
           }
@@ -66,6 +45,27 @@
           }
         ]
       ]
+    },
+    "Busca voluntárias desengajadas do grupo 8": {
+      "main": [
+        [
+          {
+            "node": "Realiza Descadastro no banco de dados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Realiza Descadastro no Zendesk",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-07-05T18:49:09.444Z",
@@ -85,27 +85,6 @@
         720,
         340
       ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        first_name,\n        email,\n        zendesk_user_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    LEFT JOIN volunteers ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        email,\n        first_name,\n        zendesk_user_id,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT DISTINCT \n    volunteer_id,\n    INITCAP(first_name) AS first_name,\n    email,\n    zendesk_user_id\nFROM total\nLEFT JOIN match.matches USING(volunteer_id)\nWHERE engajou = 'não engajou'\nAND (status IS NULL OR status NOT IN ('waiting_contact', 'in_contact'))\nAND grupo IN ('group_4', 'group_5', 'group_6', 'group_7')\nAND email IN ('thaynayaredy@gmail.com', 'nascimento.c.mariana@gmail.com')",
-        "options": {}
-      },
-      "id": "0438ce3f-8e9e-40d0-8801-de95df50637c",
-      "name": "Busca voluntárias desengajadas dos grupos 4, 5, 6 e 7",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        1240,
-        340
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -209,6 +188,27 @@
         100
       ],
       "webhookId": "dcd94051-e414-4100-b25c-b178adcc24f1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    id AS volunteer_id,\n    email,\n    INITCAP(first_name) AS first_name,\n    zendesk_user_id\nFROM volunteers\nWHERE id IN (25643, 25629, 25288, 18220, 25428, 22911, 25090, 24909, 18795, 26070, 23823, 21095, 24567, 18070, 18603, 25101, 25474, 24886, 24779, 27287, 20124, 22757, 26833, 26348, 24711, 21447, 21118, 26454, 26124, 16037, 27043, 15857, 27314, 15504, 20804, 27224, 23092, 26380, 25553, 24899, 24383, 25623, 27842, 25281, 27185, 21618, 24744, 19712, 16097, 20037, 25554, 25013, 23012, 16777, 25267, 23323, 24220, 27691, 24912, 25921, 26034, 24798, 24942, 24858, 17401, 23859, 23806, 25491, 24227, 26026, 27321, 15553, 24660, 26536, 26160, 26473, 15664, 15647, 22410, 25520, 25539, 22231, 25611, 27690, 26443, 26229, 25545, 26200, 24224, 25154, 26098, 25264, 14793, 17454, 24773, 24776, 15788, 22301, 15831, 25358, 26063, 24646, 22556, 15734, 15814, 27323, 15713, 26869, 24303, 26614, 26164, 26582, 19644, 24896, 27634, 17188, 27700, 25613, 25601, 23058, 23918, 24720, 25240, 25527, 25008, 27676, 26410, 21506, 22629, 25653, 26021, 26430, 25768, 25880, 24692, 26197, 21193, 25093, 26261, 21016, 21875, 25681, 21516, 26423, 25590, 25164, 17406, 15757, 25785, 27515, 25864, 15815, 26285, 23175, 25687, 23934, 27389, 25964, 26868, 23427, 23747, 25728, 15598, 27678, 24881, 27494, 24921, 25618, 27099, 27297, 25999, 24808, 24925, 25218, 23106, 26563, 24946, 23441, 25368, 19978, 24676, 16384, 22072, 27059, 24628, 23843, 25140, 24252, 26493, 22124, 22630, 27191, 17637, 26872, 25954, 15622, 26003, 25818, 15635, 21201, 25018, 25534, 27025, 22038, 25852, 25649, 25119, 20803, 26807, 25651, 25465, 23756, 26184, 24388, 15559, 24872, 17395, 27168, 25719, 25311, 25786, 23593, 17464, 25370, 16009, 15575, 16775, 26726, 24924, 27114, 27233, 25920, 25082, 16129, 26270, 15538, 15805, 26222, 21307, 14897, 15281, 25671, 25252, 25981, 18295, 27567, 20961, 15653, 21726, 15375, 27007, 26419, 27249, 23908, 24945, 24655, 27391, 25862, 26282, 26360, 27079, 25291, 25703, 25180, 24900, 25174, 25672, 15620, 26221, 15748, 21547, 16204, 26183, 27072, 20776, 16542, 27461, 24731, 27415, 17876, 26560, 25016, 25342, 24920, 26731, 26479, 26620, 25870, 18312, 15701, 22380, 23817, 22848, 17440, 21524, 25287, 22988, 26881, 25425, 26038, 17572, 25913, 25000, 25592, 25568, 18589, 16113, 24869, 24871, 25873, 25645, 23281, 25228, 25950, 27343, 21631, 22821, 24812, 15692, 15740, 22963, 25985, 25644, 26400, 25766, 25054, 25972, 23052, 25261, 25782, 25088, 27041, 25993, 24310, 25040, 17445, 24767, 25991, 24074, 15492, 24572, 15927, 23917, 27015, 20697, 26709, 15770, 26374, 18069, 15775, 25059, 26526, 15011, 21635, 25536, 15760, 25274, 25024, 24964, 22080, 25947, 19956, 26278, 24734, 22328, 25139, 25044, 24030, 15751, 22682, 24972, 24634, 22184, 26644, 22566, 27049, 24898, 26525, 24664, 27446, 27648, 20586, 26218, 24075, 15671, 27468, 26902, 24943, 24868, 25883, 26369, 25751, 27325, 25676, 15563, 15515, 21277, 23139, 24860, 25695, 22692, 27048, 25201, 25894, 15686, 24987, 25015, 19919, 25989, 24876, 24164, 18306, 24999, 27180, 25481, 27578, 27717, 26101, 24949, 23207, 15753, 27680, 20152, 25045, 24749, 25577, 21141, 17029, 27845, 17668, 27605, 26819, 25969, 25570, 26964, 25814, 24639, 25936, 21673, 19530, 25142, 25125, 27252, 25819, 25084, 25196, 25549, 24364, 20854, 25963, 15592, 25665, 24936, 15818, 24211, 22665, 26004, 24939, 24493, 15786, 22561, 25603, 27150, 20050, 24475, 27591, 25738, 25904, 26162, 27408, 24835, 24092, 20904, 15716, 27028, 21520, 24022, 25856, 23647, 18887, 21703, 24700, 17891, 21648, 25628, 15767, 26190, 24813, 26553, 16309, 26276, 25337, 26899, 26617, 25511, 20478, 26050, 17380, 15627, 24815, 25980, 15789, 23225, 26213, 22046, 15688, 26521, 23923, 24611, 26199, 17693, 25701, 25892, 25466, 17457, 25996, 26408, 15737, 24821, 25383, 25173, 26127, 26381, 25095, 25151, 24356, 25589, 25715, 24714, 15833, 23611, 27317, 15699, 24774, 24772, 16060, 16649, 15621, 23301, 17553, 25557, 18696, 26132, 21711, 25071, 24225, 24950, 27538, 25566, 25853, 24232, 26177, 22150, 24978, 27712, 24984, 26367, 26412, 25097, 17552, 25144, 26051, 22395, 25587, 24918, 15905, 21004, 15764, 20168, 25075, 21519, 15672, 15507, 25965, 26610, 24788)",
+        "options": {}
+      },
+      "id": "0438ce3f-8e9e-40d0-8801-de95df50637c",
+      "name": "Busca voluntárias desengajadas do grupo 8",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1240,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -218,6 +218,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-07-10T18:04:50.000Z",
-  "versionId": "461b4a47-4aea-400e-ba4b-fae190bc06ba"
+  "updatedAt": "2024-08-21T18:51:19.000Z",
+  "versionId": "1bff06b8-5c4b-4a89-a394-f35560d1f3d2"
 }
