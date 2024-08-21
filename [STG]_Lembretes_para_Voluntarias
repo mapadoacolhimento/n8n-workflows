@@ -27,10 +27,34 @@
       "main": [
         [
           {
-            "node": "[MSR] Envia email de lembrete",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
           {
             "node": "[Voluntaria] Envia email de lembrete",
             "type": "main",
@@ -38,10 +62,21 @@
           }
         ]
       ]
+    },
+    "[Voluntaria] Envia email de lembrete": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "createdAt": "2024-04-28T22:38:04.590Z",
-  "id": "VVg1NBTjVkYDyKw7",
+  "createdAt": "2024-08-21T18:13:34.186Z",
+  "id": "UovLBpYQ4PehUpmP",
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -52,12 +87,12 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 10
+              "triggerAtHour": 9
             }
           ]
         }
       },
-      "id": "bdcfcfb1-5a9c-45b4-a2b6-ec6592a39244",
+      "id": "a956fedd-5435-48c5-96a5-673b624f33fe",
       "name": "Schedule Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
@@ -69,31 +104,57 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '28 DAY'\n  OR DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY'",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
         "options": {}
       },
-      "id": "ec0d9625-c5c1-4c8e-8958-a27445022008",
+      "id": "aef9a9eb-95da-4719-b7cb-35aa2866274e",
       "name": "Busca matches aguardando contato há 14 ou 28 dias",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        660,
+        620,
         340
       ],
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"volunteer_zendesk_ticket_id\": \"{{ $json.volunteer_zendesk_ticket_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "78d977f3-58cc-4304-b636-423cabe7614a",
+      "name": "[Voluntaria] Envia email de lembrete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1540,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
         }
       }
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    (STRING_TO_ARRAY(INITCAP(name), ' '))[1] AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    '{{ $json.volunteer_first_name }}' AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type\nFROM solidarity_users\nWHERE user_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    first_name AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    '{{ $json.volunteer_zendesk_ticket_id }}' AS volunteer_zendesk_ticket_id\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
         "options": {}
       },
-      "id": "050524ad-1c9c-4fab-a056-f04ea4501815",
+      "id": "afd7dd0b-45a0-4a92-bf1c-e4b6d87bee30",
       "name": "Busca informações da MSR e da Voluntária",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
@@ -103,71 +164,80 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "bNRm9reAeAU1uKu5",
-          "name": "[STG] Bonde"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
-        "options": {}
+        "content": "Lembretes para atualização do status do acolhimento (3, 10 e 14 dias)",
+        "height": 80,
+        "width": 469.3469390685987,
+        "color": 6
       },
-      "id": "3b4c5f1c-6025-4056-a7ec-c0ece8f017e5",
-      "name": "[MSR] Envia email de lembrete",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
+      "id": "fe40f990-6e8a-4fc7-b2dd-05dbd56557ec",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
-        1180,
-        540
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
-        "options": {}
-      },
-      "id": "c81c3eaf-d518-4005-bb90-b0b62fba51f2",
-      "name": "[Voluntaria] Envia email de lembrete",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        1140,
+        320,
         220
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3ada53dd-b380-4c1b-bd73-4c763ee18fa1",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "12e32736-cf62-44c6-8b13-e64da84fb6bc",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        360
       ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
+      "webhookId": "eca063bf-e697-44d4-bafb-696b82d45c51"
+    },
+    {
+      "parameters": {},
+      "id": "84a2c034-636f-4187-bf48-06da84de1a5d",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        160
+      ]
     }
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    }
+  },
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-04-30T21:15:37.000Z",
-  "versionId": "de4ca73d-629d-4ab5-8ba6-d7fef4faf2f1"
+  "triggerCount": 1,
+  "updatedAt": "2024-08-21T18:13:34.186Z",
+  "versionId": "54142504-1f37-4fc7-bdd5-8fa9072174e1"
 }
