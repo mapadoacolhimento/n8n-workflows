@@ -443,7 +443,7 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json[\"zendesk_user_id\"] }},\n \t\t\"organization_id\": {{$node[\"Formata - Triagem Psicológico 2\"].json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"organization_id\"][\"value\"]}},\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"triagem-2\"], \n \t\t\"status\": \"new\",\n\t\t\"priority\": \"{{$node[\"Formata - Triagem Psicológico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Triagem 2] {{$node[\"Formata - Triagem Psicológico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\"body\": \"{{$node[\"Formata - Triagem Psicológico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json[\"zendesk_user_id\"] }},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"triagem-2\"], \n \t\t\"status\": \"new\",\n\t\t\"priority\": \"{{$node[\"Formata - Triagem Psicológico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Triagem 2] {{$node[\"Formata - Triagem Psicológico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\"body\": \"{{$node[\"Formata - Triagem Psicológico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (triagem psi 2)",
       "type": "n8n-nodes-base.httpRequest",
@@ -469,7 +469,7 @@
         "options": {
           "bodyContentType": "json"
         },
-        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json[\"zendesk_user_id\"] }},\n \t\t\"organization_id\": {{$node[\"Formata - Triagem Juridico 2\"].json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"organization_id\"][\"value\"]}},\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"triagem-2\"], \n \t\t\"status\": \"new\",\n\t\t\"priority\": \"{{$node[\"Formata - Triagem Juridico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Triagem 2] {{$node[\"Formata - Triagem Juridico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\"body\": \"{{$node[\"Formata - Triagem Juridico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json[\"zendesk_user_id\"] }},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"triagem-2\"], \n \t\t\"status\": \"new\",\n\t\t\"priority\": \"{{$node[\"Formata - Triagem Juridico 2\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Triagem 2] {{$node[\"Formata - Triagem Juridico 2\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\"body\": \"{{$node[\"Formata - Triagem Juridico 2\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
       },
       "name": "Criar novo ticket (triagem jur 2)",
       "type": "n8n-nodes-base.httpRequest",
@@ -573,7 +573,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "query": "select email,zendesk_user_id from volunteers where email = LOWER('{{ $json.submission.lead.fields.core.email.value }}')",
         "options": {}
       },
       "id": "2c6f1654-6dff-4916-a408-bbb83d740e2d",
@@ -594,7 +594,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "query": "select email,zendesk_user_id from volunteers where email = LOWER('{{ $json.submission.lead.fields.core.email.value }}')",
         "options": {}
       },
       "id": "410ca906-8e02-4043-b6a7-78e91c30a9cf",
@@ -615,7 +615,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "query": "select email,zendesk_user_id from volunteers where email = LOWER('{{ $json.submission.lead.fields.core.email.value }}')",
         "options": {}
       },
       "id": "b229cd3c-c74c-4dba-86e1-8a2dc1d81cf6",
@@ -636,7 +636,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "select email,zendesk_user_id from volunteers where email = '{{ $json.submission.lead.fields.core.email.value }}'",
+        "query": "select email,zendesk_user_id from volunteers where email = LOWER('{{ $json.submission.lead.fields.core.email.value }}')",
         "options": {}
       },
       "id": "12af4627-3119-4392-be31-e129f43e711e",
@@ -1086,18 +1086,25 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "GuzzleHttp/7",
-            "content-length": "12554",
+            "content-length": "12016",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; subreqs=1",
+            "cf-connecting-ip": "54.85.56.248",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "8b7dda1370db6908-IAD",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
             "content-type": "application/json",
-            "webhook-signature": "k00Vdn66XIHRvdz0LfWvmHRo3xVZGCs2pXdrkF9BaSE=",
-            "x-forwarded-for": "54.85.56.248",
+            "webhook-signature": "hWWA4h6w34NiS4UNhEJXC2s/kPqZD1S3ehLN3gJLQl0=",
+            "x-forwarded-for": "54.85.56.248, 172.70.35.33",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-b8dcdf845-jklh6",
-            "x-is-trusted": "no",
+            "x-forwarded-server": "traefik-fb6d78f9-rxwmc",
+            "x-is-trusted": "yes",
             "x-origin-base-url": "https://mautic.nossas.org",
-            "x-real-ip": "54.85.56.248",
-            "accept-encoding": "gzip"
+            "x-real-ip": "54.85.56.248"
           },
           "params": {},
           "query": {},
@@ -1105,10 +1112,10 @@
             "mautic.form_on_submit": [
               {
                 "submission": {
-                  "id": 8752,
+                  "id": 8871,
                   "ipAddress": {
-                    "ipAddress": "186.204.228.164",
-                    "id": 65588,
+                    "ipAddress": "179.250.9.225",
+                    "id": 66416,
                     "ipDetails": {
                       "city": "",
                       "region": "",
@@ -1123,13 +1130,13 @@
                     }
                   },
                   "form": {
-                    "id": 21,
-                    "name": "2.01. Instrumental de Triagem 1: Psicólogas",
-                    "alias": "200_instru",
+                    "id": 23,
+                    "name": "Instrumental de Triagem 2: Psicólogas",
+                    "alias": "instrument",
                     "category": null
                   },
                   "lead": {
-                    "id": 174468,
+                    "id": 175589,
                     "points": 0,
                     "color": null,
                     "fields": {
@@ -1248,8 +1255,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "ana@anafaustino.com.br",
-                          "normalizedValue": "ana@anafaustino.com.br"
+                          "value": "simonenunes473@gmail.com",
+                          "normalizedValue": "simonenunes473@gmail.com"
                         },
                         "tipo_de_acolhimento": {
                           "id": "50",
@@ -1365,8 +1372,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "2024-06-26 20:33:01",
-                          "normalizedValue": "2024-06-26 20:33:01"
+                          "value": "2024-08-21 22:25:25",
+                          "normalizedValue": "2024-08-21 22:25:25"
                         }
                       },
                       "social": {
@@ -1453,48 +1460,59 @@
                       "professional": []
                     }
                   },
-                  "trackingId": "3wgp1uyobctflnsf4eq2fqr",
-                  "dateSubmitted": "2024-06-26T20:40:47+00:00",
-                  "referer": "https://mautic.nossas.org/triagem-psicologico-1",
+                  "trackingId": "vop2qp48e7e1c0lnzd844nu",
+                  "dateSubmitted": "2024-08-23T20:28:53+00:00",
+                  "referer": "https://mautic.nossas.org/triagem-psicologico-2",
                   "page": null,
                   "results": {
-                    "1_nome_completo": "Ana Cristina Faustino",
-                    "2_email_de_cadastro1": "ana@anafaustino.com.br",
-                    "3_whatsapp": "1198745-4555",
-                    "4_a_acolhida_e_maior_de_1": "Sim",
-                    "5_a_acolhida_reside_no_br": "Sim",
-                    "6_a_acolhida_e_brasileira": "Sim",
-                    "7_a_acolhida_passou_ou_es": "Sim",
-                    "8_quais_os_tipos_de_viole": "Psicológica, Patrimonial, Sexual",
-                    "9_por_qual_periodo_de_tem": "Entre 6 meses e 1 ano",
-                    "10_quem_e_oa_autora_da_vi": "Marido/Esposa/Companheiro(a)",
-                    "11_a_acolhida_esta_em_sit": "Sim",
-                    "12_nome_da_acolhida": "Adayanne Cardoso Borges",
-                    "13_data_de_nascimento_da": "1982-07-07",
-                    "14_qual_o_regime_de_traba": "Não se aplica",
-                    "15_assinale_a_opcao_que_c": "Não se aplica",
-                    "16_a_acolhida_tem_indepen": "Não",
-                    "17_a_acolhida_esta_inscri": "Não",
-                    "18_atualmente_a_acolhida": "Não",
-                    "19_a_acolhida_e_responsav": "Não",
-                    "20_caso_tenha_respondido": "",
-                    "21_a_acolhida_tem_pessoas": "Não",
-                    "22_caso_tenha_respondido": "",
-                    "23_qual_a_situacao_de_mor": "Alugada",
-                    "24_caso_tenha_respondido": "",
-                    "25_a_acolhida_reside_com": "Sim",
-                    "26_a_acolhida_se_sente_se": "Não",
-                    "27_a_acolhida_vive_em_sit": "Sim",
-                    "28_a_acolhida_conhece_a_r": "Sim",
-                    "29_se_sim_assinale_qualqu": "UBS, Delegacia especializada da Mulher",
-                    "30_a_acolhida_esta_em_ate": "Não",
-                    "31_se_sim_assinale_qualqu": "",
-                    "32_descreva_resumidamente": "Acolhida Daiana está casada há 17 anos tem 2 filhas menores com agressor a tem uma filha adulta que mora com os pais em outro Estado.&#13;&#10;Relata que aproximadamente um ano tentou se separar, foi quando então se iniciaram as violências. Na primeira conversa (em Goiás na casa da mãe dela) ele aceitou a separação e quando chegou em São Paulo ele tinha trocado fechadura do apartamento. Nesse ano tentou por 4 vezes sair de casa foram tentativas 2 dela e 2 que ele colocou a para fora. Voltou a pedido das filhas e a pressão que ele fazia. Hoje ela vive numa situação de violência psicológica, violência patrimonial e violência sexual. Nunca a agrediu fisicamente, mas exerce uma pressão psicológica muito grande. &#13;&#10;Em agosto 2022 decide trabalhar em SP e foi um divisor na relação. Após querer se separar ele a impede de voltar a trabalhar como modelo integralmente. Tem aceitado alguns bicos quando ele deixa, mas não como modelo, onde trabalha muito e ganhava bem.&#13;&#10;Ela não tem família em SP, nem rede de apoio. Seu maior desejo é sair desta relação, mas se presa pela questão financeira e desdobramentos para as filhas.&#13;&#10;&#13;&#10;*Sinalizei no formulário “Cárcere privado” após uma conversa com a Isa. Acolhida não tem privacidade nem mesmo em casa (só no banheiro). Sempre tem que estar no campo de visão dele e se sente pressionada o tempo inteiro.  raramente sai quando e sempre acompanhada dele ou das filhas. &#13;&#10;&#13;&#10;&#13;&#10;",
-                    "33_encaminhamentos_do_cas": "Articulação com o serviço público e continuidade de atendimento pelo projeto",
-                    "34_caso_tenha_assinalado": "UBS"
+                    "1_nome_completo": "Simone Nunes da Silva",
+                    "2_email_de_cadastro1": "simonenunes473@gmail.com",
+                    "3_nome_da_acolhida": "Carolina Ribeiro Brandão",
+                    "4_data_de_nascimento_da_a": "1984-12-11",
+                    "5_como_a_acolhida_se_auto1": "Branca",
+                    "6_qual_a_identidade_de_ge1": "Mulher cisgênero",
+                    "7_a_acolhida_tem_alguma_d": "Não",
+                    "8_qual_o_estado_civil_da": "Solteira",
+                    "9_a_acolhida_tem_filhasos": "Não",
+                    "10_a_acolhida_esta_gravid": "Não",
+                    "11_qual_a_escolaridade_da": "Ensino superior incompleto",
+                    "12_a_acolhida_considera_q": "Não",
+                    "13_quais_impactos_a_acolh": "Insônia, Comprometimento da autoestima, Distorção dos pensamentos e crenças de desvalia, Sentimentos de culpa, Dependência afetiva e financeira",
+                    "14_quais_impactos_a_acolh": "Distúrbio alimentar, Sérios impactos na saúde mental como: depressão, ansiedade e/ou síndrome do pânico",
+                    "15_tipos_de_violencia_que": "Psicológica, Moral, Sexual",
+                    "16_oa_autora_da_violencia": "Nenhuma agressão física",
+                    "17_oa_autora_da_violencia": "Nenhuma agressão física",
+                    "18_a_acolhida_se_sente_is": "Não",
+                    "19_oa_autora_da_violencia": "Não",
+                    "20_oa_autora_da_violencia": "Não",
+                    "21_oa_autora_da_violencia": "Não",
+                    "22_caso_se_aplique_a_acol": "",
+                    "23_oa_autora_da_violencia": "",
+                    "24_a_acolhida_necessitou": "Não",
+                    "25_caso_se_aplique_a_acol": "Não",
+                    "26_a_acolhida_apresenta_d": "Sim",
+                    "27_as_agressoes_ou_ameaca": "Não",
+                    "281_qualis_outros_familia": "Mãe e mais dois tios.",
+                    "28_oa_autora_da_violencia": "Sim, outros familiares, Sim, outras pessoas",
+                    "29_oa_autora_da_violencia": "Não",
+                    "30_oa_autora_da_violencia": "Não",
+                    "31_oa_autora_da_violencia": "Sim",
+                    "321_sobre_quais_servicos": "UBS",
+                    "32_a_acolhida_ja_manifest": "Sim",
+                    "33_descreva_resumidamente": "Acolhida apresenta quadro de ansiedade e depressão, queixas de ter engordado e por roer as unhas, apresentando também baixa autoestima. Será iniciando o acompanhamento psicoterapia. ",
+                    "34_encaminhamento_do_caso": "Articulação com o serviço público e continuidade de atendimento pelo projeto",
+                    "35_data_do_inicio_do_aten": "2024-07-12",
+                    "36_formas_mais_seguras_de": "Ligação telefônica, Mensagem escrita por Whatsapp, Áudio Whatsapp, Chamada de vídeo, E-mail",
+                    "37_qual_a_frequencia_do_a": "1 vez na semana",
+                    "38_contrato_formato": "Remoto",
+                    "39_acordou_a_politica_de": "Sim",
+                    "40_a_acolhida_esta_em_aco": "Não",
+                    "41_existe_processo_juridi": "Não",
+                    "42_caso_se_aplique_voce_p": "Não",
+                    "43_voce_se_preocupa_ou_pe": "Não"
                   }
                 },
-                "timestamp": "2024-06-26T20:40:48+00:00"
+                "timestamp": "2024-08-23T20:28:56+00:00"
               }
             ]
           },
@@ -1520,6 +1538,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-06-26T20:57:26.000Z",
-  "versionId": "082df579-fdeb-418e-8b9c-91ad85c2cfa1"
+  "updatedAt": "2024-08-26T21:23:37.000Z",
+  "versionId": "80211c5a-7135-47bb-b60f-a47f152c942d"
 }
