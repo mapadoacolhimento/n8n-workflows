@@ -1053,7 +1053,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clve8mcba01ehw7t4j7z3pswx\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clve8mcba01ehw7t4j7z3pswx\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\"  \n  }\n}",
         "options": {}
       },
       "id": "4739ccc4-8afe-4605-b931-48583d0df0cf",
@@ -1192,7 +1192,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clvjzaan500moauwib4clwqah\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clvjzaan500moauwib4clwqah\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\"\n  }\n}",
         "options": {}
       },
       "id": "0311888f-9fd6-4b5a-9abf-f6e0a874db31",
@@ -1213,7 +1213,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    first_name AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    first_name AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer,\n    CASE WHEN '{{ $json.support_type }}' = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "eb171977-1a23-4e46-935b-d2f7fceaa8d3",
@@ -1234,7 +1234,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    first_name AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    first_name AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.who_answered }}' AS who_answered,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer,\n    CASE WHEN '{{ $json.support_type }}' = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "eb4cf456-81ec-4084-bb97-cc49d4a783aa",
@@ -1410,7 +1410,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clvldhxm001hy7b5dbbi8oprs\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{ $json.msr_email }}\",\n \"transactionalId\": \"clvldhxm001hy7b5dbbi8oprs\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\"\n  }\n}",
         "options": {}
       },
       "id": "0fff0e52-e642-485c-85c6-871d69cdd3ef",
@@ -1431,7 +1431,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    email AS msr_email,\n    first_name AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+        "query": "SELECT \n    email AS msr_email,\n    first_name AS msr_first_name,\n    {{ $json.msr_zendesk_ticket_id }} AS msr_zendesk_ticket_id,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    {{ $json.volunteer_zendesk_user_id }} AS volunteer_zendesk_user_id,\n    {{ $json.volunteer_zendesk_ticket_id }} AS volunteer_zendesk_ticket_id,\n    '{{ $json.support_type }}' AS support_type,\n    '{{ $json.match_created_at }}' AS match_created_at,\n    '{{ $json.form_answer }}' AS form_answer,\n  CASE WHEN '{{ $json.support_type }}' = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
         "options": {}
       },
       "id": "d844767f-9c26-4ffd-bbcc-70fb802c24cb",
@@ -3018,6 +3018,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2024-08-16T18:46:44.000Z",
-  "versionId": "77edccf0-ed37-40b4-b918-391f563fbf75"
+  "updatedAt": "2024-08-29T16:43:54.000Z",
+  "versionId": "39e689f3-c8ac-4117-80df-8d4c9f572803"
 }
