@@ -93,6 +93,11 @@
             "node": "Updates volunteer_availability geolocation",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Update volunteer geolocation",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -191,6 +196,11 @@
           },
           {
             "node": "Updates msr.msrs1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update MSR geolocation",
             "type": "main",
             "index": 0
           }
@@ -318,7 +328,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  '{{ $json.body.email }}' AS new_email,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT AND '{{ $json.body.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' OR\n      email != '{{ $json.body.email }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
+        "query": "SELECT\n  id AS volunteer_id,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.first_name }}' AS new_first_name,\n  '{{ $json.body.availability }}'::INT AS new_availability,\n  '{{ $json.body.phone }}' AS new_phone,\n  '{{ $json.body.register_number }}' AS new_register_number,\n  '{{ $json.body.email }}' AS new_email,\n  '{{ $json.body.volunteer_zendesk_user_id }}' AS volunteer_zendesk_user_id,\n  CASE \n    WHEN \n      city != '{{ $json.body.city }}' OR \n      state != '{{ $json.body.state }}' OR \n      zipcode != '{{ $json.body.zipcode }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_geolocation,\n  CASE WHEN availability != '{{ $json.body.availability }}'::INT AND '{{ $json.body.availability }}'::INT != 0 THEN TRUE ELSE FALSE END AS should_update_availability,\n  CASE \n    WHEN \n      first_name != '{{ $json.body.first_name }}' OR \n      phone != '{{ $json.body.phone }}' OR \n      register_number != '{{ $json.body.register_number }}' OR\n      email != '{{ $json.body.email }}'\n    THEN TRUE \n    ELSE FALSE \n  END AS should_update_personal\nFROM public.volunteers\nWHERE zendesk_user_id = {{ $json.body.volunteer_zendesk_user_id }}",
         "options": {}
       },
       "id": "fc5a3d2f-6d6c-41ee-8742-a4b7216ecfb7",
@@ -1094,6 +1104,92 @@
         380,
         1520
       ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.msr_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "city",
+                "value": "={{ $json.city }}"
+              },
+              {
+                "field": "cep",
+                "value": "={{ $json.zipcode }}"
+              },
+              {
+                "field": "state",
+                "value": "={{ $json.state }}"
+              },
+              {
+                "field": "neighborhood",
+                "value": "={{ $json.neighborhood }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "92eb08da-ea2a-4e65-8abd-e670dc48bd10",
+      "name": "Update MSR geolocation",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        340
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.volunteer_zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "city",
+                "value": "={{ $json.city }}"
+              },
+              {
+                "field": "cep",
+                "value": "={{ $json.zipcode }}"
+              },
+              {
+                "field": "state",
+                "value": "={{ $json.state }}"
+              },
+              {
+                "field": "neighborhood",
+                "value": "={{ $json.neighborhood }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "7fbbd1ca-8fc7-4098-9ec6-30e9331178cb",
+      "name": "Update volunteer geolocation",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1860,
+        1400
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -1103,42 +1199,42 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Zendesk Webhook",
-            "content-length": "156",
+            "content-length": "153",
             "accept-encoding": "gzip, br",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
-            "cdn-loop": "cloudflare; subreqs=1",
-            "cf-connecting-ip": "216.198.2.158",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "216.198.2.195",
             "cf-ew-via": "15",
             "cf-ipcountry": "US",
-            "cf-ray": "8aefba272790c54d-SEA",
+            "cf-ray": "8be6b6a3745a30a8-SEA",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-0000000000000000667aa7dc47419ee8-667aa7dc47419ee8-00",
-            "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.158, 172.71.142.2",
+            "traceparent": "00-66d9b8290000000096cb8be347e73d85-96cb8be347e73d85-00",
+            "tracestate": "dd=s:-1;p:96cb8be347e73d85",
+            "x-forwarded-for": "216.198.2.195, 172.71.146.72",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-fb6d78f9-jvss5",
+            "x-forwarded-server": "traefik-76f56c775b-sld5z",
             "x-is-trusted": "yes",
-            "x-real-ip": "216.198.2.158",
-            "x-request-id": "03922582-cc0f-4ba4-b4f6-27ea9d5fb3e8",
+            "x-real-ip": "216.198.2.195",
+            "x-request-id": "4c945ccc-c33c-481f-915e-d152da95b679",
             "x-zendesk-account-id": "9040899",
             "x-zendesk-webhook-id": "01HSGNVFZXZ0VD5KXJJC8YG4Z7",
-            "x-zendesk-webhook-invocation-id": "01J4M1K4ZGBDGXK803JEN1DQ7F",
-            "x-zendesk-webhook-signature": "kmdkS5r4Z/xtjSkPDlCVROE4IMqXJs7LrgE4jytNWlE=",
-            "x-zendesk-webhook-signature-timestamp": "2024-08-06T14:30:50Z"
+            "x-zendesk-webhook-invocation-id": "01J717ERDMCY795FNZJ6YN2V2N",
+            "x-zendesk-webhook-signature": "LVOwKE7/iO9rchfLFk89CySBCBovKj8otdJIAfkL/rw=",
+            "x-zendesk-webhook-signature-timestamp": "2024-09-05T13:54:49Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "msr_zendesk_user_id": "28764922752020",
-            "city": "Paranavaí",
-            "state": "PR",
-            "zipcode": "87706-030",
+            "msr_zendesk_user_id": "15434156226068",
+            "city": "Itabira",
+            "state": "MG",
+            "zipcode": "35900-025",
             "status": "inscrita",
-            "phone": "44999842979"
+            "phone": "73999317692"
           },
           "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-msr-info",
           "executionMode": "production"
@@ -1151,45 +1247,45 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Zendesk Webhook",
-            "content-length": "263",
+            "content-length": "247",
             "accept-encoding": "gzip, br",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
-            "cdn-loop": "cloudflare; subreqs=1",
-            "cf-connecting-ip": "216.198.2.158",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "216.198.2.195",
             "cf-ew-via": "15",
             "cf-ipcountry": "US",
-            "cf-ray": "8b211f9c646e9b59-SEA",
+            "cf-ray": "8be6c39ad6bd3078-SEA",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-0000000000000000181c76850d007f77-181c76850d007f77-00",
-            "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.158, 172.71.147.209",
+            "traceparent": "00-66d9ba3c000000005b43c2faab6f39e3-5b43c2faab6f39e3-00",
+            "tracestate": "dd=s:-1;p:5b43c2faab6f39e3",
+            "x-forwarded-for": "216.198.2.195, 172.71.147.103",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-fb6d78f9-msbll",
+            "x-forwarded-server": "traefik-76f56c775b-nqz4f",
             "x-is-trusted": "yes",
-            "x-real-ip": "216.198.2.158",
-            "x-request-id": "8155fbb1-f731-41d5-b4d8-b8eca831b8b0",
+            "x-real-ip": "216.198.2.195",
+            "x-request-id": "89ab9582-7207-4e61-a6d2-eab077eeca6c",
             "x-zendesk-account-id": "9040899",
             "x-zendesk-webhook-id": "01HSGXS4E94S3BH8DFMQKPAVDJ",
-            "x-zendesk-webhook-invocation-id": "01J53FHZ3EXHVXKJXE00M73NAA",
-            "x-zendesk-webhook-signature": "Z4Ur+UWPB77Rb/197bfSX52KetG+XT95FpjKAk6YYRk=",
-            "x-zendesk-webhook-signature-timestamp": "2024-08-12T14:23:28Z"
+            "x-zendesk-webhook-invocation-id": "01J717YYXWNX6Y66MV4PBDBMA5",
+            "x-zendesk-webhook-signature": "G2WOReEcFXeWSJtIPYYmq5ab3Xg9e+ZAw7ouobIqLY4=",
+            "x-zendesk-webhook-signature-timestamp": "2024-09-05T14:03:40Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "volunteer_zendesk_user_id": "22019136695060",
-            "city": "São Caetano do Sul",
+            "volunteer_zendesk_user_id": "417544904932",
+            "city": "CAMPINAS",
             "state": "SP",
-            "first_name": "Sofia",
+            "first_name": "Psi",
             "availability": "2",
-            "zipcode": "09550-180",
-            "phone": "11999475668",
-            "register_number": "506750",
-            "email": "tangerino.sofia@gmail.com"
+            "zipcode": "01303020",
+            "phone": "19999999999",
+            "register_number": "13/232453",
+            "email": "dev.psi.mapa@gmail.com"
           },
           "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-volunteer-info",
           "executionMode": "production"
@@ -1213,6 +1309,6 @@
     }
   ],
   "triggerCount": 2,
-  "updatedAt": "2024-08-14T16:51:25.000Z",
-  "versionId": "5bf61b62-5813-4d40-9cf9-67de2f82a33b"
+  "updatedAt": "2024-09-05T14:07:51.000Z",
+  "versionId": "42393537-b8d0-4b9a-a9ad-aa1050bc40c3"
 }
