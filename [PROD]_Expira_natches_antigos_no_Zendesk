@@ -1,0 +1,372 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca matches expirados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Precisa atualizar no Zendesk?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tickets das Voluntárias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Busca ticket no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca ticket no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o status do ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Precisa atualizar no Zendesk?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o status do ticket": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca matches expirados": {
+      "main": [
+        [
+          {
+            "node": "Tickets das Voluntárias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Tickets das MSRs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-05T14:20:27.470Z",
+  "id": "Run8W41jJUKs8vBV",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Expira natches antigos no Zendesk",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "77632a09-04e6-4d7c-afb0-59841c172720",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        360,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "78a99146-c5ad-40db-be9f-4cc9f3dcd821",
+              "leftValue": "={{ $json.custom_fields[2].value }}",
+              "rightValue": "encaminhamento__expirado",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "6752dacc-7549-49ad-821e-7702f316ed31",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "closed",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "383cf0db-4051-4332-9c02-bdd35c1efdf9",
+      "name": "Precisa atualizar no Zendesk?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "394151d1-434b-4214-b38f-223338c62da7",
+              "name": "volunteer_zendesk_ticket_id",
+              "value": "={{ $json.volunteer_zendesk_ticket_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cffc8de4-1ca9-4f5e-9acd-90b1d1d7a076",
+      "name": "Tickets das Voluntárias",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        800,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "394151d1-434b-4214-b38f-223338c62da7",
+              "name": "volunteer_zendesk_ticket_id",
+              "value": "={{ $json.msr_zendesk_ticket_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b7a2e537-2911-4a2c-b801-05b477172ac2",
+      "name": "Tickets das MSRs",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        800,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "eff79927-0a4d-4773-bdb0-83e0d58acb1b",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        140
+      ],
+      "webhookId": "2bfda7f8-eed9-42d7-b33a-b91dc59263f4"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": "={{ $json.volunteer_zendesk_ticket_id }}"
+      },
+      "id": "97a00c31-d751-4da5-90d3-4ef04cf8689b",
+      "name": "Busca ticket no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        140
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "batchSize": 100,
+        "options": {}
+      },
+      "id": "8684ab29-cfc0-468a-8cb4-ee101f8fb34f",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2260,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "970d9d95-14cd-4bc2-89be-45a836305efe",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2500,
+        -140
+      ],
+      "webhookId": "5758fcc3-8ec6-4463-9401-1b81db5eb79c"
+    },
+    {
+      "parameters": {
+        "batchSize": 100,
+        "options": {}
+      },
+      "id": "c554970f-4d01-471e-b848-5e4f8c64fb53",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1160,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "encaminhamento__expirado"
+              }
+            ]
+          }
+        }
+      },
+      "id": "1913cb4d-3f33-4859-a91f-d86f3fffaeb4",
+      "name": "Atualiza o status do ticket",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2680,
+        -140
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH matches_with_rn AS (\n    SELECT \n        support_request_id,\n        status,\n        msr_zendesk_ticket_id,\n        volunteer_zendesk_ticket_id,\n        ROW_NUMBER() OVER(PARTITION BY support_request_id ORDER BY updated_at DESC) AS rn\n    FROM match.matches\n),\nmost_recent_matches AS (\n    SELECT *\n    FROM matches_with_rn\n    WHERE rn = 1\n),\nexpired_matches AS (\n    SELECT *\n    FROM most_recent_matches\n    WHERE status = 'expired'\n),\nsupport_requests AS (\n    SELECT \n        support_request_id,\n        status\n    FROM match.support_requests\n)\nSELECT *\nFROM expired_matches m\nLEFT JOIN support_requests s USING(support_request_id)\nWHERE s.status = 'matched'",
+        "options": {}
+      },
+      "id": "f56441f1-475f-45d9-9c9b-cdeedcdcc165",
+      "name": "Busca matches expirados",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        580,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-05T17:42:57.000Z",
+  "versionId": "7236861a-c675-49dc-a41b-0dfd0d9389dd"
+}
