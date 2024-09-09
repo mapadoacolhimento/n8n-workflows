@@ -1,0 +1,264 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca match_confirmations que precisam ser expiradas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Faz autenticação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia erro por Slack": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Une os dados com a autenticação": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chama o endpoint /expire-match-confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca match_confirmations que precisam ser expiradas": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Faz autenticação": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chama o endpoint /expire-match-confirmation": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envia erro por Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-09T14:45:30.210Z",
+  "id": "80T6sUuZOct53UWa",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Expira match_confirmations",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a68f319d-a400-427c-8145-0f1f73d6161a",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT match_confirmation_id\nFROM match.match_confirmations\nWHERE (EXTRACT(EPOCH FROM (current_timestamp-created_at))/3600) >= 24\nAND status = 'waiting'",
+        "options": {}
+      },
+      "id": "f35e1431-886e-4869-b453-026855e373e5",
+      "name": "Busca match_confirmations que precisam ser expiradas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1020,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $vars.STG_CONFIRMACAO_LAMBDA_URL }}/sign",
+        "options": {}
+      },
+      "id": "8905dd93-34df-4927-9e0f-8a791bfedd88",
+      "name": "Faz autenticação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C06H7GA52A1",
+          "mode": "list",
+          "cachedResultName": "monitoramento-erros"
+        },
+        "text": "=ERROR: Não foi possível criar um match para esse `support_request` '{{ $json.support_request_id  }}', por conta desse erro: {{ $json.error.message }} \n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
+        "otherOptions": {}
+      },
+      "id": "6cfe95fe-30d7-4c1a-8cb0-ed3b3c2083f6",
+      "name": "Envia erro por Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        2040,
+        420
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "1f495108-ff20-4200-8952-7cadc9b56aa3",
+      "name": "Une os dados com a autenticação",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1340,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9af65dae-63b9-4ec1-8402-31c56b52f812",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1580,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b16e3218-fc93-4ee5-bcc4-a01e7b3d8323",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.STG_CONFIRMACAO_LAMBDA_URL}}/expire-match-confirmation",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n  \"supportRequest\": {\n        \"matchConfirmationId\": {{ $json.match_confirmation_id}}\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "id": "f55f0819-54f5-444e-a9f1-913392acf9cd",
+      "name": "Chama o endpoint /expire-match-confirmation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        340
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIMsEMUNmopmC6DL",
+          "name": "Lambda Auth Token"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-09T17:53:52.000Z",
+  "versionId": "5f390841-1e98-4415-9607-433cf60610bb"
+}
