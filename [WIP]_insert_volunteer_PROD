@@ -1,0 +1,289 @@
+{
+  "active": false,
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Fetch volunteers",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetches lat long",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle invalid lat long1": {
+      "main": [
+        [
+          {
+            "node": "Volunteers with lat long",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Volunteers with lat long": {
+      "main": [
+        [
+          {
+            "node": "Insert into volunteers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch volunteers": {
+      "main": [
+        [
+          {
+            "node": "Volunteers with lat long",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetches lat long": {
+      "main": [
+        [
+          {
+            "node": "Handle invalid lat long1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Insert into volunteer_availability",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert into volunteer_availability1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert into volunteers": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-09T18:06:47.173Z",
+  "id": "hbETpUZwCJMr2Zgk",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[WIP] insert volunteer PROD",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "04e88313-4ede-43d2-a324-bc32dfdbac4b",
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        900,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  \n  if(!item.json.latitude || !item.json.longitude)\n  {\n    item.json.latitude = null;\n    item.json.longitude = null;\n  }\n  else {\n    \n    const isLatitudeNotANumber = isNaN(item.json.latitude);\n    const isLongitudeNotANumber = isNaN(item.json.longitude);\n\n    if(isLatitudeNotANumber || isLongitudeNotANumber)\n    {\n      item.json.latitude = null;\n      item.json.longitude = null;\n    }\n    else {\n      \n      const isLatitudeNotInRange = item.json.latitude < -90 \n      || item.json.latitude > 90;\n    const isLongitudeNotInRange = item.json.longitude < -180 \n      || item.json.longitude > 180;\n\n      if(isLatitudeNotInRange || isLongitudeNotInRange)\n      {\n        item.json.latitude = null;\n        item.json.longitude = null;\n      }\n      else {\n        \n        item.json.latitude = parseFloat(item.json.latitude);\n        item.json.longitude = parseFloat(item.json.longitude);\n      }\n      \n    }\n  }\n}\n\nreturn $input.all();"
+      },
+      "id": "231b81b5-d7c1-4435-81f0-69108e165c3a",
+      "name": "Handle invalid lat long1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        2780
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "zendesk_user_id",
+              "field2": "zendesk_user_id"
+            }
+          ]
+        },
+        "joinMode": "enrichInput1",
+        "options": {}
+      },
+      "id": "01ab7e22-40dd-4165-aa0a-7feec3ff094e",
+      "name": "Volunteers with lat long",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        2980,
+        2480
+      ]
+    },
+    {
+      "parameters": {
+        "table": "volunteers",
+        "columns": "zendesk_user_id, form_entries_id, created_at, updated_at, first_name, last_name, email, phone, neighborhood, birth_date, register_number, color, gender, modality, fields_of_work, years_of_experience, availability, approach, form_data_id, occupation, moodle_id, latitude, longitude, zipcode, city, state, condition, offers_libras_support",
+        "additionalFields": {}
+      },
+      "id": "ac5ba2c4-474d-4abf-814b-d97bbc52eb9f",
+      "name": "Insert into volunteers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        3260,
+        2480
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    user_id AS zendesk_user_id,\n    external_id AS form_entries_id,\n    COALESCE(created_at, NOW()) AS created_at,\n    COALESCE(updated_at, NOW()) AS updated_at,\n    condition AS old_condition,\n    CASE \n      WHEN name = 'sem nome'  THEN 'not_found'\n      WHEN name = 'X'  THEN 'not_found'\n      WHEN name IS NULL  THEN 'not_found'\n      ELSE INITCAP(SUBSTR(BTRIM(name), 1, STRPOS(BTRIM(name), ' ')))\n    END AS first_name,\n    CASE \n      WHEN name = 'sem nome'  THEN 'not_found'\n      WHEN name = 'X'  THEN 'not_found'\n      WHEN name IS NULL  THEN 'not_found'\n      ELSE INITCAP(SUBSTR(BTRIM(name), (STRPOS(BTRIM(name), ' ') + 1)))\n    END AS last_name,\n    COALESCE(email, 'not_found') AS email,\n    COALESCE(BTRIM(phone), BTRIM(whatsapp), 'not_found') AS phone,\n    'not_found' AS neighborhood,\n    TO_TIMESTAMP(0)::DATE AS birth_date,\n    COALESCE(registration_number, 'not_found') AS register_number,\n    CASE \n      WHEN cor = 'amarela'  THEN 'yellow'\n      WHEN cor = 'branca'  THEN 'white'\n      WHEN cor = 'indigena'  THEN 'indigenous'\n      WHEN cor = 'parda'  THEN 'brown'\n      WHEN cor = 'preta'  THEN 'black'\n      ELSE 'not_found'\n    END AS color,\n    'not_found' AS gender, \n    CASE \n      WHEN email = 'magacrema@hotmail.com'  THEN 'on_site'\n      ELSE 'both'\n    END AS modality,\n    'not_found' AS fields_of_work,\n    'not_found' AS years_of_experience,\n    CASE \n      WHEN BTRIM(disponibilidade_de_atendimentos) = '1' THEN 1\n      WHEN BTRIM(disponibilidade_de_atendimentos) = '2' THEN 2\n      WHEN BTRIM(disponibilidade_de_atendimentos) = '3' THEN 3\n      WHEN BTRIM(disponibilidade_de_atendimentos) = '4' THEN 3\n      WHEN BTRIM(disponibilidade_de_atendimentos) = '5' OR BTRIM(disponibilidade_de_atendimentos) = '5_ou_mais' THEN 3\n      ELSE 1\n    END AS availability,\n    'not_found' AS approach,\n    NULL AS form_data_id,\n    CASE \n      WHEN organization_id = 360269610652 THEN 'lawyer'\n      ELSE 'psychologist'\n    END AS occupation,\n    NULL AS moodle_id,\n    FALSE AS offers_libras_support,\n    COALESCE(condition, 'not_found') AS condition, \n    replace(cep,'-','') as zipcode, \n    upper(city) as  city,\n    upper(state ) as state \nFROM public.solidarity_users \nWHERE \n   user_id = 394780854772\n",
+        "additionalFields": {}
+      },
+      "id": "7f10d726-31b5-47e7-95f0-28d25411598c",
+      "name": "Fetch volunteers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        2460
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    user_id AS zendesk_user_id,\n    latitude,\n    longitude  \nFROM public.solidarity_users \nWHERE \n user_id = 394780854772\n",
+        "additionalFields": {}
+      },
+      "id": "18472764-db42-46ea-bdcb-918e4764d186",
+      "name": "Fetches lat long",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        2780
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "  select id as volunteer_id, \n   0 current_matches, \n   availability as max_matches, \n   false  is_available, \n   case \n   \twhen occupation = 'lawyer' then 'legal'\n   \telse 'psychological'\n   end as \"support_type\", \n   true offers_online_support, \n   latitude as lat, \n   longitude as lng, city, \n   state, \n   offers_libras_support,\n   'not_found' as support_expertise, \n    now() as created_at,\n    now() as updated_at,\n    condition as status\n    FROM public.volunteers where id = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "91685044-d488-43f2-a6ba-d4137ea812c8",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        3460,
+        2480
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": "volunteer_availability",
+        "columns": "volunteer_id,current_matches,max_matches,is_available,support_type,offers_online_support,lat,lng, city,state, offers_libras_support,support_expertise,created_at,updated_at",
+        "additionalFields": {}
+      },
+      "id": "37d913e1-2d7f-404a-9532-c8c4b48c5caf",
+      "name": "Insert into volunteer_availability",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        3740,
+        2420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": "volunteer_status_history",
+        "columns": "volunteer_id,status,created_at",
+        "additionalFields": {}
+      },
+      "id": "40c7fffd-e1b8-4385-9d25-76e255f08e51",
+      "name": "Insert into volunteer_availability1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        3800,
+        2740
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-16T21:22:09.302Z",
+      "updatedAt": "2024-01-16T21:22:09.302Z",
+      "id": "8M37j63g33Qdgeyh",
+      "name": "database pipeline"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-09T19:35:15.000Z",
+  "versionId": "45e856a9-044e-495e-8a28-1a8941054023"
+}
