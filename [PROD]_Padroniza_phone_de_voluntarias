@@ -1,0 +1,288 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias e telefones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias e telefones": {
+      "main": [
+        [
+          {
+            "node": "Valida telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valida telefone": {
+      "main": [
+        [
+          {
+            "node": "Precisa atualizar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Precisa atualizar?": {
+      "main": [
+        [
+          {
+            "node": "Ficou not_found?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ficou not_found?": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para dados_incompletos_telefone",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status da mulher para dados_incompletos_telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-09T17:58:35.394Z",
+  "id": "lPA9rHtgowkAnpMQ",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Padroniza phone de voluntárias",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "70ec8084-8f8a-4948-8fed-b5acdee80b13",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id, \n  condition,\n  occupation,\n  zendesk_user_id,\n  BTRIM(phone) AS phone,\n  created_at\nFROM volunteers\nWHERE \n  phone != 'not_found'\nORDER BY created_at DESC",
+        "options": {}
+      },
+      "id": "a7ee6ed5-461d-43cb-8583-6c61b239f57a",
+      "name": "Busca voluntárias e telefones",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nfunction cleanPhone(originalPhone) {\n  if (originalPhone.length === 11 || originalPhone.length === 10)\n    return originalPhone\n\n  if (originalPhone.length === 12 && originalPhone.substring(0, 1) === '0') \n    return originalPhone.substring(1, 12)\n\n  if(originalPhone.length === 13 && originalPhone.substring(0, 2) === '55')\n    return originalPhone.substring(2, 13)\n  \n  return 'not_found'\n \n}\n\nfor (const item of $input.all()) {\n  const originalPhone = item.json.phone.replace(/\\D/g,'');\n  const cleanedPhone = cleanPhone(originalPhone)\n\n  \n  item.json.cleaned_phone = cleanedPhone\n\n}\n\n\n\nreturn $input.all();"
+      },
+      "id": "055fd41d-1e90-489c-8174-3a5beca54d61",
+      "name": "Valida telefone",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "9fc30008-7492-4dcd-9313-84e55af0f474",
+              "leftValue": "={{ $json.cleaned_phone }}",
+              "rightValue": "=not_found",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "5d6c9a7b-b590-4f1d-978c-e95b0dd7491d",
+              "leftValue": "={{ $json.condition }}",
+              "rightValue": "descadastrada",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "c3023d6a-54e9-4462-9c66-89f98da58462",
+              "leftValue": "={{ $json.condition }}",
+              "rightValue": "desabilitada",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "50a2ce37-ffdf-4d3d-bb43-bd8c5c6fd4ea",
+      "name": "Ficou not_found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "a2a8b81d-2417-4552-8588-955be9518141",
+              "leftValue": "={{ $json.phone }}",
+              "rightValue": "={{ $json.cleaned_phone }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e74dec67-a52a-45e5-8ede-15eddc8bd1c1",
+      "name": "Precisa atualizar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET phone = '{{ $json.cleaned_phone }}'\nWHERE id = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "46731033-06dd-49f2-8b84-c7e12f4b2ab9",
+      "name": "Atualiza phone",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1720,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "dados_incompletos_telefone"
+              }
+            ]
+          }
+        }
+      },
+      "id": "10df55ba-db40-4ceb-af02-71a50b6317f7",
+      "name": "Atualiza status da mulher para dados_incompletos_telefone",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        140
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = 'dados_incompletos_telefone', updated_at = NOW()\nWHERE id = {{ $json.id }};\n\nINSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.id }}, 'dados_incompletos_telefone', NOW());\n\nUPDATE volunteer_availability\nSET is_available = FALSE\nWHERE volunteer_id = {{ $json.id }};",
+        "options": {}
+      },
+      "id": "f62e61d1-352b-4abb-8470-9b3d3d13b25d",
+      "name": "Atualiza status para dados_incompletos_telefone",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2200,
+        -40
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-09T19:42:58.000Z",
+  "versionId": "1b41438a-ed3c-49df-9d62-d6ec3f564188"
+}
