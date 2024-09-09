@@ -1,0 +1,173 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias a serem comunicadas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca voluntárias do grupo  3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca voluntárias do grupo 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias a serem comunicadas": {
+      "main": [
+        [
+          {
+            "node": "Envia mensagem por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-09T19:48:58.434Z",
+  "id": "WPYScFqR9HGwdz75",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Envia comunicações do Recadastro por WhatsApp",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5ae9193d-7bf7-464f-a6ad-0a7f1d4b9cef",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        780,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  CONCAT('whatsapp:+55', phone) AS phone,\n  first_name\nFROM volunteers\nWHERE zendesk_user_id = 423092711812",
+        "options": {}
+      },
+      "id": "9c4b5e2b-d705-46b9-a44c-6b1543e32b4f",
+      "name": "Busca voluntárias a serem comunicadas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1220,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MG079062f161fcf64622214b97dfe44e3c"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX2dd028a6614cbc1e12a5ed3eeee0ab24"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n\"volunteerName\": \"{{ $json.first_name }}\",\n\"matchConfirmationId\": \"1\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "965f4a3a-708d-49e6-aa19-79f28a7e28f6",
+      "name": "Envia mensagem por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        340
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT \n  volunteer_id, \n  CONCAT('whatsapp:+55', phone) AS phone,\n  first_name\nFROM total\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE grupo = 'group_1'\n  AND engajou = 'não engajou'\n  AND phone != 'not_found'\n",
+        "options": {}
+      },
+      "id": "48e2552c-6568-4955-b5c4-4065c01ea2d9",
+      "name": "Busca voluntárias do grupo 1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1200,
+        660
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT \n  volunteer_id, \n  CONCAT('whatsapp:+55', phone) AS phone,\n  first_name\nFROM total\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE grupo = 'group_3'\n  AND engajou = 'não engajou'\n  AND phone != 'not_found'\n",
+        "options": {}
+      },
+      "id": "16beb340-e37b-4614-9894-ea39f5f1ecfe",
+      "name": "Busca voluntárias do grupo  3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1200,
+        920
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-09T20:22:27.000Z",
+  "versionId": "99d43eba-cfda-4ff1-9fbc-a3a241f87c11"
+}
