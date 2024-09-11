@@ -1,0 +1,339 @@
+{
+  "active": false,
+  "connections": {
+    "Ordena do mais antigo para o mais recente em cada ano": {
+      "main": [
+        [
+          {
+            "node": "Limite de 30 support_requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Faz autenticação": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_requests de 2024 e 2023": {
+      "main": [
+        [
+          {
+            "node": "Ordena do mais antigo para o mais recente em cada ano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chama o endpoint de match": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envia erro por Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Une os dados com a autenticação": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chama o endpoint de match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia erro por Slack": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Faz autenticação",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca support_requests de 2024 e 2023",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limite de 30 support_requests": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-11T18:10:15.702Z",
+  "id": "EF2M9kdlN1dFMRHA",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG-NEW] Match Diário",
+  "nodes": [
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "ano",
+              "order": "descending"
+            },
+            {
+              "fieldName": "created_at"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "84767f40-54f7-4eed-ba97-2b8c3d5ff667",
+      "name": "Ordena do mais antigo para o mais recente em cada ano",
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $vars.PROD_MATCH_LAMBDA_URL }}/sign",
+        "options": {}
+      },
+      "id": "ce3aff6d-b836-4d8c-a2ad-a6a00b6bf317",
+      "name": "Faz autenticação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  *,\n  DATE_PART('year', created_at) AS ano\nFROM match.support_requests\nWHERE status = 'waiting_for_match';",
+        "options": {}
+      },
+      "id": "deeb8a8e-ad4f-4adb-86c5-62135abaa9ea",
+      "name": "Busca support_requests de 2024 e 2023",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        980,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C06H7GA52A1",
+          "mode": "list",
+          "cachedResultName": "monitoramento-erros"
+        },
+        "text": "=ERROR: Não foi possível criar um match para esse `support_request` '{{ $json.support_request_id  }}', por conta desse erro: {{ $json.error.message }} \n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
+        "otherOptions": {}
+      },
+      "id": "6c18c3b9-ee38-4643-bbd0-46c64578d1f3",
+      "name": "Envia erro por Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        2640,
+        440
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.PROD_MATCH_LAMBDA_URL }}/handle-match",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n  \"supportRequest\": {\n        \"supportRequestId\": {{ $json.support_request_id }},\n        \"msrId\": {{ $json.msr_id }},\n        \"zendeskTicketId\": {{ $json.zendesk_ticket_id }},\n        \"supportType\": \"{{ $json.support_type }}\",\n        \"status\": \"{{ $json.status }}\",\n        \"supportExpertise\": \"{{ $json.support_expertise }}\",\n        \"priority\": null,\n        \"hasDisability\": null,\n        \"requiresLibras\": null,\n        \"acceptsOnlineSupport\": {{ $json.accepts_online_support || null}},\n        \"lat\": {{ $json.lat }},\n        \"lng\": {{ $json.lng }},\n        \"city\": \"{{ $json.city }}\",\n        \"state\": \"{{ $json.state }}\"\n  },\n  \"matchType\": \"daily\",\n  \"shouldRandomize\": false\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "id": "47dca660-15f4-4722-a1e7-05606fcb05ed",
+      "name": "Chama o endpoint de match",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIMsEMUNmopmC6DL",
+          "name": "Lambda Auth Token"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "65986df3-93a5-4915-9519-8d5e04a89328",
+      "name": "Une os dados com a autenticação",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1920,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c81e272b-347d-43b7-8c12-9e400ccff75a",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2180,
+        340
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "920dedc7-5773-41cc-b407-db6d02329144",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2380,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 10 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "d5ea9dd0-2a8d-46eb-b375-6baad51b95ed",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 30
+      },
+      "id": "915e4708-61db-4123-a594-66b576cfda3e",
+      "name": "Limite de 30 support_requests",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        340
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-09-11T18:10:15.702Z",
+  "versionId": "7cb93d2c-fd1f-48b6-8328-9407f96c874a"
+}
