@@ -50,7 +50,7 @@
         ],
         [
           {
-            "node": "Chama o endpoint /expire-match-confirmation",
+            "node": "Chama o endpoint /expire",
             "type": "main",
             "index": 0
           }
@@ -79,7 +79,7 @@
         ]
       ]
     },
-    "Chama o endpoint /expire-match-confirmation": {
+    "Chama o endpoint /expire": {
       "main": [
         [
           {
@@ -119,7 +119,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT match_confirmation_id\nFROM match.match_confirmations\nWHERE (EXTRACT(EPOCH FROM (current_timestamp-created_at))/3600) >= 24\nAND status = 'waiting'",
+        "query": "SELECT match_confirmation_id\nFROM match.match_confirmations\nWHERE (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - created_at))/3600) >= 24\nAND status = 'waiting'",
         "options": {}
       },
       "id": "f35e1431-886e-4869-b453-026855e373e5",
@@ -236,7 +236,7 @@
         }
       },
       "id": "f55f0819-54f5-444e-a9f1-913392acf9cd",
-      "name": "Chama o endpoint /expire-match-confirmation",
+      "name": "Chama o endpoint /expire",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -250,15 +250,37 @@
         }
       },
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "2817356e-57e8-494b-a15e-6ca5a7d36aeb",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        -20
+      ]
     }
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-09-09T17:53:52.000Z",
-  "versionId": "5f390841-1e98-4415-9607-433cf60610bb"
+  "updatedAt": "2024-09-11T18:09:06.000Z",
+  "versionId": "a5fe4346-1a76-44ff-b615-edd8bd362ecb"
 }
