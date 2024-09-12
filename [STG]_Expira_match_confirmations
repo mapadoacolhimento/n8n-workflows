@@ -161,7 +161,7 @@
           "mode": "list",
           "cachedResultName": "monitoramento-erros"
         },
-        "text": "=ERROR: Não foi possível criar um match para esse `support_request` '{{ $json.support_request_id  }}', por conta desse erro: {{ $json.error.message }} \n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
+        "text": "=ERROR: Não foi possível expirar o match_confirmation.\n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
         "otherOptions": {}
       },
       "id": "6cfe95fe-30d7-4c1a-8cb0-ed3b3c2083f6",
@@ -221,12 +221,12 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $vars.STG_CONFIRMACAO_LAMBDA_URL}}/expire-match-confirmation",
+        "url": "={{ $vars.STG_CONFIRMACAO_LAMBDA_URL}}/expire",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \n  \"supportRequest\": {\n        \"matchConfirmationId\": {{ $json.match_confirmation_id}}\n}",
+        "jsonBody": "={ \n  \"matchConfirmationId\": 2\n}",
         "options": {
           "batching": {
             "batch": {
@@ -243,6 +243,7 @@
         1800,
         340
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "httpHeaderAuth": {
           "id": "MIMsEMUNmopmC6DL",
@@ -281,6 +282,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-09-11T18:09:06.000Z",
-  "versionId": "a5fe4346-1a76-44ff-b615-edd8bd362ecb"
+  "updatedAt": "2024-09-12T17:42:31.000Z",
+  "versionId": "3a00aa9d-9b8a-4614-8601-ae6d77e3fca5"
 }
