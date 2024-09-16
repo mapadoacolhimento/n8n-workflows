@@ -1046,6 +1046,28 @@
           }
         ]
       ]
+    },
+    "Insert volunteer_availability": {
+      "main": [
+        [
+          {
+            "node": "Make volunteers unavailable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make volunteers unavailable": {
+      "main": [
+        [
+          {
+            "node": "Make test volunteers available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-07-24T19:29:53.990Z",
@@ -7010,6 +7032,48 @@
           "name": "[STG] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteer_availability\nSET is_available = FALSE;",
+        "options": {}
+      },
+      "id": "2b6c982e-c3c4-429a-aea4-ec289ec76e35",
+      "name": "Make volunteers unavailable",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1540,
+        20
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteer_availability\nSET is_available = TRUE, max_matches = 3, current_matches = 0\nWHERE volunteer_id in (27042, 27775);",
+        "options": {}
+      },
+      "id": "d0e46760-dfc9-4ae0-99eb-b7f98d9d57bc",
+      "name": "Make test volunteers available",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1760,
+        20
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -7033,6 +7097,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-08-06T13:33:53.000Z",
-  "versionId": "0145a2f3-881f-4ac0-82a0-227ef18834e5"
+  "updatedAt": "2024-09-16T20:29:06.000Z",
+  "versionId": "9d300090-9461-4558-ba8b-013205d275e2"
 }
