@@ -1,0 +1,89 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Envia mensagem por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-17T12:49:01.365Z",
+  "id": "QGfQNUybXTiAaqUv",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Régua de engajamento de Voluntárias",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f6efffd3-57ee-472d-b630-414d7df4c233",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        380,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=5513997270748"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX2dd028a6614cbc1e12a5ed3eeee0ab24"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n\"first_name\": \"Camila\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "16ebdd14-afe3-4201-ac6f-2a1c810e690d",
+      "name": "Envia mensagem por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        340
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-17T12:50:29.000Z",
+  "versionId": "e6940a00-99b6-40a5-b8d1-98941dac2e56"
+}
