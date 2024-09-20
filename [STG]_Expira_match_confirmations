@@ -1,22 +1,6 @@
 {
   "active": false,
   "connections": {
-    "When clicking \"Test workflow\"": {
-      "main": [
-        [
-          {
-            "node": "Busca match_confirmations que precisam ser expiradas",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Faz autenticação",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Envia erro por Slack": {
       "main": [
         [
@@ -96,6 +80,22 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Faz autenticação",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca match_confirmations que precisam ser expiradas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-09-09T14:45:30.210Z",
@@ -106,20 +106,9 @@
   "name": "[STG] Expira match_confirmations",
   "nodes": [
     {
-      "parameters": {},
-      "id": "a68f319d-a400-427c-8145-0f1f73d6161a",
-      "name": "When clicking \"Test workflow\"",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        720,
-        340
-      ]
-    },
-    {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT match_confirmation_id\nFROM match.match_confirmations\nWHERE (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - created_at))/3600) >= 24\nAND status = 'waiting'",
+        "query": "SELECT match_confirmation_id\nFROM match.match_confirmations\nWHERE (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - created_at))/3600) >= 23\nAND status = 'waiting'",
         "options": {}
       },
       "id": "f35e1431-886e-4869-b453-026855e373e5",
@@ -267,8 +256,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        700,
-        -20
+        720,
+        340
       ]
     }
   ],
@@ -282,6 +271,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-09-12T17:42:31.000Z",
-  "versionId": "3a00aa9d-9b8a-4614-8601-ae6d77e3fca5"
+  "updatedAt": "2024-09-20T14:05:59.000Z",
+  "versionId": "a2e9f1a7-1da7-4bf1-836e-fc69d6f6f9d3"
 }
