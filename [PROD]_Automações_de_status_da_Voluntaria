@@ -1,0 +1,65 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca Voluntárias que devem ficar disponíveis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-23T19:50:08.029Z",
+  "id": "ExFcheS7lfehSHNa",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Automações de status da Voluntária",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "bd19cc06-2ae9-4a28-9047-434d6f0bf224",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH status_history_with_rn AS (\n    SELECT\n        volunteer_id, \n        status,\n        created_at,\n        ROW_NUMBER() OVER(PARTITION BY volunteer_id ORDER BY created_at DESC) AS rn\n    FROM volunteer_status_history\n),\nlast_status_history AS (\n    SELECT\n        volunteer_id,\n        created_at AS last_status_at\n    FROM status_history_with_rn\n    WHERE rn = 1\n),\nvolunteers_with_days_since_last_status AS (\n    SELECT \n        id AS volunteer_id, \n        condition AS status,\n        last_status_at,\n        EXTRACT(DAY FROM CURRENT_TIMESTAMP - last_status_at) AS days_since_last_status\n    FROM volunteers\n    INNER JOIN last_status_history ON id = volunteer_id\n    WHERE condition IN ('indisponível_férias', 'indisponível_saude', 'indisponível_trabalho_e_estudo', 'indisponível_maternidade')\n),\nvolunteers_with_should_return_to_available AS (\n    SELECT \n        volunteer_id,\n        status, \n        days_since_last_status,\n        CASE \n            WHEN status = 'indisponível_férias' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_saude' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_trabalho_e_estudo' AND days_since_last_status > 180 THEN TRUE\n            WHEN status = 'indisponível_maternidade' AND days_since_last_status > 180 THEN TRUE\n            ELSE FALSE\n        END AS should_return_to_available\n    FROM volunteers_with_days_since_last_status\n)\nSELECT *\nFROM volunteers_with_should_return_to_available\nWHERE should_return_to_available",
+        "options": {}
+      },
+      "id": "243f366d-0d36-465f-97d4-f77fec208e29",
+      "name": "Busca Voluntárias que devem ficar disponíveis",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-23T20:21:16.000Z",
+  "versionId": "2c5eb31e-84e8-43f3-b817-415d05fff8a5"
+}
