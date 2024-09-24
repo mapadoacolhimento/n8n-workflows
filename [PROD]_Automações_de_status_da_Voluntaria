@@ -1,11 +1,66 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
-    "When clicking \"Test workflow\"": {
+    "Schedule Trigger": {
       "main": [
         [
           {
             "node": "Busca Voluntárias que devem ficar disponíveis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Voluntárias que devem ficar disponíveis": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status para Disponível",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza usuário do Zendesk",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "envia email de retorno": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "envia email de retorno",
             "type": "main",
             "index": 0
           }
@@ -21,20 +76,9 @@
   "name": "[PROD] Automações de status da Voluntária",
   "nodes": [
     {
-      "parameters": {},
-      "id": "bd19cc06-2ae9-4a28-9047-434d6f0bf224",
-      "name": "When clicking \"Test workflow\"",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        720,
-        340
-      ]
-    },
-    {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH status_history_with_rn AS (\n    SELECT\n        volunteer_id, \n        status,\n        created_at,\n        ROW_NUMBER() OVER(PARTITION BY volunteer_id ORDER BY created_at DESC) AS rn\n    FROM volunteer_status_history\n),\nlast_status_history AS (\n    SELECT\n        volunteer_id,\n        created_at AS last_status_at\n    FROM status_history_with_rn\n    WHERE rn = 1\n),\nvolunteers_with_days_since_last_status AS (\n    SELECT \n        id AS volunteer_id, \n        condition AS status,\n        last_status_at,\n        EXTRACT(DAY FROM CURRENT_TIMESTAMP - last_status_at) AS days_since_last_status\n    FROM volunteers\n    INNER JOIN last_status_history ON id = volunteer_id\n    WHERE condition IN ('indisponível_férias', 'indisponível_saude', 'indisponível_trabalho_e_estudo', 'indisponível_maternidade')\n),\nvolunteers_with_should_return_to_available AS (\n    SELECT \n        volunteer_id,\n        status, \n        days_since_last_status,\n        CASE \n            WHEN status = 'indisponível_férias' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_saude' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_trabalho_e_estudo' AND days_since_last_status > 180 THEN TRUE\n            WHEN status = 'indisponível_maternidade' AND days_since_last_status > 180 THEN TRUE\n            ELSE FALSE\n        END AS should_return_to_available\n    FROM volunteers_with_days_since_last_status\n)\nSELECT *\nFROM volunteers_with_should_return_to_available\nWHERE should_return_to_available",
+        "query": "WITH status_history_with_rn AS (\n    SELECT\n        volunteer_id, \n        status,\n        created_at,\n        ROW_NUMBER() OVER(PARTITION BY volunteer_id ORDER BY created_at DESC) AS rn\n    FROM volunteer_status_history\n),\nlast_status_history AS (\n    SELECT\n        volunteer_id,\n        created_at AS last_status_at\n    FROM status_history_with_rn\n    WHERE rn = 1\n),\nvolunteers_with_days_since_last_status AS (\n    SELECT \n        id AS volunteer_id, \n        email,\n        INITCAP(first_name) AS first_name,\n        zendesk_user_id,\n        condition AS status,\n        last_status_at,\n        EXTRACT(DAY FROM CURRENT_TIMESTAMP - last_status_at) AS days_since_last_status\n    FROM volunteers\n    INNER JOIN last_status_history ON id = volunteer_id\n    WHERE condition IN ('indisponível_férias', 'indisponível_saude', 'indisponível_trabalho_e_estudo', 'indisponível_maternidade', 'indisponível_outros_motivos')\n),\nvolunteers_with_should_return_to_available AS (\n    SELECT \n        volunteer_id,\n        email,\n        first_name,\n        zendesk_user_id,\n        status, \n        days_since_last_status,\n        CASE \n            WHEN status = 'indisponível_férias' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_saude' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_outros_motivos' AND days_since_last_status > 90 THEN TRUE\n            WHEN status = 'indisponível_trabalho_e_estudo' AND days_since_last_status > 180 THEN TRUE\n            WHEN status = 'indisponível_maternidade' AND days_since_last_status > 180 THEN TRUE\n            ELSE FALSE\n        END AS should_return_to_available\n    FROM volunteers_with_days_since_last_status\n)\nSELECT *\nFROM volunteers_with_should_return_to_available\nWHERE should_return_to_available",
         "options": {}
       },
       "id": "243f366d-0d36-465f-97d4-f77fec208e29",
@@ -51,15 +95,143 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"cm1fgpcut00z72irzgjnuvo5j\",\n \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "77ce95d0-0a2f-40dd-b666-bc59b6d2e2ae",
+      "name": "envia email de retorno",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1720,
+        60
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.volunteer_id }}, 'disponivel', NOW());\n\nUPDATE volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
+        "options": {}
+      },
+      "id": "b75671b9-a453-4e7d-aac0-d2be8eea0435",
+      "name": "Atualiza status para Disponível",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1520,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "disponivel"
+              }
+            ]
+          }
+        }
+      },
+      "id": "01b9cdb6-6582-402a-bfb3-a45d8eeb7be4",
+      "name": "Atualiza usuário do Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        580
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "163bc4ce-5496-4d7a-93fd-f1acd5c4367f",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0f44d8ca-d71d-48b3-8a46-92796e5f0391",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1240,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "fb5d9c32-b196-41e3-a8b6-94d40ea07636",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1480,
+        60
+      ],
+      "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
     }
   ],
   "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    }
+  },
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-09-23T20:21:16.000Z",
-  "versionId": "2c5eb31e-84e8-43f3-b817-415d05fff8a5"
+  "triggerCount": 1,
+  "updatedAt": "2024-09-24T17:24:08.000Z",
+  "versionId": "e94a2340-fdf6-4de2-8945-133c7dd669e6"
 }
