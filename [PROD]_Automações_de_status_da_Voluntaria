@@ -16,12 +16,12 @@
       "main": [
         [
           {
-            "node": "Atualiza status para Disponível",
+            "node": "Atualiza status no banco de dados",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Atualiza usuário do Zendesk",
+            "node": "Atualiza status no Zendesk",
             "type": "main",
             "index": 0
           },
@@ -78,7 +78,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH status_history_with_rn AS (\n    SELECT\n        volunteer_id, \n        status,\n        created_at,\n        ROW_NUMBER() OVER(PARTITION BY volunteer_id ORDER BY created_at DESC) AS rn\n    FROM volunteer_status_history\n),\nlast_status_history AS (\n    SELECT\n        volunteer_id,\n        created_at AS last_status_at\n    FROM status_history_with_rn\n    WHERE rn = 1\n),\nvolunteers_with_days_since_last_status AS (\n    SELECT \n        id AS volunteer_id, \n        email,\n        INITCAP(first_name) AS first_name,\n        zendesk_user_id,\n        condition AS status,\n        last_status_at,\n        EXTRACT(DAY FROM CURRENT_TIMESTAMP - last_status_at) AS days_since_last_status\n    FROM volunteers\n    INNER JOIN last_status_history ON id = volunteer_id\n    WHERE condition IN ('indisponível_férias', 'indisponível_saude', 'indisponível_trabalho_e_estudo', 'indisponível_maternidade', 'indisponível_outros_motivos')\n),\nvolunteers_with_should_return_to_available AS (\n    SELECT \n        volunteer_id,\n        email,\n        first_name,\n        zendesk_user_id,\n        status, \n        days_since_last_status,\n        CASE \n            WHEN status = 'indisponível_férias' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_saude' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_outros_motivos' AND days_since_last_status > 90 THEN TRUE\n            WHEN status = 'indisponível_trabalho_e_estudo' AND days_since_last_status > 180 THEN TRUE\n            WHEN status = 'indisponível_maternidade' AND days_since_last_status > 180 THEN TRUE\n            ELSE FALSE\n        END AS should_return_to_available\n    FROM volunteers_with_days_since_last_status\n)\nSELECT *\nFROM volunteers_with_should_return_to_available\nWHERE should_return_to_available",
+        "query": "WITH status_history_with_rn AS (\n    SELECT\n        volunteer_id, \n        status,\n        created_at,\n        ROW_NUMBER() OVER(PARTITION BY volunteer_id ORDER BY created_at DESC) AS rn\n    FROM volunteer_status_history\n),\nlast_status_history AS (\n    SELECT\n        volunteer_id,\n        created_at AS last_status_at\n    FROM status_history_with_rn\n    WHERE rn = 1\n),\nvolunteers_with_days_since_last_status AS (\n    SELECT \n        id AS volunteer_id, \n        email,\n        INITCAP(first_name) AS first_name,\n        zendesk_user_id,\n        condition AS status,\n        last_status_at,\n        EXTRACT(DAY FROM CURRENT_TIMESTAMP - last_status_at) AS days_since_last_status\n    FROM volunteers\n    INNER JOIN last_status_history ON id = volunteer_id\n    WHERE condition IN ('indisponível_férias', 'indisponível_saude', 'indisponível_trabalho_e_estudo', 'indisponível_maternidade', 'indisponível_outros_motivos')\n),\nvolunteers_with_should_return_to_available AS (\n    SELECT \n        volunteer_id,\n        email,\n        first_name,\n        zendesk_user_id,\n        status, \n        days_since_last_status,\n        CASE \n            WHEN status = 'indisponível_férias' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_saude' AND days_since_last_status > 30 THEN TRUE\n            WHEN status = 'indisponível_outros_motivos' AND days_since_last_status > 90 THEN TRUE\n            WHEN status = 'indisponível_trabalho_e_estudo' AND days_since_last_status > 180 THEN TRUE\n            WHEN status = 'indisponível_maternidade' AND days_since_last_status > 180 THEN TRUE\n            ELSE FALSE\n        END AS should_return_to_available\n    FROM volunteers_with_days_since_last_status\n)\nSELECT \n    volunteer_id,\n    email,\n    first_name,\n    zendesk_user_id,\n    should_return_to_available,\n    CASE WHEN current_matches >= max_matches THEN 'indisponivel_sem_vagas' ELSE 'disponivel' END AS new_status,\n    CASE WHEN current_matches >= max_matches THEN FALSE ELSE TRUE END AS new_is_available\nFROM volunteers_with_should_return_to_available\nINNER JOIN volunteer_availability USING(volunteer_id)\nWHERE should_return_to_available",
         "options": {}
       },
       "id": "243f366d-0d36-465f-97d4-f77fec208e29",
@@ -119,58 +119,6 @@
         "httpHeaderAuth": {
           "id": "XrvtxHAVgwwJ3r6q",
           "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.volunteer_id }}, 'disponivel', NOW());\n\nUPDATE volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
-        "options": {}
-      },
-      "id": "b75671b9-a453-4e7d-aac0-d2be8eea0435",
-      "name": "Atualiza status para Disponível",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        1520,
-        340
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "user",
-        "operation": "update",
-        "id": "={{ $json.zendesk_user_id }}",
-        "updateFields": {
-          "userFieldsUi": {
-            "userFieldValues": [
-              {
-                "field": "condition",
-                "value": "disponivel"
-              }
-            ]
-          }
-        }
-      },
-      "id": "01b9cdb6-6582-402a-bfb3-a45d8eeb7be4",
-      "name": "Atualiza usuário do Zendesk",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        1520,
-        580
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
         }
       }
     },
@@ -219,6 +167,58 @@
         60
       ],
       "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = '{{ $json.new_status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nINSERT INTO volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{ $json.volunteer_id }}, '{{ $json.new_status }}', NOW());\n\nUPDATE volunteer_availability\nSET is_available = {{ $json.new_is_available }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
+        "options": {}
+      },
+      "id": "b75671b9-a453-4e7d-aac0-d2be8eea0435",
+      "name": "Atualiza status no banco de dados",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1520,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "={{ $json.new_status }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "01b9cdb6-6582-402a-bfb3-a45d8eeb7be4",
+      "name": "Atualiza status no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        580
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -232,6 +232,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-09-24T17:24:08.000Z",
-  "versionId": "e94a2340-fdf6-4de2-8945-133c7dd669e6"
+  "updatedAt": "2024-09-25T17:51:29.000Z",
+  "versionId": "ed9d3e83-39f9-465a-bc5e-adc3c9adf8a9"
 }
