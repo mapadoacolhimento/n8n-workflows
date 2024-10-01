@@ -1,0 +1,530 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "busca tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca tickets": {
+      "main": [
+        [
+          {
+            "node": "Se encontrou mais de um ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se encontrou mais de um ticket": {
+      "main": [
+        [
+          {
+            "node": "Separa a lista de tickets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra tickets duplicados no dia 25/09": {
+      "main": [
+        [
+          {
+            "node": "Se existem tickets a serem apagados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se existem tickets a serem apagados": {
+      "main": [
+        [
+          {
+            "node": "Deleta tickets duplicados via API do Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deleta ticket duplicado via API do Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa a lista de tickets": {
+      "main": [
+        [
+          {
+            "node": "Filtra os tickets gerados em 25/09",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra os tickets gerados em 25/09": {
+      "main": [
+        [
+          {
+            "node": "Remove um ticket do dia 25/09",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se ainda sobrou algum tickets": {
+      "main": [
+        [
+          {
+            "node": "Deleta ticket duplicado via API do Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove um ticket do dia 25/09": {
+      "main": [
+        [
+          {
+            "node": "Se ainda sobrou algum tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-25T18:32:04.922Z",
+  "id": "PVLixpvtHqbPVJKX",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[FIX] Remove tickets duplicados voluntária cadastrada",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b2b99a69-420f-4c5f-aa35-b71e63a5357d",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "679a1533-020b-45f6-a6b4-c440a419db82",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        520,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "edf48817-42a9-477a-aef0-bd9b4c8ed7e3",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        260
+      ],
+      "webhookId": "b65046c6-1919-48de-8963-0d00d39b10a2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id,  concat(first_name, ' ', last_name) as name, first_name email,zendesk_user_id, occupation,condition,register_number, created_at, updated_at\nFROM  volunteers WHERE condition = 'cadastrada' and created_at < '2024-09-24' order by created_at",
+        "options": {}
+      },
+      "id": "87068819-1465-4b47-a7d4-6107f6f4319d",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        220,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{ $json[\"zendesk_user_id\"] }}/tickets/requested",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "options": {}
+      },
+      "id": "abaeb985-bac8-4d6d-b85d-6d27734332c9",
+      "name": "busca tickets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        920,
+        260
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/destroy_many.json?ids={{ $json.ticket_ids }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "options": {}
+      },
+      "id": "35d8db1f-80fc-40c2-9568-71e3115bf251",
+      "name": "Deleta tickets duplicados via API do Zendesk1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        2080,
+        320
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b41211fb-5b6e-4d77-8ffe-c7dce6417c2f",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "70b5edd6-07fb-4fbe-851a-ebdeb0f41eec",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "74d54378-404e-4df1-9443-809798856f34",
+      "name": "Se encontrou mais de um ticket",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        260
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst filtrarDuplicados = (array, campo) => {\n  const contador = array.reduce((acc, obj) => {\n    acc[obj[campo]] = (acc[obj[campo]] || 0) + 1;\n    return acc;\n  }, {});\n\n  return array.filter(obj => contador[obj[campo]] > 1);\n};\nconst filtrarPorData = (array, campo) => {\n  return array.filter(obj => obj[campo].split('T')[0] === '2024-09-25' && obj[\"description\"] === \"Importado via N8N\");\n};\nvar duplicated_tickets = [];\nvar ticket_ids = \"\";\nfor (const item of $input.all()) {\n  duplicated_tickets = filtrarPorData(filtrarDuplicados(item.json.tickets, 'subject'), 'created_at');\n  if (duplicated_tickets.length > 0){\n    for (i = 0; i < duplicated_tickets.length-1; i++) {\n      ticket_ids = ticket_ids + `${duplicated_tickets[i].id},`;\n    } \n  }\n}\nitems[0].json = { duplicated_tickets: duplicated_tickets, ticket_ids: ticket_ids.slice(0, -1)}\nreturn items;"
+      },
+      "id": "06816055-5ba0-4866-bd9b-16143391eb12",
+      "name": "Filtra tickets duplicados no dia 25/09",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        340
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "8c26321b-b74e-4893-b6e8-031ba1f5acdb",
+              "leftValue": "={{ $json.duplicated_tickets }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8bcd3853-ba0a-4409-9900-22b66846b8c8",
+      "name": "Se existem tickets a serem apagados",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U06CP90UD1U",
+          "mode": "list",
+          "cachedResultName": "adriele473"
+        },
+        "text": "Fluo finalizado",
+        "otherOptions": {}
+      },
+      "id": "33b52530-6182-4669-82ff-5959e7384109",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        740,
+        -80
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "options": {}
+      },
+      "id": "5419b482-044f-4a09-9a61-b1d4625a4a5e",
+      "name": "Deleta ticket duplicado via API do Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        2360,
+        20
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=tickets",
+        "options": {}
+      },
+      "id": "7e4de83c-e4bb-417b-b271-4fc3af88bc45",
+      "name": "Separa a lista de tickets",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "ed7cccb2-c9ad-44b7-88da-239d3736e152",
+              "leftValue": "={{ $json.created_at.split('T')[0] }}",
+              "rightValue": "2024-09-25",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "7674835e-011b-4896-9783-d8212db24173",
+              "leftValue": "={{ $json.description }}",
+              "rightValue": "Importado via N8N",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9c354a57-4ee7-419e-b87d-f3f2b0405667",
+      "name": "Filtra os tickets gerados em 25/09",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1580,
+        40
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "d722204b-641f-4969-99fb-b68937a741c6",
+              "leftValue": "={{ $json }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "caa7a6ee-abba-449a-953f-a16cac14151e",
+      "name": "Se ainda sobrou algum tickets",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2060,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": "={{ $input.all().length -1 }}"
+      },
+      "id": "9a6a0980-fcb4-4300-b43c-e6a703752535",
+      "name": "Remove um ticket do dia 25/09",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        40
+      ],
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-30T20:49:48.000Z",
+  "versionId": "7d0e84b2-0d0c-4425-b8c8-727f4c5b91c4"
+}
