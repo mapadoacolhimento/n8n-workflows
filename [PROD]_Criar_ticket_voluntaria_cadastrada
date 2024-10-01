@@ -28,7 +28,7 @@
       "main": [
         [
           {
-            "node": "Zendesk",
+            "node": "se nao tem zendesk user id",
             "type": "main",
             "index": 0
           }
@@ -39,7 +39,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk1",
             "type": "main",
             "index": 0
           }
@@ -50,7 +50,7 @@
       "main": [
         [
           {
-            "node": "Monta o assunto do ticket de acordo com a organização da voluntária",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -83,7 +83,7 @@
       "main": [
         [
           {
-            "node": "busca tickets",
+            "node": "Monta o assunto do ticket de acordo com a organização da voluntária",
             "type": "main",
             "index": 0
           }
@@ -108,7 +108,7 @@
         ],
         [
           {
-            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk1",
+            "node": "Zendesk",
             "type": "main",
             "index": 0
           }
@@ -141,7 +141,7 @@
       "main": [
         [
           {
-            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk1",
+            "node": "Zendesk1",
             "type": "main",
             "index": 0
           }
@@ -171,6 +171,75 @@
         [
           {
             "node": "Se não tem nenhum ticket do dia 25/",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monta o assunto do ticket de acordo com a organização da voluntária1": {
+      "main": [
+        [
+          {
+            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk1": {
+      "main": [
+        [
+          {
+            "node": "encontrou a voluntária no zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "encontrou a voluntária no zendesk1": {
+      "main": [
+        [
+          {
+            "node": "Monta o assunto do ticket de acordo com a organização da voluntária1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria o ticket de entrada da voluntária pela API do Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "se nao tem zendesk user id": {
+      "main": [
+        [
+          {
+            "node": "busca tickets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -210,13 +279,15 @@
       ]
     },
     {
-      "parameters": {},
+      "parameters": {
+        "amount": 2
+      },
       "id": "f5742b26-9027-426f-a424-d5f6f35c2934",
       "name": "Wait",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        980,
+        760,
         260
       ],
       "webhookId": "4f80a0c4-0970-49c4-8f69-125194dc1606",
@@ -224,21 +295,21 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  if (item.json.occupation == 'lawyer') {\n  \titem.json.subject =`[Advogada] ${item.json.name.trim()} - ${item.json.register_number}`;\n\n  } else {\n    item.json.subject =`[Psicóloga] ${item.json.name.trim()} - ${item.json.register_number}`;\n    \n  }\n}\n\nreturn $input.all();"
+        "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  if (item.json.organzation_id == 360269610652) {\n  \titem.json.subject =`[Advogada] ${item.json.name.trim()} - ${item.json.user_fields.registration_number}`;\n\n  } else {\n    item.json.subject =`[Psicóloga] ${item.json.name.trim()} - ${item.json.user_fields.registration_number}`;\n    \n  }\n}\n\nreturn $input.all();"
       },
       "id": "16e02c27-315b-46c7-84a9-148bb5b742f8",
       "name": "Monta o assunto do ticket de acordo com a organização da voluntária",
       "type": "n8n-nodes-base.code",
       "typeVersion": 1,
       "position": [
-        320,
-        240
+        2680,
+        300
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id,  concat(first_name, ' ', last_name) as name, first_name email,zendesk_user_id, occupation,condition,register_number, created_at, updated_at\nFROM  volunteers WHERE condition = 'cadastrada' and created_at < '2024-09-24' and id = 27776\nand updated_at < '2024-09-30' order by created_at",
+        "query": "SELECT id,  concat(first_name, ' ', last_name) as name, first_name email,zendesk_user_id, occupation,condition,register_number, created_at, updated_at\nFROM  volunteers WHERE condition = 'cadastrada' and created_at < '2024-09-24'\nand updated_at < '2024-09-30' order by created_at",
         "options": {}
       },
       "id": "b4110de1-d65d-43a4-a0eb-95baeb8d5f8d",
@@ -258,7 +329,7 @@
     },
     {
       "parameters": {
-        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{ $json[\"id\"] }}/tickets/requested",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{ $json[\"zendesk_user_id\"] }}/tickets/requested",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "zendeskApi",
         "options": {}
@@ -268,8 +339,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        1660,
-        60
+        1200,
+        240
       ],
       "credentials": {
         "zendeskApi": {
@@ -283,15 +354,15 @@
       "parameters": {
         "resource": "user",
         "operation": "get",
-        "id": "={{ $json.zendesk_user_id }}"
+        "id": "={{ $('Postgres').item.json.zendesk_user_id }}"
       },
       "id": "748e158f-9705-419e-9b52-3529d71cd924",
       "name": "Zendesk",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1180,
-        260
+        1920,
+        280
       ],
       "credentials": {
         "zendeskApi": {
@@ -339,8 +410,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1420,
-        260
+        2300,
+        300
       ]
     },
     {
@@ -371,8 +442,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1900,
-        340
+        1440,
+        260
       ],
       "onError": "continueRegularOutput"
     },
@@ -395,7 +466,7 @@
       "typeVersion": 2.1,
       "position": [
         820,
-        40
+        -360
       ],
       "credentials": {
         "slackOAuth2Api": {
@@ -414,8 +485,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        2200,
-        280
+        1700,
+        -400
       ]
     },
     {
@@ -429,8 +500,8 @@
           "conditions": [
             {
               "id": "ed7cccb2-c9ad-44b7-88da-239d3736e152",
-              "leftValue": "={{ $json.created_at.split('T')[0] }}",
-              "rightValue": "2024-09-25",
+              "leftValue": "={{ $json.description }}",
+              "rightValue": "Via cadastro.",
               "operator": {
                 "type": "string",
                 "operation": "equals",
@@ -448,7 +519,7 @@
               }
             }
           ],
-          "combinator": "and"
+          "combinator": "or"
         },
         "options": {}
       },
@@ -457,8 +528,8 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2,
       "position": [
-        2460,
-        280
+        2020,
+        -400
       ],
       "alwaysOutputData": true
     },
@@ -491,19 +562,19 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3120,
-        300
+        2660,
+        -380
       ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/",
+        "url": "=https://mapadokacolhimento.zendesk.com/api/v2/tickets/",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "zendeskApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"ticket\": {\n\t\t\"requester_id\": {{ $node[\"Zendesk\"].json['id'] }},\n\t\t\"organization_id\": {{ $node[\"Zendesk\"].json['organization_id'] }},\n\t\t\"description\":\"Importado via N8N\",\n\t\t\"subject\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"subject\"] }}\",\n\t\t\"comment\": {\n\t\t\t\"body\": \"Cadastrada\",\n\t\t\t\"public\": false\n\t\t},\n\t\t\"status\": \"pending\",\n\t\t\"custom_fields\": [\n\t\t\t\n\t\t\t{\n\t\t\t\t\"id\": 360016631592, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"name\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021665652, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"condition\"] }}\"\n\t\t\t}\n\n\t\t]\n\t}\n}",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"requester_id\": {{ $node[\"Zendesk\"].json['id'] }},\n\t\t\"organization_id\": {{ $node[\"Zendesk\"].json['organization_id'] }},\n\t\t\"description\":\"Importado via N8N\",\n\t\t\"subject\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"subject\"] }}\",\n\t\t\"comment\": {\n\t\t\t\"body\": \"Cadastrada\",\n\t\t\t\"public\": false\n\t\t},\n\t\t\"status\": \"pending\",\n\t\t\"custom_fields\": [\n\t\t\t\n\t\t\t{\n\t\t\t\t\"id\": 360016631592, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"name\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021665652, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json['user_fields'][\"condition\"] }}\"\n\t\t\t}\n\n\t\t]\n\t}\n}",
         "options": {}
       },
       "id": "be2ae4d8-27f2-4436-aee0-af0d4ef944d6",
@@ -511,8 +582,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        3300,
-        560
+        3100,
+        380
       ],
       "credentials": {
         "zendeskApi": {
@@ -532,8 +603,144 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        2720,
-        280
+        2320,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  if (item.json.organzation_id == 360269610652) {\n  \titem.json.subject =`[Advogada] ${item.json.name.trim()} - ${item.json.user_fields.registration_number}`;\n\n  } else {\n    item.json.subject =`[Psicóloga] ${item.json.name.trim()} - ${item.json.user_fields.registration_number}`;\n    \n  }\n}\n\nreturn $input.all();"
+      },
+      "id": "689c297a-d331-4015-a065-0ba202019d35",
+      "name": "Monta o assunto do ticket de acordo com a organização da voluntária1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        3700,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $('Postgres').item.json.zendesk_user_id }}"
+      },
+      "id": "449fee66-21f6-472f-8b40-811cf2d62702",
+      "name": "Zendesk1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        3000,
+        -360
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "bdc016e9-a31a-46f6-aa69-e58479cf9168",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "1f91d1a8-349d-473e-a095-d15f6e624cfd",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a5c2a864-5e84-42e7-be83-138f8d1758ec",
+      "name": "encontrou a voluntária no zendesk1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3380,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://mapadcokacolhimento.zendesk.com/api/v2/tickets/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"requester_id\": {{ $node[\"Zendesk1\"].json['id'] }},\n\t\t\"organization_id\": {{ $node[\"Zendesk1\"].json['organization_id'] }},\n\t\t\"description\":\"Importado via N8N\",\n\t\t\"subject\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária1\"].json[\"subject\"] }}\",\n\t\t\"comment\": {\n\t\t\t\"body\": \"Cadastrada\",\n\t\t\t\"public\": false\n\t\t},\n\t\t\"status\": \"pending\",\n\t\t\"custom_fields\": [\n\t\t\t\n\t\t\t{\n\t\t\t\t\"id\": 360016631592, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária1\"].json[\"name\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021665652, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária1\"].json['user_fields'][\"condition\"] }}\"\n\t\t\t}\n\n\t\t]\n\t}\n}",
+        "options": {}
+      },
+      "id": "45ca5ceb-9605-42f2-a829-38642b233e4d",
+      "name": "Cria o ticket de entrada da voluntária pela API do Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        3940,
+        -80
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "3ab881c3-38f2-4a4e-ace2-daf716f85852",
+              "leftValue": "={{ $json.zendesk_user_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2b951023-acf7-427c-b1d9-1576f36fb9f5",
+      "name": "se nao tem zendesk user id",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        980,
+        260
       ]
     }
   ],
@@ -544,6 +751,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-10-01T12:00:14.000Z",
-  "versionId": "dfff0156-9b03-4c70-a220-2fb3a6365e91"
+  "updatedAt": "2024-10-01T13:18:17.000Z",
+  "versionId": "73819d2b-7969-461f-9759-080d7cf14173"
 }
