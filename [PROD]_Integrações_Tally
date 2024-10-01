@@ -691,7 +691,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n  id AS volunteer_id,\n  email,\n  first_name,\n  phone,\n  zendesk_user_id,\n  COALESCE(current_matches, 0) AS current_matches,\n  '{{ $json.unsubscription_reason }}' AS unsubscription_reason,\n  '{{ $json.unsubscription_description }}' AS unsubscription_description\nFROM volunteers\nLEFT JOIN volunteer_availability ON id = volunteer_id\nWHERE email = '{{ $json.email }}'",
+        "query": "SELECT \n  id AS volunteer_id,\n  email,\n  first_name,\n  phone,\n  zendesk_user_id,\n  COALESCE(current_matches, 0) AS current_matches,\n  '{{ $json.unsubscription_reason }}' AS unsubscription_reason,\n  '{{ $json.unsubscription_description }}' AS unsubscription_description\nFROM volunteers\nLEFT JOIN volunteer_availability ON id = volunteer_id\nWHERE email = LOWER('{{ $json.email }}')",
         "options": {}
       },
       "id": "0bef115f-4852-4cbc-a530-1b67fec8b415",
@@ -3007,6 +3007,108 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Voluntária deseja se descadastrar": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "1391",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "baggage": "sentry-environment=production,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=cab807f1848945cb80cb6f76d704b649",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.41.110",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "8c8daf47064393f1-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "sentry-trace": "cab807f1848945cb80cb6f76d704b649-8ac4992c6fa05af4",
+            "x-forwarded-for": "34.96.41.110, 172.70.162.32",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-5d4997895f-4g2dm",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.110"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "3a78e3e9-3a61-4f7e-8b5c-5a420d14a92c",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2024-09-25T20:15:09.817Z",
+            "data": {
+              "responseId": "6zpdWO",
+              "submissionId": "6zpdWO",
+              "respondentId": "4Avg75",
+              "formId": "w48PJr",
+              "formName": "Descadastro de Voluntárias",
+              "createdAt": "2024-09-25T20:15:09.000Z",
+              "fields": [
+                {
+                  "key": "question_vX4q98_cdbd7ca0-1bf2-4ae1-8729-509c836c6871",
+                  "label": "email",
+                  "type": "HIDDEN_FIELDS",
+                  "value": ""
+                },
+                {
+                  "key": "question_dbjpDA",
+                  "label": "email",
+                  "type": "INPUT_TEXT",
+                  "value": "Luana.bonassi@hotmail.com"
+                },
+                {
+                  "key": "question_YjYgMd",
+                  "label": "unsubscribe_reason",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "19a95c2a-2449-404b-8d16-85eeab76f033"
+                  ],
+                  "options": [
+                    {
+                      "id": "19a95c2a-2449-404b-8d16-85eeab76f033",
+                      "text": "Estou sem tempo no momento"
+                    },
+                    {
+                      "id": "fd4d1db2-9b8a-4d28-ac30-e1b67e7f147e",
+                      "text": "Não me identifico mais com o projeto"
+                    },
+                    {
+                      "id": "5f4284c3-c3dc-4eff-8874-f5a9afbca416",
+                      "text": "O voluntariado não atendeu às minhas expectativas"
+                    },
+                    {
+                      "id": "e28829fc-a06f-4ee9-9fbf-fe73c9ed004a",
+                      "text": "Nunca recebi um atendimento pelo Mapa do Acolhimento"
+                    },
+                    {
+                      "id": "731d6bee-0f75-4b4e-9e97-d741c4be0543",
+                      "text": "Não tive uma boa experiência"
+                    },
+                    {
+                      "id": "f32e8953-37c0-4ce8-bae7-a76c34d22c1d",
+                      "text": "Os casos recebidos pelo Mapa do Acolhimento são muito complexos e não me sinto preparada para atendê-los"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_rDEWxl",
+                  "label": "describe_unsubscribe_reason",
+                  "type": "TEXTAREA",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/volunteer-unsubscribe",
+          "executionMode": "production"
+        }
+      }
     ]
   },
   "settings": {
@@ -3018,6 +3120,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2024-08-29T16:43:54.000Z",
-  "versionId": "39e689f3-c8ac-4117-80df-8d4c9f572803"
+  "updatedAt": "2024-09-26T13:12:25.000Z",
+  "versionId": "9896dca5-7ce9-4885-b741-fc11b297500f"
 }
