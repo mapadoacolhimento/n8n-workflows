@@ -1,0 +1,150 @@
+{
+  "active": true,
+  "connections": {
+    "Obtém as informações relevantes": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntária": {
+      "main": [
+        [
+          {
+            "node": "Envia a resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recebe mensagens": {
+      "main": [
+        [
+          {
+            "node": "Obtém as informações relevantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-25T18:38:54.152Z",
+  "id": "4KO885p9fIhSSlNa",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Recebe respostas do Recadastro",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $vars.TWILIO_RECADASTRO_SENDER_ID }}"
+            },
+            {
+              "name": "ContentSid",
+              "value": "={{ $json.template_sid }}"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n\"email\": \"{{ $json.email }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5d7c1b71-2bd2-47ee-bd4d-b7fc3be2a63f",
+      "name": "Envia a resposta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        420
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function getReply(volunteerMessage){\n  const replyLookup = {\n    'recadastro': $vars.TWILIO_RECADASTRO_TEMPLATE_ID,\n    'descadastro': $vars.TWILIO_DESCADASTRO_TEMPLATE_ID\n  }\n\n  const shouldSendGenericReply = !volunteerMessage || !Object.keys(replyLookup).includes(volunteerMessage);\n  \n  if(shouldSendGenericReply)\n    return $vars.TWILIO_GENERIC_REPLY_ID\n\n  return replyLookup[volunteerMessage] \n}\n\noutput = [];\nfor (const item of $input.all()) {\n  const payload = item.json.body.ButtonPayload;\n  let volunteerId;\n  let volunteerMessage;\n\n  if(!!payload){\n    volunteerId = payload.split('_')[1];\n    volunteerMessage = payload.split('_')[0];\n  }\n  else {\n    volunteerId = 0;\n    volunteerMessage = item.json.body.Body;\n  }\n  \n  const phone = item.json.body.From;\n\n   const reply = getReply(volunteerMessage);\n\n  output.push({\n    volunteer_id: volunteerId,\n    phone: phone,\n    template_sid: reply\n    \n  })\n}\n\nreturn output;"
+      },
+      "id": "8c6b75de-0f7d-4c94-a1f3-8f7a6a3a1688",
+      "name": "Obtém as informações relevantes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        740,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH message_info AS (\n  SELECT \n    {{ $json.volunteer_id }} AS volunteer_id,\n    '{{ $json.phone }}' AS phone,\n    '{{ $json.template_sid }}' AS template_sid\n),\nvolunteer AS (\n  SELECT\n    id AS volunteer_id,\n    email\n  FROM volunteers\n  WHERE id = {{ $json.volunteer_id }}\n)\nSELECT \n    phone,\n    template_sid,\n    COALESCE(email, '') AS email\nFROM message_info\nLEFT JOIN volunteer USING(volunteer_id)\n  ",
+        "options": {}
+      },
+      "id": "90597634-13fb-4230-8401-4fa76a399a98",
+      "name": "Busca voluntária",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        960,
+        420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "recadastro-voluntarias",
+        "options": {}
+      },
+      "id": "560f26f5-fb35-46f6-a83d-a48e8927901e",
+      "name": "Recebe mensagens",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        520,
+        420
+      ],
+      "webhookId": "f68af4d8-522a-4788-ac04-f30b8149a030"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-10-01T13:27:07.000Z",
+  "versionId": "8ef1e981-a9c3-4486-a78f-5eedc2d385cf"
+}
