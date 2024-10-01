@@ -1,0 +1,549 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monta o assunto do ticket de acordo com a organização da voluntária": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Monta o assunto do ticket de acordo com a organização da voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca tickets": {
+      "main": [
+        [
+          {
+            "node": "se existe tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk": {
+      "main": [
+        [
+          {
+            "node": "encontrou a voluntária no zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "encontrou a voluntária no zendesk": {
+      "main": [
+        [
+          {
+            "node": "busca tickets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "se existe tickets": {
+      "main": [
+        [
+          {
+            "node": "Separa a lista de tickets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa a lista de tickets": {
+      "main": [
+        [
+          {
+            "node": "Filtra os tickets gerados em 25/09",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra os tickets gerados em 25/09": {
+      "main": [
+        [
+          {
+            "node": "Reúne os tickets filtrados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se não tem nenhum ticket do dia 25/": {
+      "main": [
+        [
+          {
+            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria o ticket de entrada da voluntária pela API do Zendesk1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reúne os tickets filtrados": {
+      "main": [
+        [
+          {
+            "node": "Se não tem nenhum ticket do dia 25/",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-26T12:44:50.223Z",
+  "id": "gPErKVtIDsDWfGaw",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Criar ticket voluntária cadastrada",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8e4340be-4671-4424-a101-0a82544a7678",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b389b97d-605c-4b2e-8424-fb0989db930d",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        520,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "f5742b26-9027-426f-a424-d5f6f35c2934",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        980,
+        260
+      ],
+      "webhookId": "4f80a0c4-0970-49c4-8f69-125194dc1606",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field\n// called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  if (item.json.occupation == 'lawyer') {\n  \titem.json.subject =`[Advogada] ${item.json.name.trim()} - ${item.json.register_number}`;\n\n  } else {\n    item.json.subject =`[Psicóloga] ${item.json.name.trim()} - ${item.json.register_number}`;\n    \n  }\n}\n\nreturn $input.all();"
+      },
+      "id": "16e02c27-315b-46c7-84a9-148bb5b742f8",
+      "name": "Monta o assunto do ticket de acordo com a organização da voluntária",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        320,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id,  concat(first_name, ' ', last_name) as name, first_name email,zendesk_user_id, occupation,condition,register_number, created_at, updated_at\nFROM  volunteers WHERE condition = 'cadastrada' and created_at < '2024-09-24' and id = 27776\nand updated_at < '2024-09-30' order by created_at",
+        "options": {}
+      },
+      "id": "b4110de1-d65d-43a4-a0eb-95baeb8d5f8d",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        100,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{ $json[\"id\"] }}/tickets/requested",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "options": {}
+      },
+      "id": "f99ca6e3-00c4-42ca-ad00-6c0a5efdb461",
+      "name": "busca tickets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1660,
+        60
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.zendesk_user_id }}"
+      },
+      "id": "748e158f-9705-419e-9b52-3529d71cd924",
+      "name": "Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        260
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "bdc016e9-a31a-46f6-aa69-e58479cf9168",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "1f91d1a8-349d-473e-a095-d15f6e624cfd",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fe202ac3-1da4-4bb3-bb36-009382a15311",
+      "name": "encontrou a voluntária no zendesk",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1420,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b41211fb-5b6e-4d77-8ffe-c7dce6417c2f",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d649759d-d09f-4453-b85e-7a4b86daf107",
+      "name": "se existe tickets",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        340
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U06CP90UD1U",
+          "mode": "list",
+          "cachedResultName": "adriele473"
+        },
+        "text": "Fluxo finalizado",
+        "otherOptions": {}
+      },
+      "id": "97075cbe-64a2-4efa-967a-9cb7b7564e26",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        40
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=tickets",
+        "options": {}
+      },
+      "id": "ddefbd3b-d6da-4cca-9ace-bcdd99ba633c",
+      "name": "Separa a lista de tickets",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "ed7cccb2-c9ad-44b7-88da-239d3736e152",
+              "leftValue": "={{ $json.created_at.split('T')[0] }}",
+              "rightValue": "2024-09-25",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "7674835e-011b-4896-9783-d8212db24173",
+              "leftValue": "={{ $json.description }}",
+              "rightValue": "Importado via N8N",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "701a3001-a373-49d8-8d12-e77ea5c8c420",
+      "name": "Filtra os tickets gerados em 25/09",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        2460,
+        280
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "8c26321b-b74e-4893-b6e8-031ba1f5acdb",
+              "leftValue": "={{ $json.tickets[0]}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f99fd977-94a8-4432-a738-4ae5c87a2f0a",
+      "name": "Se não tem nenhum ticket do dia 25/",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"requester_id\": {{ $node[\"Zendesk\"].json['id'] }},\n\t\t\"organization_id\": {{ $node[\"Zendesk\"].json['organization_id'] }},\n\t\t\"description\":\"Importado via N8N\",\n\t\t\"subject\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"subject\"] }}\",\n\t\t\"comment\": {\n\t\t\t\"body\": \"Cadastrada\",\n\t\t\t\"public\": false\n\t\t},\n\t\t\"status\": \"pending\",\n\t\t\"custom_fields\": [\n\t\t\t\n\t\t\t{\n\t\t\t\t\"id\": 360016631592, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"name\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021665652, \n\t\t\t\t\"value\": \"{{ $node[\"Monta o assunto do ticket de acordo com a organização da voluntária\"].json[\"condition\"] }}\"\n\t\t\t}\n\n\t\t]\n\t}\n}",
+        "options": {}
+      },
+      "id": "be2ae4d8-27f2-4436-aee0-af0d4ef944d6",
+      "name": "Cria o ticket de entrada da voluntária pela API do Zendesk1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        3300,
+        560
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "tickets",
+        "options": {}
+      },
+      "id": "498a8904-fea2-48f4-b9d5-7caaab304b97",
+      "name": "Reúne os tickets filtrados",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        280
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-01T12:00:14.000Z",
+  "versionId": "dfff0156-9b03-4c70-a220-2fb3a6365e91"
+}
