@@ -10,11 +10,6 @@
             "index": 0
           },
           {
-            "node": "Busca voluntárias do grupo  3",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Busca voluntárias do grupo 1",
             "type": "main",
             "index": 0
@@ -79,29 +74,6 @@
         ]
       ]
     },
-    "Loop Over Items2": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Wait2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Wait2": {
-      "main": [
-        [
-          {
-            "node": "Envia mensagem grupo 3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Envia mensagem grupo 1": {
       "main": [
         [
@@ -113,22 +85,16 @@
         ]
       ]
     },
-    "Busca voluntárias do grupo  3": {
+    "Busca voluntárias a serem comunicadas": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
-    "Envia mensagem grupo 3": {
+    "Busca voluntárias do grupo 1": {
       "main": [
         [
           {
-            "node": "Loop Over Items2",
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
@@ -195,7 +161,7 @@
             },
             {
               "name": "ContentSid",
-              "value": "HX9b6b308fc8bf23039efa2b37c2bbbe70"
+              "value": "HX3bd4c85a53a267f654d0265ab2993194"
             },
             {
               "name": "ContentVariables",
@@ -223,7 +189,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT \n  volunteer_id, \n  CONCAT('whatsapp:+55', phone) AS phone,\n  first_name\nFROM total\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE grupo = 'group_1'\n  AND engajou = 'não engajou'\n  AND phone != 'not_found'\n",
+        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT \n  volunteer_id, \n  CONCAT('whatsapp:+55', phone) AS phone,\n  INITCAP(first_name) AS first_name\nFROM total\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE grupo = 'group_1'\n  AND engajou = 'não engajou'\n  AND phone != 'not_found'\nORDER BY volunteer_id\n",
         "options": {}
       },
       "id": "48e2552c-6568-4955-b5c4-4065c01ea2d9",
@@ -297,33 +263,6 @@
     },
     {
       "parameters": {
-        "options": {}
-      },
-      "id": "e89b24b8-dbd5-4a07-88ef-8b5376ec877e",
-      "name": "Loop Over Items2",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1500,
-        960
-      ]
-    },
-    {
-      "parameters": {
-        "amount": 1
-      },
-      "id": "87307d76-20f5-4bb1-be43-84302ef13607",
-      "name": "Wait2",
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [
-        1740,
-        980
-      ],
-      "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
         "authentication": "genericCredentialType",
@@ -342,7 +281,7 @@
             },
             {
               "name": "ContentSid",
-              "value": "HX9b6b308fc8bf23039efa2b37c2bbbe70"
+              "value": "HX3bd4c85a53a267f654d0265ab2993194"
             },
             {
               "name": "ContentVariables",
@@ -367,73 +306,6 @@
         }
       },
       "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBasicAuth",
-        "sendBody": true,
-        "contentType": "form-urlencoded",
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "To",
-              "value": "={{ $json.phone }}"
-            },
-            {
-              "name": "From",
-              "value": "MGd8a9962347e338326e9237641454191f"
-            },
-            {
-              "name": "ContentSid",
-              "value": "HX48fc5c9596f053fcfe9edc09d6e481e0"
-            },
-            {
-              "name": "ContentVariables",
-              "value": "={\n\"volunteer_id\": \"{{ $json.volunteer_id }}\"\n}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "09191181-eeab-4d15-917f-e334502126eb",
-      "name": "Envia mensagem grupo 3",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1960,
-        980
-      ],
-      "credentials": {
-        "httpBasicAuth": {
-          "id": "SFhrb3m76win1cJr",
-          "name": "Twilio API"
-        }
-      },
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "WITH voluntarias_acionadas AS (\n    SELECT \n        volunteer_id,\n        volunteer_segment_group AS grupo\n    FROM volunteer_segments\n    WHERE segment_name = 'recadastro_2024'\n),\ndescadastradas AS (\n    SELECT volunteer_id, 'descadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND condition = 'descadastrada'\n),\nrecadastradas AS (\n    SELECT volunteer_id, 'recadastrou' AS categoria\n    FROM volunteer_segments s\n    INNER JOIN volunteers v ON id = volunteer_id\n    WHERE segment_name = 'recadastro_2024'\n    AND fields_of_work != 'not_found'\n),\nvoluntarias_engajadas AS (\n    SELECT\n        *\n    FROM recadastradas\n    UNION ALL\n    SELECT *\n    FROM descadastradas\n),\ntotal AS (\n    SELECT \n        volunteer_id,\n        grupo,\n        CASE WHEN categoria IS NOT NULL THEN 'engajou' ELSE 'não engajou' END AS engajou\n    FROM voluntarias_acionadas\n    LEFT JOIN voluntarias_engajadas USING(volunteer_id)\n)\nSELECT \n  volunteer_id, \n  CONCAT('whatsapp:+55', phone) AS phone,\n  first_name\nFROM total\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE grupo = 'group_3'\n  AND engajou = 'não engajou'\n  AND phone != 'not_found'\n  AND volunteer_id != 17881\n",
-        "options": {}
-      },
-      "id": "16beb340-e37b-4614-9894-ea39f5f1ecfe",
-      "name": "Busca voluntárias do grupo  3",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        1200,
-        960
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     }
   ],
   "pinData": {
@@ -452,6 +324,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-09-30T17:02:27.000Z",
-  "versionId": "4fe367f3-ee82-42aa-b0f5-8cf466dfb91e"
+  "updatedAt": "2024-10-07T14:29:17.000Z",
+  "versionId": "da47b5f4-66a0-45bd-b5b5-20a3acf257a5"
 }
