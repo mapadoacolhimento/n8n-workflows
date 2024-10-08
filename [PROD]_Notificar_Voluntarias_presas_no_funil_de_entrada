@@ -1,0 +1,839 @@
+{
+  "active": true,
+  "connections": {
+    "Jornada da Voluntária": {
+      "main": [
+        [
+          {
+            "node": "Filtra as que estão presas em Cadastrada há mais de 30 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filtra as que estão presas em Capacitação há mais de 30 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra as que estão presas em Cadastrada há mais de 30 dias": {
+      "main": [
+        [
+          {
+            "node": "Define comunicações para Cadastrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem por WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Envia mensagem por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Lembrete para iniciar a capacitação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lembrete para iniciar a capacitação": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtra as que estão presas em Capacitação há mais de 30 dias": {
+      "main": [
+        [
+          {
+            "node": "Define comunicações para Capacitação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Define comunicações para Cadastrada": {
+      "main": [
+        [
+          {
+            "node": "Deve enviar comunicações para Cadastrada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem por WhatsApp1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envia mensagem por WhatsApp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Lembrete para iniciar a capacitação1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lembrete para iniciar a capacitação1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Define comunicações para Capacitação": {
+      "main": [
+        [
+          {
+            "node": "Deve enviar comunicações para Capacitação?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deve enviar comunicações para Cadastrada?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deve enviar comunicações para Capacitação?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Jornada da Voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-08T14:28:31.554Z",
+  "id": "JAyFfidwZ8uzjcZP",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Notificar Voluntárias presas no funil de entrada",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH volunteer_next_status AS (\n    SELECT\n        volunteer_id, \n        status AS first_status,\n        created_at AS first_status_at,\n        LEAD(status) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS second_status,\n        LEAD(created_at) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS second_status_at,\n        LEAD(status, 2) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS third_status,\n        LEAD(created_at, 2) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS third_status_at,\n        LEAD(status, 3) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS fourth_status,\n        LEAD(created_at, 3) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS fourth_status_at\n    FROM volunteer_status_history\n),\nvolunteers_who_went_through_new_process AS (\n    SELECT \n        DISTINCT *\n    FROM volunteer_next_status\n    WHERE \n        first_status = 'cadastrada'\n        AND (second_status = 'capacitacao' OR second_status IS NULL)\n        AND (third_status = 'aprovada' OR third_status IS NULL)\n        AND (fourth_status = 'disponivel' OR fourth_status IS NULL)\n        AND first_status >= '2024-01-25'\n),\nwith_volunteers_with_matches AS (\n    SELECT DISTINCT\n        v.volunteer_id,\n        \n        MIN(created_at) AS first_match_at\n    FROM volunteers_who_went_through_new_process v\n    LEFT JOIN match.matches m ON v.volunteer_id = m.volunteer_id AND m.created_at >= v.fourth_status_at\n    GROUP BY 1\n),\nfinal_journey AS (\n  SELECT \n      volunteer_id,\n      INITCAP(first_name) AS first_name,\n      email,\n      CONCAT('whatsapp:+55', phone) AS phone,\n      occupation,\n      CASE WHEN first_match_at IS NULL THEN 'não recebeu match' ELSE 'recebeu match' END AS has_match,\n      first_match_at::DATE - fourth_status_at::DATE AS days_to_receive_match,\n      first_status,\n      first_status_at,\n      second_status,\n      second_status_at,\n      third_status,\n      third_status_at,\n      fourth_status,\n      fourth_status_at\n  FROM volunteers_who_went_through_new_process\n  LEFT JOIN volunteers ON id = volunteer_id\n  LEFT JOIN with_volunteers_with_matches USING(volunteer_id)\n)\nSELECT \n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  first_status,\n  CURRENT_DATE - first_status_at::DATE AS days_since_first_status,\n  second_status,\n  CURRENT_DATE - second_status_at::DATE AS days_since_second_status,\n  third_status,\n  CURRENT_DATE - third_status_at::DATE AS days_since_third_status,\n  CURRENT_DATE AS today\nFROM final_journey",
+        "options": {}
+      },
+      "id": "6bb46999-d1ed-4c2f-a548-e98671a7f5cc",
+      "name": "Jornada da Voluntária",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "5393cb29-ff38-488d-b1e5-990532e382b6",
+              "leftValue": "={{ $json.second_status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "8e53a194-12f5-4fc8-93ec-68a4936725f0",
+              "leftValue": "={{ $json.days_since_first_status }}",
+              "rightValue": "=30",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "7033a445-ee6c-4d2b-a4c5-4c283b31472b",
+      "name": "Filtra as que estão presas em Cadastrada há mais de 30 dias",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "5393cb29-ff38-488d-b1e5-990532e382b6",
+              "leftValue": "={{ $json.second_status }}",
+              "rightValue": "capacitacao",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "8e53a194-12f5-4fc8-93ec-68a4936725f0",
+              "leftValue": "={{ $json.days_since_first_status }}",
+              "rightValue": "=30",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "a042d6c1-1c01-440d-a416-6e66382431e3",
+              "leftValue": "={{ $json.third_status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "12d51cb8-fc4f-42bd-89d8-69acee4ee1b0",
+      "name": "Filtra as que estão presas em Capacitação há mais de 30 dias",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\noutput = [];\nfor (const item of $input.all()) {\n  const volunteerId = item.json.volunteer_id;\n  const firstName = item.json.first_name;\n  const email = item.json.email;\n  const phone = item.json.phone;\n  const today = item.json.today;\n\n  const lookupEmails = {\n    \"2024-10-09T00:00:00.000Z\": \"cm15ad1xr01eix2174vir8stq\",\n    \"2024-10-14T00:00:00.000Z\": \"cm15aovdr00imezrjjme37pd6\",\n    \"2024-10-18T00:00:00.000Z\": \"cm15b1ysb00r2ezrjnjra5w7f\",\n  }\n\n  const lookupWhatsapp = {\n    \"2024-10-09T00:00:00.000Z\": \"HX932dae28fc0509de7547041bf90cf0f1\",\n    \"2024-10-14T00:00:00.000Z\": \"HX01a1eb725ac60f0ad17114813249b361\",\n    \"2024-10-18T00:00:00.000Z\": \"HX8ad1dde388eada97dcd35e500943cef6\",\n  }\n\n  const emailTransactionalId = lookupEmails[today];\n  const whatsappTemplateId = lookupWhatsapp[today];\n\n  output.push({\n    volunteer_id: volunteerId,\n    first_name: firstName,\n    email: email,\n    phone: phone,\n    email_transactional_id: emailTransactionalId,\n    whatsapp_template_id: whatsappTemplateId\n  })\n  \n}\n\nreturn output;"
+      },
+      "id": "813da5cc-b352-428b-8b62-842aef889839",
+      "name": "Define comunicações para Cadastrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1420,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "={{ $json.whatsapp_template_id }}"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\",\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bd42fc81-5570-46e7-a3bb-bd02476a9998",
+      "name": "Envia mensagem por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2500,
+        -620
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "19823ebe-a241-4253-835f-8cb508f83271",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2040,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "66606d7b-b1a2-4638-8b93-0cf26159e5fe",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2280,
+        -620
+      ],
+      "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
+    },
+    {
+      "parameters": {},
+      "id": "ccfa777d-b45a-416a-945a-014cd3d55e7f",
+      "name": "No Operation, do nothing2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        -840
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "89256eb1-c763-4d42-9a03-f17dba32d29b",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2040,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "bb390d0c-d796-403e-b78e-59fc73aa4b24",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2280,
+        -100
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "91c158d0-7651-4018-bfa3-b416cfe95a88",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.email_transactional_id }}\",\n  \"email\": \"{{ $json.email  }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n  }\n}",
+        "options": {}
+      },
+      "id": "7ed21a41-9f9d-423b-8ef2-19aa9bfa73af",
+      "name": "Lembrete para iniciar a capacitação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2460,
+        -100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "e095a09f-a2a8-4fb3-a345-27a57dfe66fd",
+              "leftValue": "={{ $json.email_transactional_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "eb4c39b3-b0fb-4f87-b09c-715aeaef81a6",
+              "leftValue": "={{ $json.whatsapp_template_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4c573af9-83bb-4621-aa6a-acf5a1f88cb1",
+      "name": "Deve enviar comunicações para Cadastrada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\noutput = [];\nfor (const item of $input.all()) {\n  const volunteerId = item.json.volunteer_id;\n  const firstName = item.json.first_name;\n  const email = item.json.email;\n  const phone = item.json.phone;\n  const today = item.json.today;\n\n  const lookupEmails = {\n    \"2024-10-09T00:00:00.000Z\": \"cm159vq2i02csfnef9uzk0nfp\",\n    \"2024-10-14T00:00:00.000Z\": \"cm15aisxg03pp5kvwo7lm6s1d\",\n    \"2024-10-18T00:00:00.000Z\": \"cm15axdy6005t13nr24i0nsi1\",\n    \"2024-10-23T00:00:00.000Z\": \"cm15fldrc0029mfdugkhxb0nk\",\n  }\n\n  const lookupWhatsapp = {\n    \"2024-10-09T00:00:00.000Z\": \"HX932dae28fc0509de7547041bf90cf0f1\",\n    \"2024-10-14T00:00:00.000Z\": \"HX01a1eb725ac60f0ad17114813249b361\",\n    \"2024-10-18T00:00:00.000Z\": \"HX8ad1dde388eada97dcd35e500943cef6\",\n    \"2024-10-23T00:00:00.000Z\": \"HX932dae28fc0509de7547041bf90cf0f1\",\n  }\n\n  const emailTransactionalId = lookupEmails[today];\n  const whatsappTemplateId = lookupWhatsapp[today];\n\n  output.push({\n    volunteer_id: volunteerId,\n    first_name: firstName,\n    email: email,\n    phone: phone,\n    email_transactional_id: emailTransactionalId,\n    whatsapp_template_id: whatsappTemplateId\n  })\n\n\n  \n}\n\nreturn output;"
+      },
+      "id": "7ef39958-9955-4d93-8f1d-2c4928b8c59d",
+      "name": "Define comunicações para Capacitação",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "={{ $json.whatsapp_template_id }}"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\",\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8dd32745-c671-4cec-892b-20ddc875457a",
+      "name": "Envia mensagem por WhatsApp1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2480,
+        1020
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "785c67ac-860d-4283-9fcc-af5ebbab8ccd",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2000,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "a1c118c9-8889-421b-b954-65e7b539746c",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2260,
+        1020
+      ],
+      "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
+    },
+    {
+      "parameters": {},
+      "id": "c545383a-fdcb-428a-929c-2bdb42b6a740",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "40f00d77-c963-4905-9ad7-7012601dbacc",
+      "name": "Loop Over Items3",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2020,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "89f11546-a0bc-4b10-86dc-9a8209877d0b",
+      "name": "Wait3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2260,
+        1540
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "c50160b7-44a2-42ee-bfd2-c18746616b16",
+      "name": "No Operation, do nothing3",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.email_transactional_id }}\",\n  \"email\": \"{{ $json.email  }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n  }\n}",
+        "options": {}
+      },
+      "id": "3d17c59f-3259-41f4-a216-64cb654a1c48",
+      "name": "Lembrete para iniciar a capacitação1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2440,
+        1540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "e095a09f-a2a8-4fb3-a345-27a57dfe66fd",
+              "leftValue": "={{ $json.email_transactional_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "eb4c39b3-b0fb-4f87-b09c-715aeaef81a6",
+              "leftValue": "={{ $json.whatsapp_template_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f734849a-86c6-43b8-8157-c712656fdb95",
+      "name": "Deve enviar comunicações para Capacitação?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1660,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      },
+      "id": "0d4dd06e-de36-4b08-a69f-7d2784ac8d7c",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        340
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrencyRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-10-08T17:57:24.000Z",
+  "versionId": "11e0c030-8d55-4cf0-91ca-fb5e26147e47"
+}
