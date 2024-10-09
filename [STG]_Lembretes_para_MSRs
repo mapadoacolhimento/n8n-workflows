@@ -156,6 +156,17 @@
           }
         ]
       ]
+    },
+    "Busca pedidos de acolhimento há 7 dias na fila": {
+      "main": [
+        [
+          {
+            "node": "Busca infos da MSR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-10-08T18:05:40.416Z",
@@ -446,7 +457,7 @@
     },
     {
       "parameters": {
-        "content": "Lembretes para MSRs que estão há mais de 7 dias na fila do Match Diário",
+        "content": "Lembretes para MSRs que estão há 7 dias na fila do Match Diário",
         "height": 80,
         "width": 386.9498485737204,
         "color": 6
@@ -463,6 +474,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
+        "query": "WITH support_requests_in_queue AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id\n    FROM match.support_requests\n    WHERE status IN ('waiting_for_match', 'waiting_for_confirmation')\n\n),\ncurrent_and_previous_status AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id,\n        status AS current_status,\n        LAG(status) OVER(PARTITION BY support_request_id ORDER BY created_at) AS previous_status,\n        created_at AS current_status_at\n    FROM match.support_request_status_history \n    INNER JOIN support_requests_in_queue USING(support_request_id)\n),\nstatus_with_joined_queue AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id,\n        current_status_at,\n        CASE \n            WHEN current_status IN ('waiting_for_match', 'waiting_for_confirmation') AND previous_status NOT IN ('waiting_for_match', 'waiting_for_confirmation') THEN TRUE \n            ELSE FALSE \n        END AS joined_queue\n    FROM current_and_previous_status\n),\nlast_joined_queue AS (\n    SELECT\n        support_request_id,\n        support_type,\n        msr_id,\n        MAX(current_status_at) AS joined_queue_at\n    FROM status_with_joined_queue\n    WHERE joined_queue\n    GROUP BY support_request_id, support_type, msr_id\n),\nsupport_request_with_days_in_queue AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id,\n        joined_queue_at,\n        CURRENT_DATE - joined_queue_at::DATE AS days_in_queue\n    FROM last_joined_queue\n\n)\nSELECT *\nFROM support_request_with_days_in_queue\nWHERE days_in_queue >= 7",
         "options": {}
       },
       "id": "17ece5d4-d192-40a7-b68e-9c90039e8405",
@@ -471,6 +483,27 @@
       "typeVersion": 2.3,
       "position": [
         1900,
+        1640
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  INITCAP(first_name) AS first_name,\n  {{ $json.support_request_id }} AS support_request_id,\n  '{{ $json.support_type }}' AS support_type\nFROM pii_sec.msr_pii \nWHERE msr_id = {{ $json.msr_id }}\n  ",
+        "options": {}
+      },
+      "id": "0993c145-cf8f-4330-afce-4678b36348ba",
+      "name": "Busca infos da MSR",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2120,
         1640
       ],
       "credentials": {
@@ -498,6 +531,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-08T18:06:43.000Z",
-  "versionId": "52e537bd-6179-4db0-baf2-4c6a9ee60c71"
+  "updatedAt": "2024-10-09T19:55:13.000Z",
+  "versionId": "0a5cd78a-4ec0-4131-9cea-5cc9e2e5ce7c"
 }
