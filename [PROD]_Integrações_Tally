@@ -624,6 +624,114 @@
           }
         ]
       ]
+    },
+    "Filtra apenas as infos que importam2": {
+      "main": [
+        [
+          {
+            "node": "Busca support_request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quer continuar na fila?": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Busca MSR",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza o support_request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza o ticket no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou a MSR?": {
+      "main": [
+        [
+          {
+            "node": "Envia e-mail de Encaminhamento para Serviço Público",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_request": {
+      "main": [
+        [
+          {
+            "node": "Encontrou o support_request?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou o support_request?": {
+      "main": [
+        [
+          {
+            "node": "Quer continuar na fila?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSR": {
+      "main": [
+        [
+          {
+            "node": "Encontrou a MSR?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSR preencheu o formulário": {
+      "main": [
+        [
+          {
+            "node": "Filtra apenas as infos que importam2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-07-24T18:25:27.509Z",
@@ -2899,6 +3007,317 @@
         2560,
         2560
       ]
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getContinueInQueue(item){\n  const continueInQueueField = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === 'continue_in_queue'\n  );\n\n  if(!continueInQueueField.value) return null\n  \n  const continueInQueueText = continueInQueueField.options.find(\n    (element) => element.id == continueInQueueField.value\n  ).text;\n\n  const shouldContinueInQueue = continueInQueueText === \"Não, prefiro não seguir com o atendimento\" ? false : true\n\n  return shouldContinueInQueue\n}\n\nfor (const item of $input.all()) {\n  \n  const supportResquestId = getHiddenFieldValue(item, 'support_request_id');\n  const shouldContinueInQueue = getContinueInQueue(item);\n  \n  output.push(\n    {\n      \"support_request_id\": supportResquestId,\n      \"should_continue_in_queue\": shouldContinueInQueue,\n    }\n  )\n}\n\nreturn output;"
+      },
+      "id": "dde28715-fe35-470b-9d35-901245aa0eda",
+      "name": "Filtra apenas as infos que importam2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        6720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Formulário para MSRs indicarem se querem continuar na fila",
+        "width": 415.2146730852694
+      },
+      "id": "b9b53136-63c2-4088-85eb-a6fcebab703c",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        820,
+        6500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "e6b63e14-7e39-444b-a44a-68a042efa1a8",
+              "leftValue": "={{ $json.should_continue_in_queue }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "fa276333-ffd8-4e91-b61c-74a8b544a207",
+      "name": "Quer continuar na fila?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        6700
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "f260a47b-745d-4cff-a5d3-693d76cb8687",
+      "name": "No Operation, do nothing6",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        6440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "0f96e552-d3ed-48e2-90f3-ed6b021d69ad",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "040084fc-d139-40e4-98a8-58743461cf88",
+      "name": "Encontrou a MSR?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        6720
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  support_request_id,\n  msr_id,\n  zendesk_ticket_id,\n  {{ $json.should_continue_in_queue }} AS should_continue_in_queue\nFROM match.support_requests\nWHERE support_request_id = {{ $json.support_request_id }}",
+        "options": {}
+      },
+      "id": "fd7f986a-3e95-4df3-95b7-0d7586146df3",
+      "name": "Busca support_request",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1280,
+        6720
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "f7f74bcf-9b9f-444b-8838-fd09b810b055",
+              "leftValue": "={{ $json.support_request_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "46b5dece-1a38-446a-8154-15a2132fd98f",
+      "name": "Encontrou o support_request?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        6720
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "support_request não encontrado"
+      },
+      "id": "b6438cf1-3538-4128-99bf-505d563b7183",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        7060
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  first_name,\n  email\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "18cbaae5-3efe-4192-9bc8-064e2a3b7aa4",
+      "name": "Busca MSR",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2020,
+        6720
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"cm0pd0w0y00xdz6kfjbbd7cfn\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "4d41702b-2b77-49f1-942d-df2505752b25",
+      "name": "Envia e-mail de Encaminhamento para Serviço Público",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2520,
+        6700
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET status = 'public_service'\nWHERE support_request_id = {{ $json.support_request_id }};\n\nINSERT INTO match.support_request_status_history (support_request_id, status, created_at)\nVALUES ({{ $json.support_request_id }}, 'public_service', NOW())",
+        "options": {}
+      },
+      "id": "624da66a-e871-46cd-a8f7-e31678637660",
+      "name": "Atualiza o support_request",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2020,
+        6960
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "encaminhamento__realizado_para_serviço_público"
+              }
+            ]
+          },
+          "internalNote": "<strong>Formulário \"Você quer continuar na fila?\"</strong>\n</br>\n</br>\nMSR sinalizou pelo formulário que não quer continuar na fila e foi encaminhada para Serviço Público."
+        }
+      },
+      "id": "a853b1bd-b777-499d-b920-f043c8d07bed",
+      "name": "Atualiza o ticket no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        7200
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "MSR não encontrada"
+      },
+      "id": "e9645b87-2b13-4adf-b934-bb9da95fee08",
+      "name": "Stop and Error2",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        6940
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "msr-daily-match-queue",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "1efed7ca-ba63-4aa4-ab50-0c0ec4ece305",
+      "name": "MSR preencheu o formulário",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        840,
+        6720
+      ],
+      "webhookId": "85a30c72-b875-4395-acb8-ca10777baa9b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
     }
   ],
   "pinData": {
@@ -3119,7 +3538,7 @@
   },
   "staticData": null,
   "tags": [],
-  "triggerCount": 3,
-  "updatedAt": "2024-09-26T13:12:25.000Z",
-  "versionId": "9896dca5-7ce9-4885-b741-fc11b297500f"
+  "triggerCount": 4,
+  "updatedAt": "2024-10-09T20:15:58.000Z",
+  "versionId": "0ce40c14-359d-434c-9942-1c8723c7e5da"
 }
