@@ -28,17 +28,6 @@
         ]
       ]
     },
-    "Envia mensagem por WhatsApp": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items2": {
       "main": [
         [
@@ -97,17 +86,6 @@
         ]
       ]
     },
-    "Lembrete para iniciar a capacitação": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Filtra as que estão presas em Capacitação há mais de 30 dias": {
       "main": [
         [
@@ -124,17 +102,6 @@
         [
           {
             "node": "Deve enviar comunicações para Cadastrada?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Envia mensagem por WhatsApp1": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -199,17 +166,6 @@
         ]
       ]
     },
-    "Lembrete para iniciar a capacitação1": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Define comunicações para Capacitação": {
       "main": [
         [
@@ -258,6 +214,50 @@
         [
           {
             "node": "Jornada da Voluntária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem por WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem por WhatsApp1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lembrete para iniciar a capacitação1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lembrete para iniciar a capacitação": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
@@ -405,51 +405,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBasicAuth",
-        "sendBody": true,
-        "contentType": "form-urlencoded",
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "To",
-              "value": "={{ $json.phone }}"
-            },
-            {
-              "name": "From",
-              "value": "MGd8a9962347e338326e9237641454191f"
-            },
-            {
-              "name": "ContentSid",
-              "value": "={{ $json.whatsapp_template_id }}"
-            },
-            {
-              "name": "ContentVariables",
-              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\",\n}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "bd42fc81-5570-46e7-a3bb-bd02476a9998",
-      "name": "Envia mensagem por WhatsApp",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        2500,
-        -620
-      ],
-      "credentials": {
-        "httpBasicAuth": {
-          "id": "SFhrb3m76win1cJr",
-          "name": "Twilio API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "options": {}
       },
       "id": "19823ebe-a241-4253-835f-8cb508f83271",
@@ -528,32 +483,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.email_transactional_id }}\",\n  \"email\": \"{{ $json.email  }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n  }\n}",
-        "options": {}
-      },
-      "id": "7ed21a41-9f9d-423b-8ef2-19aa9bfa73af",
-      "name": "Lembrete para iniciar a capacitação",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        2460,
-        -100
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -607,51 +536,6 @@
         1460,
         1300
       ]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBasicAuth",
-        "sendBody": true,
-        "contentType": "form-urlencoded",
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "To",
-              "value": "={{ $json.phone }}"
-            },
-            {
-              "name": "From",
-              "value": "MGd8a9962347e338326e9237641454191f"
-            },
-            {
-              "name": "ContentSid",
-              "value": "={{ $json.whatsapp_template_id }}"
-            },
-            {
-              "name": "ContentVariables",
-              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\",\n}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "8dd32745-c671-4cec-892b-20ddc875457a",
-      "name": "Envia mensagem por WhatsApp1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        2480,
-        1020
-      ],
-      "credentials": {
-        "httpBasicAuth": {
-          "id": "SFhrb3m76win1cJr",
-          "name": "Twilio API"
-        }
-      }
     },
     {
       "parameters": {
@@ -733,32 +617,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.email_transactional_id }}\",\n  \"email\": \"{{ $json.email  }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\",\n  }\n}",
-        "options": {}
-      },
-      "id": "3d17c59f-3259-41f4-a216-64cb654a1c48",
-      "name": "Lembrete para iniciar a capacitação1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        2440,
-        1540
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -818,6 +676,152 @@
         720,
         340
       ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "={{ $json.whatsapp_template_id }}"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bd42fc81-5570-46e7-a3bb-bd02476a9998",
+      "name": "Envia mensagem por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2500,
+        -620
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "={{ $json.whatsapp_template_id }}"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8dd32745-c671-4cec-892b-20ddc875457a",
+      "name": "Envia mensagem por WhatsApp1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2480,
+        1020
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.email_transactional_id }}\",\n  \"email\": \"{{ $json.email  }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "3d17c59f-3259-41f4-a216-64cb654a1c48",
+      "name": "Lembrete para iniciar a capacitação1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2440,
+        1540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.email_transactional_id }}\",\n  \"email\": \"{{ $json.email  }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "7ed21a41-9f9d-423b-8ef2-19aa9bfa73af",
+      "name": "Lembrete para iniciar a capacitação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2460,
+        -100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -834,6 +838,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-08T17:57:24.000Z",
-  "versionId": "11e0c030-8d55-4cf0-91ca-fb5e26147e47"
+  "updatedAt": "2024-10-09T17:52:55.000Z",
+  "versionId": "d6f456cd-78f8-4d4c-84c0-671762401144"
 }
