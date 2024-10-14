@@ -13,6 +13,11 @@
             "node": "Busca pedidos de acolhimento sem agendamento",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca pedidos de acolhimento há 7 dias na fila",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -151,6 +156,68 @@
         [
           {
             "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca pedidos de acolhimento há 7 dias na fila": {
+      "main": [
+        [
+          {
+            "node": "Busca infos da MSR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca infos da MSR": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 5 segundos": {
+      "main": [
+        [
+          {
+            "node": "Quer ficar na fila?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera 5 segundos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quer ficar na fila?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -443,6 +510,129 @@
         2340,
         940
       ]
+    },
+    {
+      "parameters": {
+        "content": "Lembretes para MSRs que estão há 7 dias na fila do Match Diário",
+        "height": 80,
+        "width": 386.9498485737204,
+        "color": 6
+      },
+      "id": "2da5112d-c89e-4243-a9e9-12ef26f3947f",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        1240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH support_requests_in_queue AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id\n    FROM match.support_requests\n    WHERE status IN ('waiting_for_match', 'waiting_for_confirmation')\n\n),\ncurrent_and_previous_status AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id,\n        status AS current_status,\n        LAG(status) OVER(PARTITION BY support_request_id ORDER BY created_at) AS previous_status,\n        created_at AS current_status_at\n    FROM match.support_request_status_history \n    INNER JOIN support_requests_in_queue USING(support_request_id)\n),\nstatus_with_joined_queue AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id,\n        current_status_at,\n        CASE \n            WHEN current_status IN ('waiting_for_match', 'waiting_for_confirmation') AND previous_status NOT IN ('waiting_for_match', 'waiting_for_confirmation') THEN TRUE \n            ELSE FALSE \n        END AS joined_queue\n    FROM current_and_previous_status\n),\nlast_joined_queue AS (\n    SELECT\n        support_request_id,\n        support_type,\n        msr_id,\n        MAX(current_status_at) AS joined_queue_at\n    FROM status_with_joined_queue\n    WHERE joined_queue\n    GROUP BY support_request_id, support_type, msr_id\n),\nsupport_request_with_days_in_queue AS (\n    SELECT \n        support_request_id,\n        support_type,\n        msr_id,\n        joined_queue_at,\n        CURRENT_DATE - joined_queue_at::DATE AS days_in_queue\n    FROM last_joined_queue\n\n)\nSELECT *\nFROM support_request_with_days_in_queue\nWHERE days_in_queue = 7",
+        "options": {}
+      },
+      "id": "6337f9d0-ecc4-4a8e-8162-6d0c8f88d5ec",
+      "name": "Busca pedidos de acolhimento há 7 dias na fila",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        1400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  INITCAP(first_name) AS first_name,\n  email,\n  {{ $json.support_request_id }} AS support_request_id,\n  CASE \n    WHEN '{{ $json.support_type }}' = 'psychological' THEN 'psicóloga'\n    ELSE 'advogada'\n  END AS volunteer_type\nFROM pii_sec.msr_pii \nWHERE msr_id = {{ $json.msr_id }}\n  ",
+        "options": {}
+      },
+      "id": "175163a1-093d-48fb-9dd0-5394e7bb8239",
+      "name": "Busca infos da MSR",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2140,
+        1400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "ad145920-928c-46b3-8740-3f968bf328a7",
+      "name": "Espera 5 segundos",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1420
+      ],
+      "webhookId": "1296b42c-3692-48dc-a798-e583c03a653e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fe640840-db8d-44e7-a1b4-7ce7eb08eb45",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2500,
+        1400
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "61952d78-a498-4abc-8336-22f0570dbb47",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clzspeh8m00jw10mfp8yl96ih\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.first_name }}\",\n    \"support_request_id\": \"{{ $json.support_request_id }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "a2c18df4-3c9f-4213-a0b9-07b53b523d6e",
+      "name": "Quer ficar na fila?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2940,
+        1420
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -462,6 +652,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-08-29T16:30:27.000Z",
-  "versionId": "bc33b75d-a36d-432b-b03b-39f77939a8d9"
+  "updatedAt": "2024-10-14T13:30:35.000Z",
+  "versionId": "740d262d-5f29-4665-83db-63f5eb8e94db"
 }
