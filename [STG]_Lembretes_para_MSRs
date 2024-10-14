@@ -3,18 +3,7 @@
   "connections": {
     "Schedule Trigger": {
       "main": [
-        [
-          {
-            "node": "Busca matches aguardando contato há 14 ou 28 dias",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca pedidos de acolhimento sem agendamento",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Busca pedidos de acolhimento sem agendamento": {
@@ -162,6 +151,57 @@
         [
           {
             "node": "Busca infos da MSR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 5 segundos": {
+      "main": [
+        [
+          {
+            "node": "Quer ficar na fila?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera 5 segundos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quer ficar na fila?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca infos da MSR": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -483,7 +523,7 @@
       "typeVersion": 2.3,
       "position": [
         1900,
-        1640
+        1660
       ],
       "credentials": {
         "postgres": {
@@ -495,7 +535,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  INITCAP(first_name) AS first_name,\n  {{ $json.support_request_id }} AS support_request_id,\n  '{{ $json.support_type }}' AS support_type\nFROM pii_sec.msr_pii \nWHERE msr_id = {{ $json.msr_id }}\n  ",
+        "query": "SELECT\n  INITCAP(first_name) AS first_name,\n  email,\n  {{ $json.support_request_id }} AS support_request_id,\n  CASE \n    WHEN '{{ $json.support_type }}' = 'psychological' THEN 'psicóloga'\n    ELSE 'advogada'\n  END AS volunteer_type\nFROM pii_sec.msr_pii \nWHERE msr_id = {{ $json.msr_id }}\n  ",
         "options": {}
       },
       "id": "0993c145-cf8f-4330-afce-4678b36348ba",
@@ -504,12 +544,77 @@
       "typeVersion": 2.4,
       "position": [
         2120,
-        1640
+        1660
       ],
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
           "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "b8b76db6-8628-40f8-b300-3ec3d2ec7e32",
+      "name": "Espera 5 segundos",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        1680
+      ],
+      "webhookId": "1296b42c-3692-48dc-a798-e583c03a653e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "972319fc-7624-4c32-880d-659d687b9571",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2480,
+        1660
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d84dcafc-63f8-4c14-a678-018b8ee7b99c",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clzspeh8m00jw10mfp8yl96ih\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.first_name }}\",\n    \"support_request_id\": \"{{ $json.support_request_id }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "6b5c38fe-fc61-4582-86a8-6e19d3e6e477",
+      "name": "Quer ficar na fila?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2920,
+        1680
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
         }
       }
     }
@@ -531,6 +636,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-09T19:55:13.000Z",
-  "versionId": "0a5cd78a-4ec0-4131-9cea-5cc9e2e5ce7c"
+  "updatedAt": "2024-10-14T13:22:55.000Z",
+  "versionId": "d2c76748-5549-4019-8c81-25b719624787"
 }
