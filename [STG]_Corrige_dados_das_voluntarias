@@ -1,0 +1,97 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntária despadronizadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntária despadronizadas": {
+      "main": [
+        [
+          {
+            "node": "Padroniza voluntárias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-21T18:14:46.116Z",
+  "id": "lYFpHrDisKcrQ6Yn",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Corrige dados das voluntárias",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4847d9db-fb01-4890-85e9-f0e21e857768",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        780,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n   id,\n   first_name,\n   INITCAP(first_name) AS new_first_name\nFROM volunteers\nWHERE INITCAP(first_name) != first_name",
+        "options": {}
+      },
+      "id": "bb406ea2-962c-43cf-bb1e-efb28b0af6e4",
+      "name": "Busca voluntária despadronizadas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        960,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET first_name = '{{ $json.new_first_name }}'\nWHERE id = {{ $json.id }}",
+        "options": {}
+      },
+      "id": "1ca354e7-4848-4dad-9146-92f3d516a19f",
+      "name": "Padroniza voluntárias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1180,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-21T18:25:08.000Z",
+  "versionId": "71dfe7a7-f950-4a77-8458-06c1b1770d84"
+}
