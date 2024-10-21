@@ -166,7 +166,7 @@
       "main": [
         [
           {
-            "node": "Busca infos da MSR",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -218,6 +218,17 @@
         [
           {
             "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Busca infos da MSR",
             "type": "main",
             "index": 0
           }
@@ -559,7 +570,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        2140,
+        2360,
         1400
       ],
       "credentials": {
@@ -579,7 +590,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
       "position": [
-        2720,
+        2940,
         1420
       ],
       "webhookId": "1296b42c-3692-48dc-a798-e583c03a653e"
@@ -593,7 +604,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        2500,
+        2720,
         1400
       ]
     },
@@ -604,7 +615,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        2720,
+        2940,
         1240
       ]
     },
@@ -624,7 +635,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2940,
+        3160,
         1420
       ],
       "credentials": {
@@ -633,9 +644,60 @@
           "name": "Loops API"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "36933fd3-45b7-410c-95a0-eb7fb03092f5",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "68120669-a893-40c7-9315-1daafe69c478",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        1400
+      ]
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2024-10-20T09:00:00.025-03:00",
+          "Readable date": "October 20th 2024, 9:00:00 am",
+          "Readable time": "9:00:00 am",
+          "Day of week": "Sunday",
+          "Year": "2024",
+          "Month": "October",
+          "Day of month": "20",
+          "Hour": "09",
+          "Minute": "00",
+          "Second": "00",
+          "Timezone": "-03 -03:00"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -652,6 +714,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-14T13:30:35.000Z",
-  "versionId": "740d262d-5f29-4665-83db-63f5eb8e94db"
+  "updatedAt": "2024-10-21T14:47:02.000Z",
+  "versionId": "bb9ba47b-02b6-4d85-a4c4-6f5e733d062a"
 }
