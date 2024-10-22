@@ -82,9 +82,9 @@
       "main": [
         [
           {
-            "node": "Une os dados do support_request e da voluntária",
+            "node": "Encontrou voluntária?",
             "type": "main",
-            "index": 1
+            "index": 0
           }
         ],
         [
@@ -182,6 +182,24 @@
     },
     "Envia erro por Slack1": {
       "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou voluntária?": {
+      "main": [
+        [
+          {
+            "node": "Une os dados do support_request e da voluntária",
+            "type": "main",
+            "index": 1
+          }
+        ],
         [
           {
             "node": "Loop Over Items",
@@ -403,7 +421,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        3380,
+        3520,
         340
       ]
     },
@@ -451,7 +469,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        2800,
+        3080,
         360
       ]
     },
@@ -464,7 +482,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3040,
+        3260,
         360
       ]
     },
@@ -495,9 +513,62 @@
           "name": "Slack account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "899bf339-c26f-4d4f-af3a-67560a71496e",
+              "leftValue": "={{ $json.data.message.volunteer.volunteer_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "62e8bce0-e5d5-43de-a86f-b67bf5e9f503",
+      "name": "Encontrou voluntária?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2780,
+        460
+      ]
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2024-10-22T10:00:00.005-03:00",
+          "Readable date": "October 22nd 2024, 10:00:00 am",
+          "Readable time": "10:00:00 am",
+          "Day of week": "Tuesday",
+          "Year": "2024",
+          "Month": "October",
+          "Day of month": "22",
+          "Hour": "10",
+          "Minute": "00",
+          "Second": "00",
+          "Timezone": "-03 -03:00"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -511,6 +582,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-02T13:38:12.000Z",
-  "versionId": "dfea4ed9-84ac-4837-b283-c59786f5f2e4"
+  "updatedAt": "2024-10-22T13:23:13.000Z",
+  "versionId": "24457bcf-def7-48e9-83d7-485dddcc38f1"
 }
