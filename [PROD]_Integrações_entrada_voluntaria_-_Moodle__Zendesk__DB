@@ -1,17 +1,6 @@
 {
   "active": true,
   "connections": {
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Busca voluntária pelo moodle ID",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Busca voluntária pelo moodle ID": {
       "main": [
         [
@@ -122,11 +111,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "Atualiza status da voluntária no Zendesk": {
-      "main": [
-        []
       ]
     },
     "Atualiza status da voluntária no Zendesk1": {
@@ -357,6 +341,17 @@
           }
         ]
       ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntária pelo moodle ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-01-24T01:52:22.279Z",
@@ -366,22 +361,6 @@
   },
   "name": "[PROD] Integrações entrada voluntária - Moodle / Zendesk / DB",
   "nodes": [
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "moodle-zendesk",
-        "options": {}
-      },
-      "id": "b43ef363-b703-4316-b895-77bb1a330206",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1,
-      "position": [
-        -1720,
-        2480
-      ],
-      "webhookId": "3e06675f-aa55-42cd-bfa1-be979b64b575"
-    },
     {
       "parameters": {
         "errorMessage": "=Não achou a voluntária\nmoodle_id:  {{$node[\"Webhook\"].json[\"body\"][\"userid\"]}}"
@@ -1284,9 +1263,80 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "moodle-zendesk",
+        "options": {}
+      },
+      "id": "b43ef363-b703-4316-b895-77bb1a330206",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1720,
+        2480
+      ],
+      "webhookId": "3e06675f-aa55-42cd-bfa1-be979b64b575"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "MoodleBot/4.1 (+https://capacitacao.mapa.org.br)",
+            "content-length": "400",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "54.85.56.248",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "8d9cf6a0863082e1-IAD",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "54.85.56.248, 172.70.174.13",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-5bdb8ff566-686hs",
+            "x-is-trusted": "yes",
+            "x-real-ip": "54.85.56.248"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventname": "\\core\\event\\course_completed",
+            "component": "mod_page",
+            "action": "viewed",
+            "target": "course_module",
+            "objecttable": "page",
+            "objectid": "61",
+            "crud": "r",
+            "edulevel": 2,
+            "contextid": 141,
+            "contextlevel": 70,
+            "contextinstanceid": "84",
+            "userid": "1226",
+            "courseid": "2",
+            "relateduserid": null,
+            "anonymous": 0,
+            "other": null,
+            "timecreated": 1730139873,
+            "host": "capacitacao.mapa.org.br",
+            "token": "",
+            "extra": ""
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/moodle-zendesk",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -1303,6 +1353,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-09-24T14:58:48.000Z",
-  "versionId": "4328c2b6-1543-475e-91d7-e645c422d700"
+  "updatedAt": "2024-10-28T18:30:06.000Z",
+  "versionId": "775edc08-41a5-4bac-94ef-703287c08090"
 }
