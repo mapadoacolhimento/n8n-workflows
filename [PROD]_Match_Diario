@@ -447,7 +447,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3900,
+        4040,
         740
       ],
       "credentials": {
@@ -475,7 +475,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst output = []\nfor (const item of $input.all()) {\n  const supportRequestId = item.json.support_request_id;\n  const data = JSON.parse(item.json.data);\n  const volunteerId = data.message.volunteer.volunteer_id;\n  const matchStage = data.message.matchStage;\n\n  output.push({\n    support_request_id: supportRequestId,\n    volunteer_id: volunteerId,\n    match_stage: matchStage\n  })\n}\n\nreturn output;"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst output = []\nfor (const item of $input.all()) {\n  const supportRequestId = item.json.support_request_id;\n  const data = JSON.parse(item.json.data);\n  let volunteerId;\n  let matchStage\n  if (data.message != \"No volunteers available\") {\n    volunteerId = data.message.volunteer.volunteer_id;\n    matchStage = data.message.matchStage;\n  }\n  \n\n  output.push({\n    support_request_id: supportRequestId,\n    volunteer_id: volunteerId,\n    match_stage: matchStage\n  })\n}\n\nreturn output;"
       },
       "id": "608dab25-50d2-4e24-8f12-d311d4ce5061",
       "name": "Prepara os dados",
@@ -504,7 +504,7 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        4120,
+        4260,
         820
       ],
       "credentials": {
@@ -554,13 +554,13 @@
     "Schedule Trigger": [
       {
         "json": {
-          "timestamp": "2024-10-22T10:00:00.005-03:00",
-          "Readable date": "October 22nd 2024, 10:00:00 am",
+          "timestamp": "2024-11-06T10:00:00.004-03:00",
+          "Readable date": "November 6th 2024, 10:00:00 am",
           "Readable time": "10:00:00 am",
-          "Day of week": "Tuesday",
+          "Day of week": "Wednesday",
           "Year": "2024",
-          "Month": "October",
-          "Day of month": "22",
+          "Month": "November",
+          "Day of month": "06",
           "Hour": "10",
           "Minute": "00",
           "Second": "00",
@@ -582,6 +582,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-30T14:57:16.000Z",
-  "versionId": "a78d80d0-8323-42ee-b06c-33fe4676fb7d"
+  "updatedAt": "2024-11-06T17:17:11.000Z",
+  "versionId": "fc744cbc-21e8-4e72-a568-7e2ae1cc830b"
 }
