@@ -1,0 +1,141 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs com match expirado após lançarmos form de atualização do status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs com match expirado após lançarmos form de atualização do status": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-11T17:49:53.755Z",
+  "id": "Cx1LhFDkhmx2YV7A",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Enviar pesquisa para MSRs com match expirado",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f4b26c85-b273-4b29-ab3e-d546adfc1cf8",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH distinct_msrs AS (\n    SELECT DISTINCT \n        msr_id, \n        support_type\n    FROM match.matches\n    WHERE \n        status = 'expired'\n        AND created_at >= '2024-07-08'\n    ORDER BY msr_id, support_type\n),\nagg_support_type AS (\n    SELECT \n        msr_id,\n        STRING_AGG(support_type::VARCHAR, '_') AS support_type\n    FROM distinct_msrs\n    GROUP BY msr_id\n)\nSELECT\n    msr_id,\n    email,\n    first_name,\n    support_type\nFROM agg_support_type\nINNER JOIN pii_sec.msr_pii USING(msr_id)",
+        "options": {}
+      },
+      "id": "0df337e9-7697-40fc-9f7b-b2e4c4489301",
+      "name": "Busca MSRs com match expirado após lançarmos form de atualização do status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d04bf4c1-0017-49c8-aa0f-f7fbeed270aa",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1160,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "f9c56a6c-97e8-4850-8016-6f9f706691f1",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        360
+      ],
+      "webhookId": "d447e45e-09a7-4135-b5d6-53c59a3539f6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"email\": \"{{ $json.email }}\",\n \"transactionalId\": \"cm3dbb9hg03mhe99ylgimwzq9\",\n \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.first_name }}\",\n    \"msr_email\": \"{{ $json.email }}\",\n    \"support_type\": \"{{ $json.support_type }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "fff20cde-dfa1-4bf8-928e-9364cdb77365",
+      "name": "email MSR - nova voluntária sem prioridade",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1580,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-11T18:18:52.000Z",
+  "versionId": "7b8db5d2-f077-42d8-bd5c-8515e9e6e6c5"
+}
