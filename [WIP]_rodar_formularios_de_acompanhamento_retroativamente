@@ -1,0 +1,604 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Instrumental de Acompanhamento 1: Advogadas1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Instrumental de Acompanhamento 2: Psicólogas1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Instrumental de Acompanhamento 2: Advogadas1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instrumental de Acompanhamento 1: Psicólogas": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata - Acomp Psicologico 1": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar novo ticket (acomp psicologico)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (acomp psicologico)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Formata - Acomp Psicologico 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instrumental de Acompanhamento 1: Advogadas1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instrumental de Acompanhamento 2: Psicólogas1": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instrumental de Acompanhamento 2: Advogadas1": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-26T17:10:26.714Z",
+  "id": "HDIaKJBMrgHsrAgd",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[WIP] rodar formulários de acompanhamento retroativamente",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9e3d9b3d-c73a-4365-a460-7e92b218e00e",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://mautic.nossas.org/api/forms/24/submissions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "25c522c8-bfb9-489f-91f7-e100ef8b0719",
+      "name": "Instrumental de Acompanhamento 1: Psicólogas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        300
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "5mHrJT6EPwg2zudb",
+          "name": "mautic"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4349b0f2-2243-46bb-b668-3b50a99bcb2c",
+              "leftValue": "={{ $json.dateSubmitted }}",
+              "rightValue": "2024-06-24T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            },
+            {
+              "id": "6c3f88b1-05d9-4670-9e05-20ed366c57a2",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 9014,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "72327081-c461-4cf7-b8ee-3ef9b2a66a39",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "submissions",
+        "options": {}
+      },
+      "id": "30084f1a-319c-4855-8800-a1cde49b800b",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\ninsert_mda_forms_answers(objects: {answers: $answers, form: \"acompanhamento-psicologico-1\", msr_name: \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (acomp psicologico)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}\",organization_id:360282119532, form_id:24\n}) {\naffected_rows\n}\n}",
+        "variables": "={\n\"answers\":{{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas2",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        0
+      ],
+      "id": "0e1429f3-3975-419d-ba58-5720ded249be",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nhq3GDSBeWJ5XE1l",
+          "name": "[PROD] BONDE api-graphql"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\n\nfor (item of items) {\n\n  const results =  item.json.results; \n\tlet dados_voluntaria = {\n\t\tnome:\tresults[\"1_nome_completo\"], //\"Teste 2022\",\n\t\temail_cadastro: results[\"2_email_de_cadastro\"] //\"teste@teste.br\",\n\t}\n\t\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"] //\"Acholhida teste\",\n\t}\n\t\n\tlet contrato = {\n\t\ttem_assiduidade_atendimentos: results[\"4_a_acolhida_tem_sido_ass\"], //\"Não (Por favor, entre em contato imediatamente com a equipe)\",\n\t\tmotivo_nao_assiduidade: results[\"41_selecione_os_motivos_a\"], //\"Falta sem avisar, O autor da violência impediu\",\n\t\trespeita_combinados_atendimento: results[\"6_a_acolhida_respeita_os\"], //\"Não\",\n\t\tfrequencia_atendimento_fora_do_horario: results[\"51_com_qual_frequencia_te\"] //\"Três ou mais vezes na semana\",\n\t}\n\n\tlet acompanhamento_psicologico = {\n\t\tfoi_submetida_novas_violencias: results[\"6_a_acolhida_foi_submetid\"], //\"Física\",\n\t\tcomentario_sobre_novas_violencias: results[\"7_caso_queira_comentar_so\"], //\"comentar sobre as novas violências que a acolhida foi submetida\",\n\t\tapesctos_psicologicos_trabalhados: results[\"8_aspectos_psicologicos_t\"], //\" Aspectos psicológicos trabalhados durante o processo psicoterapêutico\",\n\t\treferenciou_para_servico_publico: results[\"9_durante_o_atendimento_v\"], //\"Sim\",\n\t\tpor_que_servico_publico: results[\"91_por_que\"], //\"dentificou alguma necessidade de referenciar a acolhida para algum serviço público\",\n\t\tquais_instituicoes: results[\"92_para_qualis_instituica\"], //\"Defensoria pública/ NUDEM\",\n\t \triscos_relacionado_ao_suicidio: results[\"10_voce_se_preocupa_ou_pe\"] //\"Não\",\n\t}\n\n\tlet  aspectos_socioeconomicos = {\n\t\tapresenta_condicao_hipossuficiencia: results[\"11_a_acolhida_ainda_apres\"], //\"Não (acione a equipe imediatamente)\",\n\t\tmotivo_nao_condicao_hipossuficiencia: results[\"111_informe_aqui_os_motiv1\"] //\" apresenta condição de hipossuficiência \",\n\t}\n\n\tlet redes_apoio = {\n\t\tgrupos_comunitarios_religiosos: results[\"12_a_acolhida_participa_e\"], //\"Não\",\n\t\tapoio_pessoas_proximas: results[\"13_como_e_a_relacao_da_ac\"], //\"Sim\",\n\t\trelacao_familiares_acolhida: results[\"14_como_e_a_relacao_da_ac\"], //\"Média (nem sempre pode contar com os familiares, caso precise de apoio)\",\n\t\trelacao_familiares_autor_violencia: results[\"15_como_e_a_relacao_da_ac\"] //\"Ruim (não tem relação com os familiares do(a) autor(a))\",\n\t}\n\n\tlet doencas_fisicas = {\n\t\tresultante_da_violencia: results[\"16_a_acolhida_tem_algum_d\"], //\"Sim\",\t\t\n\t\tquais: results[\"162_qualis\"], //\" doença(s) física(s) \",\n\t\tquanto_tempo: results[\"162_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_acompanhamento_medico: results[\"17_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tonde_faz_acompanhamento_medico: results[\"17_onde\"], //\"Unidade Básica de Saúde (UBS)\",\n\t\tquanto_tempo_acompanhamento: results[\"17_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_uso_medicamentos: results[\"18_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tquais_medicamentos: results[\"18_qualis\"], //\" medicações por conta da(s) doença(s) física(s)\",\n\t\tquanto_tempo_medicamentos: results[\"18_ha_quanto_tempo\"], //\"Entre 2 anos e 10 anos\",\n\t\trecebe_bpc: results[\"19_caso_seja_pessoa_com_d\"] //\"Não\",\n\t}\n\n\tlet doencas_psiquiatricas  = { \n\t\tresultante_da_violencia: results[\"20_a_acolhida_tem_algum_d\"], //\"Sim\",\n\t\tquais: results[\"20_qualis\"], //\"doença(s) psiquiátrica(s) resultante(s) da violência\",\n\t\tquanto_tempo: results[\"20_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_acompanhamento_medico: results[\"21_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tonde_faz_acompanhamento_medico: results[\"21_onde\"], //\"Unidade Básica de Saúde (UBS)\",\n\t\tquanto_tempo_acompanhamento: results[\"21_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tfaz_uso_medicamentos: results[\"22_se_sim_a_acolhida_faz\"], //\"Sim\",\n\t\tquais_medicamentos: results[\"22_qualis\"], //\"medicações por conta do(s) adoecimento(s) psiquiátrico(s) \",\n\t\tquanto_tempo_medicamento: results[\"22_ha_quanto_tempo\"] //\"Mais de 10 anos\",\n\t}\n\n\tlet dependencia_quimica = {\n\t\tusa_substancias_por_conta_da_violencia: results[\"23_a_acolhida_faz_uso_de\"], //\"Sim\",\n\t\tquais: results[\"23_qualis\"], //\"Maconha\",\n\t\tquanto_tempo: results[\"23_ha_quanto_tempo\"], //\"Mais de 10 anos\",\n\t\tassistida_por_algum_serivico: results[\"24_se_sim_a_acolhida_e_as\"], //\"Sim\",\n\t\tonde: results[\"24_onde\"], //\"Hospital geral\",\n\t\tquanto_tempo_atendimento: results[\"24_ha_quanto_tempo\"] //\"Entre 1 e 2 anos\",\n\t}\n\n\tlet qualidade_vida = {\n\t\timpacto_sofrido_moderado: results[\"25_quais_impactos_a_acolh\"], //\"Insônia\",\n\t\timpacto_sofrido_grave: results[\"26_quais_impactos_a_acolh\"] //\"Aborto espontâneo\",\n\t}\n\n\tlet psicologa_voluntaria = {\n\t\ttem_contato_advogada: results[\"27_caso_a_acolhida_esteja\"], //\"Sim\",\n\t\tsolicitou_ajuda_mapa: results[\"28_voce_solicitou_ajuda_d\"], //\"Sim\",\n\t\tse_sentiu_orientada: results[\"28_sentiuse_orientada\"], //\"Sim\",\n\t\tse_sentiu_acolhida: results[\"232_sentiuse_acolhida_pel\"], //\"Sim\",\n\t\tparticipa_grupo_discussao: results[\"29_voce_participa_dos_enc\"], //\"Não\",\n\t\tparticipa_grupo_whatsapp_estado: results[\"30_voce_participa_do_grup\"], //\"Sim\",\n\t\tcomo_se_sente_atendimento: results[\"31_se_desejar_relate_como\"] //\"como se sente em relação ao atendimento psicológico realizado pelo Mapa do Acolhimento\"\n\t}\n\n\tif (contrato.tem_assiduidade_atendimentos === 'Não' || \n\t\t\tacompanhamento_psicologico.referenciou_para_servico_publico === 'Sim' ||\n\t\t\tredes_apoio.relacao_familiares_acolhida !== 'Boa' ||\n\t\t\tdoencas_fisicas.recebe_bpc === 'Não' ||\n\t\t\tdependencia_quimica.assistida_por_algum_serivico === 'Não' || \n\t\t\tqualidade_vida.impacto_sofrido_moderado !== 'A acolhida não está sofrendo nenhum dos impactos citados acima'\n\t\t) {\n\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\tif (redes_apoio.apoio_pessoas_proximas === 'Não' || \n\t\t\tdoencas_fisicas.resultante_da_violencia === 'Sim' || \n\t\t\tdoencas_psiquiatricas.resultante_da_violencia === 'Sim' || \n\t\t\tdoencas_psiquiatricas.faz_acompanhamento_medico == 'Não' ||\n\t\t\tdependencia_quimica.usa_substancias_por_conta_da_violencia == 'Sim' ||\n\t\t\tqualidade_vida.impacto_sofrido_grave !== 'A acolhida não está sofrendo nenhum dos impactos citados acima'\n\t\t ) {\n\t\t\t \n\t\tpriority = 'high'\n\t\trisco = 'grave'\n\t}\n\n\tif (acompanhamento_psicologico.foi_submetida_novas_violencias || \n\t    acompanhamento_psicologico.riscos_relacionado_ao_suicidio === 'Sim') {\n\t\tpriority = 'urgent'\n\t\trisco = 'extremo'\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, contrato, acompanhamento_psicologico, aspectos_socioeconomicos, redes_apoio, doencas_fisicas, doencas_psiquiatricas, dependencia_quimica, qualidade_vida, psicologa_voluntaria, risco}\n\tconst user_id = ''\n\n  let body_ticket = 'RISCO ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + '\\\\n\\\\nSOBRE O CONTRATO\\\\nA acolhida tem sido assídua nos atendimentos: ' +  contrato.tem_assiduidade_atendimentos +\n\t//motivos\n\t(contrato.motivo_nao_assiduidade? '\\\\nMotivos: ' + contrato.motivo_nao_assiduidade : '') + \n\t'\\\\nA acolhida respeita os combinados relacionados ao atendimento: ' + contrato.respeita_combinados_atendimento +\n\t//frequencia fora do horario\n\t(contrato.frequencia_atendimento_fora_do_horario? '\\\\nFrequência que procura além do horário de atendimento: ' + contrato.frequencia_atendimento_fora_do_horario : '') +\n\t'\\\\n\\\\nSOBRE O ACOMPANHAMENTO PSICOLÓGICO' +\n\t(acompanhamento_psicologico.foi_submetida_novas_violencias !== '' ? '\\\\nNovas violências que a acolhida foi submetida: ' + acompanhamento_psicologico.foi_submetida_novas_violencias : '') +\n\t(acompanhamento_psicologico.comentario_sobre_novas_violencias? '\\\\nComentário sobre novas violências que a acolhida foi submetida: ' + acompanhamento_psicologico.comentario_sobre_novas_violencias : '') +\n\t'\\\\nAspectos psicológicos trabalhados durante o processo psicoterapêutico: ' + acompanhamento_psicologico.apesctos_psicologicos_trabalhados + \n\t'\\\\nIdentificou necessidade de referenciar a acolhida para algum serviço público da rede de enfrentamento à violência contra as mulheres: ' + acompanhamento_psicologico.referenciou_para_servico_publico +\n\t//serviço publico\n\t// por que\n\t(acompanhamento_psicologico.por_que_servico_publico? '\\\\nMotivo pelo o qual a acolhida foi encaminhada: ' + acompanhamento_psicologico.por_que_servico_publico : '') + \n\t// quais serivicos publicos\n\t(acompanhamento_psicologico.quais_instituicoes? '\\\\nQual(is) instituição(ões) da rede de serviço público a acolhida foi encaminhada: ' + acompanhamento_psicologico.quais_instituicoes : '') +\n\t'\\\\nPreocupa ou percebe, na condução do processo psicoterapêutico, riscos relacionados ao suicídio: ' + acompanhamento_psicologico.riscos_relacionado_ao_suicidio +\n\t'\\\\n\\\\nASPECTOS SOCIOECONÔMICOS\\\\nA acolhida ainda apresenta condição de hipossuficiência: ' + aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia +\n\t//motivos hipossificiencia \n\t(aspectos_socioeconomicos.apresenta_condicao_hipossuficiencia === 'Não'? '\\\\nMotivos de não apresentar condição de hipossuficiência para o atendimento: ' + aspectos_socioeconomicos.motivo_nao_condicao_hipossuficiencia : '') +\n\t'\\\\n\\\\nREDES DE APOIO\\\\nA acolhida participa e tem apoio de grupos comunitários ou religiosos: ' + redes_apoio.grupos_comunitarios_religiosos +\n\t'\\\\nA acolhida tem apoio de outras pessoas próximas: ' + redes_apoio.apoio_pessoas_proximas + \n\t'\\\\nRelação da acolhida com seus familiares: ' + redes_apoio.relacao_familiares_acolhida + \n\t'\\\\nRelação da acolhida com a família do(a) autor(a) da violência: ' + redes_apoio.relacao_familiares_autor_violencia + \n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DOENÇA FÍSICA\\\\nA acolhida tem algum diagnóstico de doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.resultante_da_violencia +\n\t\n\t//tem doenças fisicas resultantes da violencia\n\t(doencas_fisicas.resultante_da_violencia === 'Sim'? \n\t\t'\\\\nQuais: ' + doencas_fisicas.quais + '\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo\n\t \t: '') +\n\t(doencas_fisicas.faz_acompanhamento_medico? \n\t\t'\\\\nA acolhida faz algum acompanhamento médico da(s) doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.faz_acompanhamento_medico\n\t\t: '') +\n\t//faz acompanhamento medico\n\t(doencas_fisicas.faz_acompanhamento_medico === 'Sim' ? \n\t\t'\\\\nOnde: ' + doencas_fisicas.onde_faz_acompanhamento_medico + \n\t\t'\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo_acompanhamento\n\t\t: '') +\n\t//faz uso de medicamentos\n\t(doencas_fisicas.faz_uso_medicamentos?  \n\t\t'\\\\nA acolhida faz uso de medicações por conta da(s) doença(s) física(s) resultante(s) da violência: ' + doencas_fisicas.faz_uso_medicamentos \n\t: '') +\n\t(doencas_fisicas.faz_acompanhamento_medico === 'Sim'? \t\n\t\t'\\\\nQuais: ' + doencas_fisicas.quais_medicamentos +\n\t\t'\\\\nHá quanto tempo: ' + doencas_fisicas.quanto_tempo_medicamentos\n\t\t:'') +\n\t//bpc\t\n\t(doencas_fisicas.recebe_bpc? '\\\\nA acolhida está recebendo o Benefício de Prestação Continuada (BPC): ' + doencas_fisicas.recebe_bpc : '') + \n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DOENÇAS PSIQUIÁTRICAS\\\\n A acolhida tem algum diagnóstico (verbal ou laudo) de doença(s) psiquiátrica(s) resultante(s) da violência: ' + doencas_psiquiatricas.resultante_da_violencia +\n\t\n\t//doenças psiquiatricas\n\t(doencas_psiquiatricas.resultante_da_violencia === 'Sim'?\n\t\t'\\\\nQuais: ' + doencas_psiquiatricas.quais + \n\t\t'\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo \n\t\t: '') +\n\n\t//acompanhamento medico\t \n\t(doencas_psiquiatricas.faz_acompanhamento_medico?\n\t\t'\\\\nA acolhida faz algum acompanhamento médico do(s) adoecimento(s) psiquiátrico(s) resultante(s) da violência: ' + doencas_psiquiatricas.faz_acompanhamento_medico \n\t: '') +\n\t(doencas_psiquiatricas.faz_acompanhamento_medico === 'Sim'?\n\t\t'\\\\nOnde: ' + doencas_psiquiatricas.onde_faz_acompanhamento_medico + '\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo_acompanhamento\n\t \t: '') +\n\t//uso de medicamento\n\t(doencas_psiquiatricas.faz_uso_medicamentos?\n\t\t'\\\\nA acolhida faz uso de medicações por conta do(s) adoecimento(s) psiquiátrico(s) resultante(s) da violência: ' + doencas_psiquiatricas.faz_uso_medicamentos \n\t: '') +\n\t(doencas_psiquiatricas.faz_uso_medicamentos === 'Sim' ? \n\t\t\t'\\\\nQuais: ' + doencas_psiquiatricas.quais_medicamentos + '\\\\nHá quanto tempo: ' + doencas_psiquiatricas.quanto_tempo_medicamento \n\t: '') +\n\t\n\t'\\\\n\\\\nASPECTOS DE SAÚDE | DEPENDÊNCIA QUÍMICA\\\\nA acolhida faz uso de substâncias por conta da violência: ' + dependencia_quimica.usa_substancias_por_conta_da_violencia + \n\t(dependencia_quimica.usa_substancias_por_conta_da_violencia === 'Sim'? \n\t\t'\\\\nQuais: ' + dependencia_quimica.quais + '\\\\nHá quanto tempo: ' + dependencia_quimica.quanto_tempo +\n\t\t'\\\\nA acolhida é assistida por algum serviço público em decorrência do uso de substância por conta da violência: ' + dependencia_quimica.assistida_por_algum_serivico +\n\t\t(dependencia_quimica.assistida_por_algum_serivico === 'Sim'? '\\\\nOnde: '+ dependencia_quimica.onde + '\\\\nHá quanto tempo: ' + dependencia_quimica.quanto_tempo_atendimento: '' ) \n\t\t: '') +\n\t'\\\\n\\\\nQUALIDADE DE VIDA\\\\nImpactos que a acolhida está sofrendo em decorrência da violência (moderado): ' + qualidade_vida.impacto_sofrido_moderado + \n\t'\\\\nImpactos que a acolhida está sofrendo em decorrência da violência (grave):' + qualidade_vida.impacto_sofrido_grave +\n\t'\\\\n\\\\nSOBRE A PSICÓLOGA VOLUNTÁRIA'\t+\n\t(psicologa_voluntaria.tem_contato_advogada? '\\\\nSegue em contato com a advogada que está acompanhando-a: ' + psicologa_voluntaria.tem_contato_advogada: '') +\n\t'\\\\nSolicitou ajuda da equipe técnica do Mapa do Acolhimento: ' + psicologa_voluntaria.solicitou_ajuda_mapa + \n\t(psicologa_voluntaria.solicitou_ajuda_mapa === 'Sim'? \n\t\t'\\\\nSentiu-se orientada: ' + psicologa_voluntaria.se_sentiu_orientada +\n\t\t'\\\\nSentiu-se acolhida pela equipe: ' + psicologa_voluntaria.se_sentiu_acolhida \n\t: '') + \n\t'\\\\nParticipa dos encontros de Discussão de Caso do projeto: ' + psicologa_voluntaria.participa_grupo_discussao + \n\t'\\\\nParticipa do grupo de WhatsApp de seu Estado: ' + psicologa_voluntaria.participa_grupo_whatsapp_estado +\n\t(psicologa_voluntaria.como_se_sente_atendimento? '\\\\nComo se sente em relação ao atendimento jurídico realizado pelo Mapa do Acolhimento: ' + psicologa_voluntaria.como_se_sente_atendimento\n\t: '')\n\t\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+      },
+      "name": "Formata - Acomp Psicologico 1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        180
+      ],
+      "id": "4c989317-c53f-4095-8426-ca49377046f6"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json.zendesk_user_id }},\n \t\t\"organization_id\": 360282119532,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"acompanhamento-1\"], \n \t\t\"status\": \"new\",\n   \t\t\"priority\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Acompanhamento 1] {{$node[\"Formata - Acomp Psicologico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\t\"body\": \"{{$node[\"Formata - Acomp Psicologico 1\"].json[\"body_ticket\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (acomp psicologico)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        2340,
+        0
+      ],
+      "id": "51bab03d-c90c-40bb-b373-6b6c9be80a3d",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = LOWER('{{ $json.answers.dados_voluntaria.email_cadastro }}')",
+        "options": {}
+      },
+      "id": "2b42b01a-13ca-4c90-8cb9-22f08b89a5aa",
+      "name": "Busca Zendesk User ID",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2140,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4349b0f2-2243-46bb-b668-3b50a99bcb2c",
+              "leftValue": "={{ $json.dateSubmitted }}",
+              "rightValue": "2024-06-24T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "eca7263f-f1d0-480d-9bd5-c521cee436cc",
+      "name": "Filter1",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "submissions",
+        "options": {}
+      },
+      "id": "264d77a5-e3e0-4106-bc54-576681843039",
+      "name": "Split Out1",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://mautic.nossas.org/api/forms/26/submissions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "3dc0d7a4-784d-45f3-9bbe-f58a16e87f25",
+      "name": "Instrumental de Acompanhamento 1: Advogadas1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        540
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "5mHrJT6EPwg2zudb",
+          "name": "mautic"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4349b0f2-2243-46bb-b668-3b50a99bcb2c",
+              "leftValue": "={{ $json.dateSubmitted }}",
+              "rightValue": "2024-06-24T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "eb163019-05d2-48fe-b236-2f0548b3ad15",
+      "name": "Filter2",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "submissions",
+        "options": {}
+      },
+      "id": "3fe1e2db-d6a1-4909-a942-d22d272e7f41",
+      "name": "Split Out2",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://mautic.nossas.org/api/forms/28/submissions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "1ebd41f1-2333-41a2-a497-0f6a76462889",
+      "name": "Instrumental de Acompanhamento 2: Psicólogas1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        740
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "5mHrJT6EPwg2zudb",
+          "name": "mautic"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4349b0f2-2243-46bb-b668-3b50a99bcb2c",
+              "leftValue": "={{ $json.dateSubmitted }}",
+              "rightValue": "2024-06-24T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c408ec0d-6329-40e6-93bd-a4f78549bf76",
+      "name": "Filter3",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "submissions",
+        "options": {}
+      },
+      "id": "e585b326-c329-46ee-a496-c18878a3c828",
+      "name": "Split Out3",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://mautic.nossas.org/api/forms/27/submissions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "76aac0d1-161e-461e-af34-bc2102483603",
+      "name": "Instrumental de Acompanhamento 2: Advogadas1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        940
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "5mHrJT6EPwg2zudb",
+          "name": "mautic"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2024-11-26T17:10:26.719Z",
+      "updatedAt": "2024-11-26T17:10:26.719Z",
+      "role": "workflow:owner",
+      "workflowId": "HDIaKJBMrgHsrAgd",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-11-26T13:43:14.729Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1732628580434
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-26T18:18:30.000Z",
+  "versionId": "ec615df5-31a8-4a91-9c22-8f7fa34e2f77"
+}
