@@ -1,0 +1,332 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa os tickets do objeto retornado": {
+      "main": [
+        [
+          {
+            "node": "Se o campo \"Status da Inscrição\" for igual a \"cadastrada\"e for via api",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Busca os tickets da voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca os tickets da voluntária no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Separa os tickets do objeto retornado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se o campo \"Status da Inscrição\" for igual a \"cadastrada\"e for via api": {
+      "main": [
+        [
+          {
+            "node": "Seleciona o ticket mais antigo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seleciona o ticket mais antigo": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o ticket para \"aprovada\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o ticket para \"aprovada\"": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-02T14:18:29.749Z",
+  "id": "eERvBGxcjnhhBrEN",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Atualizar status da inscrição de ticket de voluntárias aprovadas",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ca5f128c-bfef-4bac-9e80-481cfc6e518b",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * from volunteers where condition = 'aprovada'",
+        "options": {}
+      },
+      "id": "4b47476c-ce5d-477e-adbd-b53cafc11636",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$json[\"zendesk_user_id\"]}}/tickets/requested",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "36959dd6-95bb-4fe3-a562-6d636bd4927a",
+      "name": "Busca os tickets da voluntária no Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        940,
+        320
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tickets",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "aa6e672c-7847-49ad-8816-f08d7c0637b1",
+      "name": "Separa os tickets do objeto retornado",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "limit"
+      },
+      "id": "b7d661a3-eb5a-478b-8652-c20262ca75cb",
+      "name": "Seleciona o ticket mais antigo",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360021665652,
+                "value": "aprovada"
+              }
+            ]
+          },
+          "status": "open"
+        }
+      },
+      "id": "3e3396ed-47db-44e4-9ed3-09e0433bfee8",
+      "name": "Atualiza o ticket para \"aprovada\"",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        300
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d6566f5f-8edc-464d-a3b1-b246f642f7a1",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "09b95ed4-2292-47e8-8ad9-8cb7adc209b3",
+      "name": "Replace Me",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        880,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tickets.custom_fields[6].value }}",
+              "value2": "cadastrada"
+            },
+            {
+              "value1": "={{ $json.tickets.status }}",
+              "value2": "pending"
+            },
+            {
+              "value1": "={{ $json.tickets.via.channel }}",
+              "value2": "api"
+            }
+          ]
+        }
+      },
+      "id": "45e0bc5d-1395-447d-9fb9-86a1887f52e1",
+      "name": "Se o campo \"Status da Inscrição\" for igual a \"cadastrada\"e for via api",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        320
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2024-12-02T14:18:29.753Z",
+      "updatedAt": "2024-12-02T14:18:29.753Z",
+      "role": "workflow:owner",
+      "workflowId": "eERvBGxcjnhhBrEN",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-11-26T13:43:14.729Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1732628580434
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-02T14:35:22.000Z",
+  "versionId": "98af28d5-080d-45fc-bc94-c906d44dd547"
+}
