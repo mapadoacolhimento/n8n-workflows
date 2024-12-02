@@ -49,29 +49,7 @@
       "main": [
         [
           {
-            "node": "Cidades com mais match online - constroi mensagem",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Cidades com mais match online - constroi mensagem": {
-      "main": [
-        [
-          {
-            "node": "Une as mensagens1",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Une as mensagens1": {
-      "main": [
-        [
-          {
-            "node": "Envia mensagem",
+            "node": "Cidades com mais MSRs aguardando match - constroi mensagem",
             "type": "main",
             "index": 0
           }
@@ -93,6 +71,67 @@
           },
           {
             "node": "Cidades com mais match online",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cidades com mais MSRs aguardando match - constroi mensagem": {
+      "main": [
+        [
+          {
+            "node": "Une as mensagens1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Une as mensagens1": {
+      "main": [
+        [
+          {
+            "node": "Envia mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quer um update?": {
+      "main": [
+        [
+          {
+            "node": "Capitais - busca disponibilidade",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Disponibilidade total - busca disponibilidade",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cidades com mais match online",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Slack": {
+      "main": [
+        [
+          {
+            "node": "Quer um update?",
             "type": "main",
             "index": 0
           }
@@ -131,7 +170,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH month_year AS (\n  SELECT\n    DATE_PART('day', CURRENT_DATE) AS day,\n    DATE_PART('month', CURRENT_DATE) AS month,\n    DATE_PART('year', CURRENT_DATE) AS year\n),\navailable_volunteers AS (\n  SELECT \n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS available_psychologists,\n    SUM(CASE WHEN support_type = 'psychological' THEN (max_matches - current_matches) ELSE 0 END) AS psychological_availability,\n  SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS available_lawyers,\n  SUM(CASE WHEN support_type = 'legal' THEN (max_matches - current_matches) ELSE 0 END) AS legal_availability\n  FROM volunteer_availability \n  WHERE is_available = TRUE\n),\nidle_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_psychologists, \n    SUM(CASE WHEN support_type = 'legal' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_lawyers\n  FROM volunteer_availability\n  WHERE is_available = TRUE\n),\nnew_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS new_psychologists, \n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS new_lawyers\n  FROM\n    volunteer_availability\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    \n),\nnew_available_volunteers AS (\n  SELECT\n    COALESCE(SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END), 0) AS new_available_psychologists, \n    COALESCE(SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END), 0) AS new_available_lawyers\n  FROM\n    volunteer_availability\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    AND is_available = TRUE\n),\nnew_support_requests AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS psychological_support_requests,\n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS legal_support_requests\n  FROM match.support_requests\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n),\nunsubscripted_volunteers AS (\n  SELECT\n    SUM(CASE WHEN occupation = 'psychologist' THEN 1 ELSE 0 END) AS unsubscripted_psychologists,\n    SUM(CASE WHEN occupation = 'lawyer' THEN 1 ELSE 0 END) AS unsubscripted_lawyers\n  FROM volunteers\n  WHERE \n    condition = 'descadastrada'\n    AND updated_at >= CURRENT_DATE - INTERVAL '30 DAY'\n)\nSELECT *\nFROM month_year\nCROSS JOIN available_volunteers\nCROSS JOIN idle_volunteers\nCROSS JOIN new_volunteers\nCROSS JOIN new_support_requests\nCROSS JOIN new_available_volunteers\nCROSS JOIN unsubscripted_volunteers",
+        "query": "WITH month_year AS (\n  SELECT\n    DATE_PART('day', CURRENT_DATE) AS day,\n    DATE_PART('month', CURRENT_DATE) AS month,\n    DATE_PART('year', CURRENT_DATE) AS year\n),\navailable_volunteers AS (\n  SELECT \n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS available_psychologists,\n    SUM(CASE WHEN support_type = 'psychological' THEN (max_matches - current_matches) ELSE 0 END) AS psychological_availability,\n  SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS available_lawyers,\n  SUM(CASE WHEN support_type = 'legal' THEN (max_matches - current_matches) ELSE 0 END) AS legal_availability\n  FROM volunteer_availability \n  WHERE is_available = TRUE\n),\nidle_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_psychologists, \n    SUM(CASE WHEN support_type = 'legal' AND current_matches = 0 THEN 1 ELSE 0 END) AS idle_lawyers\n  FROM volunteer_availability\n  WHERE is_available = TRUE\n),\nnew_volunteers AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS new_psychologists, \n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS new_lawyers\n  FROM\n    volunteer_availability\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    \n),\nnew_available_volunteers AS (\n  SELECT\n    COALESCE(SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END), 0) AS new_available_psychologists, \n    COALESCE(SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END), 0) AS new_available_lawyers\n  FROM\n    volunteer_availability\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    AND is_available = TRUE\n),\nnew_support_requests AS (\n  SELECT\n    SUM(CASE WHEN support_type = 'psychological' THEN 1 ELSE 0 END) AS psychological_support_requests,\n    SUM(CASE WHEN support_type = 'legal' THEN 1 ELSE 0 END) AS legal_support_requests\n  FROM match.support_requests\n  WHERE created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n),\nunsubscripted_volunteers AS (\n  SELECT\n    SUM(CASE WHEN occupation = 'psychologist' THEN 1 ELSE 0 END) AS unsubscripted_psychologists,\n    SUM(CASE WHEN occupation = 'lawyer' THEN 1 ELSE 0 END) AS unsubscripted_lawyers\n  FROM volunteers\n  WHERE \n    condition = 'descadastrada'\n    AND updated_at >= CURRENT_DATE - INTERVAL '30 DAY'\n),\nvolunteers_that_finished_training AS (\n    SELECT \n        COUNT(DISTINCT CASE WHEN occupation = 'lawyer' THEN volunteer_id ELSE NULL END) AS lawyers_finished_training,\n        COUNT(DISTINCT CASE WHEN occupation = 'psychologist' THEN volunteer_id ELSE NULL END) AS psychologists_finished_training\n    FROM volunteer_status_history h\n    INNER JOIN volunteers v ON v.id = h.volunteer_id\n    WHERE \n        h.status = 'aprovada'\n        AND h.created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n)\nSELECT *\nFROM month_year\nCROSS JOIN available_volunteers\nCROSS JOIN idle_volunteers\nCROSS JOIN new_volunteers\nCROSS JOIN new_support_requests\nCROSS JOIN new_available_volunteers\nCROSS JOIN volunteers_that_finished_training\nCROSS JOIN unsubscripted_volunteers",
         "options": {}
       },
       "id": "ebe83a9e-04d8-4152-91dd-d52ae5d152e6",
@@ -187,7 +226,7 @@
           "mode": "list",
           "cachedResultName": "monitoramento-voluntarias"
         },
-        "text": "=:chart_with_upwards_trend: *MONITORAMENTO MENSAL DA DISPONIBILIDADE DE VOLUNTÁRIAS* :chart_with_upwards_trend: \n\n\nOlá! :wave:\nEssa é a visão geral da disponibilidade de Voluntárias em *{{ $json.day }}/{{ $json.month }}/{{ $json.year }}*\n\n\n\n*Voluntárias Disponíveis :white_check_mark:*\n- {{ $json.available_psychologists }} psicólogas / {{ $json.psychological_availability }} vagas para match\n- {{ $json.available_lawyers }} advogadas / {{ $json.legal_availability }} vagas para match\n\n\n*Pedidos de acolhimento recebidos no último mês :point_up:*\n- {{ $json.psychological_support_requests }} psicológicos\n- {{ $json.legal_support_requests }} jurídicos\n\n\n*Novos cadastros de Voluntárias no último mês :writing_hand:*\n- {{ $json.new_psychologists }} novas psicólogas\n- {{ $json.new_lawyers }} novas advogadas\n\n\n*Descadastro de Voluntárias no último mês :no_entry_sign:*\n- {{ $json.unsubscripted_psychologists }} psicólogas\n- {{ $json.unsubscripted_lawyers }} advogadas\n\n\n\n*Territórios prioritários para captação de Voluntárias :earth_americas: *\n\n\n{{ $json.capitals_psychologists_message }}\n\n{{ $json.capitals_lawyers_message }}\n\n{{ $json.cities_with_online_match }}\n\n",
+        "text": "=:chart_with_upwards_trend: *MONITORAMENTO MENSAL DA DISPONIBILIDADE DE VOLUNTÁRIAS* :chart_with_upwards_trend: \n\n\nOlá! :wave:\nEssa é a visão geral da disponibilidade de Voluntárias em *{{ $json.day }}/{{ $json.month }}/{{ $json.year }}*\n\n\n\n*Voluntárias Disponíveis :white_check_mark:*\n- {{ $json.available_psychologists }} psicólogas / {{ $json.psychological_availability }} vagas para match\n- {{ $json.available_lawyers }} advogadas / {{ $json.legal_availability }} vagas para match\n\n\n*Pedidos de acolhimento recebidos no último mês :point_up:*\n- {{ $json.psychological_support_requests }} psicológicos\n- {{ $json.legal_support_requests }} jurídicos\n\n\n*Novos cadastros de Voluntárias no último mês :writing_hand:*\n- {{ $json.new_psychologists }} novas psicólogas\n- {{ $json.new_lawyers }} novas advogadas\n\n\n*Voluntárias que concluíram a Capacitação no último mês :mortar_board:*\n- {{ $json.psychologists_finished_training }} psicólogas\n- {{ $json.lawyers_finished_training }} advogadas\n\n\n*Descadastro de Voluntárias no último mês :no_entry_sign:*\n- {{ $json.unsubscripted_psychologists }} psicólogas\n- {{ $json.unsubscripted_lawyers }} advogadas\n\n\n\n*Territórios prioritários para captação de Voluntárias :earth_americas: *\n\n\n{{ $json.capitals_psychologists_message }}\n\n{{ $json.capitals_lawyers_message }}\n\n{{ $json.cities_with_online_match }}\n\n",
         "otherOptions": {}
       },
       "id": "3649ceb0-2a8e-4b52-93db-d4d558fd92d7",
@@ -208,7 +247,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    INITCAP(city) AS city,\n    state,\n    COUNT(*)\nFROM match.support_requests s\nLEFT JOIN match.matches m USING(support_request_id)\nWHERE \n    (s.status = 'public_service' OR s.status::VARCHAR LIKE '%social_worker%' OR match_stage = 'online')\n    AND s.created_at >= CURRENT_DATE - INTERVAL '30 DAY'\n    AND city NOT IN ('not_found', 'INT')\n    AND state NOT IN ('not_found', 'INT')\nGROUP BY city, state\nORDER BY 3 DESC\nLIMIT 5",
+        "query": "SELECT \n    INITCAP(city) AS city,\n    state,\n    COUNT(*)\nFROM match.support_requests\nWHERE status IN ('waiting_for_match', 'waiting_for_match_with_priority', 'waiting_for_confirmation')\nGROUP BY city, state\nORDER BY 3 DESC\nLIMIT 10",
         "options": {}
       },
       "id": "701c34b2-966b-4e86-9dcd-2c467165f995",
@@ -225,19 +264,6 @@
           "name": "[PROD] Mapa"
         }
       }
-    },
-    {
-      "parameters": {
-        "jsCode": "const output = [];\n\nlet message = \"*3. Cidades com mais matches online/serviço público/assistente social no último mês* \\n\";\n\nfor (const item of $input.all()) {\n\n  const city = item.json.city;\n  const state = item.json.state;\n  const count = item.json.count;\n\n  if(!!count) {\n    message += \"> \" + city + \" (\" +  state + \"): \" + count +  \"\\n\";\n  }\n  \n  \n}\n\noutput.push({\n  cities_with_online_match: message,\n})\n\nreturn output;"
-      },
-      "id": "85b421cd-4925-4430-b9d2-1300e3d056c6",
-      "name": "Cidades com mais match online - constroi mensagem",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1460,
-        700
-      ]
     },
     {
       "parameters": {
@@ -277,6 +303,80 @@
         740,
         420
       ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nlet message = \"*3. Cidades com mais MSRs aguardando match :rotating_light: * \\n\";\n\nfor (const item of $input.all()) {\n\n  const city = item.json.city;\n  const state = item.json.state;\n  const count = item.json.count;\n\n  if(!!count) {\n    message += \"> \" + city + \" (\" +  state + \"): \" + count +  \"\\n\";\n  }\n  \n  \n}\n\noutput.push({\n  cities_with_online_match: message,\n})\n\nreturn output;"
+      },
+      "id": "85b421cd-4925-4430-b9d2-1300e3d056c6",
+      "name": "Cidades com mais MSRs aguardando match - constroi mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "19989403-e763-4672-b6fb-7195b5ec2b82",
+              "leftValue": "={{ $json.body.text }}",
+              "rightValue": "quero um update",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1c015706-7148-45f1-9697-d293f78b693b",
+      "name": "Quer um update?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        780,
+        900
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "753bc90a-7425-462a-84b1-367e889b88ec",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        940,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1527a18a-bb8d-4a39-8964-190bea5dbf05",
+        "options": {}
+      },
+      "id": "ffa128bc-2d9a-4d2c-9d3d-c83691e15d3b",
+      "name": "Webhook Slack",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        600,
+        900
+      ],
+      "webhookId": "1527a18a-bb8d-4a39-8964-190bea5dbf05"
     }
   ],
   "pinData": {},
@@ -342,7 +442,7 @@
     }
   },
   "tags": [],
-  "triggerCount": 1,
-  "updatedAt": "2024-11-11T12:00:00.000Z",
-  "versionId": "6bfa2ede-fc56-49e1-9a27-ff1376de2d3a"
+  "triggerCount": 2,
+  "updatedAt": "2024-12-02T18:05:30.000Z",
+  "versionId": "4a6bb9e1-186a-4fb7-8db5-03d8e38ea6b2"
 }
