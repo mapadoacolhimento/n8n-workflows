@@ -202,6 +202,28 @@
         ],
         [
           {
+            "node": "Busca zendesk_ticket_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca zendesk_ticket_id": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno no ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno no ticket": {
+      "main": [
+        [
+          {
             "node": "Loop Over Items",
             "type": "main",
             "index": 0
@@ -447,7 +469,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        4040,
+        4260,
         740
       ],
       "credentials": {
@@ -504,7 +526,7 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        4260,
+        4480,
         820
       ],
       "credentials": {
@@ -520,7 +542,8 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "loose"
+            "typeValidation": "loose",
+            "version": 1
           },
           "conditions": [
             {
@@ -548,23 +571,67 @@
         3460,
         360
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  zendesk_ticket_id\nFROM match.support_requests\nWHERE support_request_id = {{ $json.support_request_id }}",
+        "options": {}
+      },
+      "id": "f4fa5ec8-781a-4e38-b997-2bcdfddcba34",
+      "name": "Busca zendesk_ticket_id",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3660,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "<strong>Match Diário:</strong> </br></br>Não encontramos uma voluntária disponível. O pedido de acolhimento permanece na fila."
+        }
+      },
+      "id": "1d8e5ff0-67eb-4e29-858d-dd30fd2d0afd",
+      "name": "Adiciona comentário interno no ticket",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        3900,
+        660
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {
     "Schedule Trigger": [
       {
         "json": {
-          "timestamp": "2024-11-06T10:00:00.004-03:00",
-          "Readable date": "November 6th 2024, 10:00:00 am",
+          "timestamp": "2024-12-02T10:00:00.008-03:00",
+          "Readable date": "December 2nd 2024, 10:00:00 am",
           "Readable time": "10:00:00 am",
-          "Day of week": "Wednesday",
+          "Day of week": "Monday",
           "Year": "2024",
-          "Month": "November",
-          "Day of month": "06",
+          "Month": "December",
+          "Day of month": "02",
           "Hour": "10",
           "Minute": "00",
           "Second": "00",
-          "Timezone": "-03 -03:00"
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
         }
       }
     ]
@@ -633,6 +700,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-11-06T17:17:11.000Z",
-  "versionId": "fc744cbc-21e8-4e72-a568-7e2ae1cc830b"
+  "updatedAt": "2024-12-02T17:35:13.000Z",
+  "versionId": "2c19118c-7033-4ac8-9508-17a06adca09c"
 }
