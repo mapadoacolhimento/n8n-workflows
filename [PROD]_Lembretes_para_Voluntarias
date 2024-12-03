@@ -114,17 +114,6 @@
         ]
       ]
     },
-    "Envia mensagem por WhatsApp": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items2": {
       "main": [
         [
@@ -242,6 +231,17 @@
       ]
     },
     "Voluntárias que vão receber Whatsapp": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem por WhatsApp": {
       "main": [
         [
           {
@@ -469,51 +469,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBasicAuth",
-        "sendBody": true,
-        "contentType": "form-urlencoded",
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "To",
-              "value": "={{ $json.phone }}"
-            },
-            {
-              "name": "From",
-              "value": "MGd8a9962347e338326e9237641454191f"
-            },
-            {
-              "name": "ContentSid",
-              "value": "={{ $json.content_template_sid }}"
-            },
-            {
-              "name": "ContentVariables",
-              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "d798f76c-274e-485d-83da-f1553f89fc83",
-      "name": "Envia mensagem por WhatsApp",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        2320,
-        1000
-      ],
-      "credentials": {
-        "httpBasicAuth": {
-          "id": "SFhrb3m76win1cJr",
-          "name": "Twilio API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "options": {}
       },
       "id": "0a11a0f5-656a-46aa-8591-07c45674285c",
@@ -731,6 +686,52 @@
         200,
         1260
       ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "={{ $json.content_template_sid }}"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d798f76c-274e-485d-83da-f1553f89fc83",
+      "name": "Envia mensagem por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        1000
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -762,7 +763,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2024-11-26T13:43:14.729Z",
+              "updatedAt": "2024-12-03T18:14:29.323Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -775,8 +776,8 @@
                 "userActivatedAt": 1731658062996,
                 "npsSurvey": {
                   "waitingForResponse": true,
-                  "ignoredCount": 1,
-                  "lastShownAt": 1732628580434
+                  "ignoredCount": 2,
+                  "lastShownAt": 1733249665586
                 }
               },
               "role": "global:owner",
@@ -802,6 +803,6 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-10-09T13:24:35.000Z",
-  "versionId": "7364105a-9b3b-495c-a391-d0b9a4d7d7d6"
+  "updatedAt": "2024-12-03T15:16:39.000Z",
+  "versionId": "ffa535aa-41e9-4dcd-ae49-6ba9ce8db17f"
 }
