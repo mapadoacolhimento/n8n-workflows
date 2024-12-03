@@ -771,7 +771,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city = item.json.user_fields?.city || \"\";\n  const new_city = !city || city === 'ZERO_RESULTS'\n      ? 'not_found'\n      : city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.user_fields.cep?.replace(/[^0-9\\\\.]+/g, '').slice(0,8)\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.user_fields.city = new_city;\n  item.json.user_fields.zipcode = zipcode;\n  item.json.user_fields.state = item.json.user_fields?.state || 'not_found';\n\n  const first_name = item.json.name.split(\" \")[0];\n  item.json.user_fields.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  const whatsapp = item.json.user_fields.whatsapp?.replace(/[^0-9\\\\.]+/g, '');\n  const phone = item.json.phone?.replace(/[^0-9\\\\.]+/g, '')\n  item.json.phone = phone || whatsapp;\n  item.json.user_fields.registration_number = item.json.user_fields.registration_number?.replace(/[^0-9\\\\.]+/g, '');\n  item.json.user_fields.availability = Number(item.json.user_fields?.disponibilidade_de_atendimentos || 0);\n  item.json.user_fields.condition = item.json.user_fields?.condition || \"not_found\";\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const city = item.json.user_fields?.city || \"\";\n  const new_city = !city || city === 'ZERO_RESULTS'\n      ? 'not_found'\n      : city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = item.json.user_fields.cep?.replace(/[^0-9\\\\.]+/g, '').slice(0,8)\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.user_fields.city = new_city;\n  item.json.user_fields.zipcode = zipcode;\n  item.json.user_fields.state = item.json.user_fields?.state || 'not_found';\n\n  const first_name = item.json.name.split(\" \")[0];\n  item.json.user_fields.first_name = first_name.charAt(0).toUpperCase() + first_name.slice(1);\n  item.json.phone = item.json.phone?.replace(/[^0-9\\\\.]+/g, '');\n  item.json.user_fields.registration_number = item.json.user_fields.registration_number?.replace(/[^0-9\\\\.]+/g, '');\n  item.json.user_fields.availability = Number(item.json.user_fields?.disponibilidade_de_atendimentos || 0);\n  item.json.user_fields.condition = item.json.user_fields?.condition || \"not_found\";\n}\n\nreturn $input.all();\n"
       },
       "id": "9fa9c1db-1372-476e-add6-23b79eefc508",
       "name": "Normalize Zendesk input from volunteer",
@@ -1673,7 +1673,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2024-11-26T13:43:14.729Z",
+              "updatedAt": "2024-12-03T18:14:29.323Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -1686,8 +1686,8 @@
                 "userActivatedAt": 1731658062996,
                 "npsSurvey": {
                   "waitingForResponse": true,
-                  "ignoredCount": 1,
-                  "lastShownAt": 1732628580434
+                  "ignoredCount": 2,
+                  "lastShownAt": 1733249665586
                 }
               },
               "role": "global:owner",
@@ -1716,6 +1716,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-08-06T13:46:17.000Z",
-  "versionId": "3e1dc3f6-3d73-4407-8676-5727ba3952e9"
+  "updatedAt": "2024-12-03T14:52:44.000Z",
+  "versionId": "d0cd1fbf-cd58-4eca-a21f-9d2008abb219"
 }
