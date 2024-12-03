@@ -45,7 +45,7 @@
         ],
         [
           {
-            "node": "Busca os tickets da voluntária no Zendesk",
+            "node": "Zendesk",
             "type": "main",
             "index": 0
           }
@@ -56,7 +56,7 @@
       "main": [
         [
           {
-            "node": "Separa os tickets do objeto retornado",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -68,6 +68,13 @@
         [
           {
             "node": "Seleciona o ticket mais antigo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -95,6 +102,53 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Separa os tickets do objeto retornado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Busca os tickets da voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-12-02T14:18:29.749Z",
@@ -111,7 +165,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        260,
+        80,
         300
       ]
     },
@@ -126,7 +180,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        480,
+        300,
         300
       ],
       "credentials": {
@@ -138,7 +192,7 @@
     },
     {
       "parameters": {
-        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$json[\"zendesk_user_id\"]}}/tickets/requested",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$json[\"id\"]}}/tickets/requested",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "options": {}
@@ -148,8 +202,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        940,
-        320
+        1200,
+        240
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -169,8 +223,8 @@
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        1120,
-        320
+        1660,
+        220
       ]
     },
     {
@@ -182,8 +236,8 @@
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        1560,
-        300
+        2180,
+        200
       ]
     },
     {
@@ -207,8 +261,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1760,
-        300
+        2360,
+        380
       ],
       "credentials": {
         "zendeskApi": {
@@ -226,7 +280,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        700,
+        500,
         300
       ]
     },
@@ -238,7 +292,7 @@
       "typeVersion": 1,
       "position": [
         880,
-        160
+        140
       ]
     },
     {
@@ -265,7 +319,96 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        1300,
+        1900,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ef33e7c9-c076-443e-ba9e-87ee7482e48d",
+              "leftValue": "={{ $json.tickets }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2e7f3bce-728f-4d69-803f-298db947ed65",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1400,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.zendesk_user_id }}"
+      },
+      "id": "90974ec5-f4c3-4f6a-84b0-157c42b2e745",
+      "name": "Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        700,
+        320
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7c2dc4f2-81bb-4798-8d2a-bcb02e291d3c",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "256af9b9-9c2d-4f28-83f5-e4470d2b8289",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        920,
         320
       ]
     }
@@ -296,7 +439,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2024-11-26T13:43:14.729Z",
+              "updatedAt": "2024-12-03T18:14:29.323Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -309,8 +452,8 @@
                 "userActivatedAt": 1731658062996,
                 "npsSurvey": {
                   "waitingForResponse": true,
-                  "ignoredCount": 1,
-                  "lastShownAt": 1732628580434
+                  "ignoredCount": 2,
+                  "lastShownAt": 1733249665586
                 }
               },
               "role": "global:owner",
@@ -327,6 +470,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-12-02T14:35:22.000Z",
-  "versionId": "98af28d5-080d-45fc-bc94-c906d44dd547"
+  "updatedAt": "2024-12-03T18:32:24.000Z",
+  "versionId": "921ff202-ae70-43a0-aee7-c17e7eff63e4"
 }
