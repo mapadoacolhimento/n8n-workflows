@@ -1,0 +1,243 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza contato no Loops": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Atualiza contato no Loops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-10T18:08:54.094Z",
+  "id": "JMNgqq6mdcwipLTj",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Sync Loops",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d4d2bda5-16ac-4e22-8fad-0ee2dfdb7943",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH msrs AS (\n    SELECT \n        email,\n        first_name,\n        'msr' AS user_group,\n        NULL AS volunteer_status\n    FROM msr.msrs m\n    INNER JOIN pii_sec.msr_pii p USING(msr_id)\n    WHERE m.created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR m.updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n),\nvolunteers AS (\n    SELECT \n        email,\n        first_name,\n        'volunteer' AS user_group,\n        condition AS volunteer_status\n    FROM volunteers\n    WHERE created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n)\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM msrs\nUNION ALL\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM volunteers",
+        "options": {}
+      },
+      "id": "5b0c3e32-6391-40a9-a3d6-18d7764be726",
+      "name": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"first_name\": \"{{ $json.first_name }}\",\n  \"user_group\": \"{{ $json.user_group }}\",\n  \"volunteer_status\": \"{{ $json.volunteer_status }}\"\n}",
+        "options": {}
+      },
+      "id": "a91dfe96-d3e2-498d-97c8-f8f89bf7103e",
+      "name": "Atualiza contato no Loops",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1600,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "c60d61e9-0fc1-4653-b49f-a9d6fc7c93dc",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1180,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "92199686-9f17-4367-b624-fdae0c7e002e",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1400,
+        360
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "9099c639-4679-4925-afa4-1113dc845686",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        460,
+        460
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LGjodYg7COQ49lol",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2024-12-10T18:08:54.097Z",
+      "updatedAt": "2024-12-10T18:08:54.097Z",
+      "role": "workflow:owner",
+      "workflowId": "JMNgqq6mdcwipLTj",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-10T20:48:40.000Z",
+  "versionId": "05b40193-93ca-4c82-bdcd-f63d7399bdaa"
+}
