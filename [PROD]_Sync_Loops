@@ -12,28 +12,6 @@
         ]
       ]
     },
-    "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualiza contato no Loops": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items": {
       "main": [
         [],
@@ -51,6 +29,28 @@
         [
           {
             "node": "Atualiza contato no Loops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza contato no Loops": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -78,53 +78,6 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "WITH msrs AS (\n    SELECT \n        email,\n        first_name,\n        'msr' AS user_group,\n        NULL AS volunteer_status\n    FROM msr.msrs m\n    INNER JOIN pii_sec.msr_pii p USING(msr_id)\n    WHERE m.created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR m.updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n),\nvolunteers AS (\n    SELECT \n        email,\n        first_name,\n        'volunteer' AS user_group,\n        condition AS volunteer_status\n    FROM volunteers\n    WHERE created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n)\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM msrs\nUNION ALL\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM volunteers",
-        "options": {}
-      },
-      "id": "5b0c3e32-6391-40a9-a3d6-18d7764be726",
-      "name": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        940,
-        340
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "PUT",
-        "url": "https://app.loops.so/api/v1/contacts/update",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"first_name\": \"{{ $json.first_name }}\",\n  \"user_group\": \"{{ $json.user_group }}\",\n  \"volunteer_status\": \"{{ $json.volunteer_status }}\"\n}",
-        "options": {}
-      },
-      "id": "a91dfe96-d3e2-498d-97c8-f8f89bf7103e",
-      "name": "Atualiza contato no Loops",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        1600,
-        360
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "batchSize": 10,
         "options": {
           "reset": false
@@ -141,7 +94,7 @@
     },
     {
       "parameters": {
-        "amount": 3
+        "amount": 2
       },
       "id": "92199686-9f17-4367-b624-fdae0c7e002e",
       "name": "Wait",
@@ -155,29 +108,70 @@
     },
     {
       "parameters": {
-        "documentId": {
-          "__rl": true,
-          "mode": "list",
-          "value": ""
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "list",
-          "value": ""
-        }
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    email,\n    INITCAP(SPLIT_PART(name, ' ', 1)) AS first_name,\n    'doadora' AS user_group,\n    NULL AS volunteer_status\nFROM donations d\nLEFT JOIN activists a USING(email)\nWHERE \n    cached_community_id = 517 \n    AND email IS NOT NULL\n    AND name NOT LIKE '%Uid%'",
+        "options": {}
       },
-      "id": "9099c639-4679-4925-afa4-1113dc845686",
-      "name": "Google Sheets",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
+      "id": "815447e9-0b47-438c-832a-8f92441fb13a",
+      "name": "Busca Doadoras atualizadas nos últimos 7 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
       "position": [
-        460,
-        460
+        940,
+        700
       ],
       "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "LGjodYg7COQ49lol",
-          "name": "Google Sheets account"
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"firstName\": \"{{ $json.first_name }}\",\n  \"userGroup\": \"{{ $json.user_group }}\",\n  \"volunteerStatus\": \"{{ $json.volunteer_status }}\"\n}",
+        "options": {}
+      },
+      "id": "a91dfe96-d3e2-498d-97c8-f8f89bf7103e",
+      "name": "Atualiza contato no Loops",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1600,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH msrs AS (\n    SELECT \n        email,\n        first_name,\n        'msr' AS user_group,\n        NULL AS volunteer_status\n    FROM msr.msrs m\n    INNER JOIN pii_sec.msr_pii p USING(msr_id)\n    WHERE m.created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR m.updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n),\nvolunteers AS (\n    SELECT \n        email,\n        first_name,\n        'volunteer' AS user_group,\n        condition AS volunteer_status\n    FROM volunteers\n    -- WHERE created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    -- OR updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n)\n-- SELECT \n--     email,\n--     first_name,\n--     user_group,\n--     volunteer_status\n-- FROM msrs\n-- UNION ALL\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM volunteers\nLIMIT 10",
+        "options": {}
+      },
+      "id": "5b0c3e32-6391-40a9-a3d6-18d7764be726",
+      "name": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     }
@@ -238,6 +232,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-12-10T20:48:40.000Z",
-  "versionId": "05b40193-93ca-4c82-bdcd-f63d7399bdaa"
+  "updatedAt": "2024-12-11T22:06:26.000Z",
+  "versionId": "ace22134-69ef-49c1-9e6f-1003d0f2a513"
 }
