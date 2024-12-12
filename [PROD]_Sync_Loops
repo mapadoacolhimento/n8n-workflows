@@ -1,17 +1,6 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
-    "When clicking ‘Test workflow’": {
-      "main": [
-        [
-          {
-            "node": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items": {
       "main": [
         [],
@@ -50,7 +39,78 @@
       "main": [
         [
           {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook site": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza contato no Loops1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Doadoras atualizadas nos últimos 7 dias": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
             "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca Doadoras atualizadas nos últimos 7 dias",
             "type": "main",
             "index": 0
           }
@@ -66,17 +126,6 @@
   "name": "[PROD] Sync Loops",
   "nodes": [
     {
-      "parameters": {},
-      "id": "d4d2bda5-16ac-4e22-8fad-0ee2dfdb7943",
-      "name": "When clicking ‘Test workflow’",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        720,
-        340
-      ]
-    },
-    {
       "parameters": {
         "batchSize": 10,
         "options": {
@@ -88,8 +137,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1180,
-        340
+        1480,
+        360
       ]
     },
     {
@@ -101,31 +150,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1400,
-        360
+        1700,
+        380
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    email,\n    INITCAP(SPLIT_PART(name, ' ', 1)) AS first_name,\n    'doadora' AS user_group,\n    NULL AS volunteer_status\nFROM donations d\nLEFT JOIN activists a USING(email)\nWHERE \n    cached_community_id = 517 \n    AND email IS NOT NULL\n    AND name NOT LIKE '%Uid%'",
-        "options": {}
-      },
-      "id": "815447e9-0b47-438c-832a-8f92441fb13a",
-      "name": "Busca Doadoras atualizadas nos últimos 7 dias",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        940,
-        700
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "GPnWI2OL5IjBv3zm",
-          "name": "[PROD] Bonde"
-        }
-      }
     },
     {
       "parameters": {
@@ -143,8 +171,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1600,
-        360
+        1900,
+        380
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -157,7 +185,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH msrs AS (\n    SELECT \n        email,\n        first_name,\n        'msr' AS user_group,\n        NULL AS volunteer_status\n    FROM msr.msrs m\n    INNER JOIN pii_sec.msr_pii p USING(msr_id)\n    WHERE m.created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR m.updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n),\nvolunteers AS (\n    SELECT \n        email,\n        first_name,\n        'volunteer' AS user_group,\n        condition AS volunteer_status\n    FROM volunteers\n    -- WHERE created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    -- OR updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n)\n-- SELECT \n--     email,\n--     first_name,\n--     user_group,\n--     volunteer_status\n-- FROM msrs\n-- UNION ALL\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM volunteers\nLIMIT 10",
+        "query": "WITH msrs AS (\n    SELECT \n        email,\n        first_name,\n        'msr' AS user_group,\n        NULL AS volunteer_status\n    FROM msr.msrs m\n    INNER JOIN pii_sec.msr_pii p USING(msr_id)\n    WHERE m.created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR m.updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n),\nvolunteers AS (\n    SELECT \n        email,\n        first_name,\n        'volunteer' AS user_group,\n        condition AS volunteer_status\n    FROM volunteers\n    WHERE created_at >= CURRENT_DATE - INTERVAL '7 DAY'\n    OR updated_at >= CURRENT_DATE - INTERVAL '7 DAY'\n)\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM msrs\nUNION ALL\nSELECT \n    email,\n    first_name,\n    user_group,\n    volunteer_status\nFROM volunteers",
         "options": {}
       },
       "id": "5b0c3e32-6391-40a9-a3d6-18d7764be726",
@@ -174,6 +202,144 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "058fea7e-79f1-4a9f-b77e-af96c1174376",
+        "options": {}
+      },
+      "id": "145db7c2-d1b2-445a-ad07-99c2326246b3",
+      "name": "Webhook site",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        600,
+        900
+      ],
+      "webhookId": "058fea7e-79f1-4a9f-b77e-af96c1174376"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7406e52-9e57-4659-91ff-6fdab2377f1c",
+              "name": "email",
+              "value": "={{ $json.body['Sem rótulo email'] }}",
+              "type": "string"
+            },
+            {
+              "id": "72a2d6a4-011b-405a-8f80-c41fdd356def",
+              "name": "user_group",
+              "value": "inscrita-site",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2e90e78-e068-402c-a6ea-f5e27ae133c7",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        820,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "57d272b4-85a0-44c8-8d0b-e18b8767d024",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1020,
+        900
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"userGroup\": \"{{ $json.user_group }}\"\n}",
+        "options": {}
+      },
+      "id": "ea4bd7cf-faba-40b1-a180-6395a5c1ee79",
+      "name": "Atualiza contato no Loops1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1220,
+        900
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    email,\n    INITCAP(SPLIT_PART(name, ' ', 1)) AS first_name,\n    'doadora' AS user_group,\n    NULL AS volunteer_status\nFROM donations d\nLEFT JOIN activists a USING(email)\nWHERE \n    cached_community_id = 517 \n    AND email IS NOT NULL\n    AND name NOT LIKE '%Uid%'\n    AND a.created_at >= CURRENT_DATE - INTERVAL '7 DAY'",
+        "options": {}
+      },
+      "id": "53d51dc1-ce96-45d1-8635-69b164f5323c",
+      "name": "Busca Doadoras atualizadas nos últimos 7 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        920,
+        580
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "GPnWI2OL5IjBv3zm",
+          "name": "[PROD] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "f437eb55-d94f-4a28-b211-3f52fb08b515",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 7,
+              "triggerAtHour": 13
+            }
+          ]
+        }
+      },
+      "id": "ce12d5ec-2866-400d-b786-d718b50c8806",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        460
+      ]
     }
   ],
   "pinData": {},
@@ -229,9 +395,15 @@
       }
     }
   ],
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        347
+      ]
+    }
+  },
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-12-11T22:06:26.000Z",
-  "versionId": "ace22134-69ef-49c1-9e6f-1003d0f2a513"
+  "triggerCount": 2,
+  "updatedAt": "2024-12-12T15:51:39.000Z",
+  "versionId": "63685489-865b-4803-9385-595e6dba9f10"
 }
