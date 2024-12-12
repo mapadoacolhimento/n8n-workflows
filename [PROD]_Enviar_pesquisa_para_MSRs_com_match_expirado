@@ -12,17 +12,6 @@
         ]
       ]
     },
-    "Busca MSRs com match expirado após lançarmos form de atualização do status": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items": {
       "main": [
         [],
@@ -39,14 +28,25 @@
       "main": [
         [
           {
-            "node": "email MSR - nova voluntária sem prioridade",
+            "node": "email MSR - pesquisa",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "email MSR - nova voluntária sem prioridade": {
+    "Busca MSRs com match expirado após lançarmos form de atualização do status": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email MSR - pesquisa": {
       "main": [
         [
           {
@@ -78,27 +78,6 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "WITH distinct_msrs AS (\n    SELECT DISTINCT \n        msr_id, \n        support_type\n    FROM match.matches\n    WHERE \n        status = 'expired'\n        AND created_at >= '2024-07-08'\n    ORDER BY msr_id, support_type\n),\nagg_support_type AS (\n    SELECT \n        msr_id,\n        STRING_AGG(support_type::VARCHAR, '_') AS support_type\n    FROM distinct_msrs\n    GROUP BY msr_id\n)\nSELECT\n    msr_id,\n    email,\n    first_name,\n    support_type\nFROM agg_support_type\nINNER JOIN pii_sec.msr_pii USING(msr_id)",
-        "options": {}
-      },
-      "id": "0df337e9-7697-40fc-9f7b-b2e4c4489301",
-      "name": "Busca MSRs com match expirado após lançarmos form de atualização do status",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        940,
-        340
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
         "options": {}
       },
       "id": "d04bf4c1-0017-49c8-aa0f-f7fbeed270aa",
@@ -126,6 +105,27 @@
     },
     {
       "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH distinct_msrs AS (\n    SELECT DISTINCT \n        msr_id, \n        support_type\n    FROM match.matches\n    WHERE \n        status = 'expired'\n        AND created_at >= '2024-07-08'\n    ORDER BY msr_id, support_type\n),\nagg_support_type AS (\n    SELECT \n        msr_id,\n        STRING_AGG(support_type::VARCHAR, '_') AS support_type\n    FROM distinct_msrs\n    GROUP BY msr_id\n)\nSELECT\n    msr_id,\n    email,\n    first_name,\n    support_type\nFROM agg_support_type a\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE p.created_at >= '2024-07-08'\nAND email NOT IN ('sozionicolle15@gmail.com', 'beatrizrbs2@gmail.com', 'msantos.pinheiro2015@gmail.com', 'leticia.couceiro@gmail.com', 'daniele.sbruzzi@ufpr.br', 'juliang1701@gmail.com', 'rocharhayssa1@gmail.com', 'jaciarasantosios30@gmail.com', 'alecuebasgoe@gmail.com', 'amandadrumondproducao@gmail.com', 'vanessaayala10@yahoo.com', 'carol_vitoria15@hotmail.com', 'producao.criasolo@gmail.com', 'estefany_zorn@hotmail.com', 'raphaella.f.morais@gmail.com', 'crtomazine35@gmail.com', 'camiladvieiras@gmail.com', 'gabybarros26@gmail.com')",
+        "options": {}
+      },
+      "id": "0df337e9-7697-40fc-9f7b-b2e4c4489301",
+      "name": "Busca MSRs com match expirado após lançarmos form de atualização do status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -136,7 +136,7 @@
         "options": {}
       },
       "id": "fff20cde-dfa1-4bf8-928e-9364cdb77365",
-      "name": "email MSR - nova voluntária sem prioridade",
+      "name": "email MSR - pesquisa",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
@@ -148,7 +148,8 @@
           "id": "XrvtxHAVgwwJ3r6q",
           "name": "Loops API"
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -207,6 +208,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-12T14:22:31.000Z",
-  "versionId": "97879971-0afd-4450-a485-d5352da7f30f"
+  "updatedAt": "2024-12-12T18:08:41.000Z",
+  "versionId": "5c37e096-779b-4881-8871-1f45816160aa"
 }
