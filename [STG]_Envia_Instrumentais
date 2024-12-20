@@ -1,0 +1,144 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs que se cadastraram há 1 dia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-20T15:16:51.300Z",
+  "id": "ftyG6b2iKWx5ntdc",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[STG] Envia Instrumentais",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1430eb67-760c-4720-a959-73fef4173b10",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Instrumentais de Qualidade de Vida",
+        "height": 80,
+        "width": 518
+      },
+      "id": "cb451a88-c0de-466f-ac03-0ae0991ac98e",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        680,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Instrumental de Qualidade de Vida - d0",
+        "height": 80,
+        "width": 356.8337467037675
+      },
+      "id": "c175f579-e67f-42da-a71d-170ab5dc8004",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '1 DAY'",
+        "options": {}
+      },
+      "id": "6a199fbc-9f16-45e1-b093-31ffdac9192a",
+      "name": "Busca MSRs que se cadastraram há 1 dia",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2024-12-20T15:16:51.304Z",
+      "updatedAt": "2024-12-20T15:16:51.304Z",
+      "role": "workflow:owner",
+      "workflowId": "ftyG6b2iKWx5ntdc",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-20T15:21:10.000Z",
+  "versionId": "421534b4-6543-4d64-af9a-76930bac6578"
+}
