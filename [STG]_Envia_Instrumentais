@@ -5,7 +5,127 @@
       "main": [
         [
           {
-            "node": "Busca MSRs que se cadastraram há 1 dia",
+            "node": "Busca MSRs que se cadastraram há 1 hora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que se cadastraram há 1 hora": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental d0": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que se cadastraram há 90 dias e responderam o primeiro instrumental": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental d90": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que se cadastraram há 180 dias e responderam o primeiro instrumental1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental d180": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
             "type": "main",
             "index": 0
           }
@@ -64,11 +184,11 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '1 DAY'",
+        "query": "SELECT \n    msr_id,\n    email,\n    first_name,\n    m.created_at,\n    EXTRACT(HOUR FROM CURRENT_TIMESTAMP - m.created_at),\n    CURRENT_TIMESTAMP\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE m.created_at >= CURRENT_TIMESTAMP - INTERVAL '2 HOUR'\nAND EXTRACT(HOUR FROM CURRENT_TIMESTAMP - m.created_at) = 1",
         "options": {}
       },
       "id": "6a199fbc-9f16-45e1-b093-31ffdac9192a",
-      "name": "Busca MSRs que se cadastraram há 1 dia",
+      "name": "Busca MSRs que se cadastraram há 1 hora",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
@@ -79,6 +199,270 @@
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
           "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "13fc0e30-87d9-46b7-9d59-a21aef9cd692",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1180,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "7b7af513-a88f-4019-a7cd-0e5ab9b6537e",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1400,
+        360
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "54a4b31d-f524-4893-b9ea-8ce51e01f8f3",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "92a989c8-8d5b-4ed1-8f49-a5691570f609",
+      "name": "Envia Instrumental d0",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1620,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Instrumental de Qualidade de Vida - d90",
+        "height": 80,
+        "width": 356.8337467037675
+      },
+      "id": "aaf7b98f-0ef0-473b-be7e-657fa3b27f3b",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1c1e8f78-83eb-4e97-ba58-3a5c19e5f347",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1160,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "ee03e430-4a5c-4529-a408-bc5d18e3dd11",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        880
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "c951317f-3559-49c4-8633-5394c05b19a9",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nINNER JOIN survey.survey_quality_of_life_d0 USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY'",
+        "options": {}
+      },
+      "id": "8aa1ee77-1abb-4386-b382-af9ddcd0a087",
+      "name": "Busca MSRs que se cadastraram há 90 dias e responderam o primeiro instrumental",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        920,
+        860
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5a0d8c7d-a7f0-4642-b053-a61f16e7fbe9",
+      "name": "Envia Instrumental d90",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1600,
+        880
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Instrumental de Qualidade de Vida - d180",
+        "height": 80,
+        "width": 356.8337467037675
+      },
+      "id": "d1983eeb-feb1-43b9-a17d-7b71353d9223",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "49abe289-3231-4308-98a0-d68f298d9a7c",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1160,
+        1440
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "a3a395de-1d65-4b62-b77d-fb33927e593a",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        1460
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "c56ed093-4b80-40f4-8fca-373b934a1200",
+      "name": "No Operation, do nothing2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        1260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nINNER JOIN survey.survey_quality_of_life_d0 USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '180 DAY'",
+        "options": {}
+      },
+      "id": "8d4658dd-27da-45d1-b014-7069392a6e93",
+      "name": "Busca MSRs que se cadastraram há 180 dias e responderam o primeiro instrumental1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        920,
+        1440
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "7bc7bb39-b1e0-467c-aad8-af04028abe8a",
+      "name": "Envia Instrumental d180",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1600,
+        1460
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
         }
       }
     }
@@ -139,6 +523,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-12-20T15:21:10.000Z",
-  "versionId": "421534b4-6543-4d64-af9a-76930bac6578"
+  "updatedAt": "2025-01-07T19:07:15.000Z",
+  "versionId": "3d8bbc3e-7822-4d37-981e-10ba60f898f9"
 }
