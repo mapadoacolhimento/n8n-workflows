@@ -1,0 +1,702 @@
+{
+  "active": true,
+  "connections": {
+    "Obtém os dados": {
+      "main": [
+        [
+          {
+            "node": "Insere na survey_quality_of_life_d0",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtém os dados1": {
+      "main": [
+        [
+          {
+            "node": "Insere na survey_quality_of_life_d90",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtém os dados2": {
+      "main": [
+        [
+          {
+            "node": "Insere na survey_quality_of_life_d180",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qualidade de Vida - d0": {
+      "main": [
+        [
+          {
+            "node": "Obtém os dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qualidade de Vida - d90": {
+      "main": [
+        [
+          {
+            "node": "Obtém os dados1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qualidade de Vida - d180": {
+      "main": [
+        [
+          {
+            "node": "Obtém os dados2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-19T18:18:10.371Z",
+  "id": "LKwgNGg7olUZhIGF",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Recebe respostas dos Instrumentais",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "### Instrumental de Qualidade de Vida - d0",
+        "height": 80,
+        "width": 356.8337467037675
+      },
+      "id": "27365a71-1d9c-4169-93a2-047ce0bc1a23",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getUniqueAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
+      },
+      "id": "3b7eecc3-9e64-42ba-89de-11f0915f7a62",
+      "name": "Obtém os dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "survey",
+          "mode": "list",
+          "cachedResultName": "survey"
+        },
+        "table": {
+          "__rl": true,
+          "value": "survey_quality_of_life_d0",
+          "mode": "list",
+          "cachedResultName": "survey_quality_of_life_d0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "msr_id": "={{ $json.msr_id }}",
+            "quality_of_life": "={{ $json.quality_of_life }}",
+            "security": "={{ $json.security }}",
+            "self_esteem": "={{ $json.self_esteem }}",
+            "controlling_situations": "={{ $json.controlling_situations }}",
+            "feelings": "={{ $json.feelings }}",
+            "handle_violence_impact": "={{ $json.handle_violence_impact }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "answer_id",
+              "displayName": "answer_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "msr_id",
+              "displayName": "msr_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "quality_of_life",
+              "displayName": "quality_of_life",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "security",
+              "displayName": "security",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "controlling_situations",
+              "displayName": "controlling_situations",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "self_esteem",
+              "displayName": "self_esteem",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "feelings",
+              "displayName": "feelings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "handle_violence_impact",
+              "displayName": "handle_violence_impact",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ae811895-3591-4893-aaf4-31236ff7782c",
+      "name": "Insere na survey_quality_of_life_d0",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1160,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Instrumental de Qualidade de Vida - d90",
+        "height": 80,
+        "width": 356.8337467037675
+      },
+      "id": "737eb7f4-de13-4fa7-9fde-d4c7c72fd23e",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getUniqueAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
+      },
+      "id": "b932f09b-bf85-496c-93e0-706eb65043b2",
+      "name": "Obtém os dados1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "survey",
+          "mode": "list",
+          "cachedResultName": "survey"
+        },
+        "table": {
+          "__rl": true,
+          "value": "survey_quality_of_life_d90",
+          "mode": "list",
+          "cachedResultName": "survey_quality_of_life_d90"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "msr_id": "={{ $json.msr_id }}",
+            "quality_of_life": "={{ $json.quality_of_life }}",
+            "security": "={{ $json.security }}",
+            "controlling_situations": "={{ $json.controlling_situations }}",
+            "self_esteem": "={{ $json.self_esteem }}",
+            "feelings": "={{ $json.feelings }}",
+            "handle_violence_impact": "={{ $json.handle_violence_impact }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "answer_id",
+              "displayName": "answer_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "msr_id",
+              "displayName": "msr_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "quality_of_life",
+              "displayName": "quality_of_life",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "security",
+              "displayName": "security",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "controlling_situations",
+              "displayName": "controlling_situations",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "self_esteem",
+              "displayName": "self_esteem",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "feelings",
+              "displayName": "feelings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "handle_violence_impact",
+              "displayName": "handle_violence_impact",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9321da02-51fb-4564-85e9-5a18e62c03f6",
+      "name": "Insere na survey_quality_of_life_d90",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1160,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Instrumental de Qualidade de Vida - d180",
+        "height": 80,
+        "width": 356.8337467037675
+      },
+      "id": "df1cb4f4-6ab9-4e1c-b231-7c9f9ea05252",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getUniqueAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n  const substanceUse = getUniqueAnswer(item, \"uso_de_drogas\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact,\n      substance_use: substanceUse\n    }\n  )\n}\n\nreturn output;"
+      },
+      "id": "481749e1-9192-4e3a-ae9f-7e3c4b2c4be6",
+      "name": "Obtém os dados2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        1080
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Instrumentais de Qualidade de Vida",
+        "height": 80,
+        "width": 675.876410468
+      },
+      "id": "d4d726bf-3c06-4338-87cf-989cb9516021",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        680,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "survey",
+          "mode": "list",
+          "cachedResultName": "survey"
+        },
+        "table": {
+          "__rl": true,
+          "value": "survey_quality_of_life_d180",
+          "mode": "list",
+          "cachedResultName": "survey_quality_of_life_d180"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "msr_id": "={{ $json.msr_id }}",
+            "quality_of_life": "={{ $json.quality_of_life }}",
+            "security": "={{ $json.security }}",
+            "controlling_situations": "={{ $json.controlling_situations }}",
+            "self_esteem": "={{ $json.self_esteem }}",
+            "feelings": "={{ $json.feelings }}",
+            "handle_violence_impact": "={{ $json.handle_violence_impact }}",
+            "substance_use": "={{ $json.substance_use }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "answer_id",
+              "displayName": "answer_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "msr_id",
+              "displayName": "msr_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "quality_of_life",
+              "displayName": "quality_of_life",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "security",
+              "displayName": "security",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "controlling_situations",
+              "displayName": "controlling_situations",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "self_esteem",
+              "displayName": "self_esteem",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "feelings",
+              "displayName": "feelings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "handle_violence_impact",
+              "displayName": "handle_violence_impact",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "substance_use",
+              "displayName": "substance_use",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "849fefe2-db4a-4535-abfe-592d86960083",
+      "name": "Insere na survey_quality_of_life_d180",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1160,
+        1080
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "survey-quality-of-life-d0",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "d7a0e47e-3788-4d1b-a91b-fd7b793319f9",
+      "name": "Qualidade de Vida - d0",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        720,
+        340
+      ],
+      "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "survey-quality-of-life-d90",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "53befad4-c25b-492d-bf68-04192379b83b",
+      "name": "Qualidade de Vida - d90",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        720,
+        700
+      ],
+      "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "survey-quality-of-life-d180",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "90d0d314-fae9-45a5-b220-e9da15f29d88",
+      "name": "Qualidade de Vida - d180",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        720,
+        1080
+      ],
+      "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2024-12-19T18:18:10.376Z",
+      "updatedAt": "2024-12-19T18:18:10.376Z",
+      "role": "workflow:owner",
+      "workflowId": "LKwgNGg7olUZhIGF",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 3,
+  "updatedAt": "2025-01-07T14:38:19.000Z",
+  "versionId": "df959c9a-5714-43a8-88f3-f99c8f6a687b"
+}
