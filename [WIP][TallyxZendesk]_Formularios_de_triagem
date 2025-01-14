@@ -1,0 +1,2047 @@
+{
+  "active": false,
+  "connections": {
+    "Item Lists": {
+      "main": [
+        []
+      ]
+    },
+    "Criar novo ticket (triagem jur 1)": {
+      "main": [
+        [
+          {
+            "node": "Salvar Respostas1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID1": {
+      "main": [
+        [
+          {
+            "node": "Criar novo ticket (triagem jur 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Formata - Triagem Jurídico 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-14T17:54:38.733Z",
+  "id": "b9RED0m1uWy4LgJn",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[WIP][TallyxZendesk] Formularios de triagem",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        80,
+        2520
+      ],
+      "id": "3f8e89f9-1fda-4b52-9ec3-4b4ca1d7ced5"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "[\"body\"][\"mautic.form_on_submit\"]",
+        "options": {}
+      },
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        1920
+      ],
+      "id": "1163c2a2-6863-4850-a11e-b1458d9a9cd8"
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "endpoint": "https://api-graphql.staging.bonde.org/v1/graphql",
+        "requestFormat": "json",
+        "query": "=mutation MyMutation($answers: json) {\n  insert_mda_forms_answers(objects: {answers: $answers, form: \"triagem-juridico-1\", msr_name: \"{{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\", ticket_id: {{$node[\"Criar novo ticket (triagem jur 1)\"].json[\"ticket\"][\"id\"]}}, volunteer_email: \"{{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_voluntaria\"][\"email\"]}}\", organization_id:360269610652, form_id:{{$node[\"Formata - Triagem Jurídico 1\"].json[\"submission\"][\"form\"][\"id\"]}}\n}) {\n    affected_rows\n  }\n}",
+        "variables": "={\n\"answers\": {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers_txt\"]}}\n}"
+      },
+      "name": "Salvar Respostas1",
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        2300
+      ],
+      "id": "561906bc-e691-43f2-aeb6-975526a1b060",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EmY5oStKEqATsley",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nfor (item of items) {\n  var dados_voluntaria = { \n    nome: item.json.submission.results[\"1_nome_completo\"],\n    email: item.json.submission.results[\"2_email_de_cadastro1\"],\n    whatsapp: item.json.submission.results[\"3_whatsapp\"]\n    };\n  \n  \n  var criterios_projeto = {\n    maior_de_18: item.json.submission.results[\"4_a_acolhida_e_maior_de_1\"],\n    reside_no_brasil: item.json.submission.results[\"5_a_acolhida_reside_no_br\"],\n    brasileira: item.json.submission.results[\"6_a_acolhida_e_brasileira\"],\n    situacao_de_violencia: item.json.submission.results[\"7_a_acolhida_passou_ou_es\"],\n    periodo: item.json.submission.results[\"9_por_qual_periodo_de_tem\"],\n    tipos_de_violencia:item.json.submission.results[\"8_quais_os_tipos_de_viole\"],\n    autor_da_violencia: item.json.submission.results[\"10_quem_e_oa_autora_da_vi\"],\n    situacao_vulnerabilidade_baixa_renda: item.json.submission.results[\"11_a_acolhida_esta_em_sit\"],\n    atendida_denfensoria_publica: item.json.submission.results[\"12_a_acolhida_esta_recebe\"],\n    atendida_advogada_particular: item.json.submission.results[\"13_a_acolhida_esta_recebe\"]\n  }\n\n  \n  \n  var dados_acolhida = {\n\n    nome: item.json.submission.results[\"14_nome_da_acolhida\"],\n    data_de_nascimento: item.json.submission.results[\"15_data_de_nascimento\"],\n    regime_de_trabalho: item.json.submission.results[\"16_qual_o_regime_de_traba\"],\n    renda_individual: item.json.submission.results[\"17_assinale_a_opcao_que_c\"],\n    tem_independencia_financeira: item.json.submission.results[\"18_a_acolhida_tem_indepen\"],\n    tem_cadunico: item.json.submission.results[\"19_a_acolhida_esta_inscri\"],\n    recebe_algum_beneficio: item.json.submission.results[\"20_atualmente_a_acolhida\"],\n    responsavel_financeiramente: item.json.submission.results[\"21_a_acolhida_e_responsav\"],\n    divide_responsabilidade_com: item.json.submission.results[\"22_caso_tenha_respondido\"],\n    tem_dependentes_financeiros: item.json.submission.results[\"23_a_acolhida_tem_pessoas\"],\n    quantidade_de_dependentes: item.json.submission.results[\"24_caso_tenha_respondido\"] === \"\"? \"0\":item.json.submission.results[\"24_caso_tenha_respondido\"],\n    recebe_pensao_alimenticia: item.json.submission.results[\"25_a_acolhida_recebe_pens\"]\n  } \n  var moradia = {\n\n    situacao_moradia: item.json.submission.results[\"26_qual_a_situacao_de_mor\"],\n    cedida_por: item.json.submission.results[\"27_caso_tenha_respondido\"],\n    reside_com_o_autor_da_viloencia: item.json.submission.results[\"28_a_acolhida_reside_com\"],\n    sente_segura_em_casa: item.json.submission.results[\"29_a_acolhida_se_sente_se\"],\n    situacao_de_carcere: item.json.submission.results[\"30_a_acolhida_vive_em_sit\"]\n  } \n \n  //Determina risco do caso\n  var risco = 'nenhum'\n  item.json.priority = 'low'\n  if(moradia.situacao_de_carcere === 'Sim') {\n    item.json.priority = 'urgent'  \n    risco = 'extremo'\n  }\n\n  var servico_publico = {\n    \n    conhece_redes_de_atendimento: item.json.submission.results[\"31_a_acolhida_conhece_a_r\"],\n    quais_redes_de_atendimento_conhece: item.json.submission.results[\"32_se_sim_assinale_qualqu\"],\n    atentendida_em_servico_publico: item.json.submission.results[\"33_a_acolhida_esta_em_ate\"],\n    quais_servicos_publicos_atentida: item.json.submission.results[\"34_se_sim_assinale_qualqu\"]  \n  }\n\n  var processo_juridico = {\n    areas_direito_demanda_se_enquadra: item.json.submission.results[\"35_em_qualis_areas_do_dir\"],\n    demanda_inicial: item.json.submission.results[\"36_descreva_resumidamente\"],\n    encaminhamento: item.json.submission.results[\"37_encaminhamentos_do_cas\"],\n    servicos_indicados: item.json.submission.results[\"38_caso_tenha_assinalado\"]\n    \n  }\n  item.json.answers = {dados_voluntaria,criterios_projeto, dados_acolhida, moradia, servico_publico, processo_juridico, risco: risco}\n  item.json.answers_txt = JSON.stringify(item.json.answers).replaceAll('Sim',true).replaceAll(\"Não\",false);\n  //item.json.answers_txt = item.json.answers_txt.replaceAl(\"false se enquadra no perfil\", \"Não se enquadra no perfil\").replaceAll(\"false conhece\",\"Não conhece\").replaceAll(\"false se aplica\",\"Não se aplica\")\n  item.json.answers_txt = item.json.answers_txt.replaceAll(\"false \", \"Não \").replaceAll(\"false.\",\"Não.\");\n  item.json.answers_txt = item.json.answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n  let data = new Date(item.json.submission.results[\"15_data_de_nascimento\"]);\n  item.json.answers.dados_acolhida.data_de_nascimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear(); \n\n  item.json.answers.risco = item.json.answers.risco.toUpperCase();\n}\nconsole.log('Done!');\n\nreturn items; "
+      },
+      "name": "Formata - Triagem Jurídico 1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        2300
+      ],
+      "id": "9631a949-26be-4c84-8916-a409280ce1c6"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "requestMethod": "POST",
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/tickets",
+        "jsonParameters": true,
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={ \n\t\"ticket\":{\n \t\t\"requester_id\":{{ $json[\"zendesk_user_id\"] }},\n \t\t\"organization_id\": 360269610652,\n \t\t\"description\": \"Importado via N8N\",\n        \"tags\": [\"triagem-1\"], \n \t\t\"status\": \"new\",\n\t\t\"priority\": \"{{$node[\"Formata - Triagem Jurídico 1\"].json[\"priority\"]}}\",\n \t\t\"subject\": \"[Triagem 1] {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\",\n \t\t\"comment\": {\n \t\t\t\"body\": \"RISCO: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"risco\"]}}\\n\\nDADOS DA VOLUNTÁRIA\\n\\tNome completo: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_voluntaria\"][\"nome\"]}}\\n\\tEmail de cadastro: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_voluntaria\"][\"email\"]}}\\n\\tWhatsapp: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_voluntaria\"][\"whatsapp\"]}}\\n\\n CRITÉRIOS DO PROJETO\\n\\tA acolhida é maior de 18: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"maior_de_18\"]}}\\n\\tA acolhida reside no brasil: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"reside_no_brasil\"]}}\\n\\ta acolhida é brasileira: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"brasileira\"]}}\\n\\tA acolhida passou ou está passando por uma situação de violência baseada no gênero: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"situacao_de_violencia\"]}}\\n\\tPeríodo que está submetida a situação de violência: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"periodo\"]}}\\n\\tTipos de violência que a pessoa acolhida está submetida: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"tipos_de_violencia\"]}}\\n\\tAutor(a) da violencia: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"autor_da_violencia\"]}}\\n\\tEstá em situação de vulnerabilidade socioeconômica: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"situacao_vulnerabilidade_baixa_renda\"]}}\\n\\tA acolhida é atendida pela denfensoria publica: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"atendida_denfensoria_publica\"]}}\\n\\tA acolhida é atendida por advogada(o) particular: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"criterios_projeto\"][\"atendida_advogada_particular\"]}}\\n\\nDADOS DA ACOLHIDA\\n\\tNome da acolhida: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}\\n\\tData de nascimento: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"data_de_nascimento_br\"]}}\\n\\tRegime de trabalho da acolhida: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"regime_de_trabalho\"]}}\\n\\tRenda individual da acolihda: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"renda_individual\"]}}\\n\\tIndependência financeira: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"tem_independencia_financeira\"]}}\\n\\tInscrita no Cadastro Único: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"tem_cadunico\"]}}\\n\\tRecebendo algum benefício da assistência social: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"recebe_algum_beneficio\"]}}\\n\\tResponsável financeiramente pela renda familiar: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"responsavel_financeiramente\"]}}\\n\\tCom: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"divide_responsabilidade_com\"]}}\\n\\tTem dependentes financeiros: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"tem_dependentes_financeiros\"]}}\\n\\tquantidade de dependentes: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"quantidade_de_dependentes\"]}}\\n\\tRecebe pensão alimenticia: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"dados_acolhida\"][\"recebe_pensao_alimenticia\"]}}\\n\\nMORADIA\\n\\tSituação de moradia: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"moradia\"][\"situacao_moradia\"]}}\\n\\tCedida por quem: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"moradia\"][\"cedida_por\"]}}\\n\\tReside com o(a) autor(a) da violência: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"moradia\"][\"reside_com_o_autor_da_viloencia\"]}}\\n\\tSente-se segura  em casa: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"moradia\"][\"sente_segura_em_casa\"]}}\\n\\tVive em situação de cárcere: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"moradia\"][\"situacao_de_carcere\"]}}\\n\\nSERVIÇO PÚBLICO\\n\\tA acolhida conhece a rede de atendimento de violência contra as mulheres da região disponíveis: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"servico_publico\"][\"conhece_redes_de_atendimento\"]}}\\n\\tQuais:{{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"servico_publico\"][\"quais_redes_de_atendimento_conhece\"]}}\\n\\tA pessoa acolhida está em atendimento em algum dos serviços públicos da região: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"servico_publico\"][\"atentendida_em_servico_publico\"]}}\\n\\tQuais:{{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"servico_publico\"][\"quais_servicos_publicos_atentida\"]}}\\n\\nPROCESSO JURÍDICO\\n\\tÁreas direito a demanda se enquadra: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"processo_juridico\"][\"areas_direito_demanda_se_enquadra\"]}}\\n\\tDemanda inicial: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"processo_juridico\"][\"demanda_inicial\"]}}\\n\\tEncaminhamento do caso: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"processo_juridico\"][\"encaminhamento\"]}}\\n\\tEncaminhar para estes serviços públicos: {{$node[\"Formata - Triagem Jurídico 1\"].json[\"answers\"][\"processo_juridico\"][\"servicos_indicados\"]}}\",\n \t\t\t\"public\": false\n \t\t}\n\t}\n}"
+      },
+      "name": "Criar novo ticket (triagem jur 1)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        2300
+      ],
+      "id": "fbfc0db2-a8a5-43fa-b531-c742a7be53fc",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email,zendesk_user_id from volunteers where email = LOWER('{{ $json.submission.lead.fields.core.email.value }}')",
+        "options": {}
+      },
+      "id": "90ea52ac-c1e3-4e36-a55a-f1283e46c553",
+      "name": "Busca Zendesk User ID1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1720,
+        2300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "bNRm9reAeAU1uKu5",
+          "name": "[STG] Bonde"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "traigem1-jur-tally",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        2300
+      ],
+      "webhookId": "d4cd735b-69a1-4be9-9b3f-81261f0ab63c",
+      "id": "c02e4308-6e24-45d3-b190-37d07cd9a482"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.bonde.org",
+            "user-agent": "GuzzleHttp/7",
+            "content-length": "11785",
+            "content-type": "application/json",
+            "webhook-signature": "2oi/c4ypZB2/m1QtOKlfcVzxdYke5rbExm/tlbh5fio=",
+            "x-forwarded-for": "54.85.56.248",
+            "x-forwarded-host": "n8n.bonde.org",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "be13ecc00da6",
+            "x-origin-base-url": "https://mautic.nossas.org",
+            "x-real-ip": "54.85.56.248",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "mautic.form_on_submit": [
+              {
+                "submission": {
+                  "id": 7952,
+                  "ipAddress": {
+                    "ipAddress": "201.26.13.32",
+                    "id": 60160,
+                    "ipDetails": {
+                      "city": "",
+                      "region": "",
+                      "zipcode": "",
+                      "country": "",
+                      "latitude": "",
+                      "longitude": "",
+                      "isp": "",
+                      "organization": "",
+                      "timezone": "",
+                      "extra": ""
+                    }
+                  },
+                  "form": {
+                    "id": 2,
+                    "name": "2.00. Instrumental de Atendimento 1: Advogadas",
+                    "alias": "200__instr",
+                    "category": null
+                  },
+                  "lead": {
+                    "id": 167774,
+                    "points": 0,
+                    "color": null,
+                    "fields": {
+                      "core": {
+                        "organization_id": {
+                          "id": "61",
+                          "label": "Zendesk Organization ID",
+                          "alias": "organization_id",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "firstname": {
+                          "id": "2",
+                          "label": "First Name",
+                          "alias": "firstname",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "data_de_inscricao_no_bond1": {
+                          "id": "60",
+                          "label": "Data de Inscrição no BONDE",
+                          "alias": "data_de_inscricao_no_bond1",
+                          "type": "date",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "lastname": {
+                          "id": "3",
+                          "label": "Last Name",
+                          "alias": "lastname",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "state1": {
+                          "id": "58",
+                          "label": "Estado",
+                          "alias": "state1",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "cor": {
+                          "id": "59",
+                          "label": "Cor",
+                          "alias": "cor",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "address": {
+                          "id": "57",
+                          "label": "Endereço",
+                          "alias": "address",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "user_id": {
+                          "id": "55",
+                          "label": "Zendesk User ID",
+                          "alias": "user_id",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "email": {
+                          "id": "6",
+                          "label": "Email",
+                          "alias": "email",
+                          "type": "email",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "bruna@fernandareisadvogados.com",
+                          "normalizedValue": "bruna@fernandareisadvogados.com"
+                        },
+                        "tipo_de_acolhimento": {
+                          "id": "50",
+                          "label": "Tipo de Acolhimento",
+                          "alias": "tipo_de_acolhimento",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "mobile": {
+                          "id": "7",
+                          "label": "Mobile",
+                          "alias": "mobile",
+                          "type": "tel",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "phone": {
+                          "id": "8",
+                          "label": "Phone",
+                          "alias": "phone",
+                          "type": "tel",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "website": {
+                          "id": "22",
+                          "label": "Website",
+                          "alias": "website",
+                          "type": "url",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "whatsapp": {
+                          "id": "49",
+                          "label": "Whatsapp",
+                          "alias": "whatsapp",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "f_condition": {
+                          "id": "48",
+                          "label": "Status da Mulher",
+                          "alias": "f_condition",
+                          "type": "select",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "",
+                          "default_value": "desabilitada",
+                          "value": "desabilitada",
+                          "normalizedValue": "Desabilitada"
+                        },
+                        "city": {
+                          "id": "13",
+                          "label": "City",
+                          "alias": "city",
+                          "type": "text",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "country": {
+                          "id": "16",
+                          "label": "Country",
+                          "alias": "country",
+                          "type": "country",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "last_active": {
+                          "id": "19",
+                          "label": "Date Last Active",
+                          "alias": "last_active",
+                          "type": "datetime",
+                          "group": "core",
+                          "object": "lead",
+                          "is_fixed": "1",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": "2023-05-15 17:33:33",
+                          "normalizedValue": "2023-05-15 17:33:33"
+                        }
+                      },
+                      "social": {
+                        "facebook": {
+                          "id": "23",
+                          "label": "Facebook",
+                          "alias": "facebook",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "foursquare": {
+                          "id": "24",
+                          "label": "Foursquare",
+                          "alias": "foursquare",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "instagram": {
+                          "id": "25",
+                          "label": "Instagram",
+                          "alias": "instagram",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "linkedin": {
+                          "id": "26",
+                          "label": "LinkedIn",
+                          "alias": "linkedin",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "skype": {
+                          "id": "27",
+                          "label": "Skype",
+                          "alias": "skype",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        },
+                        "twitter": {
+                          "id": "28",
+                          "label": "Twitter",
+                          "alias": "twitter",
+                          "type": "text",
+                          "group": "social",
+                          "object": "lead",
+                          "is_fixed": "0",
+                          "properties": "a:0:{}",
+                          "default_value": null,
+                          "value": null,
+                          "normalizedValue": null
+                        }
+                      },
+                      "personal": [],
+                      "professional": []
+                    }
+                  },
+                  "trackingId": "f5rm2v1in5jxxnrg8ce4rbg",
+                  "dateSubmitted": "2023-05-15T17:51:38+00:00",
+                  "referer": "https://mautic.nossas.org/triagem-juridico-1",
+                  "page": null,
+                  "results": {
+                    "1_nome_completo": "Bruna Fernanda Reis e Silva",
+                    "2_email_de_cadastro1": "bruna@fernandareisadvogados.com",
+                    "3_whatsapp": "11915906620",
+                    "4_a_acolhida_e_maior_de_1": "Sim",
+                    "5_a_acolhida_reside_no_br": "Sim",
+                    "6_a_acolhida_e_brasileira": "Sim",
+                    "7_a_acolhida_passou_ou_es": "Sim",
+                    "8_quais_os_tipos_de_viole": "Física, Psicológica, Sexual",
+                    "9_por_qual_periodo_de_tem": "Entre 6 meses e 1 ano",
+                    "10_quem_e_oa_autora_da_vi": "Ex-marido/Ex-esposa/Ex-companheiro(a)",
+                    "11_a_acolhida_esta_em_sit": "Sim",
+                    "12_a_acolhida_esta_recebe": "Não",
+                    "13_a_acolhida_esta_recebe": "Não",
+                    "14_nome_da_acolhida": "Bruna Moreira de Sousa",
+                    "15_data_de_nascimento": "1993-05-22",
+                    "16_qual_o_regime_de_traba": "Informal",
+                    "17_assinale_a_opcao_que_c": "De R$ 0,00 a R$ 3.030,00",
+                    "18_a_acolhida_tem_indepen": "Não",
+                    "19_a_acolhida_esta_inscri": "Não",
+                    "20_atualmente_a_acolhida": "Não",
+                    "21_a_acolhida_e_responsav": "Sim",
+                    "22_caso_tenha_respondido": "Mãe, Pai",
+                    "23_a_acolhida_tem_pessoas": "Sim",
+                    "24_caso_tenha_respondido": "2",
+                    "25_a_acolhida_recebe_pens": "Não",
+                    "26_qual_a_situacao_de_mor": "Cedida ou “de favor”",
+                    "27_caso_tenha_respondido": "Familiares",
+                    "28_a_acolhida_reside_com": "Não",
+                    "29_a_acolhida_se_sente_se": "Sim",
+                    "30_a_acolhida_vive_em_sit": "Não",
+                    "31_a_acolhida_conhece_a_r": "Sim",
+                    "32_se_sim_assinale_qualqu": "Delegacia civil",
+                    "33_a_acolhida_esta_em_ate": "Sim",
+                    "34_se_sim_assinale_qualqu": "Delegacia civil",
+                    "35_em_qualis_areas_do_dir": "Cível/Família, Criminal",
+                    "36_descreva_resumidamente": "Acolhida narrou ter sofrido violência física, psicológica e sexual por parte do ex-companheiro. Algumas das narrativas incluíam pressões para deixar o trabalho, tapas no rosto, envolvimento dos filhos nas brigas do casal, ameaças, abuso de drogas e violação sexual durante discussão. A acolhida mora com os filhos e o ex-companheiro insiste em encontrá-los. Há medida protetiva em andamento para afastamento do ex-companheiro.",
+                    "37_encaminhamentos_do_cas": "Orientações jurídicas, Entrada de ação/ações, Acompanhamento de processo já em curso, Articulação com o serviço público e continuidade de atendimento pelo projeto",
+                    "38_caso_tenha_assinalado": "Delegacia especializada da Mulher, Delegacia civil"
+                  }
+                },
+                "timestamp": "2023-05-15T17:51:38+00:00"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "26181",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.41.249",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9020861a67a3ef35-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "34.96.41.249, 141.101.98.174",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-vz9hf",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.249"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "55a809ca-f67d-47a2-bc83-b6d4cea9a772",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2025-01-14T20:54:53.573Z",
+            "data": {
+              "responseId": "7y59J9",
+              "submissionId": "7y59J9",
+              "respondentId": "VMoX8y",
+              "formId": "mKvO6D",
+              "formName": "[WIP]Instrumental Triagem jurídico 1 (Voluntárias)",
+              "createdAt": "2025-01-14T20:54:53.000Z",
+              "fields": [
+                {
+                  "key": "question_eDE14O",
+                  "label": "1_nome_completo",
+                  "type": "INPUT_TEXT",
+                  "value": "adriele"
+                },
+                {
+                  "key": "question_Wr0Gya",
+                  "label": "2_email_de_cadastro1",
+                  "type": "INPUT_EMAIL",
+                  "value": "adriele@emaiil.com"
+                },
+                {
+                  "key": "question_aeGbVq",
+                  "label": "3_whatsapp",
+                  "type": "INPUT_PHONE_NUMBER",
+                  "value": "19982915773"
+                },
+                {
+                  "key": "question_6exboB",
+                  "label": "4_a_acolhida_e_maior_de_1",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "d8679c4b-aa66-4e2c-90d3-f393770e60c6"
+                  ],
+                  "options": [
+                    {
+                      "id": "d8679c4b-aa66-4e2c-90d3-f393770e60c6",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "09db48c0-c1a5-4f4a-8111-086fb109b649",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_7bZBGA",
+                  "label": "5_a_acolhida_reside_no_br",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "2288b3ac-fd7e-41b9-9228-c4192b26ba9c"
+                  ],
+                  "options": [
+                    {
+                      "id": "2288b3ac-fd7e-41b9-9228-c4192b26ba9c",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "7261b59b-eb83-40f8-8267-8ab177dff69e",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_b9OBPo",
+                  "label": "6_a_acolhida_e_brasileira",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "9add85f0-f997-44e4-9de3-806d65cec56e"
+                  ],
+                  "options": [
+                    {
+                      "id": "9add85f0-f997-44e4-9de3-806d65cec56e",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "64f06bab-c952-493d-8689-fdb601c8409b",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_AK8oZk",
+                  "label": "7_a_acolhida_passou_ou_es",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "b1f492bd-3d84-44ed-9048-4f7276b6ef6c"
+                  ],
+                  "options": [
+                    {
+                      "id": "4b607c20-9c3c-4e46-889f-2993f74acb04",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "b1f492bd-3d84-44ed-9048-4f7276b6ef6c",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_BKBONN",
+                  "label": "8_quais_os_tipos_de_viole",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "9c3ff2fe-4b7f-4ce1-804f-ea19023e5f49",
+                    "d5424986-9955-42bb-b9fd-fa80c8326504",
+                    "e74d628e-d61e-442f-afa9-881844cf61ec"
+                  ],
+                  "options": [
+                    {
+                      "id": "7aeed5cb-6c04-4175-b4cb-b1312a24f046",
+                      "text": "Física"
+                    },
+                    {
+                      "id": "0c27e694-9338-480b-8677-14fad59b7633",
+                      "text": "Psicológica"
+                    },
+                    {
+                      "id": "b8ec661b-d759-412d-827a-53bbda4bcba3",
+                      "text": "Moral"
+                    },
+                    {
+                      "id": "9c3ff2fe-4b7f-4ce1-804f-ea19023e5f49",
+                      "text": "Patrimonial"
+                    },
+                    {
+                      "id": "d5424986-9955-42bb-b9fd-fa80c8326504",
+                      "text": "Sexual"
+                    },
+                    {
+                      "id": "e74d628e-d61e-442f-afa9-881844cf61ec",
+                      "text": "Obstétrica"
+                    },
+                    {
+                      "id": "1d95cf49-c713-492b-a940-4a1482cd4b73",
+                      "text": "Institucional"
+                    },
+                    {
+                      "id": "255240ad-31c2-4160-8726-7d34a630bf29",
+                      "text": "LGBTFobia"
+                    },
+                    {
+                      "id": "e9202bad-2fca-441b-a33c-2c3d78ebc9c1",
+                      "text": "Racismo"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_BKBONN_7aeed5cb-6c04-4175-b4cb-b1312a24f046",
+                  "label": "8_quais_os_tipos_de_viole (Física)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_BKBONN_0c27e694-9338-480b-8677-14fad59b7633",
+                  "label": "8_quais_os_tipos_de_viole (Psicológica)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_BKBONN_b8ec661b-d759-412d-827a-53bbda4bcba3",
+                  "label": "8_quais_os_tipos_de_viole (Moral)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_BKBONN_9c3ff2fe-4b7f-4ce1-804f-ea19023e5f49",
+                  "label": "8_quais_os_tipos_de_viole (Patrimonial)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_BKBONN_d5424986-9955-42bb-b9fd-fa80c8326504",
+                  "label": "8_quais_os_tipos_de_viole (Sexual)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_BKBONN_e74d628e-d61e-442f-afa9-881844cf61ec",
+                  "label": "8_quais_os_tipos_de_viole (Obstétrica)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_BKBONN_1d95cf49-c713-492b-a940-4a1482cd4b73",
+                  "label": "8_quais_os_tipos_de_viole (Institucional)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_BKBONN_255240ad-31c2-4160-8726-7d34a630bf29",
+                  "label": "8_quais_os_tipos_de_viole (LGBTFobia)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_BKBONN_e9202bad-2fca-441b-a33c-2c3d78ebc9c1",
+                  "label": "8_quais_os_tipos_de_viole (Racismo)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_k9ZDqM",
+                  "label": "9_por_qual_periodo_de_tem",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "53e43cc4-ebf2-49f1-a467-fb4d514e9e80"
+                  ],
+                  "options": [
+                    {
+                      "id": "14c3dd04-ae42-4e96-a5c1-7ecd182d12d6",
+                      "text": "Mais de 10 anos"
+                    },
+                    {
+                      "id": "53e43cc4-ebf2-49f1-a467-fb4d514e9e80",
+                      "text": "Entre 2 anos e 10 anos"
+                    },
+                    {
+                      "id": "5f053cae-2824-4811-8058-0246f86ad9ea",
+                      "text": "Entre 1 e 2 anos"
+                    },
+                    {
+                      "id": "c4c595d2-2de9-4ef3-8253-2a04aea30a00",
+                      "text": "Entre 6 meses e 1 ano"
+                    },
+                    {
+                      "id": "c983fa9e-840c-4d40-9a2e-e59d8a11b66b",
+                      "text": "Entre 3 e 6 meses"
+                    },
+                    {
+                      "id": "1d40e578-3ef7-4e5f-9b3e-3938f9c22119",
+                      "text": "Menos de 3 meses"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_vr27kQ",
+                  "label": "10_quem_e_oa_autora_da_vi",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "be9e36bf-c58a-4f82-a597-7a03dd35cd23"
+                  ],
+                  "options": [
+                    {
+                      "id": "350e8a6e-ae7d-4c60-964d-53e63ee94043",
+                      "text": "Pai"
+                    },
+                    {
+                      "id": "d600caa4-4838-40be-a301-0e3fce1d4255",
+                      "text": "Mãe"
+                    },
+                    {
+                      "id": "71964f09-7b3f-4aa8-bbc7-cba482cfb441",
+                      "text": "Irmão"
+                    },
+                    {
+                      "id": "044be7ea-8cfe-45cd-9c37-13da14338d67",
+                      "text": "Tio"
+                    },
+                    {
+                      "id": "be9e36bf-c58a-4f82-a597-7a03dd35cd23",
+                      "text": "Primo"
+                    },
+                    {
+                      "id": "99cc1769-f60a-4355-a312-0e10a3ef8039",
+                      "text": "Vizinho"
+                    },
+                    {
+                      "id": "b7d679da-4839-48c5-91ab-86ec0fe72edb",
+                      "text": "Namorado"
+                    },
+                    {
+                      "id": "3e774b16-61e9-475e-af31-d394c3d9588a",
+                      "text": "Marido"
+                    },
+                    {
+                      "id": "3210ffd2-24fc-4af1-842f-03b8082bf50c",
+                      "text": "Ex-namorado"
+                    },
+                    {
+                      "id": "64ac14ae-03ad-4c78-93a9-09c30df42e33",
+                      "text": "Ex-marido"
+                    },
+                    {
+                      "id": "e7ab0347-2c18-4348-bad7-43435a1ce910",
+                      "text": "Amigo"
+                    },
+                    {
+                      "id": "04d64dc6-7bbb-4779-898c-2a89f930a464",
+                      "text": "Filho"
+                    },
+                    {
+                      "id": "2ed6cdad-7209-490b-b284-07bba7c7efa2",
+                      "text": "Outros"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_vr27kQ_350e8a6e-ae7d-4c60-964d-53e63ee94043",
+                  "label": "10_quem_e_oa_autora_da_vi (Pai)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_d600caa4-4838-40be-a301-0e3fce1d4255",
+                  "label": "10_quem_e_oa_autora_da_vi (Mãe)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_71964f09-7b3f-4aa8-bbc7-cba482cfb441",
+                  "label": "10_quem_e_oa_autora_da_vi (Irmão)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_044be7ea-8cfe-45cd-9c37-13da14338d67",
+                  "label": "10_quem_e_oa_autora_da_vi (Tio)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_be9e36bf-c58a-4f82-a597-7a03dd35cd23",
+                  "label": "10_quem_e_oa_autora_da_vi (Primo)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_vr27kQ_99cc1769-f60a-4355-a312-0e10a3ef8039",
+                  "label": "10_quem_e_oa_autora_da_vi (Vizinho)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_b7d679da-4839-48c5-91ab-86ec0fe72edb",
+                  "label": "10_quem_e_oa_autora_da_vi (Namorado)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_3e774b16-61e9-475e-af31-d394c3d9588a",
+                  "label": "10_quem_e_oa_autora_da_vi (Marido)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_3210ffd2-24fc-4af1-842f-03b8082bf50c",
+                  "label": "10_quem_e_oa_autora_da_vi (Ex-namorado)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_64ac14ae-03ad-4c78-93a9-09c30df42e33",
+                  "label": "10_quem_e_oa_autora_da_vi (Ex-marido)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_e7ab0347-2c18-4348-bad7-43435a1ce910",
+                  "label": "10_quem_e_oa_autora_da_vi (Amigo)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_04d64dc6-7bbb-4779-898c-2a89f930a464",
+                  "label": "10_quem_e_oa_autora_da_vi (Filho)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vr27kQ_2ed6cdad-7209-490b-b284-07bba7c7efa2",
+                  "label": "10_quem_e_oa_autora_da_vi (Outros)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Ke07b7",
+                  "label": "11_a_acolhida_esta_em_sit",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "a105a22e-441f-442b-ae44-e7bae3833c03"
+                  ],
+                  "options": [
+                    {
+                      "id": "a105a22e-441f-442b-ae44-e7bae3833c03",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "88c87519-c33d-45df-81a0-e9825ac715da",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_Lz0AR1",
+                  "label": "12_a_acolhida_esta_recebe",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "a34bf1fe-8c46-472f-a62c-50974aaba7c3"
+                  ],
+                  "options": [
+                    {
+                      "id": "024af5e3-bda0-4697-8c3e-01cea3a9e7ef",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "a34bf1fe-8c46-472f-a62c-50974aaba7c3",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_pdVj8b",
+                  "label": "13_a_acolhida_esta_recebe",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "74574a26-1ad4-4320-9f4c-dcadc299766a"
+                  ],
+                  "options": [
+                    {
+                      "id": "952123e8-8317-428b-ad23-a0f4cf8db694",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "74574a26-1ad4-4320-9f4c-dcadc299766a",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_1kEZqW",
+                  "label": "14_nome_da_acolhida",
+                  "type": "INPUT_TEXT",
+                  "value": "msr"
+                },
+                {
+                  "key": "question_MD5koX",
+                  "label": "15_data_de_nascimento",
+                  "type": "INPUT_DATE",
+                  "value": "2005-01-12"
+                },
+                {
+                  "key": "question_Jd0a5d",
+                  "label": "16_qual_o_regime_de_traba",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "919b4307-025e-45f2-9e3a-bf8f3ec7d49d"
+                  ],
+                  "options": [
+                    {
+                      "id": "c84291c1-a9a2-4441-9ca2-1b57c0fb7de9",
+                      "text": "CLT"
+                    },
+                    {
+                      "id": "639206b9-304a-4f42-b728-5cba8220f42c",
+                      "text": "PJ"
+                    },
+                    {
+                      "id": "919b4307-025e-45f2-9e3a-bf8f3ec7d49d",
+                      "text": "Temporário"
+                    },
+                    {
+                      "id": "cf9b5474-5eac-483b-b2b9-7f2fddd031b1",
+                      "text": "Jovem Aprendiz"
+                    },
+                    {
+                      "id": "80814fff-5720-49ba-a87f-5ae110964fbc",
+                      "text": "Informal"
+                    },
+                    {
+                      "id": "471bb67c-0cab-4e40-a809-771c03fe5f61",
+                      "text": "Não se aplica"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_ge4yKd",
+                  "label": "17_assinale_a_opcao_que_c",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "d4548890-1193-4dfe-9d1a-42c60c85e575"
+                  ],
+                  "options": [
+                    {
+                      "id": "d4548890-1193-4dfe-9d1a-42c60c85e575",
+                      "text": "De R$ 0,00 a R$ 3.030,00"
+                    },
+                    {
+                      "id": "a3ef8f18-5078-4b4b-98b9-9435347f8ad7",
+                      "text": "De R$ 3.030,00 a R$ 5.000,00"
+                    },
+                    {
+                      "id": "182d6ddc-7a30-4141-b3bb-366444f0c248",
+                      "text": "Acima de R$ 5.000,00"
+                    },
+                    {
+                      "id": "1695cde0-6bd1-4dd7-9292-074d2cff3206",
+                      "text": "Não se aplica"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_yNDKV4",
+                  "label": "18_a_acolhida_tem_indepen",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "9476a7a1-67b9-4789-918f-ef61e7b28222"
+                  ],
+                  "options": [
+                    {
+                      "id": "9476a7a1-67b9-4789-918f-ef61e7b28222",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "93bede60-7122-4f66-a037-4933e820f432",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_XrqVZ4",
+                  "label": "19_a_acolhida_esta_inscri",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "0221eb15-0009-4c53-a561-69802a8d04ac"
+                  ],
+                  "options": [
+                    {
+                      "id": "0221eb15-0009-4c53-a561-69802a8d04ac",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "2856b767-9d14-467e-b4ca-232080a12a22",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_8zev7x",
+                  "label": "20_atualmente_a_acolhida",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "9729a46b-441a-4cf2-9e97-18afe9033757"
+                  ],
+                  "options": [
+                    {
+                      "id": "9729a46b-441a-4cf2-9e97-18afe9033757",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "fb6bf2d8-e561-43cb-a067-0147adcbd97c",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_07P2N6",
+                  "label": "21_a_acolhida_e_responsav",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8942167f-724e-47d6-98ed-4636d262bceb"
+                  ],
+                  "options": [
+                    {
+                      "id": "2743262f-15e6-4ca7-814a-577410919051",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "0c9a1874-2af9-44f9-829f-6825730f017b",
+                      "text": "Não"
+                    },
+                    {
+                      "id": "8942167f-724e-47d6-98ed-4636d262bceb",
+                      "text": "Divide com alguém"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_zNepPq",
+                  "label": "22_caso_tenha_respondido",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "278eb150-a192-4ab2-b760-ec71a875c103"
+                  ],
+                  "options": [
+                    {
+                      "id": "14f2e26b-77b7-462a-a4dc-901275864faa",
+                      "text": "Mãe"
+                    },
+                    {
+                      "id": "b38357f6-8ea0-4e1d-a7f0-7593984069a6",
+                      "text": "Pai"
+                    },
+                    {
+                      "id": "ec90f0a1-8c14-4320-b2a4-ce9fc7a4d078",
+                      "text": "Familiares"
+                    },
+                    {
+                      "id": "278eb150-a192-4ab2-b760-ec71a875c103",
+                      "text": "Marido(a), Namorado(a), Genitor(a) das(os) filhas(os)"
+                    },
+                    {
+                      "id": "f92f13ba-dc42-4bf0-8651-6bfd483923aa",
+                      "text": "Filhas(os)"
+                    },
+                    {
+                      "id": "aafa1830-5860-400d-9be0-37a4a2ef6cc5",
+                      "text": "Amigas"
+                    },
+                    {
+                      "id": "d7464e7f-9a69-4a48-ba26-73240082412a",
+                      "text": "Outros"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_zNepPq_14f2e26b-77b7-462a-a4dc-901275864faa",
+                  "label": "22_caso_tenha_respondido (Mãe)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_zNepPq_b38357f6-8ea0-4e1d-a7f0-7593984069a6",
+                  "label": "22_caso_tenha_respondido (Pai)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_zNepPq_ec90f0a1-8c14-4320-b2a4-ce9fc7a4d078",
+                  "label": "22_caso_tenha_respondido (Familiares)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_zNepPq_278eb150-a192-4ab2-b760-ec71a875c103",
+                  "label": "22_caso_tenha_respondido (Marido(a), Namorado(a), Genitor(a) das(os) filhas(os))",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_zNepPq_f92f13ba-dc42-4bf0-8651-6bfd483923aa",
+                  "label": "22_caso_tenha_respondido (Filhas(os))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_zNepPq_aafa1830-5860-400d-9be0-37a4a2ef6cc5",
+                  "label": "22_caso_tenha_respondido (Amigas)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_zNepPq_d7464e7f-9a69-4a48-ba26-73240082412a",
+                  "label": "22_caso_tenha_respondido (Outros)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_5426Wd",
+                  "label": "23_a_acolhida_tem_pessoas",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "cada8795-fc0d-4751-846e-c4ed6e7be3fc"
+                  ],
+                  "options": [
+                    {
+                      "id": "cada8795-fc0d-4751-846e-c4ed6e7be3fc",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "c351ff48-7aff-44ec-9ee1-0c95b82f4d19",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_dNPLBA",
+                  "label": "24_caso_tenha_respondido",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "f9d11429-7195-4dd5-be16-5156994581d2"
+                  ],
+                  "options": [
+                    {
+                      "id": "f9d11429-7195-4dd5-be16-5156994581d2",
+                      "text": "1"
+                    },
+                    {
+                      "id": "b0268042-4d96-41ec-8ecf-7760bd3c728e",
+                      "text": "2"
+                    },
+                    {
+                      "id": "993ac929-4f3e-4e7c-af6f-1f8d2318959e",
+                      "text": "3"
+                    },
+                    {
+                      "id": "3cda0b79-f9a7-46f6-842e-df862d036da6",
+                      "text": "4"
+                    },
+                    {
+                      "id": "39f50818-77e5-470d-ad5c-185553f113c1",
+                      "text": "5+"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_YRdENd",
+                  "label": "25_a_acolhida_recebe_pens",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "34f6750e-8d19-4a82-8379-7b257e77d66f"
+                  ],
+                  "options": [
+                    {
+                      "id": "a4784385-358e-402e-be8b-c8c583917fc9",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "34f6750e-8d19-4a82-8379-7b257e77d66f",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_DKerg5",
+                  "label": "26_qual_a_situacao_de_mor",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8d7d536b-662f-4fc1-956b-7b6e5f4284f8"
+                  ],
+                  "options": [
+                    {
+                      "id": "41faddac-4fc3-46be-ad10-8f2ee7a51e00",
+                      "text": "Própria"
+                    },
+                    {
+                      "id": "562d9728-7df6-41fc-855e-fded39691c1a",
+                      "text": "Alugada"
+                    },
+                    {
+                      "id": "8d7d536b-662f-4fc1-956b-7b6e5f4284f8",
+                      "text": "Cedida ou “de favor”"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_lqRoJW",
+                  "label": "27_caso_tenha_respondido",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "647f1a70-c11b-4145-8ba7-693d004deb57"
+                  ],
+                  "options": [
+                    {
+                      "id": "cdc6838c-ba8e-4588-aee6-61475b1162fd",
+                      "text": "Ex-Companheiro"
+                    },
+                    {
+                      "id": "647f1a70-c11b-4145-8ba7-693d004deb57",
+                      "text": "Patroa ou Empregador(a)"
+                    },
+                    {
+                      "id": "aa10a53c-af1b-41d5-a9e1-a78039ea7f11",
+                      "text": "Familiares"
+                    },
+                    {
+                      "id": "a520de1a-3022-4f65-bcc2-15730e0abac4",
+                      "text": "Outros"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_RdLXEJ",
+                  "label": "28_a_acolhida_reside_com",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "7185bfb8-c077-4e80-a669-6d7f06a0b933"
+                  ],
+                  "options": [
+                    {
+                      "id": "7185bfb8-c077-4e80-a669-6d7f06a0b933",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "d76d462f-7409-4bbf-bd33-55961ebbc433",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_oDOrXV",
+                  "label": "29_a_acolhida_se_sente_se",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "1b322f6c-26d5-4f9c-ae23-380a2b073326"
+                  ],
+                  "options": [
+                    {
+                      "id": "1b322f6c-26d5-4f9c-ae23-380a2b073326",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "6a546bf6-3758-4545-bd15-9a38ae396b2f",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_GK0N8o",
+                  "label": "30_a_acolhida_vive_em_sit",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "7ab50c0b-e46a-4947-843b-a1611e508f53"
+                  ],
+                  "options": [
+                    {
+                      "id": "7ab50c0b-e46a-4947-843b-a1611e508f53",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "02c517df-fed9-4d72-a182-5e5d05e4953c",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_Ol0pO8",
+                  "label": "31_a_acolhida_conhece_a_r",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "7de85717-ef45-4226-b022-784f318a2c6f"
+                  ],
+                  "options": [
+                    {
+                      "id": "7de85717-ef45-4226-b022-784f318a2c6f",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "cdeafe74-df48-4a35-87f7-624ba15033b1",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_Vj8R2v",
+                  "label": "32_se_sim_assinale_qualqu",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "c03499ea-f6c2-4a59-8e44-5b39e7eb08cd"
+                  ],
+                  "options": [
+                    {
+                      "id": "e9be7eb2-1733-4a03-91e2-57946821e361",
+                      "text": "CREAS"
+                    },
+                    {
+                      "id": "c03499ea-f6c2-4a59-8e44-5b39e7eb08cd",
+                      "text": "CRAS"
+                    },
+                    {
+                      "id": "d4510668-4d8e-421f-a1ca-a071a6b6acb2",
+                      "text": "UBS"
+                    },
+                    {
+                      "id": "256feb11-54c9-4f07-a4df-de7dca208126",
+                      "text": "CRM; CDCM; CRAM; CIAM"
+                    },
+                    {
+                      "id": "96dfe910-ff55-49df-99b7-5be0b45c19fe",
+                      "text": "Delegacia especializada da Mulher"
+                    },
+                    {
+                      "id": "b3628e22-5946-490a-97ba-0b8886447f7e",
+                      "text": "Delegacia civil"
+                    },
+                    {
+                      "id": "273a463f-d575-4708-9280-115878faf5a0",
+                      "text": "Hospital de abortamento legal"
+                    },
+                    {
+                      "id": "7a9a9714-d9ed-4b25-b723-49769aa13dac",
+                      "text": "Defensoria pública/ NUDEM"
+                    },
+                    {
+                      "id": "9f334dfb-e060-4d13-8259-192afe1fe89a",
+                      "text": "Ministério público"
+                    },
+                    {
+                      "id": "bb6e01d1-8302-4ec6-8258-49e577cb88ce",
+                      "text": "CAPS"
+                    },
+                    {
+                      "id": "b420c255-dc95-4bba-8717-178411a46ed6",
+                      "text": "Não conhece"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_Vj8R2v_e9be7eb2-1733-4a03-91e2-57946821e361",
+                  "label": "32_se_sim_assinale_qualqu (CREAS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_c03499ea-f6c2-4a59-8e44-5b39e7eb08cd",
+                  "label": "32_se_sim_assinale_qualqu (CRAS)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_Vj8R2v_d4510668-4d8e-421f-a1ca-a071a6b6acb2",
+                  "label": "32_se_sim_assinale_qualqu (UBS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_256feb11-54c9-4f07-a4df-de7dca208126",
+                  "label": "32_se_sim_assinale_qualqu (CRM; CDCM; CRAM; CIAM)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_96dfe910-ff55-49df-99b7-5be0b45c19fe",
+                  "label": "32_se_sim_assinale_qualqu (Delegacia especializada da Mulher)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_b3628e22-5946-490a-97ba-0b8886447f7e",
+                  "label": "32_se_sim_assinale_qualqu (Delegacia civil)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_273a463f-d575-4708-9280-115878faf5a0",
+                  "label": "32_se_sim_assinale_qualqu (Hospital de abortamento legal)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_7a9a9714-d9ed-4b25-b723-49769aa13dac",
+                  "label": "32_se_sim_assinale_qualqu (Defensoria pública/ NUDEM)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_9f334dfb-e060-4d13-8259-192afe1fe89a",
+                  "label": "32_se_sim_assinale_qualqu (Ministério público)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_bb6e01d1-8302-4ec6-8258-49e577cb88ce",
+                  "label": "32_se_sim_assinale_qualqu (CAPS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Vj8R2v_b420c255-dc95-4bba-8717-178411a46ed6",
+                  "label": "32_se_sim_assinale_qualqu (Não conhece)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_PD0MVb",
+                  "label": "33_a_acolhida_esta_em_ate",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "b590b02c-4bc1-4b08-81d8-35ac8ec2b6c0"
+                  ],
+                  "options": [
+                    {
+                      "id": "b590b02c-4bc1-4b08-81d8-35ac8ec2b6c0",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "be299e92-1ace-4e01-aed3-f6c939beb0b9",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_E50jyN",
+                  "label": "34_se_sim_assinale_qualqu",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "f00f1682-a63c-4a3a-99a5-27fc0ff03d68",
+                    "0ac24818-d233-496f-9d82-34ec0700dcfa"
+                  ],
+                  "options": [
+                    {
+                      "id": "20342da3-b092-41e3-a914-7c1d94c7b601",
+                      "text": "CREAS"
+                    },
+                    {
+                      "id": "f00f1682-a63c-4a3a-99a5-27fc0ff03d68",
+                      "text": "CRAS"
+                    },
+                    {
+                      "id": "0ac24818-d233-496f-9d82-34ec0700dcfa",
+                      "text": "UBS"
+                    },
+                    {
+                      "id": "75236a2d-830a-4b91-be36-1e9fb29bfa5b",
+                      "text": "CRM; CDCM; CRAM; CIAM"
+                    },
+                    {
+                      "id": "01baf218-7d72-4949-a442-d66e714edb3b",
+                      "text": "Delegacia especializada da Mulher"
+                    },
+                    {
+                      "id": "8e4c577d-3364-48d9-a4e5-4c428fe370d0",
+                      "text": "Delegacia civil"
+                    },
+                    {
+                      "id": "6a86e0d3-f6d5-4ac9-87f7-0ce1b9134ce8",
+                      "text": "Hospital de abortamento legal"
+                    },
+                    {
+                      "id": "25587f18-d49f-41f7-a71f-54ec402fac11",
+                      "text": "Defensoria pública/ NUDEM"
+                    },
+                    {
+                      "id": "81177688-20aa-46d2-81e6-02807750b0e9",
+                      "text": "Ministério público"
+                    },
+                    {
+                      "id": "9557bee1-d63e-4ff9-afbb-944b5380990d",
+                      "text": "CAPS"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_E50jyN_20342da3-b092-41e3-a914-7c1d94c7b601",
+                  "label": "34_se_sim_assinale_qualqu (CREAS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_E50jyN_f00f1682-a63c-4a3a-99a5-27fc0ff03d68",
+                  "label": "34_se_sim_assinale_qualqu (CRAS)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_E50jyN_0ac24818-d233-496f-9d82-34ec0700dcfa",
+                  "label": "34_se_sim_assinale_qualqu (UBS)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_E50jyN_75236a2d-830a-4b91-be36-1e9fb29bfa5b",
+                  "label": "34_se_sim_assinale_qualqu (CRM; CDCM; CRAM; CIAM)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_E50jyN_01baf218-7d72-4949-a442-d66e714edb3b",
+                  "label": "34_se_sim_assinale_qualqu (Delegacia especializada da Mulher)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_E50jyN_8e4c577d-3364-48d9-a4e5-4c428fe370d0",
+                  "label": "34_se_sim_assinale_qualqu (Delegacia civil)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_E50jyN_6a86e0d3-f6d5-4ac9-87f7-0ce1b9134ce8",
+                  "label": "34_se_sim_assinale_qualqu (Hospital de abortamento legal)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_E50jyN_25587f18-d49f-41f7-a71f-54ec402fac11",
+                  "label": "34_se_sim_assinale_qualqu (Defensoria pública/ NUDEM)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_E50jyN_81177688-20aa-46d2-81e6-02807750b0e9",
+                  "label": "34_se_sim_assinale_qualqu (Ministério público)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_E50jyN_9557bee1-d63e-4ff9-afbb-944b5380990d",
+                  "label": "34_se_sim_assinale_qualqu (CAPS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_rBENzv",
+                  "label": "35_em_qualis_areas_do_dir",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "9b2631ad-3e1e-4efa-8c7f-cf75386c320f",
+                    "a7ee4f9d-f11a-4dd2-9bae-9dc9f4b7b911"
+                  ],
+                  "options": [
+                    {
+                      "id": "3b491512-0895-413c-ad06-4bdcbe8e1d85",
+                      "text": "Cível/Família"
+                    },
+                    {
+                      "id": "9b2631ad-3e1e-4efa-8c7f-cf75386c320f",
+                      "text": "Criminal"
+                    },
+                    {
+                      "id": "a7ee4f9d-f11a-4dd2-9bae-9dc9f4b7b911",
+                      "text": "Digital"
+                    },
+                    {
+                      "id": "657b0e75-2707-43d4-b520-2b98b5d951d0",
+                      "text": "Trabalhista"
+                    },
+                    {
+                      "id": "312a1b1e-a859-409c-bb44-dcf0fae66cd2",
+                      "text": "Outra"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_rBENzv_3b491512-0895-413c-ad06-4bdcbe8e1d85",
+                  "label": "35_em_qualis_areas_do_dir (Cível/Família)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_rBENzv_9b2631ad-3e1e-4efa-8c7f-cf75386c320f",
+                  "label": "35_em_qualis_areas_do_dir (Criminal)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_rBENzv_a7ee4f9d-f11a-4dd2-9bae-9dc9f4b7b911",
+                  "label": "35_em_qualis_areas_do_dir (Digital)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_rBENzv_657b0e75-2707-43d4-b520-2b98b5d951d0",
+                  "label": "35_em_qualis_areas_do_dir (Trabalhista)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_rBENzv_312a1b1e-a859-409c-bb44-dcf0fae66cd2",
+                  "label": "35_em_qualis_areas_do_dir (Outra)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_4BjWeO",
+                  "label": "36_descreva_resumidamente",
+                  "type": "TEXTAREA",
+                  "value": "iopi[pcxkfdp ,oofjfogjgjotgojk\ndfjgopgotip"
+                },
+                {
+                  "key": "question_jbxd1E",
+                  "label": "37_encaminhamentos_do_cas",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "b710a496-683b-415c-9891-adf6ea7156a5",
+                    "a8fec9ae-920a-446b-b48c-d5acdd53e284",
+                    "ff2526df-8966-403a-b8d7-655cd094bf0f"
+                  ],
+                  "options": [
+                    {
+                      "id": "fa29891a-610e-4c15-93fb-005d797abe76",
+                      "text": "Orientações jurídicas"
+                    },
+                    {
+                      "id": "a8fec9ae-920a-446b-b48c-d5acdd53e284",
+                      "text": "Entrada de ação/ações"
+                    },
+                    {
+                      "id": "b710a496-683b-415c-9891-adf6ea7156a5",
+                      "text": "Acompanhamento de processo já em curso"
+                    },
+                    {
+                      "id": "009140cb-003a-4742-b819-495046006416",
+                      "text": "Encaminhamento para serviço público e interrupção do atendimento pelo projeto"
+                    },
+                    {
+                      "id": "ff2526df-8966-403a-b8d7-655cd094bf0f",
+                      "text": "Articulação com o serviço público e continuidade de atendimento pelo projeto"
+                    },
+                    {
+                      "id": "adffc0da-373f-490f-a439-ad9348907c18",
+                      "text": "Não se enquadra no perfil do Mapa do Acolhimento (Encaminhamento para defensoria pública/NUDEM; é menor de 18 anos, não está em vulnerabilidade econômica, não está no Brasil/não é brasileira, não sofreu ou está sofrendo violência de gênero)"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_jbxd1E_fa29891a-610e-4c15-93fb-005d797abe76",
+                  "label": "37_encaminhamentos_do_cas (Orientações jurídicas)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_jbxd1E_a8fec9ae-920a-446b-b48c-d5acdd53e284",
+                  "label": "37_encaminhamentos_do_cas (Entrada de ação/ações)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_jbxd1E_b710a496-683b-415c-9891-adf6ea7156a5",
+                  "label": "37_encaminhamentos_do_cas (Acompanhamento de processo já em curso)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_jbxd1E_009140cb-003a-4742-b819-495046006416",
+                  "label": "37_encaminhamentos_do_cas (Encaminhamento para serviço público e interrupção do atendimento pelo projeto)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_jbxd1E_ff2526df-8966-403a-b8d7-655cd094bf0f",
+                  "label": "37_encaminhamentos_do_cas (Articulação com o serviço público e continuidade de atendimento pelo projeto)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_jbxd1E_adffc0da-373f-490f-a439-ad9348907c18",
+                  "label": "37_encaminhamentos_do_cas (Não se enquadra no perfil do Mapa do Acolhimento (Encaminhamento para defensoria pública/NUDEM; é menor de 18 anos, não está em vulnerabilidade econômica, não está no Brasil/não é brasileira, não sofreu ou está sofrendo violência de gênero))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV",
+                  "label": "38_caso_tenha_assinalado",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "6b40dbcd-0fcc-47f7-91d3-88de304aed79"
+                  ],
+                  "options": [
+                    {
+                      "id": "b380d547-4415-4311-a4ee-a9da66367348",
+                      "text": "CREAS"
+                    },
+                    {
+                      "id": "d45eab24-aa4c-47ca-87e0-002482880c23",
+                      "text": "CRAS"
+                    },
+                    {
+                      "id": "7c0dc0a9-7e3b-4638-ae37-81441983d411",
+                      "text": "UBS"
+                    },
+                    {
+                      "id": "c220b5e3-e319-4587-a04e-acd2151fba6e",
+                      "text": "CRM;CDCM; CRAM; CIAM"
+                    },
+                    {
+                      "id": "6b40dbcd-0fcc-47f7-91d3-88de304aed79",
+                      "text": "Delegacia especializada da Mulher"
+                    },
+                    {
+                      "id": "7b61f102-3b27-4af0-b7ad-e5f40b5aa0a0",
+                      "text": "Delegacia civil"
+                    },
+                    {
+                      "id": "1d79c36d-c285-421a-9532-e9d0d3932e89",
+                      "text": "Hospital de abortamento legal"
+                    },
+                    {
+                      "id": "2e7012c8-6f48-4189-bca0-2819ec4dacfa",
+                      "text": "Defensoria pública/ NUDEM"
+                    },
+                    {
+                      "id": "e413d7ca-4d1f-4e29-ae1c-678ad83aeb41",
+                      "text": "Ministério público"
+                    },
+                    {
+                      "id": "aaa7e2c2-66ba-4315-90ca-1b83e044d138",
+                      "text": "CAPS"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_2BrqQV_b380d547-4415-4311-a4ee-a9da66367348",
+                  "label": "38_caso_tenha_assinalado (CREAS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_d45eab24-aa4c-47ca-87e0-002482880c23",
+                  "label": "38_caso_tenha_assinalado (CRAS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_7c0dc0a9-7e3b-4638-ae37-81441983d411",
+                  "label": "38_caso_tenha_assinalado (UBS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_c220b5e3-e319-4587-a04e-acd2151fba6e",
+                  "label": "38_caso_tenha_assinalado (CRM;CDCM; CRAM; CIAM)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_6b40dbcd-0fcc-47f7-91d3-88de304aed79",
+                  "label": "38_caso_tenha_assinalado (Delegacia especializada da Mulher)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_2BrqQV_7b61f102-3b27-4af0-b7ad-e5f40b5aa0a0",
+                  "label": "38_caso_tenha_assinalado (Delegacia civil)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_1d79c36d-c285-421a-9532-e9d0d3932e89",
+                  "label": "38_caso_tenha_assinalado (Hospital de abortamento legal)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_2e7012c8-6f48-4189-bca0-2819ec4dacfa",
+                  "label": "38_caso_tenha_assinalado (Defensoria pública/ NUDEM)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_e413d7ca-4d1f-4e29-ae1c-678ad83aeb41",
+                  "label": "38_caso_tenha_assinalado (Ministério público)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2BrqQV_aaa7e2c2-66ba-4315-90ca-1b83e044d138",
+                  "label": "38_caso_tenha_assinalado (CAPS)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook-test/traigem1-jur-tally",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-01-14T17:54:38.738Z",
+      "updatedAt": "2025-01-14T17:54:38.738Z",
+      "role": "workflow:owner",
+      "workflowId": "b9RED0m1uWy4LgJn",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-16T17:41:58.269Z",
+      "updatedAt": "2024-01-16T17:41:58.269Z",
+      "id": "E3Tnq8M430hgCQfP",
+      "name": "Mapa do acolhimento"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-14T20:57:33.000Z",
+  "versionId": "9900e600-977a-4849-8ad9-f39154da8462"
+}
