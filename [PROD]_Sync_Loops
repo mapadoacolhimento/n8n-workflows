@@ -50,7 +50,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "Veio do site em inglês?",
             "type": "main",
             "index": 0
           }
@@ -62,17 +62,6 @@
         [
           {
             "node": "Atualiza contato no Loops1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "Wait1",
             "type": "main",
             "index": 0
           }
@@ -111,6 +100,46 @@
           },
           {
             "node": "Busca Doadoras atualizadas nos últimos 7 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria grupo inscrita-site": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Veio do site em inglês?": {
+      "main": [
+        [
+          {
+            "node": "Cria grupo inscrita-site-en",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cria grupo inscrita-site",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria grupo inscrita-site-en": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
             "type": "main",
             "index": 0
           }
@@ -215,38 +244,9 @@
       "typeVersion": 2,
       "position": [
         600,
-        900
+        980
       ],
       "webhookId": "058fea7e-79f1-4a9f-b77e-af96c1174376"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "b7406e52-9e57-4659-91ff-6fdab2377f1c",
-              "name": "email",
-              "value": "={{ $json.body['Sem rótulo email'] }}",
-              "type": "string"
-            },
-            {
-              "id": "72a2d6a4-011b-405a-8f80-c41fdd356def",
-              "name": "user_group",
-              "value": "inscrita-site",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "b2e90e78-e068-402c-a6ea-f5e27ae133c7",
-      "name": "Edit Fields",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        820,
-        900
-      ]
     },
     {
       "parameters": {
@@ -257,8 +257,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1020,
-        900
+        1400,
+        980
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -278,8 +278,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1220,
-        900
+        1600,
+        980
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -340,11 +340,149 @@
         600,
         460
       ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bb2f7638-c98c-4d7b-bacb-a02194708da1",
+              "leftValue": "={{ $json.headers['user-agent'] }}",
+              "rightValue": "/en",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "418d029a-d181-4825-a866-9cfbdad53c7f",
+      "name": "Veio do site em inglês?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        820,
+        980
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7406e52-9e57-4659-91ff-6fdab2377f1c",
+              "name": "email",
+              "value": "={{ $json.body['Sem rótulo email'] }}",
+              "type": "string"
+            },
+            {
+              "id": "72a2d6a4-011b-405a-8f80-c41fdd356def",
+              "name": "user_group",
+              "value": "inscrita-site",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2e90e78-e068-402c-a6ea-f5e27ae133c7",
+      "name": "Cria grupo inscrita-site",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1080,
+        1100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7406e52-9e57-4659-91ff-6fdab2377f1c",
+              "name": "email",
+              "value": "={{ $json.body['#!trpst#trp-gettext data-trpgettextoriginal=1713#!trpen#No Label#!trpst#/trp-gettext#!trpen# email'] }}",
+              "type": "string"
+            },
+            {
+              "id": "72a2d6a4-011b-405a-8f80-c41fdd356def",
+              "name": "user_group",
+              "value": "inscrita-site-en",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "eeacd15d-d098-4ecb-b75f-ea4a87ba083d",
+      "name": "Cria grupo inscrita-site-en",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1080,
+        880
+      ]
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook site": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "WordPress/6.7.1; https://mapadoacolhimento.org.br/en",
+            "content-length": "1181",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "138.68.64.97",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "DE",
+            "cf-ray": "902ec83ff295942b-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "138.68.64.97, 172.70.162.222",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-kl95v",
+            "x-is-trusted": "yes",
+            "x-real-ip": "138.68.64.97"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "#!trpst#trp-gettext data-trpgettextoriginal=1713#!trpen#No Label#!trpst#/trp-gettext#!trpen# email": "camila@mapa.org.br",
+            "#!trpst#trp-gettext data-trpgettextoriginal=558#!trpen#Date#!trpst#/trp-gettext#!trpen#": "16/01/2025",
+            "#!trpst#trp-gettext data-trpgettextoriginal=559#!trpen#Time#!trpst#/trp-gettext#!trpen#": "11:26",
+            "#!trpst#trp-gettext data-trpgettextoriginal=668#!trpen#Page URL#!trpst#/trp-gettext#!trpen#": "https://mapadoacolhimento.org.br/en/",
+            "#!trpst#trp-gettext data-trpgettextoriginal=656#!trpen#User Agent#!trpst#/trp-gettext#!trpen#": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+            "#!trpst#trp-gettext data-trpgettextoriginal=669#!trpen#Remote IP#!trpst#/trp-gettext#!trpen#": "2804:7f0:bc00:e715:1c0:cde:134c:78b8",
+            "#!trpst#trp-gettext data-trpgettextoriginal=1706#!trpen#Powered by#!trpst#/trp-gettext#!trpen#": "Elementor",
+            "form_id": "08ada22",
+            "form_name": "Novo formulário"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/058fea7e-79f1-4a9f-b77e-af96c1174376",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
   },
   "shared": [
     {
@@ -404,6 +542,6 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-12-12T15:51:39.000Z",
-  "versionId": "63685489-865b-4803-9385-595e6dba9f10"
+  "updatedAt": "2025-01-16T14:37:12.000Z",
+  "versionId": "80745747-33d7-4b3f-95fc-22c7faf9bffc"
 }
