@@ -1,0 +1,183 @@
+{
+  "active": true,
+  "connections": {
+    "Quer um update?": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "#monitoramento-voluntarias": {
+      "main": [
+        [
+          {
+            "node": "Quer um update?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-21T20:03:25.118Z",
+  "id": "JtItIjKpOV9MaoAt",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Triggers Slack",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "19989403-e763-4672-b6fb-7195b5ec2b82",
+              "leftValue": "={{ $json.body.text }}",
+              "rightValue": "quero um update",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "62188977-8e28-4c36-a19f-f4d475d94620",
+      "name": "Quer um update?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        460
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "214e2dfe-1c1d-455b-a921-e12fa8e0662e",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        860,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9DFMBnRuNVh2gCNm",
+          "mode": "list",
+          "cachedResultName": "[PROD] Monitoramento da disponibilidade de Voluntárias"
+        },
+        "options": {}
+      },
+      "id": "9bdce381-9a8d-48f6-9f3e-7ff3e3fd70e7",
+      "name": "Execute Workflow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1527a18a-bb8d-4a39-8964-190bea5dbf05",
+        "options": {}
+      },
+      "id": "f2a369cb-679d-4338-9770-bd1906446b04",
+      "name": "#monitoramento-voluntarias",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        460,
+        460
+      ],
+      "webhookId": "1527a18a-bb8d-4a39-8964-190bea5dbf05"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-01-21T20:03:25.120Z",
+      "updatedAt": "2025-01-21T20:03:25.120Z",
+      "role": "workflow:owner",
+      "workflowId": "JtItIjKpOV9MaoAt",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-21T20:20:08.000Z",
+  "versionId": "5e90167a-904f-464b-b6dc-c431972bc39c"
+}
