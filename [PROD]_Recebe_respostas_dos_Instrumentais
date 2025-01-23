@@ -92,7 +92,7 @@
     },
     {
       "parameters": {
-        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getUniqueAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getArrayAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "3b7eecc3-9e64-42ba-89de-11f0915f7a62",
       "name": "Obtém os dados",
@@ -249,7 +249,7 @@
     },
     {
       "parameters": {
-        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getUniqueAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getArrayAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "b932f09b-bf85-496c-93e0-706eb65043b2",
       "name": "Obtém os dados1",
@@ -406,7 +406,7 @@
     },
     {
       "parameters": {
-        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getUniqueAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n  const substanceUse = getUniqueAnswer(item, \"uso_de_drogas\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact,\n      substance_use: substanceUse\n    }\n  )\n}\n\nreturn output;"
+        "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getArrayAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n  const substanceUse = getUniqueAnswer(item, \"uso_de_drogas\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact,\n      substance_use: substanceUse\n    }\n  )\n}\n\nreturn output;"
       },
       "id": "481749e1-9192-4e3a-ae9f-7e3c4b2c4be6",
       "name": "Obtém os dados2",
@@ -641,7 +641,345 @@
       }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Qualidade de Vida - d0": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "6430",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.41.115",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9068390dc0463da6-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "34.96.41.115, 141.101.99.23",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-kl95v",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.115"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "10f870ea-8379-4626-a0fb-20f47ee62e82",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2025-01-23T13:45:12.332Z",
+            "data": {
+              "responseId": "ebLqDl",
+              "submissionId": "ebLqDl",
+              "respondentId": "QABR6A",
+              "formId": "mD0agZ",
+              "formName": "[MSR] Instrumental de Qualidade de Vida - dia 0",
+              "createdAt": "2025-01-23T13:45:12.000Z",
+              "fields": [
+                {
+                  "key": "question_JdlKXz_c3e63eb1-d275-4adc-b5f8-0413fe280560",
+                  "label": "msr_first_name",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "Camila"
+                },
+                {
+                  "key": "question_JdlKXz_f11fad48-3722-45a5-931b-b5abee7b3aae",
+                  "label": "msr_id",
+                  "type": "HIDDEN_FIELDS",
+                  "value": "22858077211028"
+                },
+                {
+                  "key": "question_geqjYM",
+                  "label": "qualidade_de_vida",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "5333fb5e-2ce6-417b-9ad5-dceda23e6a94"
+                  ],
+                  "options": [
+                    {
+                      "id": "3f192a76-8e3e-4233-b345-b6f1539799a0",
+                      "text": "Muito ruim"
+                    },
+                    {
+                      "id": "8ff12753-cce9-4179-87f9-c98760214c9e",
+                      "text": "Ruim"
+                    },
+                    {
+                      "id": "5333fb5e-2ce6-417b-9ad5-dceda23e6a94",
+                      "text": "Mediana"
+                    },
+                    {
+                      "id": "d6dfec3e-5384-4fa5-85d6-12c2336c1239",
+                      "text": "Muito Boa"
+                    },
+                    {
+                      "id": "0e0ba159-97ae-4be0-b960-5ad44f1eab51",
+                      "text": "Boa"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_PD9lz1",
+                  "label": "seguranca",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "7d8934bc-44ed-486f-a7be-12bed0f0d0e5"
+                  ],
+                  "options": [
+                    {
+                      "id": "116667e0-ba6a-40f4-8d88-60d0438d405c",
+                      "text": "Nada segura"
+                    },
+                    {
+                      "id": "7d8934bc-44ed-486f-a7be-12bed0f0d0e5",
+                      "text": "Muito pouco segura"
+                    },
+                    {
+                      "id": "9609b74b-69b5-4540-b67a-2563fd9d459b",
+                      "text": "Medianamente segura"
+                    },
+                    {
+                      "id": "987ef535-0e5d-453b-8b13-1845c89e73bc",
+                      "text": "Bastante segura"
+                    },
+                    {
+                      "id": "7b029f9a-3568-4971-8623-c014416c0acc",
+                      "text": "Extremamente segura"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_E5lLxl",
+                  "label": "situacoes_controle",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "2abfa872-53b2-4bfd-8659-1e95efbcfec3",
+                    "37574d0c-b310-4d0f-9bb7-2db8c60d46cb"
+                  ],
+                  "options": [
+                    {
+                      "id": "2abfa872-53b2-4bfd-8659-1e95efbcfec3",
+                      "text": "Me sinto controlada em meus acessos a recursos financeiros essenciais, como salários, contas bancárias, ou investimentos"
+                    },
+                    {
+                      "id": "37574d0c-b310-4d0f-9bb7-2db8c60d46cb",
+                      "text": "Me sinto controlada na forma como interajo com as pessoas no meu ambiente de trabalho, escola ou demais círculos sociais"
+                    },
+                    {
+                      "id": "8c6abdc4-f610-42bf-84db-69bb9469ac0d",
+                      "text": "Me sinto controlada/impedida de realizar os atos de cidadania, como votar, me candidatar a cargos eletivos ou ocupar posições de influência"
+                    },
+                    {
+                      "id": "63cad273-9ef4-4ff0-9188-972b6480caec",
+                      "text": "Me sinto controlada dentro da perspectiva religiosa"
+                    },
+                    {
+                      "id": "4822b747-9556-4bb0-a503-dd929cdf1279",
+                      "text": "Não me vejo inserida em nenhuma situação de controle neste momento."
+                    }
+                  ]
+                },
+                {
+                  "key": "question_rBOVoo",
+                  "label": "percepcao_si_mesma",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "d98a8be1-e77d-46db-aa27-eda64ec646b3"
+                  ],
+                  "options": [
+                    {
+                      "id": "bffd67a5-49f9-4207-9693-817f33044f5c",
+                      "text": "Muito ruim"
+                    },
+                    {
+                      "id": "e57624e2-025a-4d02-a784-c13d3ccf8c2b",
+                      "text": "Ruim"
+                    },
+                    {
+                      "id": "d98a8be1-e77d-46db-aa27-eda64ec646b3",
+                      "text": "Mediana"
+                    },
+                    {
+                      "id": "076711c4-171e-4c60-85ec-9473064f7317",
+                      "text": "Boa"
+                    },
+                    {
+                      "id": "68cb7f50-3ec3-442e-a443-d22ce7a8140d",
+                      "text": "Muito boa"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_4B7LKr",
+                  "label": "sentimentos_sensacoes_emocoes",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "b8568999-196b-42ea-9a31-0600a54f940d"
+                  ],
+                  "options": [
+                    {
+                      "id": "7a7e3057-df72-40fb-a353-d7b702b53ff6",
+                      "text": "Insônia"
+                    },
+                    {
+                      "id": "7886a4e0-41e4-43b7-a0df-d94b16c97c7e",
+                      "text": "Pesadelos"
+                    },
+                    {
+                      "id": "8463e094-ac27-4a61-81ba-70b586b70510",
+                      "text": "Falta de concentração"
+                    },
+                    {
+                      "id": "b8568999-196b-42ea-9a31-0600a54f940d",
+                      "text": "Irritabilidade"
+                    },
+                    {
+                      "id": "5edcd071-9232-4663-9b9b-ac2ded31e6a0",
+                      "text": "Pouco interesse ou pouco prazer em fazer as coisas"
+                    },
+                    {
+                      "id": "cb9614cd-35d6-4595-b1dd-79a694f6ccd1",
+                      "text": "Me sinto \"para baixo\", deprimido/a ou sem perspectiva"
+                    },
+                    {
+                      "id": "2514e838-9ce5-40a5-84a9-5d6d988e682c",
+                      "text": "Me sinto nervosa, ansiosa ou muito tensa"
+                    },
+                    {
+                      "id": "72f14790-fea7-4fa0-8f9c-ce27b4a6f816",
+                      "text": "Me sinto incapaz de impedir ou controlar as próprias emoções"
+                    },
+                    {
+                      "id": "6037f80d-63e6-4931-a759-a8c405e4fdb5",
+                      "text": "Distúrbio alimentar"
+                    },
+                    {
+                      "id": "b94b2491-ee42-49df-a78a-ec15ed560137",
+                      "text": "Sérios impactos na saúde mental como: depressão, ansiedade e/ou síndrome do pânico"
+                    },
+                    {
+                      "id": "b7ea4bbc-c2d5-4e38-baa9-2ff4f629209b",
+                      "text": "Comprometimento da autoestima"
+                    },
+                    {
+                      "id": "28164ee3-8311-438d-9467-b0e978eaa970",
+                      "text": "Distorção dos pensamentos e crenças de desvalia"
+                    },
+                    {
+                      "id": "0fca6769-b0d3-486f-8fff-728f6b36374c",
+                      "text": "Autodepreciação"
+                    },
+                    {
+                      "id": "9273729d-99ac-422c-aed0-76e1f9fead44",
+                      "text": "Sentimentos de culpa"
+                    },
+                    {
+                      "id": "59b60cf8-ef95-499c-8a69-966605f4a7d2",
+                      "text": "Dependência afetiva/emocional"
+                    },
+                    {
+                      "id": "1ab6046a-0b07-43ff-b6b8-1f240bcd22da",
+                      "text": "Dependência financeira"
+                    },
+                    {
+                      "id": "c660d2c1-e038-48bc-9bf9-f5357595a577",
+                      "text": "Uso de álcool e drogas"
+                    },
+                    {
+                      "id": "d837001c-1458-45ff-a41c-3d8d6b74bf6d",
+                      "text": "Desmaios"
+                    },
+                    {
+                      "id": "87f7ada1-2c5f-4acd-a340-ef7046d5a36d",
+                      "text": "Tontura"
+                    },
+                    {
+                      "id": "bb8870ad-b7d1-4445-97e7-aa23eb9154c8",
+                      "text": "Aborto espontâneo"
+                    },
+                    {
+                      "id": "05cc0a69-d576-4554-9278-216e6e060386",
+                      "text": "Partos prematuros"
+                    },
+                    {
+                      "id": "1e9fd920-fe39-4fe0-b1fa-b8fb91cc056a",
+                      "text": "Fraturas"
+                    },
+                    {
+                      "id": "f7958420-4fd4-4ad4-ae71-f352714f3718",
+                      "text": "Hematomas"
+                    },
+                    {
+                      "id": "a3c78162-be50-47e4-b0a5-efaac1bf1d99",
+                      "text": "Sangramentos"
+                    },
+                    {
+                      "id": "1e4dc9fe-89c9-4723-970d-3a38e7185b16",
+                      "text": "Infecção urinária"
+                    },
+                    {
+                      "id": "42ef8b84-34f9-466b-85bd-0a430b1ec592",
+                      "text": "Diarreia"
+                    },
+                    {
+                      "id": "9793a707-6316-4288-bee3-b61b9d561851",
+                      "text": "Dores musculares incapacitantes"
+                    },
+                    {
+                      "id": "9990fecf-cbb1-418a-b8c9-ac7b3ab6a5c5",
+                      "text": "Dores e ardência no estômago"
+                    },
+                    {
+                      "id": "ba9e1793-0dc3-4ba3-9833-8fc7235165eb",
+                      "text": "Infecções sexualmente transmissíveis"
+                    },
+                    {
+                      "id": "3899fb2c-0154-4b0a-af0a-01a2b77bda31",
+                      "text": "Não me identifico com nenhum neste momento"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_jboLlQ",
+                  "label": "lidar_impactos_da_violencia",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "19880824-b2d5-4c35-ab61-ac83bf390e84"
+                  ],
+                  "options": [
+                    {
+                      "id": "19880824-b2d5-4c35-ab61-ac83bf390e84",
+                      "text": "Ainda não me sinto capaz de lidar com os impactos da violência nem de lidar com os desafios do dia a dia"
+                    },
+                    {
+                      "id": "41024562-9f6b-4a57-95ee-41d7eb846765",
+                      "text": "Tenho conseguido lidar melhor com os impactos da violência e com os desafios do dia a dia, mas ainda é muito difícil"
+                    },
+                    {
+                      "id": "a6cbb3e8-de69-4c57-9093-9be1f79a7e95",
+                      "text": "Tem sido cada vez mais fácil/possível lidar com os impactos da violência e com os desafios do dia a dia"
+                    },
+                    {
+                      "id": "700a5cec-355e-4d39-8a11-7d5bb1c3759a",
+                      "text": "Me sinto totalmente capaz de lidar com os impactos da violência com os desafios do dia a dia de forma segura, sem muitas dificuldades"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/survey-quality-of-life-d0",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": false,
@@ -700,6 +1038,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2025-01-16T17:35:15.000Z",
-  "versionId": "f3c96262-55cb-4bb8-9ef7-fdd88a13bf54"
+  "updatedAt": "2025-01-23T13:50:07.000Z",
+  "versionId": "9b371da6-7c72-48cb-8d0c-c33b05454019"
 }
