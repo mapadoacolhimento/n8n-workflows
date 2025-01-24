@@ -8,6 +8,11 @@
             "node": "Insere na survey_quality_of_life_d0",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca tickets no Zendesk e email da MSR",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -19,6 +24,11 @@
             "node": "Insere na survey_quality_of_life_d90",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca tickets no Zendesk e email da MSR1",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -28,6 +38,11 @@
         [
           {
             "node": "Insere na survey_quality_of_life_d180",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca tickets no Zendesk e email da MSR2",
             "type": "main",
             "index": 0
           }
@@ -61,6 +76,141 @@
         [
           {
             "node": "Obtém os dados2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca tickets no Zendesk e email da MSR": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca tickets no Zendesk e email da MSR1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca tickets no Zendesk e email da MSR2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
             "type": "main",
             "index": 0
           }
@@ -222,7 +372,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        1160,
+        1220,
         340
       ],
       "credentials": {
@@ -244,7 +394,7 @@
       "typeVersion": 1,
       "position": [
         720,
-        580
+        840
       ]
     },
     {
@@ -257,7 +407,7 @@
       "typeVersion": 2,
       "position": [
         940,
-        700
+        960
       ]
     },
     {
@@ -380,7 +530,7 @@
       "typeVersion": 2.5,
       "position": [
         1160,
-        700
+        960
       ],
       "credentials": {
         "postgres": {
@@ -400,8 +550,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        720,
-        960
+        700,
+        1560
       ]
     },
     {
@@ -413,8 +563,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        940,
-        1080
+        920,
+        1680
       ]
     },
     {
@@ -561,8 +711,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        1160,
-        1080
+        1140,
+        1680
       ],
       "credentials": {
         "postgres": {
@@ -607,7 +757,7 @@
       "typeVersion": 2,
       "position": [
         720,
-        700
+        960
       ],
       "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
       "credentials": {
@@ -629,8 +779,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        720,
-        1080
+        700,
+        1680
       ],
       "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
       "credentials": {
@@ -639,6 +789,222 @@
           "name": "Tally API"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a75d0fff-cf2f-4c68-a188-9040b33c78cf",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "be0bd91f-98d7-403a-b0ba-cc47f4491304",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1660,
+        580
+      ],
+      "webhookId": "56853d24-2179-472a-a765-51f4ca9adf77"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  REPLACE(email, '@', '%40') AS email,\n  zendesk_ticket_id\nFROM match.support_requests\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}\nAND status != 'closed'",
+        "options": {}
+      },
+      "id": "e0b29d98-593e-4b29-9b9f-8b45f16edf37",
+      "name": "Busca tickets no Zendesk e email da MSR",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1220,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A MSR preencheu o <a href=\"https://app.hex.tech/b5ca4b0e-47ba-4dee-a2be-6acac72f7305/app/13034fe3-c927-42b2-abd8-eebf0c8c3b13/latest?_msr_email=%22{{ $json.email }}%22\">Instrumental de Qualidade de Vida - 90 dias depois</a>"
+        }
+      },
+      "id": "33e46ccb-7d7f-430c-8fc1-9a159fa39c50",
+      "name": "Adiciona comentário interno",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1820,
+        580
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c307d70c-8ede-4562-ba82-8cb3f0f7216b",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1420,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "f83c9619-e734-4d7e-b1d8-b0b1a2e2a993",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1640,
+        1220
+      ],
+      "webhookId": "56853d24-2179-472a-a765-51f4ca9adf77"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  REPLACE(email, '@', '%40') AS email,\n  zendesk_ticket_id\nFROM match.support_requests\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}\nAND status != 'closed'",
+        "options": {}
+      },
+      "id": "51fce8d8-9487-4c9c-b89b-56e5b74f9e30",
+      "name": "Busca tickets no Zendesk e email da MSR1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1180,
+        1200
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A MSR preencheu o <a href=\"https://app.hex.tech/b5ca4b0e-47ba-4dee-a2be-6acac72f7305/app/13034fe3-c927-42b2-abd8-eebf0c8c3b13/latest?_msr_email=%22{{ $json.email }}%22\">Instrumental de Qualidade de Vida - 90 dias</a>"
+        }
+      },
+      "id": "66721579-8925-44a2-8e5c-7ad37eef5c3b",
+      "name": "Adiciona comentário interno1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        1220
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d08b86c2-bd5a-40b1-b9c8-8d243e85faec",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1380,
+        1920
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "0685cb1d-da8e-4b8e-b86f-69197909e330",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        1940
+      ],
+      "webhookId": "56853d24-2179-472a-a765-51f4ca9adf77"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  REPLACE(email, '@', '%40') AS email,\n  zendesk_ticket_id\nFROM match.support_requests\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}\nAND status != 'closed'",
+        "options": {}
+      },
+      "id": "3cea1f44-b92a-48c3-bb40-910640a31377",
+      "name": "Busca tickets no Zendesk e email da MSR2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1140,
+        1920
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A MSR preencheu o <a href=\"https://app.hex.tech/b5ca4b0e-47ba-4dee-a2be-6acac72f7305/app/13034fe3-c927-42b2-abd8-eebf0c8c3b13/latest?_msr_email=%22{{ $json.email }}%22\">Instrumental de Qualidade de Vida - 180 dias</a>"
+        }
+      },
+      "id": "82fed991-8a86-4904-84b2-17ea62d335a0",
+      "name": "Adiciona comentário interno2",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        1940
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {
@@ -648,39 +1014,39 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Tally Webhooks",
-            "content-length": "6430",
+            "content-length": "6391",
             "accept": "application/json, text/plain, */*",
             "accept-encoding": "gzip, br",
             "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
             "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "34.96.41.115",
+            "cf-connecting-ip": "34.96.41.236",
             "cf-ew-via": "15",
             "cf-ipcountry": "US",
-            "cf-ray": "9068390dc0463da6-LHR",
+            "cf-ray": "907257b7f2abcd22-LHR",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json",
-            "x-forwarded-for": "34.96.41.115, 141.101.99.23",
+            "x-forwarded-for": "34.96.41.236, 172.70.91.161",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-kl95v",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-vz9hf",
             "x-is-trusted": "yes",
-            "x-real-ip": "34.96.41.115"
+            "x-real-ip": "34.96.41.236"
           },
           "params": {},
           "query": {},
           "body": {
-            "eventId": "10f870ea-8379-4626-a0fb-20f47ee62e82",
+            "eventId": "11e87fc7-c160-4e65-a912-4c8be2aaf761",
             "eventType": "FORM_RESPONSE",
-            "createdAt": "2025-01-23T13:45:12.332Z",
+            "createdAt": "2025-01-24T19:13:45.997Z",
             "data": {
-              "responseId": "ebLqDl",
-              "submissionId": "ebLqDl",
+              "responseId": "04bppZ",
+              "submissionId": "04bppZ",
               "respondentId": "QABR6A",
               "formId": "mD0agZ",
               "formName": "[MSR] Instrumental de Qualidade de Vida - dia 0",
-              "createdAt": "2025-01-23T13:45:12.000Z",
+              "createdAt": "2025-01-24T19:13:45.000Z",
               "fields": [
                 {
                   "key": "question_JdlKXz_c3e63eb1-d275-4adc-b5f8-0413fe280560",
@@ -699,7 +1065,7 @@
                   "label": "qualidade_de_vida",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "5333fb5e-2ce6-417b-9ad5-dceda23e6a94"
+                    "8ff12753-cce9-4179-87f9-c98760214c9e"
                   ],
                   "options": [
                     {
@@ -759,7 +1125,6 @@
                   "label": "situacoes_controle",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "2abfa872-53b2-4bfd-8659-1e95efbcfec3",
                     "37574d0c-b310-4d0f-9bb7-2db8c60d46cb"
                   ],
                   "options": [
@@ -790,7 +1155,7 @@
                   "label": "percepcao_si_mesma",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "d98a8be1-e77d-46db-aa27-eda64ec646b3"
+                    "076711c4-171e-4c60-85ec-9473064f7317"
                   ],
                   "options": [
                     {
@@ -820,7 +1185,7 @@
                   "label": "sentimentos_sensacoes_emocoes",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "b8568999-196b-42ea-9a31-0600a54f940d"
+                    "7886a4e0-41e4-43b7-a0df-d94b16c97c7e"
                   ],
                   "options": [
                     {
@@ -1038,6 +1403,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2025-01-23T13:50:07.000Z",
-  "versionId": "9b371da6-7c72-48cb-8d0c-c33b05454019"
+  "updatedAt": "2025-01-24T19:20:23.000Z",
+  "versionId": "3ba844af-d21f-48b1-836c-a0946dfc3975"
 }
