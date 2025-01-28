@@ -180,6 +180,17 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Busca MSRs que iniciaram o atendimento há 90 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-12-20T15:16:51.300Z",
@@ -191,9 +202,9 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## Instrumentais de Qualidade de Vida",
+        "content": "## Instrumentais de Qualidade de Vida (MSR)",
         "height": 80,
-        "width": 518
+        "width": 589.5332879591451
       },
       "id": "cb451a88-c0de-466f-ac03-0ae0991ac98e",
       "name": "Sticky Note",
@@ -541,6 +552,76 @@
         720,
         340
       ]
+    },
+    {
+      "parameters": {
+        "content": "## Instrumentais de Avaliação do Atendimento (MSR)",
+        "height": 80,
+        "width": 636.477008182334
+      },
+      "id": "0394a814-93fc-4fd6-a502-a8728d0a5976",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2840,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Instrumental de Avaliação do Atendimento - Psicológico",
+        "height": 80,
+        "width": 494.8531389199274
+      },
+      "id": "f11c3738-5aab-4c6a-be5f-07c39855b8af",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2860,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 15
+            }
+          ]
+        }
+      },
+      "id": "59ad8773-0937-4b39-872c-e71b66b7df58",
+      "name": "Schedule Trigger2",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  match_id,\n  msr_id,\n  msr.first_name AS msr_first_name,\n  volunteer_id,\n  v.first_name AS volunteer_first_name\nFROM match.match_status_history h\nINNER JOIN match.matches USING(match_id)\nINNER JOIN pii_sec.msr_pii msr USING(msr_id)\nINNER JOIN volunteers v ON id = volunteer_id\nWHERE \n  h.status = 'in_contact'\n  AND h.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAYS'",
+        "options": {}
+      },
+      "id": "28871e30-686d-4acb-ba47-2bdcec9ec9d3",
+      "name": "Busca MSRs que iniciaram o atendimento há 90 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3080,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -605,10 +686,13 @@
     },
     "node:Schedule Trigger1": {
       "recurrenceRules": []
+    },
+    "node:Schedule Trigger2": {
+      "recurrenceRules": []
     }
   },
   "tags": [],
-  "triggerCount": 2,
-  "updatedAt": "2025-01-21T13:22:52.000Z",
-  "versionId": "f2a29165-40af-48b3-9954-1f66689513c3"
+  "triggerCount": 3,
+  "updatedAt": "2025-01-28T18:26:07.000Z",
+  "versionId": "f1e698ef-afff-4a34-9a95-fde10a532125"
 }
