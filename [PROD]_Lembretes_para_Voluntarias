@@ -170,22 +170,11 @@
         ]
       ]
     },
-    "Voluntárias em capacitação": {
-      "main": [
-        [
-          {
-            "node": "Busca infos da voluntária e email/whatsapp id",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Voluntárias cadastradas": {
       "main": [
         [
           {
-            "node": "Busca infos da voluntária e email/whatsapp id1",
+            "node": "Encontrou?",
             "type": "main",
             "index": 0
           }
@@ -246,6 +235,39 @@
         [
           {
             "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou?": {
+      "main": [
+        [
+          {
+            "node": "Busca infos da voluntária e email/whatsapp id1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voluntárias em capacitação": {
+      "main": [
+        [
+          {
+            "node": "Encontrou?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou?1": {
+      "main": [
+        [
+          {
+            "node": "Busca infos da voluntária e email/whatsapp id",
             "type": "main",
             "index": 0
           }
@@ -575,7 +597,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        500,
+        420,
         1140
       ],
       "alwaysOutputData": false,
@@ -598,8 +620,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        500,
-        1340
+        420,
+        1360
       ],
       "alwaysOutputData": false,
       "executeOnce": false,
@@ -621,8 +643,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        680,
-        1140
+        800,
+        1120
       ],
       "credentials": {
         "postgres": {
@@ -642,7 +664,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        680,
+        800,
         1340
       ],
       "credentials": {
@@ -732,9 +754,95 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "83632a28-f207-4b96-8f55-5afdd4923d7d",
+              "leftValue": "={{ $json.volunteer_id }}",
+              "rightValue": "oi",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "eecfe976-a3a2-4fec-ab43-77a4897d2128",
+      "name": "Encontrou?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        600,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "83632a28-f207-4b96-8f55-5afdd4923d7d",
+              "leftValue": "={{ $json.volunteer_id }}",
+              "rightValue": "oi",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cf52b6aa-83a1-4132-b5b2-08dd47117b42",
+      "name": "Encontrou?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        600,
+        1140
+      ]
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Schedule Trigger1": [
+      {
+        "json": {
+          "timestamp": "2025-01-29T09:00:47.014-03:00",
+          "Readable date": "January 29th 2025, 9:00:47 am",
+          "Readable time": "9:00:47 am",
+          "Day of week": "Wednesday",
+          "Year": "2025",
+          "Month": "January",
+          "Day of month": "29",
+          "Hour": "09",
+          "Minute": "00",
+          "Second": "47",
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -802,6 +910,6 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-12-03T15:16:39.000Z",
-  "versionId": "ffa535aa-41e9-4dcd-ae49-6ba9ce8db17f"
+  "updatedAt": "2025-01-29T13:53:20.000Z",
+  "versionId": "fb582da4-3f96-4348-b536-9a63c1f0d0b0"
 }
