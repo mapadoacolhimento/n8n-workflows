@@ -1,0 +1,311 @@
+{
+  "active": true,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB Schema": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run SQL Query": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-04T19:57:24.853Z",
+  "id": "uE1tYxILaoI1yyCg",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] AI Agent pra consultas no banco de dados",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "**Replace password and username for Supabase**",
+        "height": 80,
+        "width": 215,
+        "color": 3
+      },
+      "id": "0bd4751e-ac22-4e39-91d4-399e616a6257",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        760
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0d681a5c-9970-4273-bb9c-83f9e6fd47a5",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        660,
+        600
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "oXPQUooT35CwTcvu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Run custom SQL queries using knowledge about Output structure to provide needed response for user request.\nUse ->> operator to extract JSON data.",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"query\",\"SQL query for PostgreSQL DB\") }}",
+        "options": {}
+      },
+      "id": "2904b679-f70d-482d-b2f4-8913217b359f",
+      "name": "Run SQL Query",
+      "type": "n8n-nodes-base.postgresTool",
+      "position": [
+        1100,
+        580
+      ],
+      "typeVersion": 2.5,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "db_schema",
+        "description": "Call this tool to get a description of the DB Schema",
+        "jsCode": "const dbSchema = {\n  tables: [\n    {\n      table_name: \"msr.msrs\",\n      table_description: \"Essa tabela contém as informações das MSRs (Mulher em Situação de Risco) atendidas pelo Mapa do Acolhimento. Essa tabela contém informações que não são PII.\",\n      columns: [\n        {\n          column_name: \"msr_id\",\n          column_type: \"BIGSERIAL\",\n          column_description: \"ID único da MSR. Também corresponde ao user ID do Zendesk.\"\n        },\n        {\n          column_name: \"gender\",\n          column_type: \"ENUM\",\n          column_description: \"Gênero da MSR. As opções são: cis_woman (mulher cis), trans_woman (mulher trans) e not_found (não encontrado).\"\n        },\n        {\n          column_name: \"race_color\",\n          column_type: \"ENUM\",\n          column_description: \"Raça e/ou cor da MSR. As opções são black (preta), brown (parda), indigenous (indígena), white (branca), yellow (amarela).\"\n        }\n\n      ]\n    }\n  ]\n}\n\nconst dbSchemaAsString = JSON.stringify(dbSchema);\n  \nreturn dbSchemaAsString"
+      },
+      "id": "48829551-8f31-43ed-9062-8863cafdc36b",
+      "name": "DB Schema",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "app_mention"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C08CEV428KA",
+          "mode": "list",
+          "cachedResultName": "iana-teste"
+        },
+        "options": {}
+      },
+      "id": "ff108c54-5960-4255-aa93-327925c79c5b",
+      "name": "Slack Trigger",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        560,
+        320
+      ],
+      "webhookId": "81fed1bc-51bd-40d7-b383-a4864b350e90",
+      "credentials": {
+        "slackApi": {
+          "id": "Dg49PbVFaboa5OhZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08CEV428KA",
+          "mode": "list",
+          "cachedResultName": "iana-teste"
+        },
+        "text": "={{ $fromAI(\"answer\",\"answer to user's question\") }}",
+        "otherOptions": {}
+      },
+      "id": "77f17a03-a215-458c-882b-0202bb543b93",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.2,
+      "position": [
+        1240,
+        540
+      ],
+      "webhookId": "744079f9-7b23-4d77-874c-5205840ebd9d",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "openAiFunctionsAgent",
+        "promptType": "define",
+        "text": "={{ $json.blocks[0].elements[0].elements[1].text }}",
+        "options": {
+          "systemMessage": "You are DB assistant. You need to run queries in DB aligned with user requests.\n\nYou should take the following steps:\n1. Call the db_schema tool to understand the database schema and table descriptions. \n2. Use the obtained db_schema to to create a SQL query that answers the user's question\n3. Call the Run SQL query tool to run the query that you just created.\n4. Fetch the results and use the Slack tool to send a message answering the user's question.\n\nFetch all data to analyse it for response if needed.\n"
+        }
+      },
+      "id": "2bba807f-bfa9-4560-bde0-46d3344aeab3",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        840,
+        320
+      ],
+      "typeVersion": 1.6
+    }
+  ],
+  "pinData": {
+    "Slack Trigger": [
+      {
+        "json": {
+          "user": "U06DJMAQUQ0",
+          "type": "app_mention",
+          "ts": "1738702153.025939",
+          "client_msg_id": "a85e2a6c-22f0-4b53-97d6-5874825b68f1",
+          "text": "<@U08C4SF6049> oi",
+          "team": "T0513P26WV8",
+          "blocks": [
+            {
+              "type": "rich_text",
+              "block_id": "Fj9zq",
+              "elements": [
+                {
+                  "type": "rich_text_section",
+                  "elements": [
+                    {
+                      "type": "user",
+                      "user_id": "U08C4SF6049"
+                    },
+                    {
+                      "type": "text",
+                      "text": " oi"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "channel": "C08CEV428KA",
+          "event_ts": "1738702153.025939"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-04T19:57:24.855Z",
+      "updatedAt": "2025-02-04T19:57:24.855Z",
+      "role": "workflow:owner",
+      "workflowId": "uE1tYxILaoI1yyCg",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-02-04T21:08:56.000Z",
+  "versionId": "b6f6dbc0-a173-4ddd-9735-3d0dd1e5b43f"
+}
