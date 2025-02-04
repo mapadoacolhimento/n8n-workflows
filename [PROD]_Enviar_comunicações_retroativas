@@ -1,0 +1,359 @@
+{
+  "active": false,
+  "connections": {
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Envia comunicação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca matches": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia comunicação": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envia comunicação1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia comunicação1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca pedidos de acolhimento na fila": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-02-04T17:38:46.693Z",
+  "id": "FjQYPTA2AtvmWoCI",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Enviar comunicações retroativas",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "10af0a5a-95a3-420b-9693-4a1115334ab9",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        600,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "99acde43-19d5-405c-944a-44e9266fd049",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "44c11759-7219-4834-9521-8cd8fab106cc",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1420,
+        380
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "e627243f-8673-4414-b2e3-a41da45c5f16",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  msr.email AS msr_email,\n  msr.first_name AS msr_first_name,\n  v.email AS volunteer_email,\n  v.first_name || ' ' || v.last_name AS volunteer_name,\n  v.phone AS volunteer_phone,\n  v.register_number AS volunteer_registration_number,\n  msr_zendesk_ticket_id,\n  CASE WHEN matches.support_type = 'psychological' THEN 'clv4977jg01a7hlj1twd22zq1' ELSE 'clv43f8gd02evj3woijkqcgng' END AS transactional_id\nFROM match.matches matches\nINNER JOIN pii_sec.msr_pii msr USING(msr_id)\nINNER JOIN volunteers v ON id = volunteer_id\nWHERE matches.created_at >= '2025-01-30' AND matches.created_at <= '2025-02-03'\nAND status = 'waiting_contact'",
+        "options": {}
+      },
+      "id": "fb107b6b-ec85-4364-b2d5-af976142e40b",
+      "name": "Busca matches",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        940,
+        360
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.transactional_id }}\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"lawyer_phone\": \"-\",\n    \"volunteer_name\": \"{{ $json.volunteer_name }}\",\n    \"volunteer_phone\": \"{{ $json.volunteer_phone }}\",\n    \"volunteer_registration_number\": \"{{ $json.volunteer_registration_number }}\",\n    \"msr_zendesk_ticket_id\": \"{{ $json.msr_zendesk_ticket_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5534ba93-49fb-44a0-91fa-df93655c1e35",
+      "name": "Envia comunicação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1640,
+        380
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "07647edd-b1ba-45ea-a3c2-e13187395f21",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "10a14d74-cdf6-40af-9adb-0478f6b482ff",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1420,
+        880
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "a3bc02e4-0832-45db-bfd9-13c4a64d8dbb",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cm33aco7o01o1tfg9a3hm7tyc\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"msr_zendesk_ticket_id\": \"{{ $json.msr_zendesk_ticket_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "d13251dc-c8d9-4973-b1cb-0e214cb33305",
+      "name": "Envia comunicação1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1640,
+        880
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  msr.email AS msr_email,\n  msr.first_name AS msr_first_name,\n  zendesk_ticket_id AS msr_zendesk_ticket_id\nFROM match.support_requests matches\nINNER JOIN pii_sec.msr_pii msr USING(msr_id)\nWHERE matches.created_at >= '2025-01-30' AND matches.created_at <= '2025-02-03'\nAND status = 'waiting_for_match'",
+        "options": {}
+      },
+      "id": "271a6a67-d5a2-401e-b7da-788f07558c78",
+      "name": "Busca pedidos de acolhimento na fila",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        940,
+        860
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-04T17:38:46.698Z",
+      "updatedAt": "2025-02-04T17:38:46.698Z",
+      "role": "workflow:owner",
+      "workflowId": "FjQYPTA2AtvmWoCI",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-02-04T19:50:10.000Z",
+  "versionId": "10812dfd-aa0a-4117-ba53-a50aa21e0d00"
+}
