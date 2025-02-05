@@ -140,17 +140,6 @@
         ]
       ]
     },
-    "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"": {
-      "main": [
-        [
-          {
-            "node": "Seleciona o ticket mais antigo",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Seleciona o ticket mais antigo": {
       "main": [
         [
@@ -347,6 +336,24 @@
         [
           {
             "node": "Busca voluntária pelo moodle ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"": {
+      "main": [
+        [
+          {
+            "node": "Seleciona o ticket mais antigo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop And Error4",
             "type": "main",
             "index": 0
           }
@@ -707,26 +714,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{ $json.tickets.custom_fields[6].value }}",
-              "value2": "cadastrada"
-            }
-          ]
-        }
-      },
-      "id": "a434721a-10db-45e6-a27f-43e6c21bf993",
-      "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [
-        860,
-        2440
-      ]
-    },
-    {
-      "parameters": {
         "operation": "limit"
       },
       "id": "3330c490-b974-469c-86f7-7649e5b64c0f",
@@ -734,8 +721,8 @@
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        1060,
-        2440
+        1360,
+        2420
       ]
     },
     {
@@ -759,8 +746,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1240,
-        2440
+        1640,
+        2420
       ],
       "credentials": {
         "zendeskApi": {
@@ -1281,6 +1268,57 @@
         2480
       ],
       "webhookId": "3e06675f-aa55-42cd-bfa1-be979b64b575"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tickets.custom_fields[6].value }}",
+              "value2": "cadastrada"
+            },
+            {
+              "value1": "={{ $json.tickets.custom_fields[6].value }}",
+              "value2": "capacitacao"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "98d58b99-c497-49ca-a4c6-1a490cacf904",
+      "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        860,
+        2440
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Não achou a voluntária\nvollunteer_id:  {{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
+      },
+      "id": "ae7827fc-9326-48c9-8073-ab04615e6b28",
+      "name": "Stop And Error3",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        460,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Ticket da voluntária com status {{ $json.tickets.custom_fields[6].value }}\nvollunteer_id:  {{$node[\"Busca voluntária pelo moodle ID\"].json[\"internal_id\"]}}"
+      },
+      "id": "9872b050-db57-4ff5-b382-678aff09949e",
+      "name": "Stop And Error4",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        2820
+      ]
     }
   ],
   "pinData": {
@@ -1406,6 +1444,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-11-28T19:01:12.000Z",
-  "versionId": "68819bfa-fda1-43be-ab95-778d9639a6f1"
+  "updatedAt": "2025-02-05T20:53:11.000Z",
+  "versionId": "5a68e605-e03a-4b56-a47e-03e2fc644367"
 }
