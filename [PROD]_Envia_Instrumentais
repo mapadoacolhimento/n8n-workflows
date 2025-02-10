@@ -191,6 +191,57 @@
           }
         ]
       ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Envia Instrumental de Avaliação do Atendimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental de Avaliação do Atendimento": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs que iniciaram o atendimento há 90 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-12-20T15:16:51.300Z",
@@ -570,25 +621,10 @@
     },
     {
       "parameters": {
-        "content": "### Instrumental de Avaliação do Atendimento - Psicológico",
-        "height": 80,
-        "width": 494.8531389199274
-      },
-      "id": "f11c3738-5aab-4c6a-be5f-07c39855b8af",
-      "name": "Sticky Note5",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        2860,
-        180
-      ]
-    },
-    {
-      "parameters": {
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 15
+              "triggerAtHour": 13
             }
           ]
         }
@@ -599,13 +635,13 @@
       "typeVersion": 1.2,
       "position": [
         2880,
-        340
+        260
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n  match_id,\n  msr_id,\n  msr.first_name AS msr_first_name,\n  volunteer_id,\n  v.first_name AS volunteer_first_name\nFROM match.match_status_history h\nINNER JOIN match.matches USING(match_id)\nINNER JOIN pii_sec.msr_pii msr USING(msr_id)\nINNER JOIN volunteers v ON id = volunteer_id\nWHERE \n  h.status = 'in_contact'\n  AND h.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAYS'",
+        "query": "SELECT DISTINCT\n  match_id,\n  msr_id,\n  msr.email AS msr_email,\n  msr.first_name AS msr_first_name,\n  volunteer_id,\n  v.first_name AS volunteer_first_name,\n  CASE \n    WHEN m.support_type = 'legal' THEN 'cm6z4alm8027i3eu1nnj18s0p'\n    ELSE 'cm6z4gwsk003ihxxheeeaj3jn'\n  END AS transactional_id\nFROM match.match_status_history h\nINNER JOIN match.matches m USING(match_id)\nINNER JOIN pii_sec.msr_pii msr USING(msr_id)\nINNER JOIN volunteers v ON id = volunteer_id\nWHERE \n  h.status = 'in_contact'\n  AND h.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAYS'",
         "options": {}
       },
       "id": "28871e30-686d-4acb-ba47-2bdcec9ec9d3",
@@ -613,13 +649,77 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        3080,
-        340
+        3100,
+        260
       ],
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
           "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4d3be89e-5408-47e6-a27a-c35dbc2f984d",
+      "name": "Loop Over Items3",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3360,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "4706e9dc-9c10-4da6-b1ed-290d1931abe4",
+      "name": "Wait3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3580,
+        280
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "24cfde0f-e3e3-47e8-ba49-500292a30149",
+      "name": "No Operation, do nothing3",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3580,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"{{ $json.transactional_id }}\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "8f37e019-aead-4347-a6cf-85848223fe0c",
+      "name": "Envia Instrumental de Avaliação do Atendimento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3800,
+        280
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
         }
       }
     }
@@ -693,6 +793,6 @@
   },
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2025-01-28T18:26:07.000Z",
-  "versionId": "f1e698ef-afff-4a34-9a95-fde10a532125"
+  "updatedAt": "2025-02-10T14:11:59.000Z",
+  "versionId": "55e7dba1-534e-4b4b-b829-1b9b3ca506f3"
 }
