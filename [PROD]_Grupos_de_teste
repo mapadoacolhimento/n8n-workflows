@@ -1,0 +1,146 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca grupos de teste",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca grupos de teste": {
+      "main": [
+        [
+          {
+            "node": "Insere na volunteer_segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-20T18:45:47.613Z",
+  "id": "8m871DqEneAgvQpT",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Grupos de teste",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d2559c48-d287-4e08-9d96-fcad170e30cf",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH volunteer_next_status AS (\n    SELECT\n        volunteer_id, \n        status AS first_status,\n        created_at AS first_status_at,\n        LEAD(status) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS second_status,\n        LEAD(created_at) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS second_status_at,\n        LEAD(status, 2) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS third_status,\n        LEAD(created_at, 2) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS third_status_at,\n        LEAD(status, 3) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS fourth_status,\n        LEAD(created_at, 3) OVER(PARTITION BY volunteer_id ORDER BY created_at) AS fourth_status_at\n    FROM volunteer_status_history\n),\nvolunteers_who_went_through_new_process AS (\n    SELECT \n        DISTINCT *\n    FROM volunteer_next_status\n    WHERE \n        first_status = 'cadastrada'\n        AND (second_status = 'capacitacao' OR second_status IS NULL)\n        AND (third_status = 'aprovada' OR third_status IS NULL)\n        AND (fourth_status = 'disponivel' OR fourth_status IS NULL)\n        AND first_status >= '2024-01-25'\n),\nwith_volunteers_with_matches AS (\n    SELECT DISTINCT\n        v.volunteer_id,\n        \n        MIN(created_at) AS first_match_at\n    FROM volunteers_who_went_through_new_process v\n    LEFT JOIN match.matches m ON v.volunteer_id = m.volunteer_id AND m.created_at >= v.fourth_status_at\n    GROUP BY 1\n),\nvolunteer_journey AS (\n    SELECT \n        volunteer_id,\n        occupation,\n        CASE WHEN first_match_at IS NULL THEN 'não recebeu match' ELSE 'recebeu match' END AS has_match,\n        first_match_at::DATE - fourth_status_at::DATE AS days_to_receive_match,\n        first_status,\n        first_status_at,\n        second_status,\n        second_status_at,\n        third_status,\n        third_status_at,\n        fourth_status,\n        fourth_status_at\n    FROM volunteers_who_went_through_new_process\n    LEFT JOIN volunteers ON id = volunteer_id\n    LEFT JOIN with_volunteers_with_matches USING(volunteer_id)\n),\nvolunteers_with_information AS (\n    SELECT \n        id AS volunteer_id,\n        occupation,\n        email,\n        first_name,\n        phone\n    FROM volunteers\n),\ndays_in_status AS (\n    SELECT\n        volunteer_id,\n        CURRENT_DATE - first_status_at::DATE AS days_in_status\n    FROM volunteer_journey\n    WHERE second_status IS NOT NULL AND third_status IS NULL\n),\nvolunteers_training_20_days AS (\n    SELECT \n        volunteer_id\n    FROM days_in_status\n    WHERE days_in_status >= 20\n), random_numbers AS (\n    SELECT \n        *,\n        RANDOM() AS random\n    FROM volunteers_with_information\n    INNER JOIN volunteers_training_20_days USING(volunteer_id)\n    WHERE email NOT IN ('camila.cardoso.lit@gmail.com', 'dev.adv.mapa@gmail.com', 'dev.psi.mapa@gmail.com')\n    ORDER BY volunteer_id\n    LIMIT 400\n),\nrandom_groups AS (\n    SELECT \n        *,\n        CASE \n            WHEN random <= 0.25 THEN 'group_a'\n            WHEN random > 0.25 AND random <= 0.5 THEN 'group_b'\n            WHEN random > 0.5 AND random <= 0.75 THEN 'group_c'\n            WHEN random > 0.75 THEN 'group_d'\n        END AS random_group\n    FROM random_numbers\n)\nSELECT \n    *\nFROM random_groups\n",
+        "options": {}
+      },
+      "id": "429c5758-184e-4888-805a-8166ebcb4ed2",
+      "name": "Busca grupos de teste",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        940,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('teste_ab_capacitacao_2025', {{ $json.volunteer_id }}, '{{ $json.random_group }}', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "ca36cdcc-0317-4b45-bc53-d6451754c72d",
+      "name": "Insere na volunteer_segments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1160,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-20T18:45:47.616Z",
+      "updatedAt": "2025-02-20T18:45:47.616Z",
+      "role": "workflow:owner",
+      "workflowId": "8m871DqEneAgvQpT",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-02-20T19:10:59.000Z",
+  "versionId": "7b18711a-071a-4680-8ca5-7e199952995b"
+}
