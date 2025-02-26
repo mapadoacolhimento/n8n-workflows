@@ -1,0 +1,232 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca Voluntárias do segmento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Envia mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Voluntárias do segmento": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-24T20:12:26.042Z",
+  "id": "tsJ9thwkC6TPxrcH",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Enviar whatsapp para Voluntárias aprovadas no Módulo 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "657f3858-10cb-4721-8398-27ff9f5883f5",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  first_name,\n  CONCAT('whatsapp:+55', phone) AS phone\nFROM volunteer_segments\nINNER JOIN volunteers ON id = volunteer_id\nWHERE segment_name = 'volunteers_approved_after_module3_2025'",
+        "options": {}
+      },
+      "id": "77f060d1-b0eb-479c-a971-44f50b1c2a60",
+      "name": "Busca Voluntárias do segmento",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        940,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "04a8f2e9-d86e-40ac-a30b-93889baeca80",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1240,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "6eab15bf-ea05-483f-adff-27a5d79bd3be",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1480,
+        360
+      ],
+      "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX02942056b869abbd06e0c9a78f2d71a9"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b370a9ad-2ef0-49b1-8499-e03c15efd4b6",
+      "name": "Envia mensagem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1700,
+        360
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-24T20:12:26.045Z",
+      "updatedAt": "2025-02-24T20:12:26.045Z",
+      "role": "workflow:owner",
+      "workflowId": "tsJ9thwkC6TPxrcH",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-02-24T20:20:00.000Z",
+  "versionId": "3e5bbdae-1716-4389-b487-6dd624eb001d"
+}
