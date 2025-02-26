@@ -1,0 +1,146 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca Voluntárias selecionadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Voluntárias selecionadas": {
+      "main": [
+        [
+          {
+            "node": "Insere na volunteer_segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-24T18:02:41.484Z",
+  "id": "SQoZcGCfLeLqljoW",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Cria segmento para aprovar Voluntárias que concluíram até o Módulo 3 da Capacitação",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "6e168f8d-c73a-4e11-aefd-1ad9c5e27205",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        780,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id AS volunteer_id\nFROM volunteers\nWHERE condition = 'capacitacao' \nAND id IN (28134,28125,28122,21015,28089,28073,24439,28076,14791,23167,29161,28486,15297,28615,28101,28102,28620,19986,28932,28495,28629,28496,28634,20973,29308,14898,29310,29173,29307,28945,29175,29565,29316,28501,15425,29696,28649,28651,28506,28523,28500,28960,17555,18180,18523,18839,15018,28535,29570,19393,28451,28971,17376,29185,28543,28587,29594,26319,29188,23022,29628,29629,28669,28546,28674,28676,29195,29329,28994,22158,28597,29007,28552,29008,29213,21911,28718,29023,29634,28735,28742,28743,22825,18470,29042,29337,23306,28759,29046,28764,28768,29365,28770,28775,28776,28779,29244,29040,28785,28786,24460,28604,28796,28797,28798,29256,28805,25169,28815,28816,28818,28822,28824,28825,28827,29097,28833,25399,28836,28837,28840,29399,26557,28854,29111,26883,26927,29114,27022,28873,27447,29126,28879,27782,27866,27868,27870,27871,27873,27878,27885,27900,27912,28884,27925,27936,27940,27945,27946,27955,27956,27962,27952,27972,27989,28000,27993,28055,28062,28557,22724,28082,18287,28156,28078,28160,28163,28174,29139,28223,29287,28290,28285,28167,28187,28181,28304,28298,28227,28169,28237,28228,28232,28280,28269,28281,28424,28425,28428,29291,29281,28377,28328,28339,28345,28365,28374,16954,28399,28403,23698,28442,28463,28447,28466,28483,22909,28325,28918,29465,29466,28921,28088,28071,28610,23839,29693,28639,29694,28575,29320,22077,20090,28986,28706,28715,29726,28999,29035,29039,21695,29236,28772,23865,29077,25571,26441,28851,27867,28010,28150,28172,28317,28178,24626,28099,28732)",
+        "options": {}
+      },
+      "id": "d227ccfd-f65a-4504-91c2-81f460197eb5",
+      "name": "Busca Voluntárias selecionadas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1000,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('volunteers_approved_after_module3_2025', {{ $json.volunteer_id }}, 'volunteers_approved_after_module3_2025', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "c544a421-90a4-4c4c-b0e6-4b021ee9238e",
+      "name": "Insere na volunteer_segments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1220,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-24T18:02:41.486Z",
+      "updatedAt": "2025-02-24T18:02:41.486Z",
+      "role": "workflow:owner",
+      "workflowId": "SQoZcGCfLeLqljoW",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-02-24T18:34:55.000Z",
+  "versionId": "f3dd4109-bc9a-40a0-95f0-99a5dcbb6c5c"
+}
