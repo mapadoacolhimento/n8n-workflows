@@ -1,0 +1,579 @@
+{
+  "active": false,
+  "connections": {
+    "Busca voluntária pelo email": {
+      "main": [
+        [
+          {
+            "node": "Se retornou a voluntária do Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seta os campos para atualizar a voluntária no BD": {
+      "main": [
+        [
+          {
+            "node": "Atualiza voluntária no BD1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insere  o registro na volunteer_status_history",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca os tickets da voluntária no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa os tickets do objeto retornado": {
+      "main": [
+        [
+          {
+            "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se retornou a voluntária do Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status da voluntária no Zendesk1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Seta os campos para atualizar a voluntária no BD",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza status da voluntária no Zendesk1": {
+      "main": [
+        [
+          {
+            "node": "Busca os tickets da voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seleciona o ticket mais antigo": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o ticket para \"aprovada\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"": {
+      "main": [
+        [
+          {
+            "node": "Seleciona o ticket mais antigo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias do segmento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias do segmento": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Busca voluntária pelo email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o ticket para \"aprovada\"": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Separa os tickets do objeto retornado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-24T17:43:29.393Z",
+  "id": "BCFEYWbuNETbZzGp",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Aprovação de voluntárias que concluíram o módulo 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c52fe4c2-db01-4435-9cc3-b4e4b250d485",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "search",
+        "limit": 30,
+        "filters": {
+          "query": "={{ $json.email }}"
+        }
+      },
+      "id": "eebe513d-b6b4-4e24-be96-2a0e797d7d59",
+      "name": "Busca voluntária pelo email",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        420,
+        20
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "aprovada"
+            },
+            {
+              "name": "created_at",
+              "value": "={{$now}}"
+            }
+          ],
+          "number": [
+            {
+              "name": "volunteer_id",
+              "value": "={{$node[\"Busca voluntárias do segmento\"].json[\"id\"]}}"
+            },
+            {
+              "name": "zendesk_user_id",
+              "value": "={{ $json[\"id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fefe75d0-69c5-4d5e-8f89-40963ef757d3",
+      "name": "Seta os campos para atualizar a voluntária no BD",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Busca voluntária pelo email\"].json[\"id\"]}}/tickets/requested",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "564f61e3-9915-4e07-8bda-b8063723bd97",
+      "name": "Busca os tickets da voluntária no Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1260,
+        200
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tickets",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "555ec50b-338a-4fb3-9992-8b3b57ec79d2",
+      "name": "Separa os tickets do objeto retornado",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"Busca voluntária pelo email\"].json}}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "18145c1c-7670-481d-97ef-54427f35861a",
+      "name": "Se retornou a voluntária do Zendesk",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        600,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json[\"id\"] }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "aprovada"
+              }
+            ]
+          }
+        }
+      },
+      "id": "492c9df9-6e47-4472-bacf-c661cf974b50",
+      "name": "Atualiza status da voluntária no Zendesk1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        200
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "limit"
+      },
+      "id": "78c8bd3c-1d09-4dc0-9b1e-b7308dc62c25",
+      "name": "Seleciona o ticket mais antigo",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        2060,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360021665652,
+                "value": "aprovada"
+              }
+            ]
+          },
+          "internalNote": "Voluntária aprovada ao completar pelo menos o módulo 3",
+          "status": "open"
+        }
+      },
+      "id": "7c1b92ac-3fa8-4431-a0f0-7359e2655707",
+      "name": "Atualiza o ticket para \"aprovada\"",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2460,
+        600
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"volunteer_id\"] }};",
+        "options": {}
+      },
+      "id": "43ab3199-f5b2-4d2a-a38d-32e8cae5b4d0",
+      "name": "Atualiza voluntária no BD1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1380,
+        20
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tickets.custom_fields[6].value }}",
+              "value2": "cadastrada"
+            },
+            {
+              "value1": "={{ $json.tickets.custom_fields[6].value }}",
+              "value2": "capacitacao"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "dca5dafd-81bd-496d-b4fb-04ee54eee00e",
+      "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT v.id, v.condition, v.email, v.moodle_id, vs.segment_name FROM volunteer_segments vs \n  INNER JOIN volunteers v\n  ON v.id = vs.volunteer_id \n  WHERE \n  vs.segment_name = 'volunteers_approved_after_module3_2025'\n  AND v.condition = 'capacitacao'\n",
+        "options": {}
+      },
+      "id": "fc7442b5-95a1-46ed-8955-9d7046af0fd4",
+      "name": "Busca voluntárias do segmento",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": "volunteer_status_history",
+        "columns": "volunteer_id,status,created_at",
+        "additionalFields": {}
+      },
+      "id": "76779575-08f1-487e-bd47-52c06d8252b0",
+      "name": "Insere  o registro na volunteer_status_history",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8e3ee9bb-13d7-4322-8a08-59605d5388d5",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fe441f05-f26d-48cd-8473-faee501de2fd",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1420,
+        200
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-24T17:43:29.397Z",
+      "updatedAt": "2025-02-24T17:43:29.397Z",
+      "role": "workflow:owner",
+      "workflowId": "BCFEYWbuNETbZzGp",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-02-24T19:37:58.000Z",
+  "versionId": "de7e7414-db03-497b-b6a4-eea48be21f05"
+}
