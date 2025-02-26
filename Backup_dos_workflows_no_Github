@@ -27,7 +27,7 @@
       "main": [
         [
           {
-            "node": "creaate file on github",
+            "node": "create file on github",
             "type": "main",
             "index": 0
           }
@@ -71,17 +71,6 @@
       ]
     },
     "update file on github": {
-      "main": [
-        [
-          {
-            "node": "Make a iterteration with workflows array",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "creaate file on github": {
       "main": [
         [
           {
@@ -206,6 +195,17 @@
           }
         ]
       ]
+    },
+    "create file on github": {
+      "main": [
+        [
+          {
+            "node": "Make a iterteration with workflows array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-02-09T14:21:32.324Z",
@@ -295,7 +295,8 @@
           "__rl": true,
           "value": "={{ $json.json.id }}",
           "mode": "id"
-        }
+        },
+        "requestOptions": {}
       },
       "id": "042469cc-73a8-47ba-8578-f69be561462d",
       "name": "get workflow",
@@ -342,8 +343,8 @@
       ],
       "credentials": {
         "githubApi": {
-          "id": "enJuvcF6JzQBryLg",
-          "name": "GitHub account [viviane]"
+          "id": "9hFcBjABf03a2muB",
+          "name": "GitHub account [adriele]"
         }
       },
       "onError": "continueRegularOutput"
@@ -386,51 +387,8 @@
       ],
       "credentials": {
         "githubApi": {
-          "id": "enJuvcF6JzQBryLg",
-          "name": "GitHub account [viviane]"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "PUT",
-        "url": "={{ $('Globals variables of github repository').item.json[\"repo\"][\"path\"] }}{{ $('Return a array of worflows with format name').item.json[\"json\"][\"file_name\"] }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "githubApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Accept",
-              "value": "application/vnd.github+json"
-            },
-            {
-              "name": "X-GitHub-Api-Version",
-              "value": "2022-11-28"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n    \"path\": \"{{ $('Return a array of worflows with format name').item.json[\"json\"][\"file_name\"] }}.json\",\n    \"message\": \"[N8N Backup] .json ({{$json[\"github_status\"]}}) {{ $('get all workflows').item.json.name }}\",\n    \"committer\": {\n        \"name\": \"Adriele Alvarenga Secundino\",\n        \"email\": \"dri.leela@gmail.com\"\n    },\n    \"content\": \"{{ $('new').item.json[\"n8n_data_stringy\"] }}\",\n    \"branch\": \"main\"\n}",
-        "options": {}
-      },
-      "id": "6aafeb1d-c3ae-4fd3-9692-a8c8fa9b359a",
-      "name": "creaate file on github",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        2080,
-        760
-      ],
-      "credentials": {
-        "githubApi": {
-          "id": "enJuvcF6JzQBryLg",
-          "name": "GitHub account [viviane]"
+          "id": "9hFcBjABf03a2muB",
+          "name": "GitHub account [adriele]"
         }
       }
     },
@@ -449,7 +407,8 @@
     },
     {
       "parameters": {
-        "filters": {}
+        "filters": {},
+        "requestOptions": {}
       },
       "id": "5b47fab2-4a08-48dd-a2db-dc3a31acd07e",
       "name": "get all workflows",
@@ -567,6 +526,49 @@
       "typeVersion": 1,
       "id": "7a951aa9-e004-43e5-af44-a1636a309025",
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Globals variables of github repository').item.json[\"repo\"][\"path\"] }}{{ $('Return a array of worflows with format name').item.json[\"json\"][\"file_name\"] }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"path\": \"{{ $('Return a array of worflows with format name').item.json[\"json\"][\"file_name\"] }}.json\",\n    \"message\": \"[N8N Backup] .json ({{$json[\"github_status\"]}}) {{ $('get all workflows').item.json.name }}\",\n    \"committer\": {\n        \"name\": \"Adriele Alvarenga Secundino\",\n        \"email\": \"dri.leela@gmail.com\"\n    },\n    \"content\": \"{{ $('new').item.json[\"n8n_data_stringy\"] }}\",\n    \"branch\": \"main\"\n}",
+        "options": {}
+      },
+      "id": "6aafeb1d-c3ae-4fd3-9692-a8c8fa9b359a",
+      "name": "create file on github",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2080,
+        760
+      ],
+      "credentials": {
+        "githubApi": {
+          "id": "9hFcBjABf03a2muB",
+          "name": "GitHub account [adriele]"
+        }
+      }
     }
   ],
   "pinData": {
@@ -634,6 +636,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-05-28T14:06:59.000Z",
-  "versionId": "570ea09a-0940-4159-9678-82c28d48d0f4"
+  "updatedAt": "2025-02-25T12:55:22.000Z",
+  "versionId": "870c9608-5465-4ecb-86c1-fed667f4cbc0"
 }
