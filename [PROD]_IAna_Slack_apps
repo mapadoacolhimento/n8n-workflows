@@ -1,0 +1,944 @@
+{
+  "active": true,
+  "connections": {
+    "IAna foi mencionada no Slack": {
+      "main": [
+        [
+          {
+            "node": "Qual o canal?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pega conteúdo do link": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa link e data da última atualização": {
+      "main": [
+        [
+          {
+            "node": "Pega conteúdo do link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Existem novos contatos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Mensagem de sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Atualiza contato no Loops2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza contato no Loops2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existem novos contatos?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Não há novos doadores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qual o canal?": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Separa link e data da última atualização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Mensagem de erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB Schema1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run SQL Query 1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run SQL Query 2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run SQL Query 3": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-24T13:56:18.186Z",
+  "id": "hc7q8IyGvjoR6fLe",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] IAna Slack apps",
+  "nodes": [
+    {
+      "parameters": {
+        "trigger": [
+          "app_mention"
+        ],
+        "watchWorkspace": true,
+        "options": {}
+      },
+      "id": "bccb23ce-c582-481e-a30c-766ecd77079b",
+      "name": "IAna foi mencionada no Slack",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        360
+      ],
+      "webhookId": "81fed1bc-51bd-40d7-b383-a4864b350e90",
+      "credentials": {
+        "slackApi": {
+          "id": "Dg49PbVFaboa5OhZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "C08CYATGJHK",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "#pergunte-pra-iana"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5a8d3438-3ef8-40de-b37f-091f00a47ac7",
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "C08ES2PR2N4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "#sync-doare"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fd82063d-97ab-4745-b838-4b49f8fc7c8c",
+      "name": "Qual o canal?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        220,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "ba70e680-4d15-4536-823b-92227b7a74af",
+      "name": "Pega conteúdo do link",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1140,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\nfor (const item of $input.all()) {\n  data = item.json.data\n  stringNoQuotes = data.replace(/['\"]+/g, '')\n  \n  allRows = stringNoQuotes.split(\"\\n\");\n\n  allRows.shift() // removes head\n\n  for (const row of allRows) {\n    splitRow = row.split(\",\")\n    name = splitRow[1]\n    \n    firstName = name.split(\" \")[0]\n\n    firstNameCapitilized = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()\n    email = splitRow[2].toLowerCase()\n    createdAt = splitRow[splitRow.length - 1]\n\n    output.push(\n      {\n        first_name: firstNameCapitilized,\n        email: email,\n        user_group: 'doadora_doare',\n        created_at: createdAt\n      }\n    )\n  }\n\n}\n\nreturn output"
+      },
+      "id": "710d960f-4d5a-4e58-a905-67f4ba554a9e",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3012f44f-c839-4fff-aad4-8ebceba0209f",
+              "name": "url",
+              "value": "={{ $json.blocks[0].elements[0].elements[2].url }}",
+              "type": "string"
+            },
+            {
+              "id": "9931804b-408b-4fff-8057-0a1970c9548f",
+              "name": "last_update",
+              "value": "={{ $json.blocks[0].elements[0].elements[3].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "21be71b4-59a8-401a-81f1-e5c099eb9b16",
+      "name": "Separa link e data da última atualização",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e4c9a665-3c92-411b-9209-333304c1ca4e",
+              "leftValue": "={{ $json.created_at }}",
+              "rightValue": "={{ $('Separa link e data da última atualização').item.json.last_update }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bdbf265b-0d15-43a2-b0e0-1af02d79b288",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1580,
+        1020
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08ES2PR2N4",
+          "mode": "id"
+        },
+        "text": "Os contatos foram atualizados! :robot_face: ",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "1ca09642-63cb-4ea1-aa49-454706608cf9",
+      "name": "Mensagem de sucesso",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        2380,
+        820
+      ],
+      "webhookId": "e974db74-589f-4c1b-ae13-10facbfc6d55",
+      "executeOnce": true,
+      "credentials": {
+        "slackApi": {
+          "id": "Dg49PbVFaboa5OhZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "b2ce753c-536d-42b4-b9be-d6f09d346e50",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2140,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "6ebee5b0-c9c6-4a13-8f88-db1dc1dbc3da",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2360,
+        1020
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"firstName\": \"{{ $json.first_name }}\",\n  \"userGroup\": \"{{ $json.user_group }}\"\n}",
+        "options": {}
+      },
+      "id": "430afeef-0b18-4f20-83c6-1349c246c3e8",
+      "name": "Atualiza contato no Loops2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2560,
+        1020
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a9a9f86-5117-4cf7-8c27-68824c8f94f8",
+              "leftValue": "={{ $json.email  }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3c7793d1-a7ec-467c-8c9f-8a515a649e2a",
+      "name": "Existem novos contatos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1800,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08ES2PR2N4",
+          "mode": "id"
+        },
+        "text": "Não há novos doadores desde a última atualização :confused:",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "4e29fdcd-4cdf-4444-9d23-a0d07acea338",
+      "name": "Não há novos doadores",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        1300
+      ],
+      "webhookId": "e974db74-589f-4c1b-ae13-10facbfc6d55",
+      "executeOnce": true,
+      "credentials": {
+        "slackApi": {
+          "id": "Dg49PbVFaboa5OhZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c004f360-249a-49ed-967d-d670f3d95b9c",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        960,
+        -160
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "oXPQUooT35CwTcvu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "c530583c-33e4-4def-a7d5-370d4b3b4fb7",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08CYATGJHK",
+          "mode": "id"
+        },
+        "text": "={{ $fromAI(\"answer\",\"answer to user's question\") }}",
+        "otherOptions": {
+          "mrkdwn": false
+        }
+      },
+      "id": "85291e20-8168-41fc-ac50-de9f89e18644",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.2,
+      "position": [
+        1860,
+        -160
+      ],
+      "webhookId": "744079f9-7b23-4d77-874c-5205840ebd9d",
+      "credentials": {
+        "slackApi": {
+          "id": "Dg49PbVFaboa5OhZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b3462c04-71ea-4858-8e97-180a36c5f7c5",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Agent stopped due to max iterations.",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "daf45ddc-5c60-4f35-b135-f3c716ef07e5",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1520,
+        -440
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08CYATGJHK",
+          "mode": "id"
+        },
+        "text": "Ops, parece que não consegui responder essa pergunta :confused: Tente refrasear, por favor, ou contate a equipe de Tech.",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "b280c2d5-0394-41dd-b0d5-a454aedbe328",
+      "name": "Mensagem de erro",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        -460
+      ],
+      "webhookId": "e974db74-589f-4c1b-ae13-10facbfc6d55",
+      "credentials": {
+        "slackApi": {
+          "id": "Dg49PbVFaboa5OhZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "db_schema",
+        "description": "Call this tool to get a description of the DB Schema",
+        "jsCode": "const dbSchema = \n[\n    {\n        table_name: \"msr.msrs\",\n        table_description: \"Essa tabela contém as informações das MSRs (Mulher em Situação de Risco) atendidas pelo Mapa do Acolhimento. Essa tabela contém informações que não são PII.\",\n        table_columns: [\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID único da MSR. Também corresponde ao user ID do Zendesk.\"\n            },\n            {\n                column_name: \"gender\",\n                column_type: \"ENUM\",\n                column_description: \"Gênero da MSR. As opções são: cis_woman (mulher cis), trans_woman (mulher trans) e not_found (informação não disponível).\"\n            },\n            {\n                column_name: \"race_color\",\n                column_type: \"ENUM\",\n                column_description: \"Raça e/ou cor da MSR. As opções são black (preta), brown (parda), indigenous (indígena), white (branca), yellow (amarela), not_found (informação não disponível).\"\n            },\n            {\n                column_name: \"has_disability\",\n                column_type: \"BOOL\",\n                column_description: \"Indica se a MSR tem deficiência. Pode ser nulo, caso essa informação não esteja disponível.\"\n            },\n            {\n                column_name: \"accepts_online_support\",\n                column_type: \"BOOL\",\n                column_description: \"Indica se a MSR aceita receber atendimento online.\"\n            },\n            {\n                column_name: \"zipcode\",\n                column_type: \"VARCHAR\",\n                column_description: \"Zipcode (ou CEP, no Brasil) da MSR.\"\n            },\n            {\n                column_name: \"neighborhood\",\n                column_type: \"VARCHAR\",\n                column_description: \"Bairro da MSR.\"\n            },\n            {\n                column_name: \"city\",\n                column_type: \"VARCHAR\",\n                column_description: \"Cidade da MSR. Todos os valores estão em upper case e sem caracteres especiais.\"\n            },\n            {\n                column_name: \"state\",\n                column_type: \"VARCHAR\",\n                column_description: \"Sigla do Estado da MSR.\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status atual da MSR. As opções são `registered` (cadastrada) e `unregistered` (descadastrada).\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de cadastro da MSR.\"\n            },\n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }\n        ]\n    },\n    {\n        table_name: \"pii_sec.msr_pii\",\n        table_description: \"Essa tabela contém as informações das MSRs (Mulher em Situação de Risco) atendidas pelo Mapa do Acolhimento. Essa tabela contém informações que são PII.\",\n        table_columns: [\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID único da MSR. Também corresponde ao user ID do Zendesk.\"\n            },\n            {\n                column_name: \"first_name\",\n                column_type: \"VARCHAR\",\n                column_description: \"Primeiro nome da MSR.\"\n            },\n            {\n                column_name: \"email\",\n                column_type: \"VARCHAR\",\n                column_description: \"E-mail da MSR.\"\n            },\n            {\n                column_name: \"phone\",\n                column_type: \"VARCHAR\",\n                column_description: \"Telefone da MSR.\"\n            },\n            {\n                column_name: \"date_of_birth\",\n                column_type: \"DATETIME\",\n                column_description: \"Data de nascimento da MSR. Pode ser nulo se essa informação não estiver disponível.\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de cadastro da MSR.\"\n            },\n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }\n        ]\n    },\n    {\n        table_name: \"msr.msr_status_history\",\n        table_description: \"Essa tabela contém o histórico de status das MSRs (Mulher em Situação de Risco) atendidas pelo Mapa do Acolhimento.\",\n        table_columns: [\n            {\n                column_name: \"msr_status_history_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID único da MSR. Também corresponde ao user ID do Zendesk.\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status da MSR. As opções são `registered` (cadastrada) e `unregistered` (descadastrada)\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação desse status.\"\n            },\n        ]\n    },\n    {\n        table_name: \"match.support_requests\",\n        table_description: \"Essa tabela contém as informações dos Pedidos de Acolhimento recebidos pelo Mapa do Acolhimento. Cada Pedido de Acolhimento é realizado por uma MSR (Mulher em Situação de Risco) quando ela se cadastra em nossa plataforma.\",\n        table_columns: [\n            {\n                column_name: \"support_request_id\",\n                column_type: \"INT\",\n                column_description: \"ID único do Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID da MSR que realizou o Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"zendesk_ticket_id\",\n                column_type: \"INT\",\n                column_description: \"ID do ticket do Zendesk que corresponde ao Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"support_type\",\n                column_type: \"ENUM\",\n                column_description: \"Tipo de Acolhimento. As opções são `legal` (jurídico) e `psychological` (psicológico).\"\n            },\n            {\n                column_name: \"lat\",\n                column_type: \"DECIMAL\",\n                column_description: \"Latitude da MSR que realizou o Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"lng\",\n                column_type: \"DECIMAL\",\n                column_description: \"Longitude da MSR que realizou o Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"city\",\n                column_type: \"VARCHAR\",\n                column_description: \"Cidade da MSR que realizou o Pedido de Acolhimento. Todos os valores estão em upper case e sem caracteres especiais.\"\n            },\n            {\n                column_name: \"state\",\n                column_type: \"VARCHAR\",\n                column_description: \"Sigla do Estado da MSR que realizou o Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status atual do Pedido de Acolhimento. As opções são `open` (solicitação recebida, ou seja, o Pedido de Acolhimento ainda não foi processado),  `matched` (match com uma Voluntária),  `social_worker` (encaminhado para a Assistente Social), `public_service` (encaminhado para Serviço Público), `duplicated` (solicitação repetida), `closed` (solicitação encerrada), `public_service_with_social_worker` (encaminhado para Serviço Público através da Assistente Social), `scheduled_social_worker` (entrevista com a Assistente Social agendada), `expired_social_worker` (entrevista com a Assistente Social com prazo expirado), `waiting_for_match` (aguardando Match Sem Prioridade, ou seja, está na Fila do Match Diário), `waiting_for_match_with_priority` (aguardando Match Com Prioridade, ou seja, está na Fila do Match Manual),  `waived` (desistência), `waiting_for_confirmation` (aguardando confirmação do Match com a Voluntária).\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação do Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }\n            \n        ]\n    },\n    {\n        table_name: \"match.support_request_status_history\",\n        table_description: \"Essa tabela contém o histórico de status dos Pedidos de Acolhimento recebidos pelo Mapa do Acolhimento.\",\n        table_columns: [\n            {\n                column_name: \"support_request_status_history_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"support_request_id\",\n                column_type: \"INT\",\n                column_description: \"ID único do Pedido de Acolhimento.\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status do Pedido de Acolhimento. As opções são `open` (solicitação recebida, ou seja, o Pedido de Acolhimento ainda não foi processado),  `matched` (match com uma Voluntária),  `social_worker` (encaminhado para a Assistente Social), `public_service` (encaminhado para Serviço Público), `duplicated` (solicitação repetida), `closed` (solicitação encerrada), `public_service_with_social_worker` (encaminhado para Serviço Público através da Assistente Social), `scheduled_social_worker` (entrevista com a Assistente Social agendada), `expired_social_worker` (entrevista com a Assistente Social com prazo expirado), `waiting_for_match` (aguardando Match Sem Prioridade, ou seja, está na Fila do Match Diário), `waiting_for_match_with_priority` (aguardando Match Com Prioridade, ou seja, está na Fila do Match Manual),  `waived` (desistência), `waiting_for_confirmation` (aguardando confirmação do Match com a Voluntária).\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação desse status.\"\n            },\n        ]\n    },\n    {\n        table_name: \"match.matches\",\n        table_description: \"Essa tabela contém as informações dos Matches criados pelo Mapa do Acolhimento. Cada Match corresponde a conectar um Pedido de Acolhimento, feito por uma MSR, a uma Voluntária.\",\n        table_columns: [\n            {\n                column_name: \"match_id\",\n                column_type: \"INT\",\n                column_description: \"ID único do Match.\"\n            },\n            {\n                column_name: \"support_request_id\",\n                column_type: \"INT\",\n                column_description: \"ID do Pedido de Acolhimento que corresponde a este Match.\"\n            },\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID da MSR que realizou o Pedido de Acolhimento e recebeu o Match.\"\n            },\n            {\n                column_name: \"msr_zendesk_ticket_id\",\n                column_type: \"INT\",\n                column_description: \"ID do ticket do Zendesk da MSR que corresponde ao Match.\"\n            },\n            {\n                column_name: \"volunteer_zendesk_ticket_id\",\n                column_type: \"INT\",\n                column_description: \"ID do ticket do Zendesk da Voluntária que corresponde ao Match.\"\n            },\n            {\n                column_name: \"support_type\",\n                column_type: \"ENUM\",\n                column_description: \"Tipo de Acolhimento. As opções são `legal` (jurídico) e `psychological` (psicológico).\"\n            },\n            {\n                column_name: \"match_type\",\n                column_type: \"ENUM\",\n                column_description: \"Tipo de Match. As opções são `msr` (Match feito com o Novo Match no cadastro da MSR), `daily` (Match Diário), `manual` (Match Manual) e `old` (Match Automatizado, realizado antes de 2024).\"\n            },\n            {\n                column_name: \"match_stage\",\n                column_type: \"ENUM\",\n                column_description: \"Etapa em que o Match foi realizado. As opções são `ideal` (Match Ideal), `expanded` (Match Expandido), `online` (Match Online), `manual` (Match Manual, não possui etapas), `old` (Match realizado antes de 2024, quando não existia essa lógica do Match em etapas).\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status atual do Match. As opções são `waiting_contact` (Encaminhamento Realizado, ou seja, o Match está aguardando contato, pois a MSR ainda não entrou em contato com a Voluntária),  `in_contact` (Atendimento Iniciado, a MSR e a Voluntária iniciaram o atendimento),  `interrupted_before_support` (Encaminhamento Interrompido, ou seja, o Match foi interrompido antes de o atendimento iniciar), `interrupted_after_support` (Atendimento Interrompido, ou seja, o Match foi interrompido após iniciar o atendimento), `expired` (Encaminhamento Expirado, ou seja, a MSR não entrou em contato com a Voluntária após 15 dias e, por isso, o Match expirou), `completed` (Atendimento Concluído, ou seja, o atendimento foi concluído com sucesso). Caso você seja perguntado sobre Matches que iniciaram atendimento, você deve considerar os seguintes status: `in_contact`, `interrupted_after_support` e `completed` para responder.\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação do Match.\"\n            },\n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }\n            \n        ]\n    },\n    {\n        table_name: \"match.match_status_history\",\n        table_description: \"Essa tabela contém o histórico de status dos Matches realizados pelo Mapa do Acolhimento.\",\n        table_columns: [\n            {\n                column_name: \"match_status_history_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"match_id\",\n                column_type: \"INT\",\n                column_description: \"ID único do Match.\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status do Match. As opções são `waiting_contact` (Encaminhamento Realizado, ou seja, o Match está aguardando contato, pois a MSR ainda não entrou em contato com a Voluntária),  `in_contact` (Atendimento Iniciado, a MSR e a Voluntária iniciaram o atendimento),  `interrupted_before_support` (Encaminhamento Interrompido, ou seja, o Match foi interrompido antes de o atendimento iniciar), `interrupted_after_support` (Atendimento Interrompido, ou seja, o Match foi interrompido após iniciar o atendimento), `expired` (Encaminhamento Expirado, ou seja, a MSR não entrou em contato com a Voluntária após 15 dias e, por isso, o Match expirou), `completed` (Atendimento Concluído, ou seja, o atendimento foi concluído com sucesso).\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação desse status.\"\n            },\n        ]\n    },\n    {\n        table_name: \"match.match_confirmations\",\n        table_description: \"Essa tabela contém as informações das Confirmações de Match, enviadas pelo Mapa do Acolhimento para as Voluntárias. Em alguns casos, antes de realizar o Match entre MSR e Voluntária, o Mapa envia uma mensagem para a Voluntária por WhatsApp, pedindo para que ela confirme se está disponível para atender a MSR.\",\n        table_columns: [\n            {\n                column_name: \"match_confirmation_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da Confirmação de Match.\"\n            },\n            {\n                column_name: \"support_request_id\",\n                column_type: \"INT\",\n                column_description: \"ID do Pedido de Acolhimento que corresponde a esta Confirmação de Match.\"\n            },\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID da MSR que realizou o Pedido de Acolhimento e está aguardando a Confirmação do Match.\"\n            },\n            {\n                column_name: \"volunteer_id\",\n                column_type: \"INT\",\n                column_description: \"ID da Voluntária que recebeu a Confirmação de Match.\"\n            },\n\n            {\n                column_name: \"match_type\",\n                column_type: \"ENUM\",\n                column_description: \"Tipo de Match. As opções são `msr` (Match feito com o Novo Match no cadastro da MSR), `daily` (Match Diário), `manual` (Match Manual) e `old` (Match Automatizado, realizado antes de 2024).\"\n            },\n            {\n                column_name: \"match_stage\",\n                column_type: \"ENUM\",\n                column_description: \"Etapa em que o Match foi realizado. As opções são `ideal` (Match Ideal), `expanded` (Match Expandido), `online` (Match Online), `manual` (Match Manual, não possui etapas), `old` (Match realizado antes de 2024, quando não existia essa lógica do Match em etapas).\"\n            },\n            {\n                column_name: \"match_id\",\n                column_type: \"INT\",\n                column_description: \"ID único do Match que foi criado após a Confirmação de Match. Só exite caso a Voluntária tenha aceitado a Confirmação de Match (ou seja, status = accepted). Caso contrátio, é nulo.\"\n            },\n\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status atual da Confirmação do Match. As opções são `waiting` (aguardando resposta da Voluntária),  `accepted` (a Voluntária confirmou o Match),  `denied` (a Voluntária negou o match), `expired` (a Voluntária não respondeu após 24h e, por isso, a Confirmação de Match expirou).\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação da Confirmação do Match.\"\n            },\n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }\n            \n        ]\n    },\n    {\n        table_name: \"match.match_confirmation_status_history\",\n        table_description: \"Essa tabela contém o histórico de status da Confirmação de Match.\",\n        table_columns: [\n            {\n                column_name: \"match_confirmation_status_history_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"match_confirmation_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da Confirmação de Match.\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status da Confirmação do Match. As opções são `waiting` (aguardando resposta da Voluntária),  `accepted` (a Voluntária confirmou o Match),  `denied` (a Voluntária negou o match), `expired` (a Voluntária não respondeu após 24h e, por isso, a Confirmação de Match expirou).\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação desse status.\"\n            },\n        ]\n    },\n    {\n        table_name: \"public.volunteer_availability\",\n        table_description: \"Essa tabela contém informações sobre as da Voluntárias do Mapa do Acolhimento e se elas estão DISPONÍVEIS PARA ATENDIMENTO. Se perguntarem quantas Voluntárias estão disponíveis, UTILIZE ESTA TABELA.\",\n        table_columns: [\n            {\n                column_name: \"volunteer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da Voluntária.\"\n            },\n            {\n                column_name: \"current_matches\",\n                column_type: \"INT\",\n                column_description: \"Número de matches a Voluntária tem atualmente. Se perguntare sobre Voluntárias Ociosas, você deve considerar essa coluna, buscando Voluntárias que estão disponíveis, mas sem matches no momento.\",\n            },\n            {\n                column_name: \"max_matches\",\n                column_type: \"INT\",\n                column_description: \"Número máximo de matches que a Voluntária pode receber. A diferença ente max_matches e current_matches é o número de vagas disponíveis para match que a Voluntária tem atualmente.\",\n            },\n            {\n                column_name: \"is_available\",\n                column_type: \"BOOL\",\n                column_description: \"Indica se a Voluntária está disponível atualmente. Se perguntarem sobre o total de Voluntárias disponíveis, use essa informação para responder.\",\n            },\n            {\n                column_name: \"support_type\",\n                column_type: \"ENUM\",\n                column_description: \"Tipo de Acolhimento oferecido pela Voluntária. As opções são `legal` (jurídico, quando a Voluntária é advogada) e `psychological` (psicológico, quando a Voluntária é psicóloga).\"\n            },\n            {\n                column_name: \"offers_online_support\",\n                column_type: \"ENUM\",\n                column_description: \"Indica se a Voluntária oferece atendimento online.\"\n            },\n            {\n                column_name: \"offers_libras_support\",\n                column_type: \"ENUM\",\n                column_description: \"Indica se a Voluntária oferece atendimento em libras.\"\n            },\n            {\n                column_name: \"lat\",\n                column_type: \"DECIMAL\",\n                column_description: \"Latitude da Voluntária.\"\n            },\n            {\n                column_name: \"lng\",\n                column_type: \"DECIMAL\",\n                column_description: \"Longitude da Voluntária.\"\n            },\n            {\n                column_name: \"city\",\n                column_type: \"VARCHAR\",\n                column_description: \"Cidade da Voluntária. Todos os valores estão em upper case e sem caracteres especiais.\"\n            },\n            {\n                column_name: \"state\",\n                column_type: \"VARCHAR\",\n                column_description: \"Sigla do Estado da Voluntária.\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de cadastro da Voluntária.\"\n            },\n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }       \n        ]\n    },\n    {\n        table_name: \"public.volunteers\",\n        table_description: \"Essa tabela contém as informações das Voluntárias do Mapa do Acolhimento.\",\n        table_columns: [\n            {\n                column_name: \"id\",\n                column_type: \"INT\",\n                column_description: \"ID único da Voluntária.\"\n            },\n            {\n                column_name: \"occupation\",\n                column_type: \"ENUM\",\n                column_description: \"Profissão da Voluntária. Pode ser lawyer (advogada) ou psychologist (psicóloga).\"\n            },\n            {\n                column_name: \"first_name\",\n                column_type: \"VARCHAR\",\n                column_description: \"Primeiro nome da Voluntária.\"\n            },\n            {\n                column_name: \"last_name\",\n                column_type: \"VARCHAR\",\n                column_description: \"Sobrenome da Voluntária.\"\n            },\n            {\n                column_name: \"email\",\n                column_type: \"VARCHAR\",\n                column_description: \"E-mail da Voluntária.\"\n            },\n            {\n                column_name: \"phone\",\n                column_type: \"VARCHAR\",\n                column_description: \"Telefone da Voluntária.\"\n            },\n            {\n                column_name: \"birth_date\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Data de nascimento da Voluntária. Pode ser nulo, caso essa informação não esteja disponível.\"\n            },\n            {\n                column_name: \"zipcode\",\n                column_type: \"VARCHAR\",\n                column_description: \"Zipcode (ou CEP, no Brasil) da Voluntária.\"\n            },\n            {\n                column_name: \"city\",\n                column_type: \"VARCHAR\",\n                column_description: \"Cidade da Voluntária. Todos os valores estão em upper case e sem caracteres especiais.\"\n            },\n            {\n                column_name: \"state\",\n                column_type: \"VARCHAR\",\n                column_description: \"Sigla do Estado da Voluntária.\"\n            },\n            {\n                column_name: \"neighborhood\",\n                column_type: \"VARCHAR\",\n                column_description: \"Bairro da Voluntária.\"\n            },\n            {\n                column_name: \"latitude\",\n                column_type: \"DECIMAL\",\n                column_description: \"Latitude da Voluntária.\"\n            },\n            {\n                column_name: \"longitude\",\n                column_type: \"DECIMAL\",\n                column_description: \"Longitude da Voluntária.\"\n            },\n            {\n                column_name: \"register_number\",\n                column_type: \"VARCHAR\",\n                column_description: \"Número de registro profissional da Voluntária. Pode ser o CRP, caso ela seja psicóloga, ou a OAB, caso seja advogada.\"\n            },\n            {\n                column_name: \"color\",\n                column_type: \"ENUM\",\n                column_description: \"Raça e/ou cor da Voluntária. As opções são black (preta), brown (parda), indigenous (indígena), white (branca), yellow (amarela), not_found (informação não disponível).\"\n            },\n            {\n                column_name: \"gender\",\n                column_type: \"ENUM\",\n                column_description: \"Gênero da Voluntária. As opções são: cis_woman (mulher cis), trans_woman (mulher trans) e not_found (informação não disponível).\"\n            },\n            {\n                column_name: \"modality\",\n                column_type: \"ENUM\",\n                column_description: \"Modalidade de trabalho da Voluntária. As opções são: `online` (online), `on_site` (presencial) e `both` (presencial ou online).\"\n            },\n            {\n                column_name: \"fields_of_work\",\n                column_type: \"VARCHAR\",\n                column_description: \"String em formato de array que possui os campos de trabalho da Voluntária.\"\n            },\n            {\n                column_name: \"years_of_experience\",\n                column_type: \"ENUM\",\n                column_description: \"Anos de experiência da Voluntária. As opções são `no_experience` (sem experiência), `less_than_1_year` (menos de 1 ano), `1_to_5_years` (1 a 5 anos), `5_to_10_years` (5 a 10 anos de experiência), `more_than_10_years` (mais de 10 anos) ou `not_found` (informação não disponível).\"\n            },\n            {\n                column_name: \"approach\",\n                column_type: \"VARCHAR\",\n                column_description: \"Abordagem de trabalho da Voluntária. Disponível apenas para Voluntárias advogadas.\"\n            },\n            {\n                column_name: \"condition\",\n                column_type: \"ENUM\",\n                column_description: \"Status atual da Voluntária. As opções são `anti-etica` (Voluntária foi considerada anti-ética), `aprovada` (Voluntária completou a Capacitação e está aguardando validação), `cadastrada` (Voluntária acabou de realizar o cadastro), `capacitacao` (Voluntária está em Capacitação), `dados_incompletos_email` (Voluntária está com email incompleto), `dados_incompletos_telefone` (Voluntária está com telefone incompleto), `desabilitada` (Voluntária foi desabilitada), `descadastrada` (Voluntária se descadastrou do projeto), `disponivel` (Voluntária está disponível para atendimento. ATENÇÃO APENAS ESSE STATUS INDICA QUE ELA ESTÁ DISPONÍVEL), `indisponível_agenda` (Voluntária está temporariamente indisponível por motivos de agenda), `indisponivel_aguardando_confirmacao` (Voluntária está temporariamente indisponível, por motivos de agenda), `indisponível_férias` (Voluntária está temporariamente indisponível por motivos de férias), `indisponível_maternidade` (Voluntária está temporariamente indisponível pois está de licença maternidade), `indisponível_outros_motivos` (Voluntária está temporariamente indisponível por outros motivos), `indisponível_saude` (Voluntária está temporariamente indisponível por motivos de saúde), `indisponível_-sem_resposta` (Voluntária está indisponível, pois foi tentado o contato com ela, mas ficamos sem resposta), `indisponivel_sem_vagas` (Voluntária está temporariamente indisponível pois atingiu o máximo da sua disponibilidade para matches), `indisponível_trabalho_e_estudo` (Voluntária está temporariamente indisponível por motivos de trabalho e estudo), `inscrita` (esse status não é mais utilizado) `not_found` (informação não disponível), `reprovada_diretrizes_do_mapa` (Voluntária foi reprovada por não concordar com as diretrizes do Mapa do Acolhimento), `reprovada_registro_inválido` (Voluntária foi reprovada pois o seu registro profissional no CRP ou OAB está inválido). Quando perguntarem sobre Voluntárias Ativas, use essa coluna e considere `disponivel` e `indisponivel_sem_vagas`. Quando perguntarem sobre Voluntárias Disponíveis, use essa coluna e considere apenas `disponivel`.\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de cadastro da Voluntária.\"\n            },\n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }\n        ]\n    },\n    {\n        table_name: \"public.volunteer_status_history\",\n        table_description: \"Essa tabela contém o histórico de status da Voluntária.\",\n        table_columns: [\n            {\n                column_name: \"id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"volunteer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da Voluntária.\"\n            },\n            {\n                column_name: \"status\",\n                column_type: \"ENUM\",\n                column_description: \"Status da Voluntária. As opções são `anti-etica` (Voluntária foi considerada anti-ética), `aprovada` (Voluntária completou a Capacitação e está aguardando validação), `cadastrada` (Voluntária acabou de realizar o cadastro), `capacitacao` (Voluntária está em Capacitação), `dados_incompletos_email` (Voluntária está com email incompleto), `dados_incompletos_telefone` (Voluntária está com telefone incompleto), `desabilitada` (Voluntária foi desabilitada), `descadastrada` (Voluntária se descadastrou do projeto), `disponivel` (Voluntária está disponível para receber novos Matches), `indisponível_agenda` (Voluntária está temporariamente indisponível por motivos de agenda), `indisponivel_aguardando_confirmacao` (Voluntária está temporariamente indisponível, por motivos de agenda), `indisponível_férias` (Voluntária está temporariamente indisponível por motivos de férias), `indisponível_maternidade` (Voluntária está temporariamente indisponível pois está de licença maternidade), `indisponível_outros_motivos` (Voluntária está temporariamente indisponível por outros motivos), `indisponível_saude` (Voluntária está temporariamente indisponível por motivos de saúde), `indisponível_-sem_resposta` (Voluntária está indisponível, pois foi tentado o contato com ela, mas ficamos sem resposta), `indisponivel_sem_vagas` (Voluntária está temporariamente indisponível pois atingiu o máximo da sua disponibilidade para matches), `indisponível_trabalho_e_estudo` (Voluntária está temporariamente indisponível por motivos de trabalho e estudo), `inscrita` (esse status não é mais utilizado) `not_found` (informação não disponível), `reprovada_diretrizes_do_mapa` (Voluntária foi reprovada por não concordar com as diretrizes do Mapa do Acolhimento), `reprovada_registro_inválido` (Voluntária foi reprovada pois o seu registro profissional no CRP ou OAB está inválido). Quando perguntarem sobre Voluntárias Ativas, considere `disponivel` e `indisponivel_sem_vagas`. Quando perguntarem sobre Voluntárias Disponíveis, considere apenas `disponivel`.\"\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação desse status.\"\n            },\n        ]\n    },\n    {\n        table_name: \"public.volunteer_training_history\",\n        table_description: \"Essa tabela contém informações sobre o histórico da Voluntária na Capacitação.\",\n        table_columns: [\n            {\n                column_name: \"volunteer_training_history_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"volunteer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da Voluntária.\"\n            },\n            {\n                column_name: \"moodle_user_id\",\n                column_type: \"INT\",\n                column_description: \"ID do usuário da Voluntária no Moodle (plataforma de e-learning onde fica a Capacitação).\",\n            },\n            {\n                column_name: \"event\",\n                column_type: \"ENUM\",\n                column_description: \"Nome do evento relacionado à Capacitação que foi registrado. As opções são `started_training` (a Voluntária iniciou a Capacitação) e `finished_training` (a Voluntária finalizaou a Capacitação).\",\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de criação do evento.\"\n            },    \n        ]\n    },\n    {\n        table_name: \"public.volunteer_unsubscriptions\",\n        table_description: \"Essa tabela contém as informações sobre o descadastro de Voluntárias. No momento do descadastro do Mapa do Acolhimento, as Voluntária preenchem um formulário indicando os motivos pelos quais estão se descadastrando do projeto. Os dados desse formulário estão armazenados nessa tabela.\",\n        table_columns: [\n            {\n                column_name: \"volunteer_unsubscription_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"volunteer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da Voluntária.\"\n            },\n            {\n                column_name: \"unsubscription_reason\",\n                column_type: \"VARCHAR\",\n                column_description: \"Motivo pelo qual a Voluntária se descadastrou do Mapa do Acolhimento. Esse motivo é assinalado pela Voluntária no formulário de descadastro.\",\n            },\n            {\n                column_name: \"unsubscription_description\",\n                column_type: \"VARCHAR\",\n                column_description: \"Descrição aberta da Voluntária sobre o motivo pelo qual ela se descadastrou do Mapa do Acolhimento.\",\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp de descadastro da Voluntária.\"\n            },  \n            {\n                column_name: \"updated_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp da última atualização da linha.\"\n            }   \n        ]\n    },\n    {\n        table_name: \"survey.survey_quality_of_life_d0\",\n        table_description: \"Essa tabela contém as informações do Instrumental de Qualidade de Vida - d0, que é um formulário respondido pelo MSR (Mulher em Situação de Risco) no dia de cadastro no Mapa do Acolhimento.\",\n        table_columns: [\n            {\n                column_name: \"answer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID único da MSR.\"\n            },\n            {\n                column_name: \"quality_of_life\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua qualidade de vida? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"security\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Quão segura você se sente em sua vida diária? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"controlling_situations\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Neste momento você se vê inserida em alguma das situações abaixo?'.\",\n            },\n            {\n                column_name: \"self_esteem\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua percepção de si mesma ou da sua autoestima? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"feelings\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você se identifica com algum dos sentimentos/sensações/emoções, sintomas ou condições descritas abaixo?'.\",\n            },\n            {\n                column_name: \"handle_violence_impact\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua capacidade de lidar com os impactos da violência que você viveu e os desafios do dia a dia'.\",\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp do momento em que a MSR respondeu ao formulário.\"\n            },\n        ]\n    },\n    {\n        table_name: \"survey.survey_quality_of_life_d90\",\n        table_description: \"Essa tabela contém as informações do Instrumental de Qualidade de Vida - d90, que é um formulário respondido pelo MSR (Mulher em Situação de Risco) 90 dias após o cadastro no Mapa do Acolhimento.\",\n        table_columns: [\n            {\n                column_name: \"answer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID único da MSR.\"\n            },\n            {\n                column_name: \"quality_of_life\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua qualidade de vida? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"security\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Quão segura você se sente em sua vida diária? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"controlling_situations\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Neste momento você se vê inserida em alguma das situações abaixo?'.\",\n            },\n            {\n                column_name: \"self_esteem\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua percepção de si mesma ou da sua autoestima? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"feelings\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você se identifica com algum dos sentimentos/sensações/emoções, sintomas ou condições descritas abaixo?'.\",\n            },\n            {\n                column_name: \"handle_violence_impact\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua capacidade de lidar com os impactos da violência que você viveu e os desafios do dia a dia'.\",\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp do momento em que a MSR respondeu ao formulário.\"\n            },\n        ]\n    },\n    {\n        table_name: \"survey.survey_quality_of_life_d180\",\n        table_description: \"Essa tabela contém as informações do Instrumental de Qualidade de Vida - d180, que é um formulário respondido pelo MSR (Mulher em Situação de Risco) 180 dias após o cadastro no Mapa do Acolhimento.\",\n        table_columns: [\n            {\n                column_name: \"answer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"msr_id\",\n                column_type: \"BIGINT\",\n                column_description: \"ID único da MSR.\"\n            },\n            {\n                column_name: \"quality_of_life\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua qualidade de vida? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"security\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Quão segura você se sente em sua vida diária? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"controlling_situations\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Neste momento você se vê inserida em alguma das situações abaixo?'.\",\n            },\n            {\n                column_name: \"self_esteem\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua percepção de si mesma ou da sua autoestima? Considere como referência o último 1 mês'.\",\n            },\n            {\n                column_name: \"feelings\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você se identifica com algum dos sentimentos/sensações/emoções, sintomas ou condições descritas abaixo?'.\",\n            },\n            {\n                column_name: \"handle_violence_impact\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como você avalia sua capacidade de lidar com os impactos da violência que você viveu e os desafios do dia a dia'.\",\n            },\n            {\n                column_name: \"substance_use\",\n                column_type: \"VARCHAR\",\n                 column_description: \"Resposta da MSR para a pergunta 'O atendimento que você recebeu no Mapa do Acolhimento te ajudou a parar de consumir algum tipo de droga (lícita ou ilícita) que você iniciou o uso por causa da violência que enfrentou?'.\",\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp do momento em que a MSR respondeu ao formulário.\"\n            },\n        ]\n    },\n    {\n        table_name: \"survey.psychological_support_evaluation\",\n        table_description: \"Essa tabela contém as informações do Instrumental de Avaliação do Atendimento - Psicológico, que é um formulário respondido pelo MSR (Mulher em Situação de Risco) 90 dias após iniciar o atendimento com a Voluntária.\",\n        table_columns: [\n            {\n                column_name: \"answer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"match_id\",\n                column_type: \"INT\",\n                column_description: \"ID único do Match.\"\n            },\n            {\n                column_name: \"had_to_pay_for_support\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você foi cobrada a pagar algum valor pelo atendimento que recebeu?'.\",\n            },\n            {\n                column_name: \"is_strategy_useful\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você sente que as orientações e reflexões compartilhadas nas sessões têm te ajudado a lidar com suas questões?'.\",\n            },\n            {\n                column_name: \"handle_stress_anxiety\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você notou alguma mudança em como lida com o estresse e a ansiedade relacionados ao seu caso desde que começou a receber atendimento pelo Mapa do Acolhimento?'.\",\n            },\n            {\n                column_name: \"satisfaction_level\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Qual é o seu nível de satisfação com o atendimento psicológico que você tem recebido através do Mapa do Acolhimento?'.\",\n            },\n            {\n                column_name: \"expectations_met\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'O atendimento da voluntária está de acordo com as suas expectativas?'.\",\n            },\n            {\n                column_name: \"written_evaluation\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Qual é o seu nível de satisfação geral com o acompanhamento psicológico? Há algo específico que você gostaria de destacar, positivo ou negativo? Fique à vontade para escrever.'.\",\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp do momento em que a MSR respondeu ao formulário.\"\n            },\n        ]\n    },\n    {\n        table_name: \"survey.legal_support_evaluation\",\n        table_description: \"Essa tabela contém as informações do Instrumental de Avaliação do Atendimento - Jurídico, que é um formulário respondido pelo MSR (Mulher em Situação de Risco) 90 dias após iniciar o atendimento com a Voluntária.\",\n        table_columns: [\n            {\n                column_name: \"answer_id\",\n                column_type: \"INT\",\n                column_description: \"ID único da tabela.\"\n            },\n            {\n                column_name: \"match_id\",\n                column_type: \"INT\",\n                column_description: \"ID único do Match.\"\n            },\n            {\n                column_name: \"had_to_pay_for_support\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você foi cobrada a pagar algum valor pelo atendimento que recebeu?'.\",\n            },\n            {\n                column_name: \"is_strategy_useful\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você sente que as orientações e reflexões compartilhadas nas sessões têm te ajudado a lidar com suas questões?'.\",\n            },\n            {\n                column_name: \"handle_stress_anxiety\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Você notou alguma mudança em como lida com o estresse e a ansiedade relacionados ao seu caso desde que começou a receber atendimento pelo Mapa do Acolhimento?'.\",\n            },\n            {\n                column_name: \"case_progress\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Como está o progresso do seu caso?'.\",\n            },\n            {\n                column_name: \"satisfaction_level\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Qual é o seu nível de satisfação com o atendimento psicológico que você tem recebido através do Mapa do Acolhimento?'.\",\n            },\n            {\n                column_name: \"expectations_met\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'O atendimento da voluntária está de acordo com as suas expectativas?'.\",\n            },\n            {\n                column_name: \"written_evaluation\",\n                column_type: \"VARCHAR\",\n                column_description: \"Resposta da MSR para a pergunta 'Qual é o seu nível de satisfação geral com o acompanhamento psicológico? Há algo específico que você gostaria de destacar, positivo ou negativo? Fique à vontade para escrever.'.\",\n            },\n            {\n                column_name: \"created_at\",\n                column_type: \"TIMESTAMP\",\n                column_description: \"Timestamp do momento em que a MSR respondeu ao formulário.\"\n            },\n        ]\n    },    \n\n]\n\nconst dbSchemaAsString = JSON.stringify(dbSchema);\n  \nreturn dbSchemaAsString"
+      },
+      "id": "234f5923-fec8-4bd1-8b73-005401d0ffc3",
+      "name": "DB Schema1",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        1080,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Run custom SQL queries using knowledge about Output structure to provide needed response for user request.\nUse ->> operator to extract JSON data.",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"query\",\"SQL query for PostgreSQL DB\") }}",
+        "options": {}
+      },
+      "id": "8262e963-69b8-4d92-8c91-98f351773f96",
+      "name": "Run SQL Query 1",
+      "type": "n8n-nodes-base.postgresTool",
+      "position": [
+        1220,
+        -140
+      ],
+      "typeVersion": 2.5,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Run custom SQL queries using knowledge about Output structure to provide needed response for user request.\nUse ->> operator to extract JSON data.",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"query\",\"SQL query for PostgreSQL DB\") }}",
+        "options": {}
+      },
+      "id": "cadf2219-c5df-4200-9e33-5b4127a081d0",
+      "name": "Run SQL Query 2",
+      "type": "n8n-nodes-base.postgresTool",
+      "position": [
+        1360,
+        -140
+      ],
+      "typeVersion": 2.5,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Run custom SQL queries using knowledge about Output structure to provide needed response for user request.\nUse ->> operator to extract JSON data.",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"query\",\"SQL query for PostgreSQL DB\") }}",
+        "options": {}
+      },
+      "id": "2a399516-f34f-4865-9765-bafac5222a1c",
+      "name": "Run SQL Query 3",
+      "type": "n8n-nodes-base.postgresTool",
+      "position": [
+        1500,
+        -140
+      ],
+      "typeVersion": 2.5,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "openAiFunctionsAgent",
+        "promptType": "define",
+        "text": "={{ $json.blocks[0].elements[0].elements[1].text }}",
+        "options": {
+          "systemMessage": "You are a DB assistant. Your name is IAna. You work for Mapa do Acolhimento, a non-profit organization that matches survivors of gender-based violence with volunteer psychologists and lawyers across Brazil. \n\nAs a DB assistant, your role is to answer questions about Mapa do Acolhimento's database.\n\nYou need to run queries in DB aligned with user requests.\n\nYou should take the following steps:\n1. Call the db_schema tool to understand the database schema and table descriptions. \n2. Use the obtained db_schema to to create a SQL query that answers the user's question. You should use PostgreSQL.\n3. Call the Run SQL Query 1 tool to run the query that you just created.\n4. If your query doesn't run, try a different one using Run SQL Query 2 and Run SQL Query 3.\n5. If you need to perform any calculations, you can use the Calculator tool. If your query is too complex, make it simpler and use the calculator tool to calculate the results.\n6. Obtain the results and answer the user's question by using the Slack tool. If you're not able to answer the user's question, explain that you were not able to answer and use the Slack tool to send a message.\n7. Use the Slack Markdown to format your answer. When you want to use bold, use it like this: *bold*\n\nBe friendly. Always end your messages with a friendly emoji.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "bb64ead4-ea00-47be-901f-76aca12bb07d",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1140,
+        -440
+      ],
+      "typeVersion": 1.6,
+      "alwaysOutputData": false,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "### #pergunte-pra-iana\nAI agent que responde perguntas sobre o banco de dados"
+      },
+      "id": "4349cc32-cddb-4165-9766-03bfe0e32f1b",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### #sync-doare\nSincronização de doadores da Doare no Loops"
+      },
+      "id": "9ec6e31b-9d89-4b13-80ce-de508a213416",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fc5f5e49-057c-4976-a483-44fbc855ab88",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        -440
+      ],
+      "webhookId": "e35dd096-adcb-40ea-840b-c5d874306bd4"
+    }
+  ],
+  "pinData": {
+    "IAna foi mencionada no Slack": [
+      {
+        "json": {
+          "user": "U06DJMAQUQ0",
+          "type": "app_mention",
+          "ts": "1739995149.859239",
+          "client_msg_id": "55638a38-cb7a-4054-8736-8a29e956e252",
+          "text": "<@U08CXBQ7E8M> <https://doare-reports.s3.us-west-2.amazonaws.com/92cdf656-83b8-401a-adc1-88d69e93e097-1739987923-Mapa%20do%20Acolhimento.csv> 2025-02-20",
+          "team": "T0513P26WV8",
+          "blocks": [
+            {
+              "type": "rich_text",
+              "block_id": "U1z/U",
+              "elements": [
+                {
+                  "type": "rich_text_section",
+                  "elements": [
+                    {
+                      "type": "user",
+                      "user_id": "U08CXBQ7E8M"
+                    },
+                    {
+                      "type": "text",
+                      "text": " "
+                    },
+                    {
+                      "type": "link",
+                      "url": "https://doare-reports.s3.us-west-2.amazonaws.com/92cdf656-83b8-401a-adc1-88d69e93e097-1739987923-Mapa%20do%20Acolhimento.csv"
+                    },
+                    {
+                      "type": "text",
+                      "text": " 2025-02-20"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "channel": "C08ES2PR2N4",
+          "event_ts": "1739995149.859239"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-24T13:56:18.193Z",
+      "updatedAt": "2025-02-24T13:56:18.193Z",
+      "role": "workflow:owner",
+      "workflowId": "hc7q8IyGvjoR6fLe",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 3,
+  "updatedAt": "2025-02-24T14:03:26.000Z",
+  "versionId": "beb483c4-0e4f-42c6-bbcc-ea22e84116c4"
+}
