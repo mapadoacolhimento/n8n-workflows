@@ -350,7 +350,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"closed\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "efffec30-778b-426b-959e-b97231764c01",
       "name": "Extracts zendesk_ticket_id and support_request_status",
@@ -1435,6 +1435,51 @@
           "Timezone": "-03 -03:00"
         }
       }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "101",
+            "accept-encoding": "gzip, br",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "216.198.2.158",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "91da899e845eff19-PDX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-67cd87ff00000000f6348f9381dcf172-f6348f9381dcf172-00",
+            "tracestate": "dd=s:-1;p:f6348f9381dcf172",
+            "x-forwarded-for": "216.198.2.158, 172.68.174.16",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-5k6rh",
+            "x-is-trusted": "yes",
+            "x-real-ip": "216.198.2.158",
+            "x-request-id": "965c97c5-fbd8-4915-947f-2a39c7c47014",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HHZD4S3Y9687M5Y8QYNCRCJN",
+            "x-zendesk-webhook-invocation-id": "01JNXDPFCHXDZDPD65JTH3XE1K",
+            "x-zendesk-webhook-signature": "1bfKOegeSyVZkGpD5NBAAac3psYFefEsU9pLGO+3fMY=",
+            "x-zendesk-webhook-signature-timestamp": "2025-03-09T12:22:23Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "93522",
+            "tags": "atendimento__iniciado",
+            "status_acolhimento": "atendimento__iniciado"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-support-request",
+          "executionMode": "production"
+        }
+      }
     ]
   },
   "settings": {
@@ -1507,6 +1552,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2024-07-04T20:24:17.000Z",
-  "versionId": "b2733170-8854-4cb8-99cd-bbdf140c6c06"
+  "updatedAt": "2025-03-10T17:16:04.000Z",
+  "versionId": "abfb013a-d686-4b2a-9f59-12fbc041bd74"
 }
