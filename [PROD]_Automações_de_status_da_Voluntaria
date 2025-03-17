@@ -16,17 +16,7 @@
       "main": [
         [
           {
-            "node": "Atualiza status no banco de dados",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Atualiza status no Zendesk",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Loop Over Items",
+            "node": "Se consulta não retornou vazia",
             "type": "main",
             "index": 0
           }
@@ -66,6 +56,34 @@
           }
         ]
       ]
+    },
+    "Se consulta não retornou vazia": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status no banco de dados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-09-23T19:50:08.029Z",
@@ -86,9 +104,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        940,
+        600,
         340
       ],
+      "alwaysOutputData": false,
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
@@ -137,7 +156,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        680,
+        240,
         340
       ]
     },
@@ -219,6 +238,51 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "70cf9f46-fb66-423b-933d-f90325c99eb7",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8949cfcd-811c-4335-addd-791a424afe5a",
+      "name": "Se consulta não retornou vazia",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        340
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "2f4a1b99-f1a0-48f4-8d96-77e22b8aa268",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        580
+      ]
     }
   ],
   "pinData": {},
@@ -285,6 +349,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-03-13T18:07:59.000Z",
-  "versionId": "c02c4a48-5c26-413c-8277-69135347e471"
+  "updatedAt": "2025-03-17T13:44:20.000Z",
+  "versionId": "709a6fec-6000-48bc-a073-4852769a2598"
 }
