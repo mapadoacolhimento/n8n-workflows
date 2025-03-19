@@ -350,7 +350,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"closed\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"waived\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "efffec30-778b-426b-959e-b97231764c01",
       "name": "Extracts zendesk_ticket_id and support_request_status",
@@ -1552,6 +1552,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2025-03-10T17:16:04.000Z",
-  "versionId": "abfb013a-d686-4b2a-9f59-12fbc041bd74"
+  "updatedAt": "2025-03-19T19:43:48.000Z",
+  "versionId": "63d4594f-fff2-4849-8902-134f731a69e6"
 }
