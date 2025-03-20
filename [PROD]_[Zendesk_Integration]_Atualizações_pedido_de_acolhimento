@@ -27,7 +27,7 @@
       "main": [
         [
           {
-            "node": "Is it a new status?",
+            "node": "Se achou status correspondente",
             "type": "main",
             "index": 0
           }
@@ -316,6 +316,24 @@
           }
         ]
       ]
+    },
+    "Se achou status correspondente": {
+      "main": [
+        [
+          {
+            "node": "Is it a new status?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-04-10T15:17:23.968Z",
@@ -350,7 +368,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"waived\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"waived\",\n\"encaminhamento__aguardando_confirmação\":\"waiting_for_confirmation\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "efffec30-778b-426b-959e-b97231764c01",
       "name": "Extracts zendesk_ticket_id and support_request_status",
@@ -399,8 +417,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        980,
-        260
+        1260,
+        240
       ]
     },
     {
@@ -414,8 +432,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
       "position": [
-        1280,
-        240
+        1500,
+        220
       ],
       "credentials": {
         "postgres": {
@@ -431,7 +449,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1280,
+        1540,
         480
       ]
     },
@@ -1382,6 +1400,53 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d4acc293-7bab-44bc-b1b3-7393f21f2158",
+              "leftValue": "{{$json[\"new_status\"]}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d788ff46-2501-4509-a6a5-3871c5d68dae",
+      "name": "Se achou status correspondente",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Sem opção de SupportRequestStatus para o status de acolhimento  {{ $('Webhook').item.json.body.status_acolhimento }} para o ticket Id {{ $('Webhook').item.json.body.id}}"
+      },
+      "id": "873340b4-52f0-484b-8145-238df503e29e",
+      "name": "Stop and Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        440
+      ]
     }
   ],
   "pinData": {
@@ -1552,6 +1617,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2025-03-19T19:43:48.000Z",
-  "versionId": "63d4594f-fff2-4849-8902-134f731a69e6"
+  "updatedAt": "2025-03-20T18:39:35.000Z",
+  "versionId": "56c779ad-ba93-4b7b-aa34-37b30066fc19"
 }
