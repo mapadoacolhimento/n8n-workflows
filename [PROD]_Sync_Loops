@@ -35,17 +35,6 @@
         ]
       ]
     },
-    "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Webhook site": {
       "main": [
         [
@@ -68,38 +57,11 @@
         ]
       ]
     },
-    "Busca Doadoras atualizadas nos últimos 7 dias": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Merge": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Schedule Trigger": {
       "main": [
         [
           {
             "node": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca Doadoras atualizadas nos últimos 7 dias",
             "type": "main",
             "index": 0
           }
@@ -145,6 +107,17 @@
           }
         ]
       ]
+    },
+    "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-12-10T18:08:54.094Z",
@@ -166,8 +139,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1480,
-        360
+        1300,
+        380
       ]
     },
     {
@@ -222,8 +195,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        940,
-        340
+        960,
+        460
       ],
       "credentials": {
         "postgres": {
@@ -291,43 +264,11 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    email,\n    INITCAP(SPLIT_PART(name, ' ', 1)) AS first_name,\n    'doadora' AS user_group,\n    NULL AS volunteer_status\nFROM donations d\nLEFT JOIN activists a USING(email)\nWHERE \n    cached_community_id = 517 \n    AND email IS NOT NULL\n    AND name NOT LIKE '%Uid%'\n    AND a.created_at >= CURRENT_DATE - INTERVAL '7 DAY'",
-        "options": {}
-      },
-      "id": "53d51dc1-ce96-45d1-8635-69b164f5323c",
-      "name": "Busca Doadoras atualizadas nos últimos 7 dias",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        920,
-        580
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "GPnWI2OL5IjBv3zm",
-          "name": "[PROD] Bonde"
-        }
-      }
-    },
-    {
-      "parameters": {},
-      "id": "f437eb55-d94f-4a28-b211-3f52fb08b515",
-      "name": "Merge",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3,
-      "position": [
-        1200,
-        360
-      ]
-    },
-    {
-      "parameters": {
         "rule": {
           "interval": [
             {
-              "daysInterval": 7,
-              "triggerAtHour": 13
+              "field": "cronExpression",
+              "expression": "03 14 * * MON"
             }
           ]
         }
@@ -571,6 +512,6 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-02-24T14:01:36.000Z",
-  "versionId": "2f939080-63fd-4426-a8d3-4f525fdd9ddb"
+  "updatedAt": "2025-03-20T14:05:15.000Z",
+  "versionId": "2e2027b4-8993-4492-99ef-e0b70784a5d4"
 }
