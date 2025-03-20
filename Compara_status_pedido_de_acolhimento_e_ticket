@@ -1,0 +1,280 @@
+{
+  "active": false,
+  "connections": {
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk1": {
+      "main": [
+        [
+          {
+            "node": "Extracts zendesk_ticket_id and support_request_status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracts zendesk_ticket_id and support_request_status1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-19T20:44:25.718Z",
+  "id": "P58dQ3Emswwjjm7y",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Compara status pedido de acolhimento e ticket",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select zendesk_ticket_id, status, created_at from match.support_requests where status = 'matched' order by created_at desc limit 600",
+        "options": {}
+      },
+      "id": "403a454d-6887-4689-9ab5-23ffae86eb1f",
+      "name": "Postgres1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -300,
+        620
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b47965dc-7545-493b-86c4-c220c3a8ef5c",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": "={{ $json.zendesk_ticket_id }}"
+      },
+      "id": "7d8833a3-9b82-408a-b506-3378f9afe411",
+      "name": "Zendesk1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        140,
+        640
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d52a8f77-89cc-4e1b-89c0-cc8e9dd0fe42",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "matched",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d6450fdc-8e78-4305-9670-12fdca8a8b5e",
+      "name": "If2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        700,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.id;\n  let status;\n  console.log(item.json.fields[2].value)\n  const status_acolhimento = item.json.fields[2].value;\n  const tags = item.json.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"waived\",\n\"encaminhamento__negado\": \"matched\",\n\"encaminhamento__realizado\": \"matched\",\n\"encaminhamento_interrompido\": \"matched\",\n\"atendimento__iniciado\": \"matched\",\n\"atendimento_triagem_1\": \"matched\",\n\"atendimento_triagem_2\": \"matched\",\n\"atendimento_acompanhamento_1\": \"matched\",\n\"atendimento_acompanhamento_2\": \"matched\",\n\"atendimento__concluído\": \"matched\",\n\"atendimento__interrompido\": \"matched\",\n\"encaminhamento__antigo\": \"matched\",\n\"encaminhamento__confirmou_disponibilidade\": \"matched\",\n\"encaminhamento__expirado\": \"matched\",\n\"encaminhamento__assistente_social\": \"matched\",\n \"encaminhamento__aguardando_confirmação\":   \"matched\",\n\"encaminhamento__entrou_em_contato\": \"matched\"\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status,\n    \"status_acolhimento\": status_acolhimento\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+      },
+      "id": "9e3d5bac-2d2e-4b1b-9b9c-29d9c454928b",
+      "name": "Extracts zendesk_ticket_id and support_request_status1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        440,
+        640
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "42998c3c-f33f-4e47-a265-86a0fe442a87",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        620
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "f9ce3bed-b43a-477d-844f-66043fad0c01",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        340,
+        920
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-03-19T20:44:25.727Z",
+      "updatedAt": "2025-03-19T20:44:25.727Z",
+      "role": "workflow:owner",
+      "workflowId": "P58dQ3Emswwjjm7y",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-03-20T19:36:39.000Z",
+  "versionId": "6b465c23-e890-4548-a1a4-2af3bda7e0b7"
+}
