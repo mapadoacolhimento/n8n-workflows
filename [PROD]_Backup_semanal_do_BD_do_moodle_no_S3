@@ -1,0 +1,380 @@
+{
+  "active": true,
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Salvar bkp no s3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Slack2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fazer backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar bkp no s3": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fazer backup": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-12T18:01:14.588Z",
+  "id": "GwT1inIMJZ4KD84W",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Backup semanal do BD do moodle no S3",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "03bce7b1-6a8b-444b-9443-c4d87c2a57f2",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e7cd44a7-707c-4f51-b518-463f8ccc44e8",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08ELS4MQCE",
+          "mode": "list",
+          "cachedResultName": "monitoramento-bkp"
+        },
+        "text": "Erro pg_dump banco da capacitação",
+        "otherOptions": {}
+      },
+      "id": "e81ea76b-72ec-44a5-a174-f4f98a1fb314",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        540
+      ],
+      "webhookId": "f1dedfd0-ab88-458e-a900-2fd094a9a453",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08ELS4MQCE",
+          "mode": "list",
+          "cachedResultName": "monitoramento-bkp"
+        },
+        "text": "Erro pg_restore banco da capacitação",
+        "otherOptions": {}
+      },
+      "id": "49492145-b445-4551-adc0-431330ec522c",
+      "name": "Slack1",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1720,
+        360
+      ],
+      "webhookId": "f1dedfd0-ab88-458e-a900-2fd094a9a453",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "03bce7b1-6a8b-444b-9443-c4d87c2a57f2",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0d152b58-210f-458a-97cd-be2d9933a100",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1500,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08ELS4MQCE",
+          "mode": "list",
+          "cachedResultName": "monitoramento-bkp"
+        },
+        "text": "Backup do banco da capacitação finalizado. ",
+        "otherOptions": {}
+      },
+      "id": "3eef0ed9-23f7-4c79-8edb-d9988ed751ac",
+      "name": "Slack2",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1740,
+        180
+      ],
+      "webhookId": "f1dedfd0-ab88-458e-a900-2fd094a9a453",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "43 23 * * MON"
+            }
+          ]
+        }
+      },
+      "id": "71bdadb2-a065-4a35-a51f-d9870913f196",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "=pg_dump -U postgres -h staging-database-1.clmgmw0y47yd.sa-east-1.rds.amazonaws.com -d moodle -F c -b -v -f /backup_moodle.backup"
+      },
+      "id": "56ee7660-3361-4203-8ff9-ecbf05ff46ce",
+      "name": "restaurar banco em staging",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        40
+      ],
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "lrvcy3WPAuBwYVqV",
+          "name": "SSH moodle prod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "=sudo AWS_ACCESS_KEY_ID=\"{{ $vars.AWS_ACCESS_KEY_ID }}\" AWS_SECRET_ACCESS_KEY=\"{{ $vars.AWS_SECRET_ACCESS_KEY }}\" aws s3 cp /backup_moodle.backup s3://bakcup-bd-moodle/bkp-prod/"
+      },
+      "id": "cdabb98c-363e-4830-8a99-2e6c0ec0ca41",
+      "name": "Salvar bkp no s3",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1260,
+        240
+      ],
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "lrvcy3WPAuBwYVqV",
+          "name": "SSH moodle prod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "=rm -rf /backup_moodle.backup && pg_dump -U postgres -h localhost -F c -b -v -f /backup_moodle.backup moodle"
+      },
+      "id": "d8a643c2-8513-4b6e-9833-5eecc424e088",
+      "name": "Fazer backup",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        820,
+        320
+      ],
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "lrvcy3WPAuBwYVqV",
+          "name": "SSH moodle prod"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-12T18:01:14.592Z",
+      "updatedAt": "2025-02-12T18:01:14.592Z",
+      "role": "workflow:owner",
+      "workflowId": "GwT1inIMJZ4KD84W",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-03-24T19:09:30.000Z",
+  "versionId": "a5966b40-bc0d-44eb-aefd-28f49de889ca"
+}
