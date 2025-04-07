@@ -1,0 +1,146 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca Voluntárias selecionadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Voluntárias selecionadas": {
+      "main": [
+        [
+          {
+            "node": "Insere na volunteer_segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-07T13:54:13.543Z",
+  "id": "woaRAvu66D3ynXvk",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Cria segmento para voluntárias que receberão a pesquisa do cadastro de msr",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "08443167-d2b7-4f1a-be20-88e510773387",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        780,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as volunteer_id from volunteers where \ncreated_at >= NOW() - INTERVAL '3 months' and condition in ('disponivel', 'indisponivel_sem_vagas', 'indisponivel_aguardando_confirmacao' ) and\nid in \n(29695,29696,29567,29699,29926,29936,30848,30421,29727,29628,30289,30519,30150,30521,30152,30523,30286,30524,30155,31014,29633,30156,30296,30551,30298,31079,31256,29402,29726,29634,30556,29958,31145,30141,29927,30135,30322,30091,30192,30195,31296,30245,30211,30250,29570,30132,29431,29433,30227,30254,30257,30263,30271,29693,29694,29464,30281,29465,29565)",
+        "options": {}
+      },
+      "id": "73a4b670-a16f-4775-9e0b-5db059a037fc",
+      "name": "Busca Voluntárias selecionadas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1000,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('volunteer_survey_msr_registration_2025', {{ $json.volunteer_id }}, 'volunteer_survey_msr_registration_2025', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "4e7b1971-3f42-4e97-b4e5-f6c2109dfce6",
+      "name": "Insere na volunteer_segments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1220,
+        340
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-07T13:54:13.548Z",
+      "updatedAt": "2025-04-07T13:54:13.548Z",
+      "role": "workflow:owner",
+      "workflowId": "woaRAvu66D3ynXvk",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-07T14:03:21.000Z",
+  "versionId": "f26d3967-2f7d-44c3-b448-f8e182383b57"
+}
