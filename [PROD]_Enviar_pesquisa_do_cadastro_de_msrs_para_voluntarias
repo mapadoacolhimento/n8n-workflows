@@ -1,6 +1,91 @@
 {
   "active": false,
-  "connections": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        []
+      ]
+    }
+  },
   "createdAt": "2025-04-07T17:10:00.399Z",
   "id": "uMTqtHs3XEC9nppr",
   "meta": {
@@ -8,6 +93,98 @@
   },
   "name": "[PROD] Enviar pesquisa do cadastro de msrs para voluntárias",
   "nodes": [
+    {
+      "parameters": {},
+      "id": "482ca343-3013-4bf1-bfba-c592c81482e7",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e85cb380-4280-40b4-a7b4-fee430e20499",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d04dfe68-19b6-4cab-ad84-cb699fc165af",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        460,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "c0b9fb15-fcba-46d9-b099-b58977fe3c5c",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        940,
+        20
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "d1a0d596-ed6b-4b63-892b-920176920b8f",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        340
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cm97d888c02po6xjfo72fhjss\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"occupation\": \"{{ $json.occupation }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"phone\": \"{{ $json.phone }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "73bba346-cd0b-4378-95af-b34fe5d61abd",
+      "name": "Envia email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        700,
+        340
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
     {
       "parameters": {
         "method": "POST",
@@ -20,7 +197,7 @@
           "parameters": [
             {
               "name": "To",
-              "value": "=whatsapp:+5519982915773"
+              "value": "=whatsapp:+55{{ $json.phone }}"
             },
             {
               "name": "From",
@@ -32,19 +209,19 @@
             },
             {
               "name": "ContentVariables",
-              "value": "={\n  \"name\": \"Adriele\",\n  \"email\": \"adriele@mapa.org.br\"\n}"
+              "value": "={\n  \"name\": \"{{ $json.first_name }}\",\n  \"email\": \"{{ $json.email }}\"\n}"
             }
           ]
         },
         "options": {}
       },
       "id": "1db49141-3d9d-443b-bbd2-2f7136a74a38",
-      "name": "Envia mensagem",
+      "name": "Envia mensagem whatsapp",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        280,
-        220
+        700,
+        20
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -53,6 +230,27 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name = 'volunteer_survey_msr_registration_2025' \n ",
+        "options": {}
+      },
+      "id": "44ddb587-d6c5-4051-9b69-3d562feaee8c",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        120,
+        260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -111,6 +309,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-04-07T18:45:11.000Z",
-  "versionId": "4dcb3745-1d6e-44ef-9a59-2ca472550a52"
+  "updatedAt": "2025-04-08T13:11:36.000Z",
+  "versionId": "a603b36d-a69d-4a0b-ae1a-3c46b4e46ce2"
 }
