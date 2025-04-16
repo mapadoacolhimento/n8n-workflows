@@ -1,0 +1,571 @@
+{
+  "active": false,
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp semana 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca segmento de voluntarias ativas no dia": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp semana 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca segmento de voluntarias ativas no dia1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp semana 3": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp semana 2": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Voluntárias selecionadas": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Busca Voluntárias selecionadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca Voluntárias selecionadas1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Voluntárias selecionadas1": {
+      "main": [
+        []
+      ]
+    },
+    "Insere na volunteer_segments1": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias ativas no dia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insere na volunteer_segments": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias ativas no dia1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-16T12:57:09.937Z",
+  "id": "57KZuBEkn4o7SNVy",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Enviar avisos de nova comunidade para as voluntárias",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "374c9a4f-1166-4b58-9015-618ef5f27044",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "15d7ed28-865e-4c80-a88d-f330bcb0fd78",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        340,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "ba0c77d0-dbe3-4bd7-8583-bece80c6bd59",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        40
+      ],
+      "webhookId": "7d975317-307d-4103-b009-468d779bf5ae"
+    },
+    {
+      "parameters": {
+        "content": "Semana 2\nEnvio de whatsapp das voluntárias ativas do dia",
+        "height": 80,
+        "width": 539.4229508196718
+      },
+      "id": "2159dfae-4606-418d-afcc-06b15c003ee9",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'active_volunteers_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \n ",
+        "options": {}
+      },
+      "id": "4ff5ed33-56b4-465b-afcb-e4a6ebecbe03",
+      "name": "Busca segmento de voluntarias ativas no dia",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        100,
+        20
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "cdd163ed-a541-434b-8839-4254dcad1da5",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        300,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "5d4f0954-2c70-4286-9e6a-c18e7efea2fd",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        780,
+        460
+      ],
+      "webhookId": "7d975317-307d-4103-b009-468d779bf5ae"
+    },
+    {
+      "parameters": {
+        "content": "Semana 3\nEnvio de whatsapp das voluntárias ativas do dia",
+        "height": 80,
+        "width": 539.4229508196718
+      },
+      "id": "923ae3b6-0aef-467d-b6b0-360ce4377d96",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'active_volunteers_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \n ",
+        "options": {}
+      },
+      "id": "b52f45db-f8e3-4011-bb96-90aae63ed845",
+      "name": "Busca segmento de voluntarias ativas no dia1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        40,
+        440
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HXf80aa6ad64e32582b3e7a337ab4b4731"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f476191c-cd94-4f85-a6b7-14ae67a9a645",
+      "name": "Envia mensagem whatsapp semana 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        460
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HXb77273a52b83f28181d3dcb0202fee93"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "83076408-dc5a-4109-a8e1-bcc071a1a8ce",
+      "name": "Envia mensagem whatsapp semana 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        40
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as volunteer_id from public.volunteers where  condition in ('disponivel', 'indisponivel_sem_vagas', 'indisponivel_aguardando_confirmacao' )",
+        "options": {}
+      },
+      "id": "4597955a-67aa-4866-a307-424b96c0ef57",
+      "name": "Busca Voluntárias selecionadas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -420,
+        440
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('active_volunteers_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'active_volunteers_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "6b72881f-198f-499e-b2dd-96e2b1871e38",
+      "name": "Insere na volunteer_segments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -200,
+        440
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "13 10 29 4 *"
+            }
+          ]
+        }
+      },
+      "id": "cc2b9fd5-ff0e-48b8-9b87-b85b6168d4ec",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "13 10 7 5 *"
+            }
+          ]
+        }
+      },
+      "id": "0c9baca7-71a5-4423-a1bf-47f646e075af",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as volunteer_id from public.volunteers where  condition in ('disponivel', 'indisponivel_sem_vagas', 'indisponivel_aguardando_confirmacao' )",
+        "options": {}
+      },
+      "id": "63d880cf-a92c-4f9a-933f-15cff28a7490",
+      "name": "Busca Voluntárias selecionadas1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -340,
+        20
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('active_volunteers_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'active_volunteers_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "9e7ebf07-0789-4b41-b82e-a8468070a26a",
+      "name": "Insere na volunteer_segments1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -80,
+        20
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-16T12:57:09.940Z",
+      "updatedAt": "2025-04-16T12:57:09.940Z",
+      "role": "workflow:owner",
+      "workflowId": "57KZuBEkn4o7SNVy",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-16T17:00:47.000Z",
+  "versionId": "c8471150-3412-4166-9a1b-741599c79809"
+}
