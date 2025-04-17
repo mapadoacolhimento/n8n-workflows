@@ -1,0 +1,199 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias em capacitação que responderam a pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias em capacitação que responderam a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Insere na volunteer_segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias em capacitação que NÀO responderam a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Insere na volunteer_segments1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-17T19:03:06.303Z",
+  "id": "uVc3SvLbd7xzWIh2",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Cria segmentos para comunicações sobre o  intensivão",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5260823b-6a1f-44e6-a472-2d20201bc47a",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        400,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('volunteers_in_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'answered_the_survey', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "b4e0733f-5a12-48a7-aa54-8935c9067781",
+      "name": "Insere na volunteer_segments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        820,
+        280
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as volunteer_id from public.volunteers where email in (\n'simonebpoletto@gmail.com',\n'edsandra.dias@sescrio.org.br',\n'fabiola879@gmail.com',\n'elienemariaca@gmail.com',\n'alinesouza.at.psico@gmail.com',\n'ourique.assessoria@gmail.com',\n'psibarbaraserpa@gmail.com',\n'angelicands@gmail.com',\n'aninhamazza@gmail.com',\n'brunabrigo2@gmail.com',\n'luciana.fincati.psi@outlook.com',\n'beaaql@outlook.com',\n'iresfalcade@gmail.com',\n'dcr.reis@gmail.com',\n'nildenan@gmail.com',\n'limas.kalina@gmail.com',\n'stephanie.costa2010@gmail.com',\n'nathalialuiza07@gmail.com',\n'psimarycarvalho@gmail.com',\n'claudiacassiapsi@gmail.com',\n'gabriela.canisso@gmail.com',\n'rebecasmelo@gmail.com',\n'danny__13@live.com',\n'gabiappoli@gmail.com',\n'dora23amorim@gmail.com',\n'holiva.psicologia@gmail.com',\n'taylacarizepsi@gmail.com'\n) and condition = 'capacitacao'",
+        "options": {}
+      },
+      "id": "a78005fc-47c1-4707-ba3e-a03f9b8ee760",
+      "name": "Busca voluntárias em capacitação que responderam a pesquisa",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        600,
+        280
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('volunteers_in_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'not_answered_the_survey', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "cc72e463-0c7b-4f3d-82a9-9e32c1a5a632",
+      "name": "Insere na volunteer_segments1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        820,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as volunteer_id, condition from public.volunteers where condition = 'capacitacao' and  email not in (\n'simonebpoletto@gmail.com',\n'edsandra.dias@sescrio.org.br',\n'fabiola879@gmail.com',\n'elienemariaca@gmail.com',\n'alinesouza.at.psico@gmail.com',\n'ourique.assessoria@gmail.com',\n'psibarbaraserpa@gmail.com',\n'angelicands@gmail.com',\n'aninhamazza@gmail.com',\n'brunabrigo2@gmail.com',\n'luciana.fincati.psi@outlook.com',\n'beaaql@outlook.com',\n'iresfalcade@gmail.com',\n'dcr.reis@gmail.com',\n'nildenan@gmail.com',\n'limas.kalina@gmail.com',\n'stephanie.costa2010@gmail.com',\n'nathalialuiza07@gmail.com',\n'psimarycarvalho@gmail.com',\n'claudiacassiapsi@gmail.com',\n'gabriela.canisso@gmail.com',\n'rebecasmelo@gmail.com',\n'danny__13@live.com',\n'gabiappoli@gmail.com',\n'dora23amorim@gmail.com',\n'holiva.psicologia@gmail.com',\n'taylacarizepsi@gmail.com'\n) ",
+        "options": {}
+      },
+      "id": "1c793a80-5f16-48e0-b23e-85a53582652a",
+      "name": "Busca voluntárias em capacitação que NÀO responderam a pesquisa",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        600,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-17T19:03:06.308Z",
+      "updatedAt": "2025-04-17T19:03:06.308Z",
+      "role": "workflow:owner",
+      "workflowId": "uVc3SvLbd7xzWIh2",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-17T20:12:52.000Z",
+  "versionId": "f4a82295-618f-4ce2-9e73-f02005c6b3f1"
+}
