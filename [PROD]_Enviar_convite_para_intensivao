@@ -1,0 +1,462 @@
+{
+  "active": false,
+  "connections": {
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca segmento de voluntarias em capacitaçao": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Se a voluntária respondeu a pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se a voluntária respondeu a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Envia email para quem respondeu a pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envia email para quem não respondeu a pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email para quem respondeu a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email para quem não respondeu a pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-17T20:13:57.956Z",
+  "id": "FJkLnxSl71xQRyOT",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Enviar convite para intensivão",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "dd54b8b8-b4a6-46d1-a1e8-b32e8efc1849",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f89ebe59-d6f6-4771-bed7-fb015bc87987",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -120,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1.5
+      },
+      "id": "af5bd23e-05c9-4980-8a2a-1c01cf3443b2",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        340,
+        80
+      ],
+      "webhookId": "82dd7c16-9e8f-4d30-9e00-b6dd02354a97"
+    },
+    {
+      "parameters": {
+        "content": "Envio do whatsapp",
+        "height": 80,
+        "width": 539.4229508196718
+      },
+      "id": "e7ad9118-73f4-4fa1-96dc-f5f646f01165",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}'\n",
+        "options": {}
+      },
+      "id": "aeb2d704-3377-4503-a4bd-a043fba2785e",
+      "name": "Busca segmento de voluntarias em capacitaçao",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -580,
+        60
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c78ca58c-cc9f-4a25-8c5b-a3043823fae6",
+              "leftValue": "={{ $json.volunteer_segment_group }}",
+              "rightValue": "answered_the_survey",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9f169574-59e9-4ec0-9508-05d0f128f50d",
+      "name": "Se a voluntária respondeu a pesquisa",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        120,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f9c2d739-0b50-4507-b85c-085eec70e5e0",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -140,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "97835777-513d-4c86-b238-7c04b1246650",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        620,
+        640
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "b664df9e-2ff4-46b6-ad9c-fc51c62936f2",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        620,
+        400
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cm9loou290fpg8sgwal14hy3h\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "8494200f-8616-4834-97ca-a71895854071",
+      "name": "Envia email para quem respondeu a pesquisa",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        380,
+        400
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cm9lo6sbv0dbxf3swt3mf6303\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "ff3d4417-72dd-4d67-b9be-2d4cfc1e37b2",
+      "name": "Envia email para quem não respondeu a pesquisa",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        360,
+        640
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX05cbb07b38624c2ac40308a39bcb1863"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"email\": \"{{ $json.email }}\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2bc88a0e-1283-41f3-b0d5-bbf245576d0c",
+      "name": "Envia mensagem whatsapp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        80
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "envio de email",
+        "height": 82.81967213114754,
+        "width": 399.97377049180335
+      },
+      "id": "cd7f8ea0-6259-4d5c-80bb-6b7f0dc50057",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        380
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-17T20:13:57.959Z",
+      "updatedAt": "2025-04-17T20:13:57.959Z",
+      "role": "workflow:owner",
+      "workflowId": "FJkLnxSl71xQRyOT",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-24T22:42:17.000Z",
+  "versionId": "e2ef2596-f031-4916-9432-81ad89ca81ef"
+}
