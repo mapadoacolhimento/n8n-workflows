@@ -12,11 +12,6 @@
         ]
       ]
     },
-    "Busca segmento de voluntarias em capacitaçao": {
-      "main": [
-        []
-      ]
-    },
     "Loop Over Items1": {
       "main": [
         [],
@@ -124,6 +119,74 @@
           }
         ]
       ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp1": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-04-17T20:13:57.956Z",
@@ -140,8 +203,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -840,
-        60
+        -680,
+        40
       ]
     },
     {
@@ -153,8 +216,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -120,
-        60
+        -1800,
+        -220
       ]
     },
     {
@@ -166,14 +229,14 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        340,
-        80
+        -1340,
+        -200
       ],
       "webhookId": "82dd7c16-9e8f-4d30-9e00-b6dd02354a97"
     },
     {
       "parameters": {
-        "content": "Envio do whatsapp",
+        "content": "Envio do whatsapp primeiro convite",
         "height": 80,
         "width": 539.4229508196718
       },
@@ -182,8 +245,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -640,
-        -80
+        -1860,
+        -320
       ]
     },
     {
@@ -197,8 +260,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -580,
-        60
+        -420,
+        40
       ],
       "credentials": {
         "postgres": {
@@ -237,8 +300,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        120,
-        500
+        -1560,
+        220
       ]
     },
     {
@@ -250,8 +313,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -140,
-        480
+        -1820,
+        200
       ]
     },
     {
@@ -263,8 +326,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        620,
-        640
+        -1060,
+        360
       ],
       "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
     },
@@ -277,8 +340,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        620,
-        400
+        -1060,
+        120
       ],
       "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
     },
@@ -298,8 +361,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        380,
-        400
+        -1300,
+        120
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -325,8 +388,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        360,
-        640
+        -1320,
+        360
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -371,8 +434,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        120,
-        80
+        -1560,
+        -200
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -384,7 +447,7 @@
     },
     {
       "parameters": {
-        "content": "envio de email",
+        "content": "envio de email primeiro convite",
         "height": 82.81967213114754,
         "width": 399.97377049180335
       },
@@ -393,9 +456,166 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -180,
-        380
+        -1860,
+        100
       ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "979e77c4-680b-48b4-8298-eb5cd19232d7",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1.5
+      },
+      "id": "fc6258f4-98ff-4d3a-88d1-78d44639cc4b",
+      "name": "Wait3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        -120
+      ],
+      "webhookId": "82dd7c16-9e8f-4d30-9e00-b6dd02354a97"
+    },
+    {
+      "parameters": {
+        "content": "Envio do whatsapp segundo convite",
+        "height": 80,
+        "width": 539.4229508196718
+      },
+      "id": "af7b78ef-83d3-4f8e-919b-0ee256b3f2cc",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX6ed3f36e57e63beee1964e53fe984a1c"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"email\": \"{{ $json.email }}\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "12e7a663-df7c-4631-b320-98631fdd874d",
+      "name": "Envia mensagem whatsapp1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        -120
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9f120312-628c-4c28-9ee1-8d42eb9fd444",
+      "name": "Loop Over Items3",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "291ca9d3-eb7a-4ac4-b330-d82d4fe632bb",
+      "name": "Wait4",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        240
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "content": "envio de email segundo  convite",
+        "height": 82.81967213114754,
+        "width": 399.97377049180335
+      },
+      "id": "78def68a-d812-415c-b0a0-4a3b08a38545",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cm9lovynn0ggqilanw7me6hdg\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5ddc79aa-3e49-47c1-aab3-092f657ba63c",
+      "name": "Envia email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        60,
+        240
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -457,6 +677,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-04-24T22:42:17.000Z",
-  "versionId": "e2ef2596-f031-4916-9432-81ad89ca81ef"
+  "updatedAt": "2025-04-25T18:27:40.000Z",
+  "versionId": "355a7bb5-cfe9-42c1-acf6-51b66f7d9c30"
 }
