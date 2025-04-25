@@ -1,11 +1,6 @@
 {
   "active": false,
   "connections": {
-    "When clicking ‘Test workflow’": {
-      "main": [
-        []
-      ]
-    },
     "Busca voluntárias em capacitação que responderam a pesquisa": {
       "main": [
         [
@@ -27,6 +22,17 @@
           }
         ]
       ]
+    },
+    "Busca voluntárias que não finalizaram a capacitação": {
+      "main": [
+        [
+          {
+            "node": "Insere na volunteer_segments2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-04-17T19:03:06.303Z",
@@ -43,8 +49,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        320,
-        300
+        260,
+        520
       ]
     },
     {
@@ -59,7 +65,7 @@
       "typeVersion": 2.5,
       "position": [
         820,
-        280
+        180
       ],
       "credentials": {
         "postgres": {
@@ -79,8 +85,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        600,
-        280
+        620,
+        180
       ],
       "credentials": {
         "postgres": {
@@ -100,8 +106,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        820,
-        500
+        840,
+        380
       ],
       "credentials": {
         "postgres": {
@@ -122,7 +128,49 @@
       "typeVersion": 2.5,
       "position": [
         600,
-        500
+        380
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "ae38ae27-7b9e-4a22-9d0d-993c7d9664d6",
+      "name": "Insere na volunteer_segments2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        840,
+        600
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as volunteer_id, condition from public.volunteers where condition in ('cadastrada','capacitacao')",
+        "options": {}
+      },
+      "id": "74a8af63-67cf-4de2-a2e6-9044888876e2",
+      "name": "Busca voluntárias que não finalizaram a capacitação",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        600,
+        600
       ],
       "credentials": {
         "postgres": {
@@ -188,6 +236,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-04-24T19:30:22.000Z",
-  "versionId": "e58727c3-77fe-486f-b204-3a73d9ad9cd3"
+  "updatedAt": "2025-04-25T18:32:02.000Z",
+  "versionId": "50c55b70-dea3-40e2-a861-d3ad5abab5fe"
 }
