@@ -344,7 +344,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\nfor (const item of $input.all()) {\n  data = item.json.data\n  stringNoQuotes = data.replace(/['\"]+/g, '')\n  \n  allRows = stringNoQuotes.split(\"\\n\");\n\n  allRows.shift() // removes head\n\n  for (const row of allRows) {\n    splitRow = row.split(\",\")\n    name = splitRow[1]\n    \n    firstName = name.split(\" \")[0]\n\n    firstNameCapitilized = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()\n    email = splitRow[2].toLowerCase()\n    createdAt = splitRow[splitRow.length - 1]\n\n    output.push(\n      {\n        first_name: firstNameCapitilized,\n        email: email,\n        user_group: 'doadora_doare',\n        created_at: createdAt\n      }\n    )\n  }\n\n}\n\nreturn output"
+        "jsCode": "output = []\nfor (const item of $input.all()) {\n  data = item.json.data\n  stringNoQuotes = data.replace(/['\"]+/g, '')\n  \n  allRows = stringNoQuotes.split(\"\\n\");\n\n  allRows.shift() // removes head\n\n  for (const row of allRows) {\n    splitRow = row.split(\",\")\n    name = splitRow[1]\n    \n    firstName = name.split(\" \")[0]\n\n    firstNameCapitilized = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()\n    email = splitRow[2].toLowerCase()\n    dataString = splitRow[splitRow.length - 1]\n    const [dia, mes, ano] = dataString.split('/');\n    const createdAt = `${ano}-${mes}-${dia}`;  \n    output.push(\n      {\n        first_name: firstNameCapitilized,\n        email: email,\n        user_group: 'doadora_doare',\n        created_at: createdAt\n      }\n    )\n  }\n\n}\n\nreturn output"
       },
       "id": "710d960f-4d5a-4e58-a905-67f4ba554a9e",
       "name": "Code",
@@ -843,16 +843,16 @@
     "IAna foi mencionada no Slack": [
       {
         "json": {
-          "user": "U06DJMAQUQ0",
+          "user": "U054LTUPSLR",
           "type": "app_mention",
-          "ts": "1739995149.859239",
-          "client_msg_id": "55638a38-cb7a-4054-8736-8a29e956e252",
-          "text": "<@U08CXBQ7E8M> <https://doare-reports.s3.us-west-2.amazonaws.com/92cdf656-83b8-401a-adc1-88d69e93e097-1739987923-Mapa%20do%20Acolhimento.csv> 2025-02-20",
+          "ts": "1745606855.902509",
+          "client_msg_id": "c7436192-3fa3-49ef-a0e8-81d0e09b9a6d",
+          "text": "<@U08CXBQ7E8M> <https://doare-reports.s3.us-west-2.amazonaws.com/a032ff86-1015-428e-9706-41c130867314-1745606738-Mapa%20do%20Acolhimento.csv> 2025-04-25",
           "team": "T0513P26WV8",
           "blocks": [
             {
               "type": "rich_text",
-              "block_id": "U1z/U",
+              "block_id": "+/jx5",
               "elements": [
                 {
                   "type": "rich_text_section",
@@ -867,11 +867,11 @@
                     },
                     {
                       "type": "link",
-                      "url": "https://doare-reports.s3.us-west-2.amazonaws.com/92cdf656-83b8-401a-adc1-88d69e93e097-1739987923-Mapa%20do%20Acolhimento.csv"
+                      "url": "https://doare-reports.s3.us-west-2.amazonaws.com/a032ff86-1015-428e-9706-41c130867314-1745606738-Mapa%20do%20Acolhimento.csv"
                     },
                     {
                       "type": "text",
-                      "text": " 2025-02-20"
+                      "text": " 2025-04-25"
                     }
                   ]
                 }
@@ -879,7 +879,7 @@
             }
           ],
           "channel": "C08ES2PR2N4",
-          "event_ts": "1739995149.859239"
+          "event_ts": "1745606855.902509"
         }
       }
     ]
@@ -939,6 +939,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2025-02-24T14:03:26.000Z",
-  "versionId": "beb483c4-0e4f-42c6-bbcc-ea22e84116c4"
+  "updatedAt": "2025-04-25T19:09:04.000Z",
+  "versionId": "228e08de-4a25-44f3-861a-d97cba90e214"
 }
