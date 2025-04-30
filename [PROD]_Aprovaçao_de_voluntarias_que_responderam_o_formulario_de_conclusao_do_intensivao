@@ -1,0 +1,802 @@
+{
+  "active": true,
+  "connections": {
+    "Seta os campos para atualizar a voluntária no BD": {
+      "main": [
+        [
+          {
+            "node": "Insere  o registro na volunteer_status_history",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza voluntária no BD1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca os tickets da voluntária no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa os tickets do objeto retornado": {
+      "main": [
+        [
+          {
+            "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza status da voluntária no Zendesk1": {
+      "main": [
+        [
+          {
+            "node": "Busca os tickets da voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seleciona o ticket mais antigo": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o ticket para \"aprovada\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"": {
+      "main": [
+        [
+          {
+            "node": "Seleciona o ticket mais antigo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Separa os tickets do objeto retornado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se achou o email": {
+      "main": [
+        [
+          {
+            "node": "Busca a voluntária no BD",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca a voluntária no BD": {
+      "main": [
+        [
+          {
+            "node": "Se retornou a voluntária pelo email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Se achou o email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntária pelo ID": {
+      "main": [
+        [
+          {
+            "node": "Encontrou a voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se retornou a voluntária pelo email": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntária pelo ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou a voluntária no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Seta os campos para atualizar a voluntária no BD",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status da voluntária no Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-28T13:47:56.755Z",
+  "id": "qu1tciDTMwBcWjNm",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Aprovação de voluntárias que responderam o formulário de conclusão do intensivão",
+  "nodes": [
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "aprovada"
+            },
+            {
+              "name": "created_at",
+              "value": "={{$now}}"
+            }
+          ],
+          "number": [
+            {
+              "name": "volunteer_id",
+              "value": "={{$node[\"Busca a voluntária no BD\"].json[\"id\"]}}"
+            },
+            {
+              "name": "zendesk_user_id",
+              "value": "={{ $json[\"id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "de0d5ea1-164f-4d8d-b53a-500c8c6d0aec",
+      "name": "Seta os campos para atualizar a voluntária no BD",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Busca voluntária pelo ID\"].json[\"id\"]}}/tickets/requested",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "c89ec01f-7f54-43c9-84a1-b15da6c69a94",
+      "name": "Busca os tickets da voluntária no Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1480,
+        200
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tickets",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "70099815-e2ec-4f8b-90e0-12c0fae5426d",
+      "name": "Separa os tickets do objeto retornado",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json[\"id\"] }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "aprovada"
+              }
+            ]
+          }
+        }
+      },
+      "id": "b8f26a5f-a504-4b11-8f82-bf50547e81d3",
+      "name": "Atualiza status da voluntária no Zendesk1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1260,
+        200
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "limit"
+      },
+      "id": "c028272b-36fc-4c6e-bd0c-be7cc1a7c2a9",
+      "name": "Seleciona o ticket mais antigo",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        2280,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360021665652,
+                "value": "aprovada"
+              }
+            ]
+          },
+          "internalNote": "Voluntária aprovada pois participou do intensivão do dia 06/05/2025",
+          "status": "open"
+        }
+      },
+      "id": "3c7dd3b6-b9a2-46fa-8632-41543a449604",
+      "name": "Atualiza o ticket para \"aprovada\"",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        180
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"volunteer_id\"] }};",
+        "options": {}
+      },
+      "id": "f91b7261-7fa4-46f3-b041-525e42cad654",
+      "name": "Atualiza voluntária no BD1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1600,
+        20
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tickets.custom_fields[6].value }}",
+              "value2": "cadastrada"
+            },
+            {
+              "value1": "={{ $json.tickets.custom_fields[6].value }}",
+              "value2": "capacitacao"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "7247aba1-037c-4761-a8e1-4057d60b11de",
+      "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2060,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "table": "volunteer_status_history",
+        "columns": "volunteer_id,status,created_at",
+        "additionalFields": {}
+      },
+      "id": "118b2725-0d4d-430e-a490-ba382e60d035",
+      "name": "Insere  o registro na volunteer_status_history",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        -160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "89a8120f-1629-4e49-81c7-296d45d084be",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1640,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Email vazio"
+      },
+      "id": "78267fdf-5dad-4a39-8e1f-1f66750f6019",
+      "name": "Stop and Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        20,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ff6a8a39-7830-44de-89ab-0842b875e445",
+              "leftValue": "={{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}",
+              "rightValue": "[undefined]",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "004a4c0b-b45c-4066-8d52-a1be709945e5",
+      "name": "Se achou o email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -140,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "Voluntária não encontrada no BD"
+      },
+      "id": "625c7978-5cca-440c-a994-43161dee74f8",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        580,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Voluntária não encontrada no Zendesk"
+      },
+      "id": "9b5dab9b-38c3-4e66-983e-162f83ac39c9",
+      "name": "Stop and Error2",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, email, zendesk_user_id from volunteers where email = '{{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}'",
+        "options": {}
+      },
+      "id": "7a992249-d5a4-4722-aee5-a801d93fa98c",
+      "name": "Busca a voluntária no BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        100,
+        40
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "intensive-course",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "3da261ae-00de-4861-81a7-34f22a310c41",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        60
+      ],
+      "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "get",
+        "id": "={{ $json.zendesk_user_id }}"
+      },
+      "id": "c2f40888-ffba-4f19-81a3-a7d8786341fb",
+      "name": "Busca voluntária pelo ID",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        640,
+        20
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "83d0a3cc-bbe9-4542-9ace-9a4a7d775782",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "607c2840-fd27-4f1b-8cf4-eb80ff002549",
+      "name": "Se retornou a voluntária pelo email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "db3e675d-358b-4af0-939b-20fcb3ff74f5",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "02e6d9e1-003b-44b0-8c67-ca3fc092ca8e",
+      "name": "Encontrou a voluntária no Zendesk",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        20
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "1210",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.41.94",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "938973f6312a97c2-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "34.96.41.94, 172.71.241.17",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-kl95v",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.94"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "545bc369-6eae-4840-89d5-bb62aa83050e",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2025-04-30T19:30:19.005Z",
+            "data": {
+              "responseId": "pbdQzOV",
+              "submissionId": "pbdQzOV",
+              "respondentId": "JbMD2K",
+              "formId": "wkrQXr",
+              "formName": "Formulário de Confirmação de Presença: Intensivão Mapa do Acolhimento 2025",
+              "createdAt": "2025-04-30T19:30:18.000Z",
+              "fields": [
+                {
+                  "key": "question_K509Ez",
+                  "label": "Nome completo:",
+                  "type": "INPUT_TEXT",
+                  "value": "Teste"
+                },
+                {
+                  "key": "question_L70erz",
+                  "label": "email_provided",
+                  "type": "INPUT_TEXT",
+                  "value": "devadv@email.com"
+                },
+                {
+                  "key": "question_pyVQEy",
+                  "label": null,
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "93f7e924-0505-4cc8-93ac-05c8938313dc"
+                  ],
+                  "options": [
+                    {
+                      "id": "93f7e924-0505-4cc8-93ac-05c8938313dc",
+                      "text": "Advogada"
+                    },
+                    {
+                      "id": "ac737857-d4cf-4f70-ae38-1cf0350073c5",
+                      "text": "Psicóloga"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_1dELe4",
+                  "label": "Qual é a sua especialidade? (Exemplo: Direito penal, Direito de família / TCC, Psicanálise, Gestalt)",
+                  "type": "INPUT_TEXT",
+                  "value": "Teste"
+                },
+                {
+                  "key": "question_MN5W4E_25f4165f-b7bc-431a-8bec-b035799d355d",
+                  "label": "email",
+                  "type": "HIDDEN_FIELDS",
+                  "value": null
+                },
+                {
+                  "key": "question_MN5W4E_fb66315b-6e3d-4c98-adcd-9721660f3901",
+                  "label": "occupation",
+                  "type": "HIDDEN_FIELDS",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/intensive-course",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-28T13:47:56.758Z",
+      "updatedAt": "2025-04-28T13:47:56.758Z",
+      "role": "workflow:owner",
+      "workflowId": "qu1tciDTMwBcWjNm",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-04-30T19:51:22.000Z",
+  "versionId": "379480d0-bb6d-4d5a-85f1-e4417adb39bd"
+}
