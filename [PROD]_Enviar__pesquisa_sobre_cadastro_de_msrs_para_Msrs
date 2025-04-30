@@ -1,0 +1,213 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca msrs cadastradas entre jan-25 e mar-25",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca msrs cadastradas entre jan-25 e mar-25": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-30T17:54:06.687Z",
+  "id": "OMrdIMnXHwzfBrJg",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Enviar  pesquisa sobre cadastro de msrs para Msrs",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "fa39504e-912c-4088-883a-122d35eaefff",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        300,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cm9wynnwm03eipfizv5tiiqnu\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.first_name }}\",\n    \"created_at\": \"{{ $json.created_at }}\",\n    \"support_request_type\": \"{{ $json.support_type }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "05110a5a-f3a9-47e5-aff6-d039c82bc874",
+      "name": "Envia email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1000,
+        280
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "179c2a72-fe6c-496d-ab08-e5b5ee5c32f2",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        780,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "08c2a4d9-9d63-47eb-86b4-a98b56af37e2",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        280
+      ],
+      "webhookId": "641eb252-4d62-450f-9c7e-fd84b16489bc"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select \nmp.first_name,  \nmp.email, \nto_char(m.created_at, 'YYYY-MM-DD') as created_at, \n(SELECT jsonb_agg(distinct support_type) AS type_array\nFROM match.support_requests sp\nwhere status <> 'duplicated' and sp.msr_id = m.msr_id) support_type\nfrom msr.msrs m, pii_sec.msr_pii mp where m.created_at >= '2025-01-01' and m.created_at < '2025-04-01'  and m.status = 'registered' and m.msr_id = mp.msr_id ",
+        "options": {}
+      },
+      "id": "5983a05a-168e-4e5f-841c-823cd704e2fa",
+      "name": "Busca msrs cadastradas entre jan-25 e mar-25",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        520,
+        260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-30T17:54:06.691Z",
+      "updatedAt": "2025-04-30T17:54:06.691Z",
+      "role": "workflow:owner",
+      "workflowId": "OMrdIMnXHwzfBrJg",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-30T19:18:13.000Z",
+  "versionId": "8cea16dd-862a-408f-bde2-389849690ec1"
+}
