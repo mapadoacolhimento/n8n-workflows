@@ -112,17 +112,6 @@
         ]
       ]
     },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Se achou o email",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Busca voluntária pelo ID": {
       "main": [
         [
@@ -169,6 +158,17 @@
         [
           {
             "node": "Stop and Error2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Se achou o email",
             "type": "main",
             "index": 0
           }
@@ -508,7 +508,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, email, zendesk_user_id from volunteers where email = '{{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}'",
+        "query": "SELECT id, email, zendesk_user_id from volunteers where email = TRIM(LOWER('{{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}'))",
         "options": {}
       },
       "id": "7a992249-d5a4-4722-aee5-a801d93fa98c",
@@ -524,29 +524,6 @@
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
           "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "intensive-course",
-        "authentication": "headerAuth",
-        "options": {}
-      },
-      "id": "3da261ae-00de-4861-81a7-34f22a310c41",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        -400,
-        60
-      ],
-      "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "BhcubpnINJanuVaZ",
-          "name": "Tally API"
         }
       }
     },
@@ -639,6 +616,29 @@
         860,
         20
       ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "intensive-course",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "3da261ae-00de-4861-81a7-34f22a310c41",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        60
+      ],
+      "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
     }
   ],
   "pinData": {
@@ -648,58 +648,58 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Tally Webhooks",
-            "content-length": "1210",
+            "content-length": "1353",
             "accept": "application/json, text/plain, */*",
             "accept-encoding": "gzip, br",
             "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
             "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "34.96.41.94",
+            "cf-connecting-ip": "34.96.41.1",
             "cf-ew-via": "15",
             "cf-ipcountry": "US",
-            "cf-ray": "938973f6312a97c2-LHR",
+            "cf-ray": "93bc32fe1054413c-LHR",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json",
-            "x-forwarded-for": "34.96.41.94, 172.71.241.17",
+            "x-forwarded-for": "34.96.41.1, 172.70.86.36",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
             "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-kl95v",
             "x-is-trusted": "yes",
-            "x-real-ip": "34.96.41.94"
+            "x-real-ip": "34.96.41.1"
           },
           "params": {},
           "query": {},
           "body": {
-            "eventId": "545bc369-6eae-4840-89d5-bb62aa83050e",
+            "eventId": "e19f8fdc-5606-4d76-a3c7-07ecc99b47e9",
             "eventType": "FORM_RESPONSE",
-            "createdAt": "2025-04-30T19:30:19.005Z",
+            "createdAt": "2025-05-06T23:18:51.799Z",
             "data": {
-              "responseId": "pbdQzOV",
-              "submissionId": "pbdQzOV",
-              "respondentId": "JbMD2K",
+              "responseId": "0QB1q9Q",
+              "submissionId": "0QB1q9Q",
+              "respondentId": "ARaLye",
               "formId": "wkrQXr",
               "formName": "Formulário de Confirmação de Presença: Intensivão Mapa do Acolhimento 2025",
-              "createdAt": "2025-04-30T19:30:18.000Z",
+              "createdAt": "2025-05-06T23:18:51.000Z",
               "fields": [
                 {
                   "key": "question_K509Ez",
                   "label": "Nome completo:",
                   "type": "INPUT_TEXT",
-                  "value": "Teste"
+                  "value": "Danielle Nogueira Batista "
                 },
                 {
                   "key": "question_L70erz",
                   "label": "email_provided",
                   "type": "INPUT_TEXT",
-                  "value": "devadv@email.com"
+                  "value": "daninogueirabatista@yahoo.com.br "
                 },
                 {
                   "key": "question_pyVQEy",
                   "label": null,
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "93f7e924-0505-4cc8-93ac-05c8938313dc"
+                    "ac737857-d4cf-4f70-ae38-1cf0350073c5"
                   ],
                   "options": [
                     {
@@ -716,7 +716,7 @@
                   "key": "question_1dELe4",
                   "label": "Qual é a sua especialidade? (Exemplo: Direito penal, Direito de família / TCC, Psicanálise, Gestalt)",
                   "type": "INPUT_TEXT",
-                  "value": "Teste"
+                  "value": "Clínica- Existencial humanista, ACP.  Atuo na área de violência doméstica,  Psicóloga Jurídica e Perita."
                 },
                 {
                   "key": "question_MN5W4E_25f4165f-b7bc-431a-8bec-b035799d355d",
@@ -797,6 +797,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-04-30T19:51:22.000Z",
-  "versionId": "379480d0-bb6d-4d5a-85f1-e4417adb39bd"
+  "updatedAt": "2025-05-07T16:59:01.000Z",
+  "versionId": "631e0d8a-b7c4-47c9-95f6-704c8fd453ed"
 }
