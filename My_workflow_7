@@ -1,0 +1,140 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-05-12T20:52:34.008Z",
+  "id": "f6pZDWkBDrbNag5N",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 7",
+  "nodes": [
+    {
+      "parameters": {
+        "filePath": "/data/agenda_com_vagas.csv"
+      },
+      "id": "453a735a-b318-427b-a0d3-eb6260e729b1",
+      "name": "Ler Planilha CSV",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        700,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "\nconst horarioSelecionado = $json[\"body\"][\"horario\"];\nconst email = $json[\"body\"][\"email\"];\n\nlet csvContent = $binary.data.data.toString();\nlet rows = csvContent.split(\"\\n\").map(l => l.split(\",\"));\nlet header = rows[0];\nlet idx = rows.findIndex(r => r[0] === horarioSelecionado);\n\nif (idx === -1) {\n  throw new Error(\"Horário inválido.\");\n}\n\nlet vagasRestantes = parseInt(rows[idx][3]);\nlet inscritos = rows[idx][2] ? rows[idx][2].split(\";\") : [];\n\nif (vagasRestantes <= 0) {\n  return [{ json: { status: \"cheio\", mensagem: \"Este horário está cheio.\" } }];\n}\n\ninscritos.push(email);\nrows[idx][2] = inscritos.join(\";\");\nrows[idx][3] = (vagasRestantes - 1).toString();\n\nconst newCsv = [header.join(\",\")].concat(rows.slice(1).map(r => r.join(\",\"))).join(\"\\n\");\n\nitems[0].json = {\n  status: \"confirmado\",\n  horario: horarioSelecionado,\n  email: email,\n  meet_link: rows[idx][4],\n  csvAtualizado: newCsv\n};\n\nreturn items;\n"
+      },
+      "id": "a7922f9b-7e8a-4e6a-86ab-f7249245e146",
+      "name": "Verifica e Atualiza Vaga",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        940,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "fileName": "/data/agenda_com_vagas.csv",
+        "dataPropertyName": "csvAtualizado",
+        "options": {}
+      },
+      "id": "e8d7ac07-036e-45ca-99d3-2857c574c36d",
+      "name": "Salvar Planilha Atualizada",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8edfac3d-d7eb-4932-9c74-2a6b223e7d4c",
+      "name": "Responder ao Formulário",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "inscricao-reuniao",
+        "options": {}
+      },
+      "id": "5d7090cd-5994-4779-a531-f1a9cd47a4b9",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        460,
+        440
+      ],
+      "webhookId": "1e626a8d-e495-4812-9a77-50cc0059d611"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-05-12T20:52:34.020Z",
+      "updatedAt": "2025-05-12T20:52:34.020Z",
+      "role": "workflow:owner",
+      "workflowId": "f6pZDWkBDrbNag5N",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-05-12T20:52:34.008Z",
+  "versionId": "21dd59fc-bfd3-4b3f-992c-aad31fc68230"
+}
