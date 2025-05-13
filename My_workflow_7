@@ -1,54 +1,116 @@
 {
   "active": false,
-  "connections": {},
-  "createdAt": "2025-05-12T20:52:33.167Z",
-  "id": "mKWKp44UIkwG7Zh5",
+  "connections": {
+    "Google Calendar1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Calendar2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-05-12T20:52:34.008Z",
+  "id": "f6pZDWkBDrbNag5N",
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "name": "My workflow 7",
   "nodes": [
-    {
-      "parameters": {
-        "filePath": "/data/agenda_com_vagas.csv"
-      },
-      "id": "453a735a-b318-427b-a0d3-eb6260e729b1",
-      "name": "Ler Planilha CSV",
-      "type": "n8n-nodes-base.readBinaryFile",
-      "typeVersion": 1,
-      "position": [
-        700,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "functionCode": "\nconst horarioSelecionado = $json[\"body\"][\"horario\"];\nconst email = $json[\"body\"][\"email\"];\n\nlet csvContent = $binary.data.data.toString();\nlet rows = csvContent.split(\"\\n\").map(l => l.split(\",\"));\nlet header = rows[0];\nlet idx = rows.findIndex(r => r[0] === horarioSelecionado);\n\nif (idx === -1) {\n  throw new Error(\"Horário inválido.\");\n}\n\nlet vagasRestantes = parseInt(rows[idx][3]);\nlet inscritos = rows[idx][2] ? rows[idx][2].split(\";\") : [];\n\nif (vagasRestantes <= 0) {\n  return [{ json: { status: \"cheio\", mensagem: \"Este horário está cheio.\" } }];\n}\n\ninscritos.push(email);\nrows[idx][2] = inscritos.join(\";\");\nrows[idx][3] = (vagasRestantes - 1).toString();\n\nconst newCsv = [header.join(\",\")].concat(rows.slice(1).map(r => r.join(\",\"))).join(\"\\n\");\n\nitems[0].json = {\n  status: \"confirmado\",\n  horario: horarioSelecionado,\n  email: email,\n  meet_link: rows[idx][4],\n  csvAtualizado: newCsv\n};\n\nreturn items;\n"
-      },
-      "id": "a7922f9b-7e8a-4e6a-86ab-f7249245e146",
-      "name": "Verifica e Atualiza Vaga",
-      "type": "n8n-nodes-base.function",
-      "typeVersion": 1,
-      "position": [
-        940,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "fileName": "/data/agenda_com_vagas.csv",
-        "dataPropertyName": "csvAtualizado",
-        "options": {}
-      },
-      "id": "e8d7ac07-036e-45ca-99d3-2857c574c36d",
-      "name": "Salvar Planilha Atualizada",
-      "type": "n8n-nodes-base.writeBinaryFile",
-      "typeVersion": 1,
-      "position": [
-        1180,
-        460
-      ]
-    },
     {
       "parameters": {
         "options": {}
@@ -58,14 +120,272 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        1400,
+        1140,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "dev@mapa.org.br",
+          "mode": "list",
+          "cachedResultName": "dev@mapa.org.br"
+        },
+        "eventId": "=",
+        "updateFields": {
+          "attendeesUi": {
+            "values": {
+              "attendees": [
+                ""
+              ]
+            }
+          }
+        }
+      },
+      "id": "879b9dd9-2da8-4f6e-96bc-10d75b43163d",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        400
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "26oxDzwEuKRUHeod",
+          "name": "Dev credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "27b50c40-3a59-4ff2-8350-a6e3039a1a2c",
+              "leftValue": "={{ $json.attendees }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "array",
+                "operation": "lengthLt",
+                "rightType": "number"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dc1645f4-d2a9-407b-99a5-56fab299a969",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1020,
         460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "dev@mapa.org.br",
+          "mode": "list",
+          "cachedResultName": "dev@mapa.org.br"
+        },
+        "eventId": "={{ $json.id_evento_1 }}",
+        "options": {}
+      },
+      "id": "0bdac9d4-977f-4fbb-a303-901cdce1baf1",
+      "name": "Google Calendar1",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        860,
+        460
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "26oxDzwEuKRUHeod",
+          "name": "Dev credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nvar resposta = {}\nconst eventos = {\n  'e479c077-63c1-4bb3-8d5e-34708c9c84cc': '5p4b0r6v78bk0btj74c80mvr0k',\n \"f5ccfd37-820a-4594-827a-83ae97486648\": '4j67m0600i0udqnlsblv7926fb'\n}\nfor (const item of $input.all()) {\n  const primeira_opcao_id = item.json.body.data.fields[0].value[0];\n\n  \n   const segunda_opcao_id = item.json.body.data.fields[1].value[0];\n\n  const id_evento_1 = eventos[primeira_opcao_id]\n  const id_evento_2 = eventos[segunda_opcao_id]\n  item.json = {\n    email: \"adriele@mapa.org.br\",\n    id_evento_1,\n    id_evento_2\n  }  \n}\n\nreturn $input.all();"
+      },
+      "id": "d269189d-39ed-452e-b1ef-6b50e7461da0",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "dev@mapa.org.br",
+          "mode": "list",
+          "cachedResultName": "dev@mapa.org.br"
+        },
+        "eventId": "={{ $('Code').item.json.id_evento_2 }}",
+        "options": {}
+      },
+      "id": "88343195-7a64-44b3-924b-eb480227552a",
+      "name": "Google Calendar2",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        1260,
+        580
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "26oxDzwEuKRUHeod",
+          "name": "Dev credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eb4d96ce-8dc2-4d8e-a3a1-90abc48e62ee",
+              "leftValue": "={{ $json.attendees}}",
+              "rightValue": 2,
+              "operator": {
+                "type": "array",
+                "operation": "lengthLt",
+                "rightType": "number"
+              }
+            },
+            {
+              "id": "5da9c9c5-98bd-4213-b679-94fec4b190f4",
+              "leftValue": "={{ $json.attendees}}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "f3b67ed3-4cf6-4238-9178-6510537b011c",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1480,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=",
+        "options": {}
+      },
+      "id": "bb4cdf97-e09d-42f3-b5fd-025b6a6814de",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "dev@mapa.org.br",
+          "mode": "list",
+          "cachedResultName": "dev@mapa.org.br"
+        },
+        "eventId": "={{ $json.id }}",
+        "updateFields": {
+          "attendeesUi": {
+            "values": {
+              "attendees": [
+                "={{ $('Code').item.json.email }}"
+              ]
+            }
+          }
+        }
+      },
+      "id": "b168403c-d17f-42d1-b6ca-b6ad3d6df22e",
+      "name": "Google Calendar3",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        1720,
+        520
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "26oxDzwEuKRUHeod",
+          "name": "Dev credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=",
+        "options": {}
+      },
+      "id": "1dfb48f7-c8a4-465b-b614-af27d767d99c",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1940,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=",
+        "options": {}
+      },
+      "id": "a6de802a-f434-4416-91ba-f1d550e0f0cb",
+      "name": "HTTP Request2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1720,
+        720
       ]
     },
     {
       "parameters": {
         "httpMethod": "POST",
         "path": "inscricao-reuniao",
+        "authentication": "headerAuth",
         "options": {}
       },
       "id": "5d7090cd-5994-4779-a531-f1a9cd47a4b9",
@@ -73,22 +393,147 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        460,
-        440
+        420,
+        460
       ],
-      "webhookId": "1e626a8d-e495-4812-9a77-50cc0059d611"
+      "webhookId": "1e626a8d-e495-4812-9a77-50cc0059d611",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "dev@mapa.org.br",
+          "mode": "list",
+          "cachedResultName": "dev@mapa.org.br"
+        },
+        "options": {}
+      },
+      "id": "a714d381-3c36-4e5f-a345-dc3eec52f896",
+      "name": "Google Calendar4",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        720
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "26oxDzwEuKRUHeod",
+          "name": "Dev credential"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "1040",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.41.99",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "93f4de71a032cd24-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "34.96.41.99, 172.70.91.236",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-kl95v",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.99"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "acf34ea0-ccee-424d-86ff-846d65425723",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2025-05-13T20:22:36.856Z",
+            "data": {
+              "responseId": "obRB8PX",
+              "submissionId": "obRB8PX",
+              "respondentId": "JbMD2K",
+              "formId": "n0lqk0",
+              "formName": "TESTE",
+              "createdAt": "2025-05-13T20:22:36.000Z",
+              "fields": [
+                {
+                  "key": "question_0B5X8Q",
+                  "label": "Qual horário  você prefere?",
+                  "type": "DROPDOWN",
+                  "value": [
+                    "e479c077-63c1-4bb3-8d5e-34708c9c84cc"
+                  ],
+                  "options": [
+                    {
+                      "id": "e479c077-63c1-4bb3-8d5e-34708c9c84cc",
+                      "text": "Segunda 20h–21h"
+                    },
+                    {
+                      "id": "48349d86-812a-4faa-a049-2cf1227d6de3",
+                      "text": "Terça 11h–12h"
+                    },
+                    {
+                      "id": "c96c15fb-2758-4311-bd68-b3b24f3cd39c",
+                      "text": "Quarta 14h–15h"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_G94VbQ",
+                  "label": "Caso esse não esteja mais disponível escolha uma segunda opção",
+                  "type": "DROPDOWN",
+                  "value": [
+                    "f5ccfd37-820a-4594-827a-83ae97486648"
+                  ],
+                  "options": [
+                    {
+                      "id": "321548b7-39e2-41f5-a8ce-fa734f4d12c8",
+                      "text": "Segunda 20h-21"
+                    },
+                    {
+                      "id": "ab5895f6-509a-4db9-9e66-74cce49f5331",
+                      "text": "Terça 11h-12h"
+                    },
+                    {
+                      "id": "f5ccfd37-820a-4594-827a-83ae97486648",
+                      "text": "Quarta 14h-15h "
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook-test/inscricao-reuniao",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1"
   },
   "shared": [
     {
-      "createdAt": "2025-05-12T20:52:33.172Z",
-      "updatedAt": "2025-05-12T20:52:33.172Z",
+      "createdAt": "2025-05-12T20:52:34.020Z",
+      "updatedAt": "2025-05-12T20:52:34.020Z",
       "role": "workflow:owner",
-      "workflowId": "mKWKp44UIkwG7Zh5",
+      "workflowId": "f6pZDWkBDrbNag5N",
       "projectId": "rfgBK87HsySgxYKT",
       "project": {
         "createdAt": "2024-11-15T08:07:36.637Z",
@@ -135,6 +580,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-05-12T20:52:33.167Z",
-  "versionId": "a8d8e125-dec6-46d8-a8a0-a1af82cc12a2"
+  "updatedAt": "2025-05-13T20:49:36.000Z",
+  "versionId": "bb4a22ec-f374-46b4-8075-14a4baa2ec3b"
 }
