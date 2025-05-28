@@ -1,0 +1,240 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Busca msrs aguardando match psicológico com prioridade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email": {
+      "main": [
+        [
+          {
+            "node": "Atualiza contato no Loops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza contato no Loops": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-05-28T20:10:34.995Z",
+  "id": "3CKHZ53tU3rbDp7y",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[PROD] Enviar convite dos grupos terapeuticos para Msrs",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d9e24c04-4078-45f5-87b2-abb29e1f4369",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        300,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\",\n  }\n}",
+        "options": {}
+      },
+      "id": "4105aaac-0c62-49a2-a372-800580c7f3d3",
+      "name": "Envia email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1000,
+        280
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "12aefc6d-7a79-4057-b929-b5e987daedf1",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        780,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "cc09f68e-2711-40a2-96c6-ad5129cdc5b7",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        280
+      ],
+      "webhookId": "bf5d1268-2033-43ed-8b87-45330809f404"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select \ndistinct\nmp.first_name,  \nmp.email, \nsp.status, \nsp.support_type\nFROM match.support_requests sp , msr.msrs m, pii_sec.msr_pii mp \nwhere m.status = 'registered' and m.msr_id = mp.msr_id  and m.msr_id =  sp.msr_id and sp.status = 'waiting_for_match' and sp.support_type = 'psychological'",
+        "options": {}
+      },
+      "id": "be5bd4cd-6541-4033-8104-ae147eb0cb81",
+      "name": "Busca msrs aguardando match psicológico com prioridade",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        520,
+        260
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"userTag\": \"convite-grupo-terapeutico\",\n}",
+        "options": {}
+      },
+      "id": "b5bd2ba8-acc2-4554-ac6d-9f276112763b",
+      "name": "Atualiza contato no Loops",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1180,
+        280
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-05-28T20:10:35.005Z",
+      "updatedAt": "2025-05-28T20:10:35.005Z",
+      "role": "workflow:owner",
+      "workflowId": "3CKHZ53tU3rbDp7y",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1733863720858
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false,
+              "isOwner": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-05-28T20:52:37.000Z",
+  "versionId": "5812ef00-fdef-49de-bed8-1d379ca4f6d0"
+}
