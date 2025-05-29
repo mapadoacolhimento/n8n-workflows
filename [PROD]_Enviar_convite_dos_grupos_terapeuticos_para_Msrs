@@ -28,7 +28,7 @@
       "main": [
         [
           {
-            "node": "Atualiza contato no Loops",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -46,15 +46,9 @@
         ]
       ]
     },
-    "Atualiza contato no Loops": {
+    "Busca msrs aguardando match psicológico com prioridade": {
       "main": [
-        [
-          {
-            "node": "Wait",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     }
   },
@@ -84,7 +78,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\",\n  }\n}",
+        "jsonBody": "={\n  \"transactionalId\": \"cmb9ocr1u026h150ibpx6p0wr\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\"\n  }\n}",
         "options": {}
       },
       "id": "4105aaac-0c62-49a2-a372-800580c7f3d3",
@@ -118,14 +112,14 @@
     },
     {
       "parameters": {
-        "amount": 1
+        "amount": 0.5
       },
       "id": "cc09f68e-2711-40a2-96c6-ad5129cdc5b7",
       "name": "Wait",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1380,
+        1260,
         280
       ],
       "webhookId": "bf5d1268-2033-43ed-8b87-45330809f404"
@@ -133,7 +127,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "select \ndistinct\nmp.first_name,  \nmp.email, \nsp.status, \nsp.support_type\nFROM match.support_requests sp , msr.msrs m, pii_sec.msr_pii mp \nwhere m.status = 'registered' and m.msr_id = mp.msr_id  and m.msr_id =  sp.msr_id and sp.status = 'waiting_for_match' and sp.support_type = 'psychological'",
+        "query": "SELECT DISTINCT\n    mp.first_name,  \n    mp.email, \n    sp.status, \n    sp.support_type\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii mp ON m.msr_id = mp.msr_id\nINNER JOIN match.support_requests sp ON m.msr_id = sp.msr_id\nWHERE m.status = 'registered'\n  AND sp.status = 'waiting_for_match'\n  AND sp.support_type = 'psychological'",
         "options": {}
       },
       "id": "be5bd4cd-6541-4033-8104-ae147eb0cb81",
@@ -150,33 +144,6 @@
           "name": "[PROD] Mapa"
         }
       }
-    },
-    {
-      "parameters": {
-        "method": "PUT",
-        "url": "https://app.loops.so/api/v1/contacts/update",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"userTag\": \"convite-grupo-terapeutico\",\n}",
-        "options": {}
-      },
-      "id": "b5bd2ba8-acc2-4554-ac6d-9f276112763b",
-      "name": "Atualiza contato no Loops",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        1180,
-        280
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      },
-      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -235,6 +202,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-05-28T20:52:37.000Z",
-  "versionId": "5812ef00-fdef-49de-bed8-1d379ca4f6d0"
+  "updatedAt": "2025-05-29T19:12:02.000Z",
+  "versionId": "b0e8c943-f919-4b05-96d2-109634a39ea0"
 }
