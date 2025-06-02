@@ -48,7 +48,13 @@
     },
     "Busca msrs aguardando match psicológico com prioridade": {
       "main": [
-        []
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -127,7 +133,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    mp.first_name,  \n    mp.email, \n    sp.status, \n    sp.support_type\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii mp ON m.msr_id = mp.msr_id\nINNER JOIN match.support_requests sp ON m.msr_id = sp.msr_id\nWHERE m.status = 'registered'\n  AND sp.status = 'waiting_for_match'\n  AND sp.support_type = 'psychological'",
+        "query": "SELECT DISTINCT\n    mp.first_name,  \n    mp.email, \n    sp.status, \n    sp.support_type,\n     TO_CHAR(sp.created_at, 'DD/MM/YYYY') Data,\n    sp.created_at\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii mp ON m.msr_id = mp.msr_id\nINNER JOIN match.support_requests sp ON m.msr_id = sp.msr_id\nWHERE m.status = 'registered'\n  AND sp.status = 'waiting_for_match'\n  AND sp.support_type = 'psychological'\n  order by sp.created_at asc limit 100",
         "options": {}
       },
       "id": "be5bd4cd-6541-4033-8104-ae147eb0cb81",
@@ -148,7 +154,9 @@
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "shared": [
     {
@@ -202,6 +210,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-05-29T19:12:02.000Z",
-  "versionId": "b0e8c943-f919-4b05-96d2-109634a39ea0"
+  "updatedAt": "2025-06-02T20:12:47.000Z",
+  "versionId": "cdad9aab-3abe-480b-8a80-413d0aa737b9"
 }
