@@ -5,7 +5,7 @@
       "main": [
         [
           {
-            "node": "Busca msrs aguardando match psicológico com prioridade",
+            "node": "Busca msrs aguardando match psicológico com prioridade2",
             "type": "main",
             "index": 0
           }
@@ -56,6 +56,51 @@
           }
         ]
       ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email segundo convite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca msrs aguardando match psicológico com prioridade2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email segundo convite": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-05-28T20:10:34.995Z",
@@ -73,8 +118,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        300,
-        260
+        240,
+        640
       ]
     },
     {
@@ -142,7 +187,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        520,
+        500,
         260
       ],
       "credentials": {
@@ -154,17 +199,44 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    mp.first_name,  \n    mp.email, \n    sp.status, \n    sp.support_type,\n     TO_CHAR(sp.created_at, 'DD/MM/YYYY') Data,\n    sp.created_at\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii mp ON m.msr_id = mp.msr_id\nINNER JOIN match.support_requests sp ON m.msr_id = sp.msr_id\nWHERE m.status = 'registered'\n  AND sp.status = 'waiting_for_match'\n  AND sp.support_type = 'psychological'\n  order by sp.created_at asc limit 100",
         "options": {}
       },
-      "id": "c43ec385-391d-4fed-8235-cbb6356fd9a8",
-      "name": "Busca msrs aguardando match psicológico com prioridade1",
+      "id": "66f650b1-b334-4110-81aa-9b362e16c4f5",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "id": "4d48589e-d7c4-4e43-acd3-c8549923fb06",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        660
+      ],
+      "webhookId": "bf5d1268-2033-43ed-8b87-45330809f404"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    mp.first_name,  \n    mp.email, \n    sp.status, \n    sp.support_type,\n     TO_CHAR(sp.created_at, 'DD/MM/YYYY') Data,\n    sp.created_at\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii mp ON m.msr_id = mp.msr_id\nINNER JOIN match.support_requests sp ON m.msr_id = sp.msr_id\nWHERE m.status = 'registered'\n  AND sp.status = 'waiting_for_match'\n  AND sp.support_type = 'psychological'\n",
+        "options": {}
+      },
+      "id": "fd2f492a-5c93-4a47-b897-999420825fbe",
+      "name": "Busca msrs aguardando match psicológico com prioridade2",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        520,
-        40
+        460,
+        640
       ],
       "credentials": {
         "postgres": {
@@ -172,6 +244,93 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmbs1ubhi0k26yq0ivot0myux\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "d9f7ff15-25c8-429b-812a-a6b487caa6ac",
+      "name": "Envia email segundo convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        940,
+        660
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    mp.first_name,  \n    mp.email, \n    sp.status, \n    sp.support_type,\n     TO_CHAR(sp.created_at, 'DD/MM/YYYY') Data,\n    sp.created_at\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii mp ON m.msr_id = mp.msr_id\nINNER JOIN match.support_requests sp ON m.msr_id = sp.msr_id\nWHERE m.status = 'registered'\n  AND sp.status = 'waiting_for_match'\n  AND sp.support_type = 'psychological'\n  order by sp.created_at asc limit 100",
+        "options": {}
+      },
+      "id": "c43ec385-391d-4fed-8235-cbb6356fd9a8",
+      "name": "Busca 100 msrs aguardando match psicológico com prioridade1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        320,
+        -60
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Primeiro envio\n**100 pedidos de acolhimento jurídico mais antigos** aguardando match sem prioridade"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        320,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "ece76c64-cdde-4ac0-9787-ddadd232342e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Segundo envio\n**Restantes dos pedidos de acolhimento jurídico** aguardando match sem prioridade"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        500,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "cf827a8b-f274-45f2-ae86-27d200c68dc2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Terceiro envio\n**Pedidos de acolhimento jurídico** aguardando match sem prioridade\nHorários restantes de grupos remanescentes"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        460
+      ],
+      "typeVersion": 1,
+      "id": "dd45211b-7e85-4ab9-a33b-1045d29ce406",
+      "name": "Sticky Note2"
     }
   ],
   "pinData": {},
@@ -232,6 +391,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-06-05T17:27:39.000Z",
-  "versionId": "8a94e741-e52f-4dca-9e05-d3e87d53e951"
+  "updatedAt": "2025-06-11T14:50:57.000Z",
+  "versionId": "2f9074b5-c4d6-4ed7-bc49-3f0a69880b0b"
 }
