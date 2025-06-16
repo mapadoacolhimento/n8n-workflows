@@ -37,20 +37,8 @@
     },
     "Se a voluntária respondeu a pesquisa": {
       "main": [
-        [
-          {
-            "node": "Envia email para quem respondeu a pesquisa",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Envia email para quem não respondeu a pesquisa",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [],
+        []
       ]
     },
     "Wait2": {
@@ -100,13 +88,7 @@
     "Loop Over Items": {
       "main": [
         [],
-        [
-          {
-            "node": "Envia mensagem whatsapp",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "When clicking ‘Test workflow’": {
@@ -123,13 +105,7 @@
     "Loop Over Items2": {
       "main": [
         [],
-        [
-          {
-            "node": "Envia mensagem whatsapp1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Wait3": {
@@ -157,13 +133,7 @@
     "Loop Over Items3": {
       "main": [
         [],
-        [
-          {
-            "node": "Envia email",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Wait4": {
@@ -191,13 +161,7 @@
     "Loop Over Items4": {
       "main": [
         [],
-        [
-          {
-            "node": "Envia mensagem whatsapp2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Wait5": {
@@ -225,24 +189,12 @@
     "Loop Over Items5": {
       "main": [
         [],
-        [
-          {
-            "node": "Envia email1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Wait6": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items5",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Envia email1": {
@@ -260,7 +212,69 @@
       "main": [
         [
           {
-            "node": "Loop Over Items4",
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items6": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Wait8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp primeiro convite": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email primeiro convite1": {
+      "main": [
+        [
+          {
+            "node": "Wait8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items7": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp primeiro convite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items7",
             "type": "main",
             "index": 0
           }
@@ -283,8 +297,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -680,
-        40
+        -2280,
+        2400
       ]
     },
     {
@@ -332,7 +346,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}'\n",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \n",
         "options": {}
       },
       "id": "aeb2d704-3377-4503-a4bd-a043fba2785e",
@@ -340,8 +354,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -420,
-        40
+        -2040,
+        2380
       ],
       "credentials": {
         "postgres": {
@@ -849,6 +863,148 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## intensivão 30/06\nEnvios dos convites para o o intensivão do dia 30/06",
+        "height": 740,
+        "width": 1960
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2420,
+        2000
+      ],
+      "typeVersion": 1,
+      "id": "3e8b7251-49f3-420d-be27-50ec5ec341b0",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "caaece4e-c880-4fcc-ba54-da7574c75a5d",
+      "name": "Loop Over Items6",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1800,
+        2140
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "id": "80926bf8-09e4-47f9-90e1-08c99e075ecf",
+      "name": "Wait8",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1280,
+        2160
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HXb50c1a110dbdeda80ac7dd804042faf5"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"email\": \"{{ $json.email }}\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f7282c71-f1ee-414a-9c0d-2985ba3a1b93",
+      "name": "Envia mensagem whatsapp primeiro convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1580,
+        2400
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmbpd8x1w0ra3re0j6amc63q0\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "412add5b-d779-42c5-9931-0f90ff2ef31a",
+      "name": "Envia email primeiro convite1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1520,
+        2160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d1ad86cd-98ea-4517-9199-53cc5850df27",
+      "name": "Loop Over Items7",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1800,
+        2380
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 0.4
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1360,
+        2400
+      ],
+      "id": "b7652b33-b9be-4d18-a8c3-e738cc98ef61",
+      "name": "Wait7",
+      "webhookId": "9321eaad-4900-4322-bcad-c02ec71ce670"
     }
   ],
   "pinData": {},
@@ -911,6 +1067,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-05-06T14:37:58.000Z",
-  "versionId": "60db9566-0587-41ad-b26e-51c25bf15a01"
+  "updatedAt": "2025-06-16T15:44:03.000Z",
+  "versionId": "0d493611-d0e9-4ff7-ab57-28615e408b1a"
 }
