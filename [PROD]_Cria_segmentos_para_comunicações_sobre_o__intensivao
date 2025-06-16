@@ -1,28 +1,6 @@
 {
   "active": false,
   "connections": {
-    "Busca voluntárias em capacitação que responderam a pesquisa": {
-      "main": [
-        [
-          {
-            "node": "Insere na volunteer_segments",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca voluntárias que não finalizaram a capacitação que NÀO responderam a pesquisa": {
-      "main": [
-        [
-          {
-            "node": "Insere na volunteer_segments1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Busca voluntárias que não finalizaram a capacitação": {
       "main": [
         [
@@ -62,97 +40,13 @@
       "typeVersion": 1,
       "position": [
         260,
-        520
+        600
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'answered_the_survey', NOW(), NOW())",
-        "options": {}
-      },
-      "id": "b4e0733f-5a12-48a7-aa54-8935c9067781",
-      "name": "Insere na volunteer_segments",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        820,
-        180
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "select id as volunteer_id from public.volunteers where email in (\n'simonebpoletto@gmail.com',\n'edsandra.dias@sescrio.org.br',\n'fabiola879@gmail.com',\n'elienemariaca@gmail.com',\n'alinesouza.at.psico@gmail.com',\n'ourique.assessoria@gmail.com',\n'psibarbaraserpa@gmail.com',\n'angelicands@gmail.com',\n'aninhamazza@gmail.com',\n'brunabrigo2@gmail.com',\n'luciana.fincati.psi@outlook.com',\n'beaaql@outlook.com',\n'iresfalcade@gmail.com',\n'dcr.reis@gmail.com',\n'nildenan@gmail.com',\n'limas.kalina@gmail.com',\n'stephanie.costa2010@gmail.com',\n'nathalialuiza07@gmail.com',\n'psimarycarvalho@gmail.com',\n'claudiacassiapsi@gmail.com',\n'gabriela.canisso@gmail.com',\n'rebecasmelo@gmail.com',\n'danny__13@live.com',\n'gabiappoli@gmail.com',\n'dora23amorim@gmail.com',\n'holiva.psicologia@gmail.com',\n'taylacarizepsi@gmail.com'\n) and condition = 'capacitacao'",
-        "options": {}
-      },
-      "id": "a78005fc-47c1-4707-ba3e-a03f9b8ee760",
-      "name": "Busca voluntárias em capacitação que responderam a pesquisa",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        620,
-        180
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'not_answered_the_survey', NOW(), NOW())",
-        "options": {}
-      },
-      "id": "cc72e463-0c7b-4f3d-82a9-9e32c1a5a632",
-      "name": "Insere na volunteer_segments1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        840,
-        380
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "select id as volunteer_id, condition from public.volunteers where condition in ('cadastrada','capacitacao') and  email not in (\n'simonebpoletto@gmail.com',\n'edsandra.dias@sescrio.org.br',\n'fabiola879@gmail.com',\n'elienemariaca@gmail.com',\n'alinesouza.at.psico@gmail.com',\n'ourique.assessoria@gmail.com',\n'psibarbaraserpa@gmail.com',\n'angelicands@gmail.com',\n'aninhamazza@gmail.com',\n'brunabrigo2@gmail.com',\n'luciana.fincati.psi@outlook.com',\n'beaaql@outlook.com',\n'iresfalcade@gmail.com',\n'dcr.reis@gmail.com',\n'nildenan@gmail.com',\n'limas.kalina@gmail.com',\n'stephanie.costa2010@gmail.com',\n'nathalialuiza07@gmail.com',\n'psimarycarvalho@gmail.com',\n'claudiacassiapsi@gmail.com',\n'gabriela.canisso@gmail.com',\n'rebecasmelo@gmail.com',\n'danny__13@live.com',\n'gabiappoli@gmail.com',\n'dora23amorim@gmail.com',\n'holiva.psicologia@gmail.com',\n'taylacarizepsi@gmail.com'\n) ",
-        "options": {}
-      },
-      "id": "1c793a80-5f16-48e0-b23e-85a53582652a",
-      "name": "Busca voluntárias que não finalizaram a capacitação que NÀO responderam a pesquisa",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        600,
-        380
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, 'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', NOW(), NOW())",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, '{{ $json.condition }}', NOW(), NOW())",
         "options": {}
       },
       "id": "ae38ae27-7b9e-4a22-9d0d-993c7d9664d6",
@@ -248,6 +142,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-04-30T12:56:57.000Z",
-  "versionId": "f04d3379-eceb-4550-b08d-cbe9547642ad"
+  "updatedAt": "2025-06-16T12:59:59.000Z",
+  "versionId": "cfb3a46c-711c-4232-a1a4-7e5b63a9772b"
 }
