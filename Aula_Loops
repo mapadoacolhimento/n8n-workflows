@@ -1,0 +1,159 @@
+{
+  "active": false,
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Envia email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-16T20:44:39.883Z",
+  "id": "owxhv28ESxu6fS6V",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Aula Loops",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Aula Loops",
+        "formDescription": "Teste",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "first_name",
+              "placeholder": "Primeiro Nome",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email",
+              "placeholder": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Como você está hoje?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Bem"
+                  },
+                  {
+                    "option": "Mais ou menos"
+                  },
+                  {
+                    "option": "Melhor nem responder..."
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -340,
+        -40
+      ],
+      "id": "cb6d39ec-29cb-49c0-9498-15dc165367d4",
+      "name": "On form submission",
+      "webhookId": "da04cca1-a65a-41a7-9e01-a3def4e478e3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmbpd8x1w0ra3re0j6amc63q0\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "b4878999-f93c-42f6-ad56-b198d1698ea7",
+      "name": "Envia email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -80,
+        -40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-16T20:44:39.887Z",
+      "updatedAt": "2025-06-16T20:44:39.887Z",
+      "role": "workflow:owner",
+      "workflowId": "owxhv28ESxu6fS6V",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2025-06-09T18:23:34.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1749493410027
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-16T20:52:51.000Z",
+  "versionId": "ab72c385-e5ef-4749-bce6-d828b8ce5199"
+}
