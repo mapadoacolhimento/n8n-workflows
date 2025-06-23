@@ -369,7 +369,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"waived\",\n    \"encaminhamento__aguardando_confirmação\":\"waiting_for_confirmation\",\n    \"solicitação_encerrada\":\"closed\",\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_ticket_id = item.json.body.id;\n  let status;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  const tags = item.json.body.tags\n  \n  \n  const status_lookup = {\n    \"solicitação_recebida\": \"open\",\n    \"encaminhamento__realizado_para_serviço_público\": \"public_service\",\n    \"encaminhamento__realizado\": \"matched\",\n    \"atendimento__iniciado\": \"matched\",\n    \"encaminhamento__assistente_social\": \"social_worker\",\n    \"encaminhamento__servico_publico_com_assistente_social\": \"public_service_with_social_worker\",\n    \"aguardando_match__sem_prioridade\": \"waiting_for_match\",\n    \"aguardando_match__com_prioridade\": \"waiting_for_match_with_priority\",\n    \"desistencia\": \"waived\",\n    \"encaminhamento__aguardando_confirmação\":\"waiting_for_confirmation\",\n    \"solicitação_encerrada\":\"closed\",\n    \"solicitação_repetida\": \"duplicated\",\n  }\n    \n\n    status = status_lookup[status_acolhimento]\n    \n\n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "efffec30-778b-426b-959e-b97231764c01",
       "name": "Extracts zendesk_ticket_id and support_request_status",
@@ -1618,6 +1618,6 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2025-06-17T12:31:36.000Z",
-  "versionId": "1b2235b9-1500-47a5-ad21-a82f713b770a"
+  "updatedAt": "2025-06-23T15:17:53.000Z",
+  "versionId": "02fe4519-78cc-4abb-91f6-f6f6c50c08ef"
 }
