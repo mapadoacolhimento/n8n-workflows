@@ -95,17 +95,7 @@
       "main": [
         [
           {
-            "node": "Busca segmento de voluntarias em capacitaçao",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca segmento de voluntarias em capacitaçao que se inscreveram",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca segmento de voluntarias em capacitaçao que NÃO se inscreveram",
+            "node": "Busca segmento de voluntarias em capacitaçao1",
             "type": "main",
             "index": 0
           }
@@ -404,11 +394,73 @@
         ]
       ]
     },
-    "Busca segmento de voluntarias em capacitaçao que NÃO se inscreveram": {
+    "Loop Over Items11": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp terceiro convite1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait12": {
       "main": [
         [
           {
-            "node": "Loop Over Items10",
+            "node": "Loop Over Items11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca segmento de voluntarias em capacitaçao1": {
+      "main": [
+        []
+      ]
+    },
+    "Envia mensagem whatsapp terceiro convite1": {
+      "main": [
+        [
+          {
+            "node": "Wait12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items12": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email terceiro convite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait13": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email terceiro convite": {
+      "main": [
+        [
+          {
+            "node": "Wait13",
             "type": "main",
             "index": 0
           }
@@ -488,8 +540,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -1860,
-        2400
+        -660,
+        2480
       ],
       "credentials": {
         "postgres": {
@@ -1149,8 +1201,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -1580,
-        2400
+        -380,
+        2480
       ]
     },
     {
@@ -1160,8 +1212,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -1140,
-        2420
+        60,
+        2500
       ],
       "id": "09ad33db-4c63-4e00-878b-5aa069acac25",
       "name": "Wait9",
@@ -1176,8 +1228,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -1620,
-        2660
+        -420,
+        2740
       ]
     },
     {
@@ -1189,8 +1241,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -1080,
-        2680
+        120,
+        2760
       ],
       "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
     },
@@ -1229,8 +1281,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1360,
-        2420
+        -160,
+        2500
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -1256,8 +1308,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -1300,
-        2680
+        -100,
+        2760
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1278,8 +1330,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -1840,
-        2660
+        -640,
+        2740
       ],
       "credentials": {
         "postgres": {
@@ -1297,8 +1349,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -1600,
-        2980
+        -400,
+        3060
       ]
     },
     {
@@ -1310,8 +1362,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -1000,
-        3000
+        200,
+        3080
       ],
       "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
     },
@@ -1331,8 +1383,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -1300,
-        3000
+        -100,
+        3080
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1345,16 +1397,16 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' and email not in ('gabrielaect@gmail.com', 'julianasantiagosilva12@hotmail.com', 'cparanagua@gmail.com', 'nilza.cpv@adv.oabsp.org.br', 'gisele.maia211@gmail.com', 'leolindaevangelistaadv@gmail.com', 'claudiacassiapsi@gmail.com', 'eduarda.borges@adv.oabsp.org.br', 'atrabulsi37@gmail.com', 'siqueiraamanda7@gmail.com', 'claudiam.moreira45@gmail.com', 'mayaranogueira603@gmail.com', 'julia.luzes.araujo@gmail.com', 'marisouzaramalho@gmail.com', 'monique_bernardes@hotmail.com', 'psicarolinacavalcante@gmail.com', 'themyspordeus@gmail.com', 'psicovanessasanfer@gmail.com', 'suelen.libardi@gmail.com', 'simonelirapsi@gmail.com', 'liciabs@ffclrp.usp.br', 'paulareaprender@gmail.com', 'psi.maiarabarbosa@gmail.com', 'carlaalexandra0401@gmail.com', 'ateliertatianavieira@gmail.com', 'biabuenoss@yahoo.com', 'a_komp@hotmail.com', 'tilanas2@gmail.com', 'flaviamelm36@hotmail.com', 'jessicamindas@live.com', 'mbfcj@hotmail.com', 'rosangela.racanicchi@hotmail.com', 'vboczko@adv.oabsp.org.br', 'rafaella.alvessouzaa@hotmail.com', 'ramosamandaeu@gmail.com', 'al.rodrigues.psi@gmail.com', 'maibecastro.advogada@gmail.com', 'jandairaduarte.clinica@gmail.com', 'bmayara.psi@gmail.com', 'thaysa.tha@gmail.com', 'analaurapadilha.adv@gmail.com', 'rafaeladinelli@gmail.com', 'avila.kassia@gmail.com', 'luziabs@hotmail.com', 'catia.pereira73@gmail.com', 'vizentinpatricia@gmail.com', 'thamyres.acioli@gmail.com', 'evelyngobar@gmail.com', 'laramguilherme@gmail.com', 'psicamilams@gmail.com', 'thabata.campos@terra.com.br', 'julidportella@gmail.com', 'marinaveraspinto@gmail.com', 'marianecastellano@hotmail.com', 'lcpmoreira@outlook.com', 'alinemottaoda@gmail.com', 'luana.sansano@gmail.com', 'camilaventurinfranzini@gmail.com', 'raquelsouzafontes@gmail.com', 'wagpsicologia@gmail.com', 'psicohannahbodas@gmail.com', 'rosane.ramosnunes@yahoo.com.br', 'psicologiagleyce@gmail.com', 'psi.ednaoliveira@yahoo.com', 'alinedeborapsi@hotmail.com', 'ebmaia08@gmail.com', 'ingridabreu.psi@gmail.com', 'psi.giovannaeliziario@gmail.com', 'cibelepenna@yahoo.com.br', 'sammycarralas.psi@gmail.com', 'laisaa.moretto@gmail.com', 'deborah.mmari@gmail.com', 'ourique.assessoria@gmail.com', 'camiladesarocha@gmail.com', 'izadorafa@hotmail.com', 'goncalveserica29@gmail.com', 'machadoisabella.adv@gmail.com', 'psi.micarol2@outlook.com', 'sandydaluz.psicologia@gmail.com', 'dayanneapda@gmail.com', 'karlabeatriz54@gmail.com', 'danielabaldez.psico@gmail.com', 'contatomarinaviana@gmail.com', 'adv.pamsoares@gmail.con', 'lucieneav2017@gmail.com', 'naiara_m@hotmail.com', 'nazy.b@hotmail.com', 'adrianasviotto@gmail.com', 'giselasalles23@gmail.com', 'carinefrancos@gmail.com', 'herciapalhano@gmail.com', 'wilianapsi3@gmail.com', 'fcalabrez83@gmail.com', 'marcelatrevelinbichara@gmail.com', 'psicarinatomaz@yahoo.com.br', 'estagiariasueli@gmail.com', 'nancys.psicologa@gmail.com', 'lilianpdias@gmail.com', 'suzanapinho.adv@gmail.com', 'kescames@gmail.com', 'ddtavares@uol.com.br', 'carla.ribeiro.psibh@gmail.com', 'andradeivana@yahoo.com.br', 'paulinhamartinssantos@outlook.com', 'aldicarvalho2@gmail.com', 'mayara.carvalho.krempp@gmail.com', 'lelasant204@gmail.com', 'isa_agibert@hotmail.com', 'katia_braz@hotmail.com', 'gabrielleg629@gmail.com', 'psiluizafelix@gmail.com', 'ttlima11@gmail.com', 'psiluciapaz@gmail.com', 'laysousa.estudos@gmail.com', 'zeliapsilva@hotmail.com', 'sarapadua.psi@gmail.com', 'ttmb.estudoeprofissional@gmail.com', 'anagfmenezes@gmail.com', 'astrolabio_neia@hotmail.com', 'alinnefcf@gmail.com', 'moniquepzr@hotmail.com', 'psicarolinapinho@gmail.com', 'ray.ane.moreira@hotmail.com', 'tatianacarvalhopsi@gmail.com', 'psicologa.isabelaflorindo@gmail.com', 'rcamila7@gmail.com', 'psi.julianna@gmail.com', 'psi.isabelagermano@gmail.com', 'psimaristellafreitas@gmail.com', 'saudementalpsi1000@gmail.com', 'figueiredo.rose72@gmail.com', 'patricia.loraine@gmail.com', 'nathaliasoares38@gmail.com', 'hillysmpsi@gmail.com', 'irisribeiropsi@yahoo.com.br', 'leticiamarcolino2018@gmail.com', 'sandramoreirapsicologia@gmail.com', 'danny__13@live.com', 'luciam.l.queres@gmail.com', 'claudialimadireito@gmail.com', 'dalovaglio@gmail.com', 'katarinalima.adv@gmail.com', '16monicabem@gmail.com', 'mary_sch20@hotmail.com', 'silvabore@yahoo.com.br', 'isabelesantello.psico@gmail.com', 'renataribeirocyrillo@gmail.com', 'paolla_bandeira@hotmail.com')\n",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \n",
         "options": {}
       },
-      "id": "87ddbda3-4387-4b30-98a6-28e6df37fd4d",
-      "name": "Busca segmento de voluntarias em capacitaçao que NÃO se inscreveram",
+      "id": "40f44f92-a67b-4bf3-b82f-e307d287f470",
+      "name": "Busca segmento de voluntarias em capacitaçao1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -1840,
-        3020
+        -1980,
+        2700
       ],
       "credentials": {
         "postgres": {
@@ -1362,6 +1414,134 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c1b60fd4-fd88-43eb-aee8-685b57f40392",
+      "name": "Loop Over Items11",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1660,
+        2560
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1220,
+        2580
+      ],
+      "id": "d0ef9d43-056e-4f26-9bf0-23e6c12f075e",
+      "name": "Wait12",
+      "webhookId": "9321eaad-4900-4322-bcad-c02ec71ce670"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HXc715b23585b10b3c30e0b96249e28ae8"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"email\": \"{{ $json.email }}\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "538fcde1-5c7e-4ed7-bce6-519d4eef6984",
+      "name": "Envia mensagem whatsapp terceiro convite1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1440,
+        2580
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "id": "c81b032f-0615-416c-96a1-69c6ea4cf520",
+      "name": "Loop Over Items12",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1700,
+        2820
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "2d05ae0a-6373-4db6-99c5-c966132a8769",
+      "name": "Wait13",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1100,
+        2840
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmcdy79ri1tts320ivbjw07es\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "62a015bf-191d-44ac-b3f5-23ff9c7f0e51",
+      "name": "Envia email terceiro convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1400,
+        2840
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -1424,6 +1604,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-06-23T14:35:30.000Z",
-  "versionId": "33aa9780-e5d4-4982-97d2-e5e8b42ac245"
+  "updatedAt": "2025-06-26T22:43:42.000Z",
+  "versionId": "5b8946c0-1671-4cd8-b077-36942cac7beb"
 }
