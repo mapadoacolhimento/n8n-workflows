@@ -1,0 +1,363 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Se a voluntária ainda tem vagas disponíveis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se a voluntária ainda tem vagas disponíveis": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Atualiza a voluntária para disponivel",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status da mulher para disponivel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza voluntária para insdiponível sem vagas": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza a voluntária para disponivel": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Atualiza voluntária para insdiponível sem vagas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status da mulher para  indisponivel sem vagas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-26T11:48:21.467Z",
+  "id": "gSWCxBuQaWZKtpK1",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[WIP] Corrigir disponibilidade de voluntárias que ainda estão com status de confimração de disponibilidade",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        -20
+      ],
+      "id": "462f58a9-d758-4da6-848e-7a3b476dacac",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select \ndistinct v.id, v.email,v.zendesk_user_id,\n(select vh.status from public.volunteer_status_history vh where vh.volunteer_id = v.id and vh.status <> 'indisponivel_aguardando_confirmacao' order by vh.created_at desc limit 1) as ultimo_status_antes_confirmação, \n(select count(*) from match.matches m where m.volunteer_id = v.id and m.status in( 'in_contact','waiting_contact', 'started_contact')) quantidade_matches, \nva.current_matches, \nva.max_matches,\nva.max_matches - (select count(*) from match.matches m where m.volunteer_id = v.id and m.status in( 'in_contact','waiting_contact', 'started_contact'))  qtd_vagas\n\nfrom public.volunteers v \ninner join public.volunteer_availability va on (va.volunteer_id = v.id)\nwhere \nv.condition = 'indisponivel_aguardando_confirmacao' \nand  ( select count(*) from match.match_confirmations mc where mc.volunteer_id = v.id and mc.status = 'waiting') = 0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -540,
+        -20
+      ],
+      "id": "06384f94-5195-42a2-a18b-5736f241f5f2",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0f3b9f22-6abf-4d7d-bb2f-7511f8862e85",
+              "leftValue": "={{ $json.qtd_vagas.toNumber() }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        -20
+      ],
+      "id": "52c93bf1-bdf4-41b7-8c14-18a79159049a",
+      "name": "Se a voluntária ainda tem vagas disponíveis"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "update public.volunteers  set condition = 'disponivel' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'disponivel');\n\nUPDATE public.volunteer_availability\nSET \ncurrent_matches= {{ $json.qtd_vagas }} ,  \nis_available=true, \nupdated_at=CURRENT_TIMESTAMP \nWHERE volunteer_id= {{ $json.id }};\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        340,
+        -160
+      ],
+      "id": "8c191bde-34a9-4c10-938c-bcd0c0634080",
+      "name": "Atualiza a voluntária para disponivel",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "update public.volunteers  set condition = 'indisponivel_sem_vagas' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'indisponivel_sem_vagas');\n\nUPDATE public.volunteer_availability\nSET \ncurrent_matches= {{ $json.qtd_vagas }} ,  \nis_available=false, \nupdated_at=CURRENT_TIMESTAMP \nWHERE volunteer_id= {{ $json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        440,
+        280
+      ],
+      "id": "6dc07482-24db-4f32-849c-f189d60a2045",
+      "name": "Atualiza voluntária para insdiponível sem vagas",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        0,
+        -120
+      ],
+      "id": "1b1c9a1e-c07c-4c6a-a81f-773e8d8daab9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "disponivel"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        340,
+        -340
+      ],
+      "id": "cfce564f-7df3-45b7-a8e2-7479ef5eeb0d",
+      "name": "Atualiza status da mulher para disponivel",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "indisponivel_sem_vagas"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        440,
+        80
+      ],
+      "id": "d18fce49-52f6-423f-be5e-71301888477d",
+      "name": "Atualiza status da mulher para  indisponivel sem vagas",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        20,
+        200
+      ],
+      "id": "1fe5ebfe-3a06-421a-bf30-5efb4936afb1",
+      "name": "Loop Over Items1"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-26T11:48:21.471Z",
+      "updatedAt": "2025-06-26T11:48:21.471Z",
+      "role": "workflow:owner",
+      "workflowId": "gSWCxBuQaWZKtpK1",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2025-06-09T18:23:34.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1749493410027
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-26T18:07:58.000Z",
+  "versionId": "142f2bea-ffb0-428f-bc31-3aac35d99297"
+}
