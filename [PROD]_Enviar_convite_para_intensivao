@@ -93,13 +93,7 @@
     },
     "When clicking ‘Test workflow’": {
       "main": [
-        [
-          {
-            "node": "Busca segmento de voluntarias em capacitaçao1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Loop Over Items2": {
@@ -419,7 +413,13 @@
     },
     "Busca segmento de voluntarias em capacitaçao1": {
       "main": [
-        []
+        [
+          {
+            "node": "Loop Over Items14",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Envia mensagem whatsapp terceiro convite1": {
@@ -466,6 +466,107 @@
           }
         ]
       ]
+    },
+    "Loop Over Items13": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp ultimo convite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait14": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items14": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email ultimo convite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait15": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp ultimo convite": {
+      "main": [
+        [
+          {
+            "node": "Wait14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email ultimo convite": {
+      "main": [
+        [
+          {
+            "node": "Wait15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca segmento de voluntarias em capacitaçao2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-04-17T20:13:57.956Z",
@@ -483,9 +584,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -2220,
+        -2540,
         2700
-      ]
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -1406,7 +1508,7 @@
       "typeVersion": 2.5,
       "position": [
         -1980,
-        2700
+        2840
       ],
       "credentials": {
         "postgres": {
@@ -1424,8 +1526,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -1660,
-        2560
+        -400,
+        3380
       ]
     },
     {
@@ -1435,8 +1537,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -1220,
-        2580
+        40,
+        3400
       ],
       "id": "d0ef9d43-056e-4f26-9bf0-23e6c12f075e",
       "name": "Wait12",
@@ -1477,8 +1579,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1440,
-        2580
+        -180,
+        3400
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -1498,8 +1600,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -1700,
-        2820
+        -440,
+        3640
       ]
     },
     {
@@ -1511,8 +1613,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -1100,
-        2840
+        160,
+        3660
       ],
       "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
     },
@@ -1532,7 +1634,132 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -1400,
+        -140,
+        3660
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "id": "608e046b-f105-4478-91ea-53a978a60c44",
+      "name": "Loop Over Items13",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1740,
+        2560
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1300,
+        2580
+      ],
+      "id": "f828c3a8-53c1-4e21-9d3b-cda327df5ae7",
+      "name": "Wait14",
+      "webhookId": "9321eaad-4900-4322-bcad-c02ec71ce670"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "id": "f189b237-c7e0-4484-a7fc-b1bb7a7d0fc0",
+      "name": "Loop Over Items14",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1780,
+        2820
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "c60912b5-ea06-437a-833c-e9316b2542b2",
+      "name": "Wait15",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1180,
+        2840
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HXaf31f22a7a0d36440b65a36255298cae"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2183f24d-6547-4159-8070-d83e4f83c50f",
+      "name": "Envia mensagem whatsapp ultimo convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1520,
+        2580
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmcezfw5710kc050ifwpqwk1o\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  \n  }\n}",
+        "options": {}
+      },
+      "id": "77dfdd2e-7bf6-4ce8-899b-e230af798334",
+      "name": "Envia email ultimo convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1480,
         2840
       ],
       "credentials": {
@@ -1542,6 +1769,67 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "37 7 30 6 *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2200,
+        2820
+      ],
+      "id": "be406187-4fa9-41f0-b219-eed46c59a8a0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 30 6 *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2160,
+        2540
+      ],
+      "id": "cf56dcff-e36d-49fb-a196-286af51ef92b",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \n",
+        "options": {}
+      },
+      "id": "692339d2-2433-4d7d-9e80-a1d00d4ecfe0",
+      "name": "Busca segmento de voluntarias em capacitaçao2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -1940,
+        2540
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1604,6 +1892,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-06-26T22:43:42.000Z",
-  "versionId": "5b8946c0-1671-4cd8-b077-36942cac7beb"
+  "updatedAt": "2025-06-27T19:16:50.000Z",
+  "versionId": "6b4a63dd-d2fe-4e44-950b-5f5d3aea302b"
 }
