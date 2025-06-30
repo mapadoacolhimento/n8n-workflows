@@ -218,7 +218,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "update public.volunteers  set condition = 'disponivel' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'disponivel');\n\nUPDATE public.volunteer_availability\nSET \ncurrent_matches= {{ $json.qtd_vagas }} ,  \nis_available=true, \nupdated_at=CURRENT_TIMESTAMP \nWHERE volunteer_id= {{ $json.id }};\n\nSELECT id, zendesk_user_id from public.volunteers where id = {{ $json.id }};",
+        "query": "update public.volunteers  set condition = 'disponivel' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'disponivel');\n\nSELECT id, zendesk_user_id from public.volunteers where id = {{ $json.id }};",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -239,14 +239,14 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "update public.volunteers  set condition = 'indisponivel_sem_vagas' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'indisponivel_sem_vagas');\n\nUPDATE public.volunteer_availability\nSET \ncurrent_matches= {{ $json.qtd_vagas }} ,  \nis_available=false, \nupdated_at=CURRENT_TIMESTAMP \nWHERE volunteer_id= {{ $json.id }};\n\nSELECT id, zendesk_user_id from public.volunteers where id = {{ $json.id }};",
+        "query": "update public.volunteers  set condition = 'indisponivel_sem_vagas' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'indisponivel_sem_vagas');\n\nSELECT id, zendesk_user_id from public.volunteers where id = {{ $json.id }};",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        300,
-        220
+        320,
+        300
       ],
       "id": "6dc07482-24db-4f32-849c-f189d60a2045",
       "name": "Atualiza voluntária para insdiponível sem vagas",
@@ -278,7 +278,7 @@
       "typeVersion": 3,
       "position": [
         20,
-        200
+        280
       ],
       "id": "1fe5ebfe-3a06-421a-bf30-5efb4936afb1",
       "name": "Loop Over Items1"
@@ -366,7 +366,7 @@
       "typeVersion": 1,
       "position": [
         560,
-        220
+        300
       ],
       "id": "dc0257c5-0797-475d-b8a8-c7f756cae44b",
       "name": "Busca voluntária no Zendesk1",
@@ -397,7 +397,7 @@
       "typeVersion": 1,
       "position": [
         980,
-        320
+        300
       ],
       "id": "8ebc5dc7-272f-444c-bac6-8e512e90770a",
       "name": "Atualiza status da mulher para insdiponivel sem vagas1",
@@ -497,6 +497,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-06-27T18:23:42.000Z",
-  "versionId": "6833558d-600c-4a3a-b4ab-c67eee024c6a"
+  "updatedAt": "2025-06-30T18:17:00.000Z",
+  "versionId": "d42bb51c-aa84-4312-b3cf-84fb88cd9e5f"
 }
