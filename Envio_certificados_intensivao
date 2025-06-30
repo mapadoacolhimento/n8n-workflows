@@ -1,0 +1,387 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "Voluntarias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Extract From File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia certificado para as voluntárias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voluntarias": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract From File1": {
+      "main": [
+        [
+          {
+            "node": "Envia certificado para as voluntárias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-30T14:17:14.350Z",
+  "id": "YqWzFp4UKkzzyxFx",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Envio certificados intensivão",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1a5813ee-3a7d-464f-925e-8790551e27c3",
+      "name": "When clicking \"Test Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        440,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{$json.Nome}}.png",
+        "limit": 1,
+        "filter": {},
+        "options": {}
+      },
+      "id": "65e16585-acb4-4228-911a-2dcfafa1dbe3",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1160,
+        920
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "31vgqoSRas2e7TQe",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "75b913bc-e8fe-4e35-b1b8-6135089ea09e",
+      "name": "Google Drive1",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2040,
+        880
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "31vgqoSRas2e7TQe",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1AafT_YYQapmltV5QguD2OV-3Im0_oxIkdE1gvthSgr8/edit?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "id": "c6652ebe-e97e-495d-b87b-92c0105c889d",
+      "name": "Google Drive2",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        680,
+        920
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "31vgqoSRas2e7TQe",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "d50d049e-aff4-4117-9e60-b1b1286e9fba",
+      "name": "Extract From File1",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2280,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $('Loop Over Items1').item.json.Email}}\",\n  \"transactionalId\": \"cmcj73ehz07gn1o0i1dr1xi7d\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $('Loop Over Items1').item.json.Nome.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "840be1ef-ed8c-4074-a4b1-fca6118b2f5b",
+      "name": "Envia certificado para as voluntárias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2540,
+        960
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "xls",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        920,
+        920
+      ],
+      "id": "22835a35-f432-4272-b665-30290b68384b",
+      "name": "Voluntarias"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "14f692f9-c8e4-484b-985c-ed73d0dd43a5",
+      "name": "Merge2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1500,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1740,
+        860
+      ],
+      "id": "e89eeebb-910d-4cbb-af2d-06d4caf36ac1",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U06CP90UD1U",
+          "mode": "list",
+          "cachedResultName": "adriele473"
+        },
+        "text": "Deu ruim",
+        "otherOptions": {}
+      },
+      "id": "9d36b776-1321-4d00-8dd2-1871aa16367d",
+      "name": "Slack1",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        2760,
+        1120
+      ],
+      "webhookId": "ac0890ca-09d3-497a-812d-c98d8f7a4592",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-30T14:17:14.354Z",
+      "updatedAt": "2025-06-30T14:17:14.354Z",
+      "role": "workflow:owner",
+      "workflowId": "YqWzFp4UKkzzyxFx",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2025-06-09T18:23:34.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1749493410027
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-30T22:49:30.000Z",
+  "versionId": "0b1b82b5-9713-4013-895d-0a02e091c0ce"
+}
