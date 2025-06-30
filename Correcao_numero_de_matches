@@ -1,0 +1,198 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Postgres": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres2": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-06-30T10:52:37.672Z",
+  "id": "e4xi03f04TF16Mv0",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Correcao numero de matches",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        120
+      ],
+      "id": "70139e37-d31e-4173-b07f-5e0b64e717cb",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH match_count AS (\n    SELECT\n        volunteer_id,\n        current_matches,\n        COUNT(*) AS calculated_current_matches\n    FROM match.matches \n    LEFT JOIN volunteer_availability USING (volunteer_id)\n    WHERE \n        volunteer_id IS NOT NULL\n        AND status IN ('waiting_contact', 'in_contact')\n    GROUP BY volunteer_id, current_matches \n)\nSELECT *\nFROM match_count\nWHERE calculated_current_matches != current_matches order by calculated_current_matches",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -400,
+        -80
+      ],
+      "id": "e2f4c703-abda-4f7c-9c25-4e1e74c6cc5a",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        -20
+      ],
+      "id": "ca9f4497-64df-41eb-8018-1f98844b9ca4",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteer_availability set current_matches = {{ $json.calculated_current_matches }} WHERE volunteer_id ={{ $json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        -20
+      ],
+      "id": "afa31b92-67c3-4917-9fde-68986227d767",
+      "name": "Postgres1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select v.updated_at, v.id, v.email, v.condition, va.max_matches, va.current_matches, \nva.is_available, \n(select count(*) from match.matches  m where v.id = m.volunteer_id and m.status IN ('waiting_contact', 'in_contact') ) calculated_current_matches\nfrom public.volunteers v\ninner join public.volunteer_availability va on (va.volunteer_id = v.id)\nwhere   va.current_matches != (select count(*) from match.matches  m where v.id = m.volunteer_id and m.status IN ('waiting_contact', 'in_contact') ) ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -340,
+        120
+      ],
+      "id": "87f75413-dac9-4680-9177-65c9fdbd8326",
+      "name": "Postgres2",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-30T10:52:37.680Z",
+      "updatedAt": "2025-06-30T10:52:37.680Z",
+      "role": "workflow:owner",
+      "workflowId": "e4xi03f04TF16Mv0",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2025-06-09T18:23:34.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1749493410027
+                }
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-30T13:20:07.000Z",
+  "versionId": "11dbce63-051e-4ce4-96f1-dfaac8727468"
+}
