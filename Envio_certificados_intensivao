@@ -67,12 +67,7 @@
       "main": [
         [
           {
-            "node": "Google Drive",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Merge2",
+            "node": "Remove Duplicates",
             "type": "main",
             "index": 0
           }
@@ -81,7 +76,13 @@
     },
     "Merge2": {
       "main": [
-        []
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Loop Over Items1": {
@@ -117,6 +118,33 @@
           }
         ]
       ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-06-30T14:17:14.350Z",
@@ -134,7 +162,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        440,
+        -120,
         920
       ]
     },
@@ -152,7 +180,7 @@
       "typeVersion": 3,
       "position": [
         1160,
-        920
+        1020
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -201,7 +229,7 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        680,
+        140,
         920
       ],
       "credentials": {
@@ -262,7 +290,7 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
       "position": [
-        920,
+        380,
         920
       ],
       "id": "22835a35-f432-4272-b665-30290b68384b",
@@ -280,7 +308,7 @@
       "typeVersion": 2.1,
       "position": [
         1500,
-        920
+        900
       ]
     },
     {
@@ -306,7 +334,7 @@
           "mode": "list",
           "cachedResultName": "adriele473"
         },
-        "text": "Deu ruim",
+        "text": "={{ $('Loop Over Items1').item.json.Email}} não enviado",
         "otherOptions": {}
       },
       "id": "9d36b776-1321-4d00-8dd2-1871aa16367d",
@@ -324,6 +352,39 @@
           "name": "Slack account"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        600,
+        920
+      ],
+      "id": "cf81b01c-18f5-44c8-8a7e-df92e8965c99",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Nome"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        860,
+        920
+      ],
+      "id": "5366d535-9f20-4198-ba45-2cd70c1232df",
+      "name": "Sort"
     }
   ],
   "pinData": {},
@@ -382,6 +443,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-06-30T22:49:30.000Z",
-  "versionId": "0b1b82b5-9713-4013-895d-0a02e091c0ce"
+  "updatedAt": "2025-07-01T18:22:21.000Z",
+  "versionId": "97a0b2bb-7419-4e06-89fa-3c659de527eb"
 }
