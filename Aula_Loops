@@ -1,11 +1,22 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
-    "On form submission": {
+    "Interesse": {
       "main": [
         [
           {
             "node": "Envia email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pesquisa": {
+      "main": [
+        [
+          {
+            "node": "Atualiza contato no Loops",
             "type": "main",
             "index": 0
           }
@@ -21,6 +32,60 @@
   },
   "name": "Aula Loops",
   "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmcndhrga0afa380idwdmagno\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "b4878999-f93c-42f6-ad56-b198d1698ea7",
+      "name": "Envia email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -80,
+        -40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"firstName\": \"{{ $json.first_name }}\",\n  \"userTag\": \"mestre-loops\" \n}",
+        "options": {}
+      },
+      "id": "ab245dc7-63a4-4eda-928c-febeaa9f08d1",
+      "name": "Atualiza contato no Loops",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -100,
+        140
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
     {
       "parameters": {
         "formTitle": "Aula Loops",
@@ -67,35 +132,57 @@
         -40
       ],
       "id": "cb6d39ec-29cb-49c0-9498-15dc165367d4",
-      "name": "On form submission",
+      "name": "Interesse",
       "webhookId": "da04cca1-a65a-41a7-9e01-a3def4e478e3"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "formTitle": "Aula Loops",
+        "formDescription": "Responda esse formulário para atualizar seu contato",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "first_name",
+              "placeholder": "Primeiro Nome",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email",
+              "placeholder": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Deu pra entender um pouco mais dos envios no loops?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Tô só o meme da Nazaré"
+                  },
+                  {
+                    "option": "Assim, muita coisa.."
+                  },
+                  {
+                    "option": "Me sinto pronta!"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
         "options": {}
       },
-      "id": "b4878999-f93c-42f6-ad56-b198d1698ea7",
-      "name": "Envia email",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
       "position": [
-        -80,
-        -40
+        -340,
+        140
       ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      },
-      "onError": "continueRegularOutput"
+      "id": "834f3f49-d0d2-4da9-b414-bb925d84ad7b",
+      "name": "Pesquisa",
+      "webhookId": "1952505d-9266-460f-bade-132551cf607e"
     }
   ],
   "pinData": {},
@@ -153,7 +240,7 @@
   ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 1,
-  "updatedAt": "2025-06-23T18:23:06.000Z",
-  "versionId": "14d729d3-6fbb-4d98-b267-683816e786a5"
+  "triggerCount": 2,
+  "updatedAt": "2025-07-03T13:40:02.000Z",
+  "versionId": "1bfe75a5-3e76-4ba7-b5a8-0e753ec2e886"
 }
