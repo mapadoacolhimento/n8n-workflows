@@ -3,13 +3,7 @@
   "connections": {
     "When clicking ‘Execute workflow’": {
       "main": [
-        [
-          {
-            "node": "Postgres",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Postgres": {
@@ -143,13 +137,7 @@
     },
     "Postgres1": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Loop Over Items2": {
@@ -189,8 +177,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -780,
-        -40
+        -760,
+        -20
       ],
       "id": "462f58a9-d758-4da6-848e-7a3b476dacac",
       "name": "When clicking ‘Execute workflow’"
@@ -510,7 +498,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "update public.volunteer_availability set is_available = TRUE where volunteer_id = {{ $json.volunteer_id }}",
+        "query": "update public.volunteer_availability set is_available = TRUE where volunteer_id = {{ $json.volunteer_id }};\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.volunteer_id }}, 'disponivel');",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -586,6 +574,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-07-07T14:23:09.000Z",
-  "versionId": "e9680261-1726-4c84-963a-d1cb27be57f1"
+  "updatedAt": "2025-07-08T20:21:42.000Z",
+  "versionId": "17120638-cd1f-49ce-b275-356c36650dc5"
 }
