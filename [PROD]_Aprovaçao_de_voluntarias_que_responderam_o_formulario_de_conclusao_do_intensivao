@@ -87,7 +87,7 @@
       "main": [
         [
           {
-            "node": "Busca a voluntária no BD",
+            "node": "Edit Fields2",
             "type": "main",
             "index": 0
           }
@@ -175,82 +175,11 @@
         ]
       ]
     },
-    "Seta os campos para atualizar a voluntária no BD1": {
+    "Webhook1": {
       "main": [
         [
           {
-            "node": "Insere  o registro na volunteer_status_history1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Atualiza voluntária no BD",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca os tickets da voluntária no Zendesk1": {
-      "main": [
-        [
-          {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Separa os tickets do objeto retornado1": {
-      "main": [
-        [
-          {
-            "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualiza status da voluntária no Zendesk": {
-      "main": [
-        [
-          {
-            "node": "Busca os tickets da voluntária no Zendesk1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Seleciona o ticket mais antigo1": {
-      "main": [
-        [
-          {
-            "node": "Atualiza o ticket para \"aprovada\"1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"1": {
-      "main": [
-        [
-          {
-            "node": "Seleciona o ticket mais antigo1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If1": {
-      "main": [
-        [
-          {
-            "node": "Separa os tickets do objeto retornado1",
+            "node": "Se achou o email1",
             "type": "main",
             "index": 0
           }
@@ -261,7 +190,7 @@
       "main": [
         [
           {
-            "node": "Busca a voluntária no BD1",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -275,74 +204,105 @@
         ]
       ]
     },
-    "Busca a voluntária no BD1": {
+    "Edit Fields": {
       "main": [
         [
           {
-            "node": "Se retornou a voluntária pelo email1",
+            "node": "Formata o nome",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Busca voluntária pelo ID1": {
+    "Edit Fields2": {
       "main": [
         [
           {
-            "node": "Encontrou a voluntária no Zendesk1",
+            "node": "Busca a voluntária no BD",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Se retornou a voluntária pelo email1": {
+    "Formata o nome": {
       "main": [
         [
           {
-            "node": "Busca voluntária pelo ID1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Stop and Error4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Encontrou a voluntária no Zendesk1": {
-      "main": [
-        [
-          {
-            "node": "Seta os campos para atualizar a voluntária no BD1",
+            "node": "Switch",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Atualiza status da voluntária no Zendesk",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Stop and Error5",
+            "node": "Merge1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Webhook1": {
+    "Switch": {
       "main": [
         [
           {
-            "node": "Se achou o email1",
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Edit Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image": {
+      "main": [
+        [
+          {
+            "node": "Extract From File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract From File": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Envia certificado para as voluntárias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia certificado para as voluntárias": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Slack1",
             "type": "main",
             "index": 0
           }
@@ -488,7 +448,7 @@
               }
             ]
           },
-          "internalNote": "Voluntária aprovada pois participou do intensivão do dia 06/05/2025",
+          "internalNote": "=Voluntária aprovada pois participou do intensivão e preencheu o formulário de confirmação de presença: {{ $('Webhook').item.json.body.data.formName }}",
           "status": "open"
         }
       },
@@ -616,8 +576,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        20,
-        360
+        -400,
+        180
       ]
     },
     {
@@ -650,8 +610,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -140,
-        60
+        -660,
+        80
       ]
     },
     {
@@ -683,7 +643,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, email, zendesk_user_id from volunteers where email = TRIM(LOWER('{{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}'))",
+        "query": "SELECT id, email, zendesk_user_id from volunteers where email = TRIM(LOWER('{{ $json.email }}'))",
         "options": {}
       },
       "id": "7a992249-d5a4-4722-aee5-a801d93fa98c",
@@ -804,8 +764,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -400,
-        60
+        -940,
+        80
       ],
       "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
       "credentials": {
@@ -817,265 +777,41 @@
     },
     {
       "parameters": {
-        "keepOnlySet": true,
-        "values": {
-          "string": [
-            {
-              "name": "status",
-              "value": "aprovada"
-            },
-            {
-              "name": "created_at",
-              "value": "={{$now}}"
-            }
-          ],
-          "number": [
-            {
-              "name": "volunteer_id",
-              "value": "={{$node[\"Busca a voluntária no BD1\"].json[\"id\"]}}"
-            },
-            {
-              "name": "zendesk_user_id",
-              "value": "={{ $json[\"id\"] }}"
-            }
-          ]
-        },
+        "content": "## Aprovação dos intensivões de maio e junho\n",
+        "height": 320,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1080,
+        -40
+      ],
+      "typeVersion": 1,
+      "id": "50bfc6b5-59e4-40d7-9a90-4360c6d4f69c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-intensive-course",
+        "authentication": "headerAuth",
         "options": {}
       },
-      "id": "996aa47e-9734-49a3-9105-cc2680b64e32",
-      "name": "Seta os campos para atualizar a voluntária no BD1",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 1,
+      "id": "49819481-916a-4220-82e2-1c68b65ec6fe",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
       "position": [
-        1120,
-        740
-      ]
-    },
-    {
-      "parameters": {
-        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Busca voluntária pelo ID1\"].json[\"id\"]}}/tickets/requested",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBasicAuth",
-        "options": {}
-      },
-      "id": "785ebf32-31a4-4281-87d3-ef568b2a2fc0",
-      "name": "Busca os tickets da voluntária no Zendesk1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 3,
-      "position": [
-        1380,
-        1060
+        -920,
+        620
       ],
+      "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
       "credentials": {
-        "httpBasicAuth": {
-          "id": "cw6WdIc7c9HRGleo",
-          "name": "Zendesk auth"
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
         }
       }
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "tickets",
-        "include": "allOtherFields",
-        "options": {}
-      },
-      "id": "09a61bc3-f20c-421b-ae11-1fb253a72566",
-      "name": "Separa os tickets do objeto retornado1",
-      "type": "n8n-nodes-base.itemLists",
-      "typeVersion": 1,
-      "position": [
-        1740,
-        1060
-      ]
-    },
-    {
-      "parameters": {
-        "resource": "user",
-        "operation": "update",
-        "id": "={{ $json[\"id\"] }}",
-        "updateFields": {
-          "userFieldsUi": {
-            "userFieldValues": [
-              {
-                "field": "condition",
-                "value": "aprovada"
-              }
-            ]
-          }
-        }
-      },
-      "id": "f096c257-ca52-4da6-9af0-8d7504453f1d",
-      "name": "Atualiza status da voluntária no Zendesk",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        1160,
-        1060
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "limit"
-      },
-      "id": "eb541c33-69a7-45c9-ba85-ee16b757ef6f",
-      "name": "Seleciona o ticket mais antigo1",
-      "type": "n8n-nodes-base.itemLists",
-      "typeVersion": 1,
-      "position": [
-        2180,
-        1040
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "id": "={{ $json[\"tickets\"][\"id\"] }}",
-        "updateFields": {
-          "customFieldsUi": {
-            "customFieldsValues": [
-              {
-                "id": 360021665652,
-                "value": "aprovada"
-              }
-            ]
-          },
-          "internalNote": "Voluntária aprovada pois participou do intensivão do dia 30/06/2025",
-          "status": "open"
-        }
-      },
-      "id": "76535271-577f-467d-b972-0ec0caa584f7",
-      "name": "Atualiza o ticket para \"aprovada\"1",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        2420,
-        1040
-      ],
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"volunteer_id\"] }};",
-        "options": {}
-      },
-      "id": "d6d918bf-c978-45d8-9761-01094c10d760",
-      "name": "Atualiza voluntária no BD",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        1500,
-        880
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{ $json.tickets.custom_fields[6].value }}",
-              "value2": "cadastrada"
-            },
-            {
-              "value1": "={{ $json.tickets.custom_fields[6].value }}",
-              "value2": "capacitacao"
-            }
-          ]
-        },
-        "combineOperation": "any"
-      },
-      "id": "cd0507fd-db1d-4cc8-81dd-43f90f695458",
-      "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"1",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [
-        1960,
-        1060
-      ]
-    },
-    {
-      "parameters": {
-        "table": "volunteer_status_history",
-        "columns": "volunteer_id,status,created_at",
-        "additionalFields": {}
-      },
-      "id": "50da4868-bb3e-4670-9904-9afe88e35490",
-      "name": "Insere  o registro na volunteer_status_history1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        1400,
-        700
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
-              "leftValue": "={{ $json.count }}",
-              "rightValue": 0,
-              "operator": {
-                "type": "number",
-                "operation": "gt"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "2a90624c-c152-4142-9061-ca609db9fc62",
-      "name": "If1",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        1540,
-        1060
-      ]
-    },
-    {
-      "parameters": {
-        "errorMessage": "=Email vazio"
-      },
-      "id": "20549f32-c964-4913-a3bc-f8f9a0049080",
-      "name": "Stop and Error3",
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        -80,
-        1220
-      ]
     },
     {
       "parameters": {
@@ -1102,173 +838,272 @@
         },
         "options": {}
       },
-      "id": "73b977c1-3fbb-4398-90d1-5974cf5294c9",
+      "id": "d1c718aa-b3d2-4155-85bf-e3ada8b30424",
       "name": "Se achou o email1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
+        -540,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Email vazio"
+      },
+      "id": "e777e76f-afed-4bdc-870b-ca5e1d461b19",
+      "name": "Stop and Error3",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        60,
+        1080
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d0138b5-7915-4f6b-87c4-e1e6f512b61a",
+              "name": "email",
+              "value": "={{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value.trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "8a72fdf2-314b-4133-ba71-2e8f196616c7",
+              "name": "name",
+              "value": "={{ $json.body.data.fields.filter(item => item.label == 'Nome completo:')[0].value.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "ebda4fa9-e574-448b-86e9-35176ae029ba",
+              "name": "form_id",
+              "value": "={{ $json.body.data.formId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
         -240,
-        920
-      ]
-    },
-    {
-      "parameters": {
-        "errorMessage": "Voluntária não encontrada no BD"
-      },
-      "id": "f08c04b2-a8ff-4161-9d52-aa8d4d5bdb8e",
-      "name": "Stop and Error4",
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        480,
-        1240
-      ]
-    },
-    {
-      "parameters": {
-        "errorMessage": "=Voluntária não encontrada no Zendesk"
-      },
-      "id": "b52f4cd9-4b8f-47fd-980b-20680450552b",
-      "name": "Stop and Error5",
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        940,
-        1260
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT id, email, zendesk_user_id from volunteers where email = TRIM(LOWER('{{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}'))",
-        "options": {}
-      },
-      "id": "e03f38ed-97ce-4f5b-8f5c-d25112089194",
-      "name": "Busca a voluntária no BD1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        0,
-        900
+        600
       ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
+      "id": "146f3468-5e9b-4fda-90d8-63483921e4bd",
+      "name": "Edit Fields"
     },
     {
       "parameters": {
-        "resource": "user",
-        "operation": "get",
-        "id": "={{ $json.zendesk_user_id }}"
-      },
-      "id": "0c053e6e-8e98-4e23-a708-6e98221f7248",
-      "name": "Busca voluntária pelo ID1",
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        540,
-        880
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
+        "assignments": {
+          "assignments": [
             {
-              "id": "83d0a3cc-bbe9-4542-9ace-9a4a7d775782",
-              "leftValue": "={{ $json }}",
-              "rightValue": "",
-              "operator": {
-                "type": "object",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
+              "id": "9d0138b5-7915-4f6b-87c4-e1e6f512b61a",
+              "name": "email",
+              "value": "={{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}",
+              "type": "string"
             }
-          ],
-          "combinator": "and"
+          ]
         },
         "options": {}
       },
-      "id": "76e8b8f4-dbe4-4ae0-abac-941f0b56a102",
-      "name": "Se retornou a voluntária pelo email1",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        260,
-        900
-      ]
+        -160,
+        60
+      ],
+      "id": "b8eac1ed-5efa-4a7b-9563-72d9704e6741",
+      "name": "Edit Fields2"
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "db3e675d-358b-4af0-939b-20fcb3ff74f5",
-              "leftValue": "={{ $json.id }}",
-              "rightValue": "",
-              "operator": {
-                "type": "number",
-                "operation": "exists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction capitalize(str) {\n  return str.replace(/\\b\\w/g, (char) => char.toUpperCase());\n}\nfor (const item of $input.all()) {\n  item.json.name = capitalize(item.json.name);\n}\n\nreturn $input.all();"
       },
-      "id": "a28912fe-f4cf-4482-9e6e-128dea57c651",
-      "name": "Encontrou a voluntária no Zendesk1",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        760,
-        880
-      ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "intensive-course-3006",
-        "authentication": "headerAuth",
-        "options": {}
-      },
-      "id": "a696815e-d523-4713-b7e9-dffdabe0b068",
-      "name": "Webhook1",
-      "type": "n8n-nodes-base.webhook",
+      "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -500,
-        920
+        -20,
+        600
       ],
-      "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
+      "id": "92ac2c8d-5cec-4e09-967c-ac1088586dba",
+      "name": "Formata o nome"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.form_id }}",
+                    "rightValue": "wkrQXr",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e91a48e1-1022-4582-a88d-74d3f6af00a0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Intensivão Julho"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        120,
+        720
+      ],
+      "id": "33943fbf-a536-4a3e-bdc8-f1f2f71f9a78",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://drive.google.com/file/d/1qt8OQjXznf70jYlSkHTJpXJHmTBvNz6h/view?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        400,
+        720
+      ],
+      "id": "1b91f046-7ddf-44c9-b2ab-df03a21d1080",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "31vgqoSRas2e7TQe",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "dataPropertyName": "=data",
+        "text": "={{ $json.name }}",
+        "fontSize": 60,
+        "fontColor": "#622565",
+        "positionX": 136,
+        "positionY": 610,
+        "lineLength": 42,
+        "options": {
+          "fileName": "certificado",
+          "format": "png"
+        }
+      },
+      "id": "680cfda0-6c84-48d4-a1ba-b04ea08ef919",
+      "name": "Edit Image",
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        660,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "3c1efb68-71fa-4cea-8bb5-97592787f76d",
+      "name": "Extract From File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        900,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "59f53cd9-0747-4846-b790-40bbb50d863f",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1240,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmcj73ehz07gn1o0i1dr1xi7d\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "c48df2f1-000c-414f-b61d-d2f6c8d40095",
+      "name": "Envia certificado para as voluntárias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1520,
+        660
+      ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "BhcubpnINJanuVaZ",
-          "name": "Tally API"
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U06CP90UD1U",
+          "mode": "list",
+          "cachedResultName": "adriele473"
+        },
+        "text": "={{ $('Loop Over Items1').item.json.Email}} não enviado",
+        "otherOptions": {}
+      },
+      "id": "b4e1abec-b4d7-4956-b5f0-9f8ccde2f508",
+      "name": "Slack1",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        1760,
+        720
+      ],
+      "webhookId": "ac0890ca-09d3-497a-812d-c98d8f7a4592",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
         }
       }
     }
@@ -1376,86 +1211,84 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Tally Webhooks",
-            "content-length": "1247",
+            "content-length": "1353",
             "accept": "application/json, text/plain, */*",
             "accept-encoding": "gzip, br",
             "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
-            "baggage": "sentry-environment=production,sentry-release=61dd8b98f5734c74ae7ede254c4f24afae1f2c74,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=0454df7d3dce4dc055210c6d0a7bc6e7,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.5739037756315974,sentry-sample_rate=0.01",
             "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "34.96.41.200",
+            "cf-connecting-ip": "34.96.41.1",
             "cf-ew-via": "15",
-            "cf-ipcountry": "BE",
-            "cf-ray": "957d8fa8b504cdb6-LHR",
+            "cf-ipcountry": "US",
+            "cf-ray": "93bc32fe1054413c-LHR",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json",
-            "sentry-trace": "0454df7d3dce4dc055210c6d0a7bc6e7-d2759f69a8a6216c-0",
-            "x-forwarded-for": "34.96.41.200, 172.70.90.34",
+            "x-forwarded-for": "34.96.41.1, 172.70.86.36",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-qlbb7",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-kl95v",
             "x-is-trusted": "yes",
-            "x-real-ip": "34.96.41.200"
+            "x-real-ip": "34.96.41.1"
           },
           "params": {},
           "query": {},
           "body": {
-            "eventId": "bc7243c5-5dcd-4eb0-9907-3f8f64253b45",
+            "eventId": "e19f8fdc-5606-4d76-a3c7-07ecc99b47e9",
             "eventType": "FORM_RESPONSE",
-            "createdAt": "2025-06-30T12:10:33.615Z",
+            "createdAt": "2025-05-06T23:18:51.799Z",
             "data": {
-              "responseId": "81dELDY",
-              "submissionId": "81dELDY",
-              "respondentId": "1eyjvp",
-              "formId": "np182q",
-              "formName": "Formulário de Confirmação de Presença: Intensivão Mapa do Acolhimento 2025 - Junho",
-              "createdAt": "2025-06-30T12:10:33.000Z",
+              "responseId": "0QB1q9Q",
+              "submissionId": "0QB1q9Q",
+              "respondentId": "ARaLye",
+              "formId": "wkrQXr",
+              "formName": "Formulário de Confirmação de Presença: Intensivão Mapa do Acolhimento 2025",
+              "createdAt": "2025-05-06T23:18:51.000Z",
               "fields": [
                 {
-                  "key": "question_erZ0RO",
+                  "key": "question_K509Ez",
                   "label": "Nome completo:",
                   "type": "INPUT_TEXT",
-                  "value": "Victoria Chirity"
+                  "value": "adriele Alvarenga secUndino de Silva sauro "
                 },
                 {
-                  "key": "question_WR9Kza",
+                  "key": "question_L70erz",
                   "label": "email_provided",
                   "type": "INPUT_TEXT",
-                  "value": "victoriachirity12@gmail.com"
+                  "value": "adriele@mapa.org.br "
                 },
                 {
-                  "key": "question_a4NAdq",
+                  "key": "question_pyVQEy",
                   "label": null,
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "08d54f80-8dec-470a-810f-93e818103f58"
+                    "ac737857-d4cf-4f70-ae38-1cf0350073c5"
                   ],
                   "options": [
                     {
-                      "id": "77b4fce1-78d7-4d31-a65d-c1a9b869918f",
+                      "id": "93f7e924-0505-4cc8-93ac-05c8938313dc",
                       "text": "Advogada"
                     },
                     {
-                      "id": "08d54f80-8dec-470a-810f-93e818103f58",
+                      "id": "ac737857-d4cf-4f70-ae38-1cf0350073c5",
                       "text": "Psicóloga"
                     }
                   ]
                 },
                 {
-                  "key": "question_6KJWNB",
+                  "key": "question_1dELe4",
                   "label": "Qual é a sua especialidade? (Exemplo: Direito penal, Direito de família / TCC, Psicanálise, Gestalt)",
                   "type": "INPUT_TEXT",
-                  "value": "Psicanálise"
+                  "value": "Clínica- Existencial humanista, ACP.  Atuo na área de violência doméstica,  Psicóloga Jurídica e Perita."
                 },
                 {
-                  "key": "question_7KlaxA_886022b8-c5bd-4b22-9616-0ffbb9471012",
+                  "key": "question_MN5W4E_25f4165f-b7bc-431a-8bec-b035799d355d",
                   "label": "email",
                   "type": "HIDDEN_FIELDS",
                   "value": null
                 },
                 {
-                  "key": "question_7KlaxA_83f03fbf-3737-42b1-ad90-5a0ef0daf16c",
+                  "key": "question_MN5W4E_fb66315b-6e3d-4c98-adcd-9721660f3901",
                   "label": "occupation",
                   "type": "HIDDEN_FIELDS",
                   "value": null
@@ -1463,7 +1296,7 @@
               ]
             }
           },
-          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/intensive-course-3006",
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/intensive-course",
           "executionMode": "production"
         }
       }
@@ -1527,6 +1360,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-07-01T14:05:38.000Z",
-  "versionId": "96e0c64d-4997-442e-b390-ccb54f71ff2f"
+  "updatedAt": "2025-07-17T15:06:10.000Z",
+  "versionId": "c1356c1a-25ca-45ba-9a05-080022e3d8f7"
 }
