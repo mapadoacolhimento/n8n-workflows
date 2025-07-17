@@ -1,5 +1,5 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
     "Busca segmento de voluntarias em capacitaçao1": {
       "main": [
@@ -46,11 +46,6 @@
             "node": "Busca segmento de voluntarias em capacitaçao1",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Busca segmento de voluntarias em capacitaçao",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -82,7 +77,7 @@
         [],
         [
           {
-            "node": "Envia email segundo convite NÃO SE INSCREVERAM",
+            "node": "Envia email terceiro convite",
             "type": "main",
             "index": 0
           }
@@ -94,7 +89,7 @@
         [],
         [
           {
-            "node": "Envia mensagem whatsapp segundo convite",
+            "node": "Envia mensagem whatsapp terceiro convite",
             "type": "main",
             "index": 0
           }
@@ -113,11 +108,50 @@
             "node": "Envia email terceiro convite JÄ SE INSCREVERAM",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "loop whatsapp1",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
     },
-    "Envia email segundo convite NÃO SE INSCREVERAM": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "loop whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "loop whatsapp1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp segundo convite2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp segundo convite2": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email terceiro convite": {
       "main": [
         [
           {
@@ -128,7 +162,7 @@
         ]
       ]
     },
-    "Envia mensagem whatsapp segundo convite": {
+    "Envia mensagem whatsapp terceiro convite": {
       "main": [
         [
           {
@@ -149,7 +183,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email not in ('psicologa.anacoli@gmail.com', 'katarinalima.adv@gmail.com', 'inezaraujo.adv@hotmail.com')",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email not in ('inezaraujo.adv@hotmail.com', 'katarinalima.adv@gmail.com', 'psicologa.anacoli@gmail.com', 'psi.marianasantos852@gmail.com', 'alinedeborapsi@hotmail.com', 'gmercante@gmail.com', 'leticiabrechani_d@yahoo.com.br', 'gmercante@gmail.com', 'app.rodrigues01@gmail.com')",
         "options": {}
       },
       "id": "0747cefc-e298-4648-918f-e67821de9d38",
@@ -201,7 +235,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "07 14 17 7 *"
+              "expression": "07 14 21 7 *"
             }
           ]
         }
@@ -274,7 +308,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "01 14 17 7 *"
+              "expression": "01 14 21 7 *"
             }
           ]
         }
@@ -411,7 +445,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email in ('psicologa.anacoli@gmail.com', 'katarinalima.adv@gmail.com', 'inezaraujo.adv@hotmail.com')",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email in ('inezaraujo.adv@hotmail.com', 'katarinalima.adv@gmail.com', 'psicologa.anacoli@gmail.com', 'psi.marianasantos852@gmail.com', 'alinedeborapsi@hotmail.com', 'gmercante@gmail.com', 'leticiabrechani_d@yahoo.com.br', 'gmercante@gmail.com', 'app.rodrigues01@gmail.com')",
         "options": {}
       },
       "id": "5738d76e-fa75-4d2e-8017-313ff86a549c",
@@ -419,8 +453,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -180,
-        860
+        1400,
+        -280
       ],
       "credentials": {
         "postgres": {
@@ -437,16 +471,121 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmd6do1kh0fuby20iutvuivcb\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "jsonBody": "={\n  \"transactionalId\": \"cmd6dbz980cg3190ia5khe5r5\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
         "options": {}
       },
-      "id": "2c34098c-2aa4-4c1a-9183-3f03f5482929",
-      "name": "Envia email segundo convite NÃO SE INSCREVERAM",
+      "id": "eee27ba3-0a9e-48ad-afa5-547e2c9fb8e4",
+      "name": "Envia email terceiro convite JÄ SE INSCREVERAM",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        320,
-        0
+        1760,
+        -380
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2320,
+        -60
+      ],
+      "id": "ad9d8d2a-f07c-43e4-a476-bab9fc1e3b42",
+      "name": "Wait",
+      "webhookId": "2d87d2da-cbd7-46e3-a477-a814cef0922e"
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "id": "cd9660f9-6e55-468a-b292-da0ec618e156",
+      "name": "loop whatsapp1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1740,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX2972022239acd577862a06acd35ffe92"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"email\": \"{{ $json.email }}\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0d618b7a-f3fd-4cd7-8149-cb16615b1190",
+      "name": "Envia mensagem whatsapp segundo convite2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2020,
+        -60
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmd6do1kh0fuby20iutvuivcb\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "c28c2a78-967e-4daf-aef2-33a53dcf49a0",
+      "name": "Envia email segundo convite NÃO SE INSCREVERAM1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1160,
+        -300
       ],
       "retryOnFail": true,
       "notesInFlow": true,
@@ -489,13 +628,13 @@
         },
         "options": {}
       },
-      "id": "59bdb4ce-a77e-42b0-a867-73490148c533",
-      "name": "Envia mensagem whatsapp segundo convite",
+      "id": "276d44d2-f493-4ffc-a908-332ddd9c082d",
+      "name": "Envia mensagem whatsapp segundo convite1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        320,
-        380
+        1160,
+        -160
       ],
       "retryOnFail": true,
       "credentials": {
@@ -514,16 +653,16 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmd6dbz980cg3190ia5khe5r5\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "jsonBody": "={\n  \"transactionalId\": \"cmd7t4nfa0s94xj0itnyajqcv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
         "options": {}
       },
-      "id": "eee27ba3-0a9e-48ad-afa5-547e2c9fb8e4",
-      "name": "Envia email terceiro convite JÄ SE INSCREVERAM",
+      "id": "2c34098c-2aa4-4c1a-9183-3f03f5482929",
+      "name": "Envia email terceiro convite",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        60,
-        860
+        320,
+        0
       ],
       "retryOnFail": true,
       "notesInFlow": true,
@@ -535,6 +674,68 @@
       },
       "onError": "continueRegularOutput",
       "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX4e07e4d445a3ac42223bf976165d7e47"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"email\": \"{{ $json.email }}\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "59bdb4ce-a77e-42b0-a867-73490148c533",
+      "name": "Envia mensagem whatsapp terceiro convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        380
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Segundo convite",
+        "height": 760,
+        "width": 1420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1140,
+        -520
+      ],
+      "typeVersion": 1,
+      "id": "98fbaa42-308c-4b00-8a64-105d2b7f7020",
+      "name": "Sticky Note1"
     }
   ],
   "pinData": {},
@@ -596,10 +797,13 @@
     },
     "node:Schedule Trigger1": {
       "recurrenceRules": []
+    },
+    "node:Schedule Trigger segment": {
+      "recurrenceRules": []
     }
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-07-16T20:46:03.000Z",
-  "versionId": "93a97663-2220-4e1b-822c-68942f7e390b"
+  "updatedAt": "2025-07-17T20:17:49.000Z",
+  "versionId": "b9822a24-9a75-45c1-af59-332118b40bde"
 }
