@@ -140,34 +140,6 @@
           }
         ]
       ]
-    },
-    "Postgres1": {
-      "main": [
-        []
-      ]
-    },
-    "Loop Over Items2": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Atualiza a voluntária para disponivel1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualiza a voluntária para disponivel1": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "createdAt": "2025-06-26T11:48:21.467Z",
@@ -246,7 +218,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "update public.volunteers  set condition = 'disponivel' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'disponivel');\n\nSELECT id, zendesk_user_id from public.volunteers where id = {{ $json.id }};",
+        "query": "update public.volunteers  set condition = 'disponivel' where id = {{ $json.id }}  ;\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.id }}, 'disponivel');\n\nUPDATE public.volunteer_availability set is_available = TRUE\nWHERE volunteer_id = {{ $json.id }};\n\nSELECT id, zendesk_user_id from public.volunteers where id = {{ $json.id }};",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -466,61 +438,6 @@
           "name": "Zendesk account"
         }
       }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT *\nFROM volunteer_availability\nLEFT JOIN volunteers ON id = volunteer_id\nWHERE condition = 'disponivel' AND is_available = FALSE and current_matches < max_matches and volunteer_id <> 28182 ",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        -720,
-        240
-      ],
-      "id": "93540711-7a51-48bd-a280-e2feeb373e52",
-      "name": "Postgres1",
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        -560,
-        260
-      ],
-      "id": "be4766cf-fb98-4d7c-85d7-a0c51b2ddeb3",
-      "name": "Loop Over Items2"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "update public.volunteer_availability set is_available = TRUE where volunteer_id = {{ $json.volunteer_id }};\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP, {{ $json.volunteer_id }}, 'disponivel');",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        -300,
-        280
-      ],
-      "id": "42538972-aa5d-4239-8b7c-318019dbeca7",
-      "name": "Atualiza a voluntária para disponivel1",
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     }
   ],
   "pinData": {},
@@ -580,6 +497,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-07-09T15:05:06.000Z",
-  "versionId": "596505e2-0612-4601-b72c-7a3dd97b6d86"
+  "updatedAt": "2025-07-17T19:12:59.000Z",
+  "versionId": "3809d139-802f-4d3f-82c5-e339b2ac91fb"
 }
