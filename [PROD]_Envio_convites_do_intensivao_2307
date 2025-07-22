@@ -77,7 +77,7 @@
         [],
         [
           {
-            "node": "Envia email terceiro convite",
+            "node": "Envia email ultimo convite",
             "type": "main",
             "index": 0
           }
@@ -89,7 +89,7 @@
         [],
         [
           {
-            "node": "Envia mensagem whatsapp terceiro convite",
+            "node": "Envia mensagem whatsapp último convite",
             "type": "main",
             "index": 0
           }
@@ -151,7 +151,7 @@
         ]
       ]
     },
-    "Envia email terceiro convite": {
+    "Envia email ultimo convite": {
       "main": [
         [
           {
@@ -162,7 +162,7 @@
         ]
       ]
     },
-    "Envia mensagem whatsapp terceiro convite": {
+    "Envia mensagem whatsapp último convite": {
       "main": [
         [
           {
@@ -235,7 +235,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "07 14 21 7 *"
+              "expression": "07 10 23 7 *"
             }
           ]
         }
@@ -308,7 +308,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "01 14 21 7 *"
+              "expression": "01 10 23 7 *"
             }
           ]
         }
@@ -647,6 +647,21 @@
     },
     {
       "parameters": {
+        "content": "## Segundo convite",
+        "height": 760,
+        "width": 1420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1140,
+        -520
+      ],
+      "typeVersion": 1,
+      "id": "98fbaa42-308c-4b00-8a64-105d2b7f7020",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -656,13 +671,13 @@
         "jsonBody": "={\n  \"transactionalId\": \"cmd7t4nfa0s94xj0itnyajqcv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
         "options": {}
       },
-      "id": "2c34098c-2aa4-4c1a-9183-3f03f5482929",
-      "name": "Envia email terceiro convite",
+      "id": "fa435b54-a1e8-46b7-b065-e617552b9230",
+      "name": "Envia email terceiro convite1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        320,
-        0
+        1440,
+        80
       ],
       "retryOnFail": true,
       "notesInFlow": true,
@@ -705,8 +720,81 @@
         },
         "options": {}
       },
+      "id": "def42f23-60af-40f2-b946-65ed610a5448",
+      "name": "Envia mensagem whatsapp terceiro convite1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        80
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmdei1cm62qmozp0in9mjrjs5\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "2c34098c-2aa4-4c1a-9183-3f03f5482929",
+      "name": "Envia email ultimo convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        320,
+        0
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX63d5ec3f74dcfe5e794b4437c54b3772"
+            }
+          ]
+        },
+        "options": {}
+      },
       "id": "59bdb4ce-a77e-42b0-a867-73490148c533",
-      "name": "Envia mensagem whatsapp terceiro convite",
+      "name": "Envia mensagem whatsapp último convite",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -721,21 +809,6 @@
         }
       },
       "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "content": "## Segundo convite",
-        "height": 760,
-        "width": 1420
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1140,
-        -520
-      ],
-      "typeVersion": 1,
-      "id": "98fbaa42-308c-4b00-8a64-105d2b7f7020",
-      "name": "Sticky Note1"
     }
   ],
   "pinData": {},
@@ -765,7 +838,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-06-09T18:23:34.810Z",
+              "updatedAt": "2025-07-22T19:04:05.304Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -779,7 +852,8 @@
                 "npsSurvey": {
                   "responded": true,
                   "lastShownAt": 1749493410027
-                }
+                },
+                "easyAIWorkflowOnboarded": true
               },
               "role": "global:owner",
               "disabled": false,
@@ -804,6 +878,6 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-07-17T20:17:49.000Z",
-  "versionId": "b9822a24-9a75-45c1-af59-332118b40bde"
+  "updatedAt": "2025-07-22T12:26:48.000Z",
+  "versionId": "224c15ec-72e4-4173-b466-dd5812ca2ee5"
 }
