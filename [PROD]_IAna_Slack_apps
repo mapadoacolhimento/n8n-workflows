@@ -16,18 +16,7 @@
       "main": [
         [
           {
-            "node": "Code",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code": {
-      "main": [
-        [
-          {
-            "node": "Filter",
+            "node": "Extract from File",
             "type": "main",
             "index": 0
           }
@@ -39,17 +28,6 @@
         [
           {
             "node": "Pega conteúdo do link",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filter": {
-      "main": [
-        [
-          {
-            "node": "Existem novos contatos?",
             "type": "main",
             "index": 0
           }
@@ -230,6 +208,50 @@
           }
         ]
       ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Existem novos contatos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-02-24T13:56:18.186Z",
@@ -332,7 +354,13 @@
     {
       "parameters": {
         "url": "={{ $json.url }}",
-        "options": {}
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
       },
       "id": "ba70e680-4d15-4536-823b-92227b7a74af",
       "name": "Pega conteúdo do link",
@@ -340,19 +368,6 @@
       "typeVersion": 4.2,
       "position": [
         1140,
-        1020
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "output = []\nfor (const item of $input.all()) {\n  data = item.json.data\n  stringNoQuotes = data.replace(/['\"]+/g, '')\n  \n  allRows = stringNoQuotes.split(\"\\n\");\n\n  allRows.shift() // removes head\n\n  for (const row of allRows) {\n    splitRow = row.split(\",\")\n    name = splitRow[1]\n    \n    firstName = name.split(\" \")[0]\n\n    firstNameCapitilized = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()\n    email = splitRow[2].toLowerCase()\n    dataString = splitRow[splitRow.length - 1]\n    const [dia, mes, ano] = dataString.split('/');\n    const createdAt = `${ano}-${mes}-${dia}`;  \n    output.push(\n      {\n        first_name: firstNameCapitilized,\n        email: email,\n        user_group: 'doadora_doare',\n        created_at: createdAt\n      }\n    )\n  }\n\n}\n\nreturn output"
-      },
-      "id": "710d960f-4d5a-4e58-a905-67f4ba554a9e",
-      "name": "Code",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1360,
         1020
       ]
     },
@@ -387,40 +402,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "e4c9a665-3c92-411b-9209-333304c1ca4e",
-              "leftValue": "={{ $json.created_at }}",
-              "rightValue": "={{ $('Separa link e data da última atualização').item.json.last_update }}",
-              "operator": {
-                "type": "dateTime",
-                "operation": "after"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "bdbf265b-0d15-43a2-b0e0-1af02d79b288",
-      "name": "Filter",
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.2,
-      "position": [
-        1580,
-        1020
-      ],
-      "alwaysOutputData": true
-    },
-    {
-      "parameters": {
         "select": "channel",
         "channelId": {
           "__rl": true,
@@ -437,7 +418,7 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.2,
       "position": [
-        2380,
+        2860,
         820
       ],
       "webhookId": "e974db74-589f-4c1b-ae13-10facbfc6d55",
@@ -461,7 +442,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        2140,
+        2620,
         1000
       ]
     },
@@ -474,7 +455,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2360,
+        2840,
         1020
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
@@ -495,7 +476,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2560,
+        3040,
         1020
       ],
       "credentials": {
@@ -536,7 +517,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1800,
+        2260,
         1020
       ]
     },
@@ -558,8 +539,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.2,
       "position": [
-        2160,
-        1300
+        2680,
+        1340
       ],
       "webhookId": "e974db74-589f-4c1b-ae13-10facbfc6d55",
       "executeOnce": true,
@@ -838,6 +819,114 @@
         -440
       ],
       "webhookId": "e35dd096-adcb-40ea-840b-c5d874306bd4"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1020
+      ],
+      "id": "4025cb9e-3940-4d12-96c0-5e8ccf9d43cf",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05b72e7f-b6ca-451b-bc60-14067a0c8b53",
+              "name": "created_at_excel",
+              "value": "={{ $json['Data Criação Doador'] }}",
+              "type": "number"
+            },
+            {
+              "id": "645f0f96-b269-40f2-87a0-232d69839d55",
+              "name": "email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "1c54b3cd-a3ad-4f13-af2d-3a48fc766568",
+              "name": "name",
+              "value": "={{ $json.Nome }}",
+              "type": "string"
+            },
+            {
+              "id": "63b01d0f-9a5d-4bf4-9109-24f6c9dfcb2c",
+              "name": "first_name",
+              "value": "={{ $json.Nome.split(' ',1)[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "4e58b7f2-d8d4-4802-9e58-6be138c07a0f",
+              "name": "user_group",
+              "value": "doadora_doare",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1580,
+        1020
+      ],
+      "id": "7417bf5d-f554-4872-b955-cb545d46b9e9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction formatDateToDDMMYYYY(date) {\n    const day = String(date.getDate()).padStart(2, '0');\n    const month = String(date.getMonth() + 1).padStart(2, '0');\n    const year = date.getFullYear();\n    return `${year}-${month}-${day}`;\n}\n\nfunction excelDateToJSDate(excelDate) {\n    // O Excel considera 1 = 1 de janeiro de 1900 (em modo 1900)\n    // JavaScript conta milissegundos desde 1 de janeiro de 1970\n    const excelEpoch = new Date(1899, 11, 31); // 31/12/1899 (correção do bug do Excel que considera 1900 um ano bissexto)\n    const days = Math.floor(excelDate);\n    const timeFraction = excelDate - days;\n    \n    // Adiciona os dias (menos 1 porque o Excel tem um bug onde considera 29/02/1900 como válido)\n    const date = new Date(excelEpoch);\n    date.setDate(date.getDate() + days - 1);\n    \n    // Adiciona a parte do tempo (horas, minutos, segundos)\n    const millisecondsInDay = 24 * 60 * 60 * 1000;\n    const timeOffset = timeFraction * millisecondsInDay;\n    date.setTime(date.getTime() + timeOffset);\n    \n    return formatDateToDDMMYYYY(date);\n}\n\n\n\nfor (const item of $input.all()) {\n  item.json.created_at = excelDateToJSDate(item.json.created_at_excel) ;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        1020
+      ],
+      "id": "2c57b785-65d8-4d22-a8ef-b40f3d36928b",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e4c9a665-3c92-411b-9209-333304c1ca4e",
+              "leftValue": "={{ $json.created_at }}",
+              "rightValue": "={{ $('Separa link e data da última atualização').item.json.last_update }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "77b73221-01bd-4a89-a79e-346c655a47dd",
+      "name": "Filter1",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        1020
+      ],
+      "alwaysOutputData": true
     }
   ],
   "pinData": {
@@ -846,14 +935,14 @@
         "json": {
           "user": "U054LTUPSLR",
           "type": "app_mention",
-          "ts": "1745606855.902509",
-          "client_msg_id": "c7436192-3fa3-49ef-a0e8-81d0e09b9a6d",
-          "text": "<@U08CXBQ7E8M> <https://doare-reports.s3.us-west-2.amazonaws.com/a032ff86-1015-428e-9706-41c130867314-1745606738-Mapa%20do%20Acolhimento.csv> 2025-04-25",
+          "ts": "1752787664.646789",
+          "client_msg_id": "e9a4d515-02bb-4fbd-b91c-cb302864144e",
+          "text": "<@U08CXBQ7E8M> <https://doare-reports.s3.us-west-2.amazonaws.com/c2284563-69dc-4d65-9e10-a403972f93ef-1753208968-Mapa%20do%20Acolhimento.xlsx> 2025-05-08",
           "team": "T0513P26WV8",
           "blocks": [
             {
               "type": "rich_text",
-              "block_id": "+/jx5",
+              "block_id": "GBIkx",
               "elements": [
                 {
                   "type": "rich_text_section",
@@ -868,11 +957,11 @@
                     },
                     {
                       "type": "link",
-                      "url": "https://doare-reports.s3.us-west-2.amazonaws.com/a032ff86-1015-428e-9706-41c130867314-1745606738-Mapa%20do%20Acolhimento.csv"
+                      "url": "https://doare-reports.s3.us-west-2.amazonaws.com/c2284563-69dc-4d65-9e10-a403972f93ef-1753208968-Mapa%20do%20Acolhimento.xlsx"
                     },
                     {
                       "type": "text",
-                      "text": " 2025-04-25"
+                      "text": " 2025-05-08"
                     }
                   ]
                 }
@@ -880,7 +969,7 @@
             }
           ],
           "channel": "C08ES2PR2N4",
-          "event_ts": "1745606855.902509"
+          "event_ts": "1752787664.646789"
         }
       }
     ]
@@ -911,7 +1000,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-06-09T18:23:34.810Z",
+              "updatedAt": "2025-07-22T19:04:05.304Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -925,7 +1014,8 @@
                 "npsSurvey": {
                   "responded": true,
                   "lastShownAt": 1749493410027
-                }
+                },
+                "easyAIWorkflowOnboarded": true
               },
               "role": "global:owner",
               "disabled": false,
@@ -940,6 +1030,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-04-25T19:09:04.000Z",
-  "versionId": "228e08de-4a25-44f3-861a-d97cba90e214"
+  "updatedAt": "2025-07-22T19:04:16.000Z",
+  "versionId": "bd06e34e-b4fd-4501-bca6-51c268a2c038"
 }
