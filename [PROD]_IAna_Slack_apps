@@ -842,7 +842,7 @@
               "id": "05b72e7f-b6ca-451b-bc60-14067a0c8b53",
               "name": "created_at_excel",
               "value": "={{ $json['Data Criação Doador'] }}",
-              "type": "number"
+              "type": "string"
             },
             {
               "id": "645f0f96-b269-40f2-87a0-232d69839d55",
@@ -883,7 +883,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction formatDateToDDMMYYYY(date) {\n    const day = String(date.getDate()).padStart(2, '0');\n    const month = String(date.getMonth() + 1).padStart(2, '0');\n    const year = date.getFullYear();\n    return `${year}-${month}-${day}`;\n}\n\nfunction excelDateToJSDate(excelDate) {\n    // O Excel considera 1 = 1 de janeiro de 1900 (em modo 1900)\n    // JavaScript conta milissegundos desde 1 de janeiro de 1970\n    const excelEpoch = new Date(1899, 11, 31); // 31/12/1899 (correção do bug do Excel que considera 1900 um ano bissexto)\n    const days = Math.floor(excelDate);\n    const timeFraction = excelDate - days;\n    \n    // Adiciona os dias (menos 1 porque o Excel tem um bug onde considera 29/02/1900 como válido)\n    const date = new Date(excelEpoch);\n    date.setDate(date.getDate() + days - 1);\n    \n    // Adiciona a parte do tempo (horas, minutos, segundos)\n    const millisecondsInDay = 24 * 60 * 60 * 1000;\n    const timeOffset = timeFraction * millisecondsInDay;\n    date.setTime(date.getTime() + timeOffset);\n    \n    return formatDateToDDMMYYYY(date);\n}\n\n\n\nfor (const item of $input.all()) {\n  item.json.created_at = excelDateToJSDate(item.json.created_at_excel) ;\n}\n\nreturn $input.all();"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction formatDateToDDMMYYYY(date) {\n\n    const day = String(date.getDate()).padStart(2, '0');\n    const month = String(date.getMonth() + 1).padStart(2, '0');\n    const year = date.getFullYear();\n    return `${year}-${month}-${day}`;\n}\n\nfunction excelDateToJSDate(excelDate) {\n    // O Excel considera 1 = 1 de janeiro de 1900 (em modo 1900)\n    // JavaScript conta milissegundos desde 1 de janeiro de 1970\n    const excelEpoch = new Date(1899, 11, 31); // 31/12/1899 (correção do bug do Excel que considera 1900 um ano bissexto)\n    const days = Math.floor(excelDate);\n    const timeFraction = excelDate - days;\n    \n    // Adiciona os dias (menos 1 porque o Excel tem um bug onde considera 29/02/1900 como válido)\n    const date = new Date(excelEpoch);\n    date.setDate(date.getDate() + days - 1);\n    \n    // Adiciona a parte do tempo (horas, minutos, segundos)\n    const millisecondsInDay = 24 * 60 * 60 * 1000;\n    const timeOffset = timeFraction * millisecondsInDay;\n    date.setTime(date.getTime() + timeOffset);\n    \n    return formatDateToDDMMYYYY(date);\n}\n\n\n\nfor (const item of $input.all()) {\n    // Se for string no formato DD/MM/AAAA\n  let date = item.json.created_at_excel\n  if (/^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(date)) {\n    const [dia, mes, ano] = date.split('/');\n    item.json.created_at = `${ano}-${mes}-${dia}`;\n  } else {\n    item.json.created_at = excelDateToJSDate(item.json.created_at_excel) ;\n  }\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -935,14 +935,14 @@
         "json": {
           "user": "U054LTUPSLR",
           "type": "app_mention",
-          "ts": "1752787664.646789",
-          "client_msg_id": "e9a4d515-02bb-4fbd-b91c-cb302864144e",
-          "text": "<@U08CXBQ7E8M> <https://doare-reports.s3.us-west-2.amazonaws.com/c2284563-69dc-4d65-9e10-a403972f93ef-1753208968-Mapa%20do%20Acolhimento.xlsx> 2025-05-08",
+          "ts": "1754328953.724149",
+          "client_msg_id": "09b0735e-79f0-4066-884a-fa45d2c28603",
+          "text": "<@U08CXBQ7E8M> <https://doare-reports.s3.amazonaws.com/reports/1754328883-Mapa%20do%20Acolhimento.xlsx> 2025-01-01",
           "team": "T0513P26WV8",
           "blocks": [
             {
               "type": "rich_text",
-              "block_id": "GBIkx",
+              "block_id": "vuaHI",
               "elements": [
                 {
                   "type": "rich_text_section",
@@ -957,11 +957,11 @@
                     },
                     {
                       "type": "link",
-                      "url": "https://doare-reports.s3.us-west-2.amazonaws.com/c2284563-69dc-4d65-9e10-a403972f93ef-1753208968-Mapa%20do%20Acolhimento.xlsx"
+                      "url": "https://doare-reports.s3.amazonaws.com/reports/1754328883-Mapa%20do%20Acolhimento.xlsx"
                     },
                     {
                       "type": "text",
-                      "text": " 2025-05-08"
+                      "text": " 2025-01-01"
                     }
                   ]
                 }
@@ -969,7 +969,7 @@
             }
           ],
           "channel": "C08ES2PR2N4",
-          "event_ts": "1752787664.646789"
+          "event_ts": "1754328953.724149"
         }
       }
     ]
@@ -1030,6 +1030,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-07-22T19:04:16.000Z",
-  "versionId": "bd06e34e-b4fd-4501-bca6-51c268a2c038"
+  "updatedAt": "2025-08-04T19:15:30.000Z",
+  "versionId": "1f18c696-9dfe-4ba5-9978-fee011a47631"
 }
