@@ -1,0 +1,666 @@
+{
+  "active": false,
+  "connections": {
+    "Pega conteúdo do link": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa link e data da última atualização": {
+      "main": [
+        [
+          {
+            "node": "Pega conteúdo do link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Encontra contato no Loops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza contato no Loops2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existem novos contatos?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Existem novos contatos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qual o canal?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Separa link e data da última atualização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontra contato no Loops": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Atualiza contato no Loops2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cria contato no Loops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cria contato no Loops": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-04T19:29:19.728Z",
+  "id": "86n11n4libGFWbDo",
+  "isArchived": false,
+  "meta": null,
+  "name": "Sincronizar doare antigos",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "7f2e3054-0cb7-474b-b9a0-fd9e6de013eb",
+      "name": "Pega conteúdo do link",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3012f44f-c839-4fff-aad4-8ebceba0209f",
+              "name": "url",
+              "value": "={{ $json.blocks[0].elements[0].elements[2].url }}",
+              "type": "string"
+            },
+            {
+              "id": "9931804b-408b-4fff-8057-0a1970c9548f",
+              "name": "last_update",
+              "value": "={{ $json.blocks[0].elements[0].elements[3].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "143c0c84-d6f1-4dfd-b20f-ffb47e888126",
+      "name": "Separa link e data da última atualização",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "27036ca7-cd94-4cd8-b59d-368a645199f9",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2340,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $('Loop Over Items1').item.json.email }}\",\n  \"firstName\": \"{{ $('Loop Over Items1').item.json.first_name }}\",\n  \"userGroup\": \"doadora_doare\"\n}",
+        "options": {}
+      },
+      "id": "1508d915-a999-47c8-9b6e-74158f638607",
+      "name": "Atualiza contato no Loops2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3300,
+        680
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a9a9f86-5117-4cf7-8c27-68824c8f94f8",
+              "leftValue": "={{ $json.email  }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ac769464-7238-4ce0-b657-309eaac48c7d",
+      "name": "Existem novos contatos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1860,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08ES2PR2N4",
+          "mode": "id"
+        },
+        "text": "Não há novos doadores desde a última atualização :confused:",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "15baef8f-5168-433a-98b2-50096b97caba",
+      "name": "Não há novos doadores",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        2440,
+        1400
+      ],
+      "webhookId": "e974db74-589f-4c1b-ae13-10facbfc6d55",
+      "executeOnce": true,
+      "credentials": {
+        "slackApi": {
+          "id": "Dg49PbVFaboa5OhZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### #sync-doare\nSincronização de doadores da Doare no Loops"
+      },
+      "id": "37c8652a-aed2-4c4d-bfb8-57bae419e203",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        600,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        680
+      ],
+      "id": "e2a9c8e4-51e8-40ea-9a6b-11aa039966aa",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05b72e7f-b6ca-451b-bc60-14067a0c8b53",
+              "name": "created_at_excel",
+              "value": "={{ $json['Data Criação Doador'] }}",
+              "type": "string"
+            },
+            {
+              "id": "645f0f96-b269-40f2-87a0-232d69839d55",
+              "name": "email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "1c54b3cd-a3ad-4f13-af2d-3a48fc766568",
+              "name": "name",
+              "value": "={{ $json.Nome }}",
+              "type": "string"
+            },
+            {
+              "id": "63b01d0f-9a5d-4bf4-9109-24f6c9dfcb2c",
+              "name": "first_name",
+              "value": "={{ $json.Nome.split(' ',1)[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "4e58b7f2-d8d4-4802-9e58-6be138c07a0f",
+              "name": "user_group",
+              "value": "doadora_doare",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        680
+      ],
+      "id": "cef53fff-e64d-4c6b-9076-4bb14999ca07",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction formatDateToDDMMYYYY(date) {\n\n    const day = String(date.getDate()).padStart(2, '0');\n    const month = String(date.getMonth() + 1).padStart(2, '0');\n    const year = date.getFullYear();\n    return `${year}-${month}-${day}`;\n}\n\nfunction excelDateToJSDate(excelDate) {\n    // O Excel considera 1 = 1 de janeiro de 1900 (em modo 1900)\n    // JavaScript conta milissegundos desde 1 de janeiro de 1970\n    const excelEpoch = new Date(1899, 11, 31); // 31/12/1899 (correção do bug do Excel que considera 1900 um ano bissexto)\n    const days = Math.floor(excelDate);\n    const timeFraction = excelDate - days;\n    \n    // Adiciona os dias (menos 1 porque o Excel tem um bug onde considera 29/02/1900 como válido)\n    const date = new Date(excelEpoch);\n    date.setDate(date.getDate() + days - 1);\n    \n    // Adiciona a parte do tempo (horas, minutos, segundos)\n    const millisecondsInDay = 24 * 60 * 60 * 1000;\n    const timeOffset = timeFraction * millisecondsInDay;\n    date.setTime(date.getTime() + timeOffset);\n    \n    return formatDateToDDMMYYYY(date);\n}\n\n\n\nfor (const item of $input.all()) {\n    // Se for string no formato DD/MM/AAAA\n  let date = item.json.created_at_excel\n  if (/^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(date)) {\n    const [dia, mes, ano] = date.split('/');\n    item.json.created_at = `${ano}-${mes}-${dia}`;\n  } else {\n    item.json.created_at = excelDateToJSDate(item.json.created_at_excel) ;\n  }\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        680
+      ],
+      "id": "c7313887-59bb-4bed-934c-6c5b9c155e0a",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "C08CYATGJHK",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "#pergunte-pra-iana"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5a8d3438-3ef8-40de-b37f-091f00a47ac7",
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "C08ES2PR2N4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "#sync-doare"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c3edd488-5bd7-4aa4-8a14-374026d46ca7",
+      "name": "Qual o canal?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -60,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://app.loops.so/api/v1/contacts/find?email={{ $('Loop Over Items1').item.json.email }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "bd11f9b2-6fb1-4ca0-8482-3c91485424dc",
+      "name": "Encontra contato no Loops",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2560,
+        700
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2c29c8da-28ae-4173-9239-20f89d4290b5",
+              "leftValue": "={{ $json.userGroup }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c60977ff-dc69-4db4-bca8-241f805b82e4",
+              "leftValue": "={{ $json.userGroup }}",
+              "rightValue": "doadora",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3080,
+        720
+      ],
+      "id": "621dbb18-038a-4583-a1a4-79589325cc45",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0836c7ad-ef88-4a75-8416-8113945ebe80",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2760,
+        700
+      ],
+      "id": "52c6bd10-1f2e-43cd-b987-0f0e20a30773",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $('Loop Over Items1').item.json.email }}\",\n  \"firstName\": \"{{ $('Loop Over Items1').item.json.first_name }}\",\n  \"userGroup\": \"doadora_doare\"\n}",
+        "options": {}
+      },
+      "id": "e8057093-37ef-4ca5-ad82-94a38b058871",
+      "name": "cria contato no Loops",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3120,
+        940
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-04T19:29:19.737Z",
+      "updatedAt": "2025-08-04T19:29:19.737Z",
+      "role": "workflow:owner",
+      "workflowId": "86n11n4libGFWbDo",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "role": "project:personalOwner",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2025-07-22T19:04:05.304Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1749493410027
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "role": "global:owner",
+              "disabled": false,
+              "mfaEnabled": false,
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-04T20:17:55.000Z",
+  "versionId": "63181b9e-aa20-4dd5-97e5-692c9e1f2a16"
+}
