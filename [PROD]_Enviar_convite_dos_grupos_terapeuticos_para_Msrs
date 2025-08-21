@@ -5,7 +5,7 @@
       "main": [
         [
           {
-            "node": "Busca msrs aguardando match psicológico com prioridade2",
+            "node": "Busca msrs aguardando match psicológico com prioridade3",
             "type": "main",
             "index": 0
           }
@@ -48,13 +48,7 @@
     },
     "Busca msrs aguardando match psicológico com prioridade": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Loop Over Items1": {
@@ -82,13 +76,7 @@
     },
     "Busca msrs aguardando match psicológico com prioridade2": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Envia email segundo convite": {
@@ -96,6 +84,51 @@
         [
           {
             "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email quarto convite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca msrs aguardando match psicológico com prioridade3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email quarto convite": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
             "type": "main",
             "index": 0
           }
@@ -118,8 +151,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        240,
-        640
+        200,
+        1080
       ]
     },
     {
@@ -321,7 +354,8 @@
     },
     {
       "parameters": {
-        "content": "## Terceiro envio\n**Pedidos de acolhimento jurídico** aguardando match sem prioridade\nHorários restantes de grupos remanescentes"
+        "content": "## Terceiro envio\n**Pedidos de acolhimento jurídico** aguardando match sem prioridade\nHorários restantes de grupos remanescentes",
+        "height": 220
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
@@ -331,6 +365,123 @@
       "typeVersion": 1,
       "id": "dd45211b-7e85-4ab9-a33b-1045d29ce406",
       "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "id": "410c1505-9404-4c3f-be15-960f99411436",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        700,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "id": "b11944af-0ad5-4aea-b989-b5b348e85458",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1180,
+        1080
+      ],
+      "webhookId": "bf5d1268-2033-43ed-8b87-45330809f404"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    mp.first_name,  \n    mp.email, \n    sp.status, \n    sp.support_type,\n     TO_CHAR(sp.created_at, 'DD/MM/YYYY') Data,\n    sp.created_at\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii mp ON m.msr_id = mp.msr_id\nINNER JOIN match.support_requests sp ON m.msr_id = sp.msr_id\nWHERE m.status = 'registered'\n  AND sp.status = 'waiting_for_match'\n  AND sp.support_type = 'psychological'\n",
+        "options": {}
+      },
+      "id": "77976ff3-f236-4fc5-930f-bc2b80941a8a",
+      "name": "Busca msrs aguardando match psicológico com prioridade3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        440,
+        1060
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Quarto envio\n**Pedidos de acolhimento psicologico** aguardando match sem prioridade\nHorários restantes de grupos remanescentes",
+        "height": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        840
+      ],
+      "typeVersion": 1,
+      "id": "33813baf-b0ce-48c6-bdcf-64891ed15fe4",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmelcmlei9fa2140i78n71azd\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "04d48fef-ec67-491a-b188-f1bca339ab8b",
+      "name": "Envia email quarto convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        920,
+        1080
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmelcmlei9fa2140i78n71azd\",\n  \"email\": \"adriele@mapa.org.br\",\n  \"dataVariables\": {\n    \"first_name\": \"Bola de Cristal\",\n    \"email\": \"adriele@mapa.org.br\"\n  }\n}",
+        "options": {}
+      },
+      "id": "d7b7b221-b493-42be-a67c-08346174ee65",
+      "name": "Envia email quarto convite1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1360,
+        780
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -392,6 +543,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-06-11T14:50:57.000Z",
-  "versionId": "2f9074b5-c4d6-4ed7-bc49-3f0a69880b0b"
+  "updatedAt": "2025-08-21T13:32:53.000Z",
+  "versionId": "603a7b16-9252-4595-9273-2cc389baa21d"
 }
