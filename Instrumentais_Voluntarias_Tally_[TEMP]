@@ -157,7 +157,13 @@
     },
     "Webhook2": {
       "main": [
-        []
+        [
+          {
+            "node": "Formata - Triagem Juridico 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Webhook3": {
@@ -282,7 +288,7 @@
     },
     {
       "parameters": {
-        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nfor (item of items) {\n  var results = item.json.submission.results;\n  \n  Object.keys(results).forEach(key => {\n    if (results[key] === \"\" || results[key] === null) {\n      delete results[key];\n      }\n  });\n  let risco = 'nenhum';\n  let priority = 'low';\n  var dados_voluntaria = {\n\t  nome: results[\"1_nome_completo\"],\n\t  email: results[\"2_email_de_cadastro1\"],\n  }\n  var dados_acolhida = {\n    nome: results[\"3_nome_da_acolhida\"],\n    data_de_nascimento: results[\"4_data_de_nascimento_da_a\"],\n    identidade_racial: results[\"5_como_a_acolhida_se_auto\"],\n    identidade_genero:results[\"6_qual_a_identidade_de_ge\"],\n    deficiencia:results[\"informe_aqui_qual_ou_quai\"],\n    pcd:results[\"7_a_acolhida_tem_alguma_d\"],\n    regime_de_bens:results[\"81_caso_se_aplique_qual_o\"],\n    estado_civil:results[\"8_qual_o_estado_civil_da\"],\n    filhos_faixa_etaria:results[\"91_selecione_em_qual_faix1\"],\n    filhos_pcd: results[\"92_algum_dos_filhos_e_pes1\"],\n    deficiencia_filhos:results[\"93_caso_tenha_respondido1\"],\n    tem_filhos:results[\"9_a_acolhida_tem_filhasos\"],\n    gravida_ou_tem_recem_nascido: results[\"10_a_acolhida_esta_gravid\"],\n  }\n\n  let data = new Date(results[\"4_data_de_nascimento_da_a\"]);\n  let data_de_nascimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear();\n  \n  var aspectos_socioeconomicos = {\n    escolaridade: results[\"11_qual_a_escolaridade_da\"],\n  }\n\n  var moradia = {\n    local_de_risco: results[\"12_a_acolhida_considera_q\"],\n  }\n\n  var historico_violencia = {\n    tipos_violencia: results[\"13_tipos_de_violencia_que\"],\n    violencia_fisica_grave: results[\"14_oa_autora_da_violencia\"],\n    violencia_fisica_extrema: results[\"15_oa_autora_da_violencia\"],\n    se_sente_isolada: results[\"16_a_acolhida_se_sente_is\"],\n    autor_tem_acesso_arma_fogo: results[\"17_oa_autora_da_violencia\"],\n    como_ameacou: results[\"181_como\"],\n    autor_ameacou_familiar: results[\"18_oa_autora_da_violencia\"],\n    autor_obrigou_ato_sexual:results[\"19_oa_autora_da_violencia\"],\n    violencia_durante_gravidez:results[\"20_caso_se_aplique_a_acol\"],\n    autor_comportamentos_abusivos:results[\"21_oa_autora_da_violencia\"],\n    acolhida_atendimento_medico:results[\"22_a_acolhida_necessitou\"],\n    acolhida_teve_interrese_em_separar: results[\"23_caso_se_aplique_a_acol\"],\n    acolhida_tem_dependencia_emocional: results[\"24_a_acolhida_apresenta_d\"],\n    frequencia_violencia_aumentou: results[\"25_as_agressoes_ou_ameaca\"],\n    autor_agrediu_outras_pessoas: results[\"26_oa_autora_da_violencia\"],\n  }\n\n  var autor_da_violencia = {\n    quais_dominios: results[\"271_selecione_as_opcaooes\"],\n    tem_dominio: results[\"27_oa_autora_da_violencia\"],\n    usa_substancias_psicoativas: results[\"28_oa_autora_da_violencia\"],\n    quais_substancias: results[\"281_informe_aqui_qual_ou\"],\n    diagnostico_doenca_psiquiatrica: results[\"29_oa_autora_da_violencia\"],\n  }\n\n  var servico_publico = {\n    acolhida_criticou_servicos_publicos: results[\"30_a_acolhida_ja_manifest\"],\n    quais_servicos_publicos: results[\"301_sobre_quais_servicos\"],\n  }\n\n  var processo_juridico = {\n    objetivo_da_demanda: results[\"31_qual_o_objeto_das_dema\"],\n    lei_maria_da_penha: results[\"32_a_demanda_da_acolhida\"],\n    forma_de_viloencia: results[\"321_em_qual_forma_de_viol\"],\n    lei_que_se_enquadra: results[\"321_entao_em_qualis_outra\"],\n    resumo_demanda: results[\"33_descreva_resumidamente\"],\n    encaminhamento: results[\"34_encaminhamento_do_caso\"],\n  }\n  var contato_contrato_com_acolhida = {\n    inicio_atendimento: results[\"35_data_do_inicio_do_aten\"],\n    contrato_pro_bono: results[\"36_voce_estabeleceu_um_co\"],\n    horas_atendimento_por_semana: results[\"37_quantas_horas_de_atend\"],\n    qual_fluxo_comunicao: results[\"38_voce_e_a_acolhida_esta\"],\n    frequencia_comunicacao: results[\"381_voces_acordaram_uma_f\"],\n    forma_segura_contato_com_acolhida: results[\"39_formas_mais_seguras_de\"],\n  }\n  data = new Date(results[\"35_data_do_inicio_do_aten\"]);\n  let inicio_atendimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear();\n  \n  var assistencia_psicologica = {\n    tem_acompanhamento_psicologico: results[\"40_a_acolhida_esta_em_aco\"],\n    via_mapa_do_acolhimento: results[\"401_esse_acompanhamento_e\"],\n    entrou_em_contato_com_psicologa: results[\"402_voce_profissional_adv\"]\n  }\n\n  //risco moderado \n  if(moradia.local_de_risco === 'Sim' || autor_da_violencia.tem_dominio === 'Sim'){\n    risco = 'moderado'\n    priority = 'normal'\n  }\n  //risco grave\n  if (dados_acolhida.pcd === 'Sim' || \n      dados_acolhida.filhos_pcd === 'Sim' || \n      dados_acolhida.gravida_ou_tem_recem_nascido === 'Sim' || \n      historico_violencia.violencia_fisica_grave !== 'Nenhuma agressão física' ||\n      historico_violencia.autor_obrigou_ato_sexual === 'Sim' || \n      historico_violencia.violencia_durante_gravidez === 'Sim' ||\n      historico_violencia.acolhida_atendimento_medico.includes('Sim') || \n      historico_violencia.frequencia_violencia_aumentou === 'Sim' ||\n      autor_da_violencia.usa_substancias_psicoativas === 'Sim' ||\n      autor_da_violencia.diagnostico_doenca_psiquiatrica === 'Sim'){\n  \n   risco = 'grave'\n   priority = 'high'\n  }\n\n  //risco extremo \n  if (historico_violencia.violencia_fisica_extrema !== 'Nenhuma agressão física' ||\n      historico_violencia.autor_tem_acesso_arma_fogo === 'Sim' ||\n      historico_violencia.autor_ameacou_familiar === 'Sim' ||\n      historico_violencia.autor_comportamentos_abusivos || \n      historico_violencia.autor_agrediu_outras_pessoas.includes('Sim') ){\n    risco = 'extremo'\n    priority = 'urgent'\n  }\n  item.json.priority = priority;\n  item.json.answers = { dados_voluntaria,dados_acolhida,aspectos_socioeconomicos,moradia,historico_violencia,autor_da_violencia,servico_publico,processo_juridico,contato_contrato_com_acolhida,assistencia_psicologica, risco: risco}\n  \n  item.json.body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS VOLUNTARIA\\\\nNome: '+ dados_voluntaria.nome + '\\\\nemail: ' + dados_voluntaria.email +\n  '\\\\n\\\\nDADOS ACOLHIDA\\\\nNome: ' + dados_acolhida.nome+ '\\\\nData de nascimento: ' + data_de_nascimento_br + \n  '\\\\nIdentidade racial: ' + dados_acolhida.identidade_racial + '\\\\nIdentidade de genero: ' + dados_acolhida.identidade_genero +\n  '\\\\nÉ uma pessoa com deficiência: ' + dados_acolhida.pcd + \n  //codicao pcd\n  (dados_acolhida.pcd.toUpperCase() === 'SIM' ? '\\\\nQual deficiencia: ' + dados_acolhida.deficiencia : '') +\n  '\\\\nEstado cívil: ' + dados_acolhida.estado_civil + \n  //condicao estado civil\n  (dados_acolhida.estado_civil === 'Solteira'? '' : '\\\\nRegime de bens: ' + dados_acolhida.regime_de_bens) + '\\\\nTem filhos: ' + dados_acolhida.tem_filhos +\n  //condicao filhos\n  (dados_acolhida.tem_filhos === 'Sim'? '\\\\nFaixa etaria dos filhos(as): ' + dados_acolhida.filhos_faixa_etaria + '\\\\nAlgum dos filhos tem difciência: ' + dados_acolhida.filhos_pcd + \n  //condicao filhos pcd\n  (dados_acolhida.filhos_pcd === 'Sim' ?  '\\\\nDeficiencia do filho: ' + dados_acolhida.deficiencia_filhos: '') : '') +\n  '\\\\nGravida ou esteve grávida nos últimos 18 meses: ' + dados_acolhida.gravida_ou_tem_recem_nascido +\n  '\\\\n\\\\nASPECTOS SOCIOECONÔMICOS\\\\nEscolaridade: ' + aspectos_socioeconomicos.escolaridade +\n  '\\\\n\\\\nMORADIA\\\\nConsidera que mora num local com risco de violência: ' + moradia.local_de_risco + \n  '\\\\n\\\\nHISTÓRICO DE VIOLÊNCIA\\\\nTipos de violência: ' + historico_violencia.tipos_violencia + '\\\\nTipos de viloencia física (grave): ' + historico_violencia.violencia_fisica_grave +\n  '\\\\nTipos de viloencia física (extrema): ' + historico_violencia.violencia_fisica_extrema + '\\\\nSe sente isolada: ' + historico_violencia.se_sente_isolada +\n  '\\\\nO autor da violência tem acesso a uma arma fogo: ' + historico_violencia.autor_tem_acesso_arma_fogo +  \n  '\\\\nO autor da violência já ameaçou algum familiar: ' + historico_violencia.autor_ameacou_familiar +\n  //condicao ja ameacou \n  (historico_violencia.autor_ameacou_familiar === 'Sim'? '\\\\nComo ameaçou: ' + historico_violencia.como_ameacou : '') +\n  '\\\\nO autor da violência obrigou a acolhida a ter relações sexuais ou praticar atos sexuais: ' + historico_violencia.autor_obrigou_ato_sexual + \n  '\\\\nA acolhida sofreu algum tipo de violência durante a gravidez ou nos três meses posteriores ao parto: ' + historico_violencia.violencia_durante_gravidez +\n  '\\\\nO autor da violência teve algum destes comportamentos com a acolhida: ' + historico_violencia.autor_comportamentos_abusivos +\n  '\\\\nA acolhida necessitou de atendimento médico e/ou internação: ' + historico_violencia.acolhida_atendimento_medico +\n  '\\\\nA acolhida se separou ou teve interrese em separar: ' + historico_violencia.acolhida_teve_interrese_em_separar + \n  '\\\\nA acolhida apresenta dependência emocional do autor da violência: ' + historico_violencia.acolhida_tem_dependencia_emocional +\n  '\\\\nAs agressões ou ameaças do autor da violência contra a acolhida se tornaram mais frequentes ou mais graves nos últimos meses: ' + historico_violencia.frequencia_violencia_aumentou +\n  '\\\\nO autor da violência já ameaçou ou agrediu outras pessoas ou animais: ' + historico_violencia.autor_agrediu_outras_pessoas +\n  '\\\\n\\\\nSOBRE O(A) AUTOR(A) DA VIOLÊNCIA\\\\nTem domínio/poder social e/ou financeiro sobre a acolhida: ' + autor_da_violencia.tem_dominio +\n  //condicao dominio socila/financeiro\n  (autor_da_violencia.tem_dominio === 'Sim'? '\\\\nQuais dominios/poderes: ' + autor_da_violencia.quais_dominios : '') +\n  '\\\\nFaz uso de substâncias psicoativas: ' + autor_da_violencia.usa_substancias_psicoativas +\n  //condicao uso substancias\n  (autor_da_violencia.usa_substancias_psicoativas === 'Sim'? '\\\\nQuais substâncias psicoativas: ' + autor_da_violencia.quais_substancias : '') +\n  '\\\\nTem algum diagnóstico (verbal ou laudo) de doença psiquiátrica: ' +  autor_da_violencia.diagnostico_doenca_psiquiatrica +\n  '\\\\n\\\\nSERVIÇO PÚBLICO\\\\nA acolhida já manifestou alguma resistência, má experiência ou estranhamento sobre o atendimento em serviços públicos: ' + servico_publico.acolhida_criticou_servicos_publicos +\n  //condicao servicao publicos\n  (servico_publico.acolhida_criticou_servicos_publicos === 'Sim'? '\\\\nQuais serviços públicos: ' + servico_publico.quais_servicos_publicos : '') +\n  '\\\\n\\\\nPROCESSO JURÍDICO\\\\nObjetivo da demanda: '  + processo_juridico.objetivo_da_demanda + '\\\\nSe enquadra na lei Maria da Penha: ' +  processo_juridico.lei_maria_da_penha +\n  //condicao lei maria da penha \n  (processo_juridico.lei_maria_da_penha === 'Sim'? '\\\\nQual forma de violência se enquadra na lei Maria da Penha: ' + processo_juridico.forma_de_viloencia : \n   '\\\\nEm qual lei_que se enquadra: ' + processo_juridico.lei_que_se_enquadra) +\n  '\\\\nResumo da demanda: ' + processo_juridico.resumo_demanda + '\\\\nEncaminhamento: ' + processo_juridico.encaminhamento +\n  '\\\\n\\\\nCONTATRO E CONTRATO COM A ACOLHIDA\\\\nData do inicio do atendimento: ' + inicio_atendimento_br + \n  '\\\\nEstabeleceu um contrato de serviços pro bono: ' + contato_contrato_com_acolhida.contrato_pro_bono +\n  '\\\\nHoras de atendimento por semana: ' + contato_contrato_com_acolhida.horas_atendimento_por_semana +\n  '\\\\nEstabeleceram um tipo de fluxo de comunição: ' + contato_contrato_com_acolhida.qual_fluxo_comunicao +\n  //condicao fluxo de comunicacao\n  (contato_contrato_com_acolhida.qual_fluxo_comunicao.includes('Sim')? '\\\\nFoi estabelecida uma frequência de comunicacao: ' + contato_contrato_com_acolhida.frequencia_comunicacao : '') +\n  '\\\\nQual a forma segura de entrar em contato com a acolhida: ' + contato_contrato_com_acolhida.forma_segura_contato_com_acolhida +\n  '\\\\n\\\\nASSISTÊNCIA PSICOLÓGICA\\\\nA acolhida está em acompanhamento psicológico: ' + assistencia_psicologica.tem_acompanhamento_psicologico +\n  //condica tem acompanhamento\n  (assistencia_psicologica.tem_acompanhamento_psicologico === 'Sim'? '\\\\nIntermediado pelo Mapa do Acolhimento: ' + assistencia_psicologica.via_mapa_do_acolhimento +\n  '\\\\nA voluntária entrou em contato com a psicologa: ' + assistencia_psicologica.entrou_em_contato_com_psicologa : '')\n  \n  dados_acolhida.deficiencia = dados_acolhida.deficiencia?.replaceAll('Deficiência ','');\n  dados_acolhida.deficiencia_filhos = dados_acolhida.deficiencia_filhos?.replaceAll('Deficiência ','');\n  historico_violencia.como_ameacou = historico_violencia.como_ameacou?.replaceAll('Utilizando ','');\n  historico_violencia.acolhida_atendimento_medico = historico_violencia.acolhida_atendimento_medico?.replaceAll('Sim, ', '');\n  historico_violencia.autor_ameacou_familiar = historico_violencia.autor_ameacou_familiar?.replaceAll('Sim, ', ''); \n  historico_violencia.autor_agrediu_outras_pessoas = historico_violencia.autor_agrediu_outras_pessoas?.replaceAll('Sim, ', ''); \n  historico_violencia.acolhida_tem_dependencia_emocional = historico_violencia.acolhida_tem_dependencia_emocional.replace('Sim', true).replace('Não', false)\n  historico_violencia.violencia_durante_gravidez = historico_violencia.violencia_durante_gravidez?.replace('Sim', true).replace('Não', false);\n  processo_juridico.forma_de_viloencia = processo_juridico.forma_de_viloencia?.replaceAll('Violência ',''); \n  contato_contrato_com_acolhida.qual_fluxo_comunicao = contato_contrato_com_acolhida.qual_fluxo_comunicao\n                                                        .replaceAll('Sim, pelo WhatsApp', 'whatsapp')\n                                                        .replaceAll('Sim, por ligação telefônica', 'ligação telefônica')\n                                                        .replaceAll('Não, a comunicação se dará por livre demanda', 'livre')\n  item.json.answers_txt = '\"dados_voluntaria\": ' + JSON.stringify(dados_voluntaria)\n  item.json.answers_txt = item.json.answers_txt + ', \"dados_acolhida\":'+JSON.stringify(dados_acolhida).replaceAll('Sim', true).replaceAll('Não', false) ; \n  item.json.answers_txt =  item.json.answers_txt + ', \"moradia\":' + JSON.stringify(moradia).replaceAll('Sim', true).replaceAll('Não', false) ; \n  historico_violencia.se_sente_isolada = historico_violencia.se_sente_isolada?.replace('Sim', true).replace('Não', false);\n  historico_violencia.autor_tem_acesso_arma_fogo = historico_violencia.autor_tem_acesso_arma_fogo?.replace('Sim', true).replace('Não', false);\n  historico_violencia.autor_ameacou_familiar = historico_violencia.autor_ameacou_familiar?.replace('Sim', true).replace('Não', false);\n  historico_violencia.autor_obrigou_ato_sexual = historico_violencia.autor_obrigou_ato_sexual?.replace('Sim', true).replace('Não', false);\n  historico_violencia.acolhida_teve_interrese_em_separar = historico_violencia.acolhida_teve_interrese_em_separar?.replace('Sim', true).replace('Não', false);\n  historico_violencia.frequencia_violencia_aumentou = historico_violencia.frequencia_violencia_aumentou?.replace('Sim', true).replace('Não', false);\n  servico_publico.acolhida_criticou_servicos_publicos = servico_publico.acolhida_criticou_servicos_publicos?.replaceAll('Sim', true).replaceAll('Não',false); \n  processo_juridico.lei_maria_da_penha = processo_juridico.lei_maria_da_penha?.replaceAll('Sim',true).replaceAll('Não',false);\n  autor_da_violencia.tem_dominio = autor_da_violencia.tem_dominio.replaceAll('Sim', true).replaceAll('Não',false);\n  autor_da_violencia.usa_substancias_psicoativas = autor_da_violencia.usa_substancias_psicoativas.replaceAll('Sim', true).replaceAll('Não',false);\n  autor_da_violencia.diagnostico_doenca_psiquiatrica = autor_da_violencia.diagnostico_doenca_psiquiatrica.replaceAll('Sim', true).replaceAll('Não',false);\n\n  item.json.answers_txt = '{' + item.json.answers_txt + ',\"historico_violencia\":' + JSON.stringify(historico_violencia) + \n                          ', \"autor_da_violencia\": ' +  JSON.stringify(autor_da_violencia) + \n                          ', \"servico_publico\":' + JSON.stringify(servico_publico) + \n                          ', \"aspectos_socioeconomicos\":' + JSON.stringify(aspectos_socioeconomicos) +\n                          ', \"processo_juridico\":' + JSON.stringify(processo_juridico) +\n                          ', \"contato_contrato_com_acolhida\":' + JSON.stringify(contato_contrato_com_acolhida).replaceAll('Sim', true).replaceAll('Não', false) + \n                          ', \"assistencia_psicologica\":' + JSON.stringify(assistencia_psicologica).replaceAll('Sim', true).replaceAll('Não', false) + ', \"risco\": \"' + risco + '\"}'\n  item.json.answers_txt = item.json.answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n}\n\n\n// You can write logs to the browser console\nconsole.log('Done!');\n\nreturn items;"
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\nfor (item of items) {\n  var form_answers = item.json.body.data.fields\n  \n//  Object.keys(results).forEach(key => {\n//    if (results[key] === \"\" || results[key] === null) {\n//      delete results[key];\n//      }\n//  });\n  let risco = 'nenhum';\n  let priority = 'low';\n  var dados_voluntaria = {\n\tnome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n    email: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n  }\n  //getSelectedTexts(form_answers, \"regime_de_trabalho\")\n  var dados_acolhida = {\n    nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value,\n    data_de_nascimento: form_answers.find(objeto => objeto.label == \"data_de_nascimento\").value,\n    identidade_racial: getSelectedTexts(form_answers, \"identidade_racial\"),\n    identidade_genero:getSelectedTexts(form_answers, \"identidade_genero\"),\n    deficiencia:getSelectedTexts(form_answers, \"deficiencia\"),\n    pcd:getSelectedTexts(form_answers, \"pcd\"),\n    regime_de_bens:getSelectedTexts(form_answers, \"regime_de_bens\"),\n    estado_civil:getSelectedTexts(form_answers, \"estado_civil\"),\n    filhos_faixa_etaria:getSelectedTexts(form_answers, \"filhos_faixa_etaria\"),\n    filhos_pcd: getSelectedTexts(form_answers, \"filhos_pcd\"),\n    deficiencia_filhos:getSelectedTexts(form_answers, \"deficiencia_filhos\"),\n    tem_filhos:getSelectedTexts(form_answers, \"tem_filhos\"),\n    gravida_ou_tem_recem_nascido:getSelectedTexts(form_answers, \"gravida_ou_tem_recem_nascido\"),\n  }\n\n  let data = new Date(dados_acolhida.data_de_nascimento);\n  let data_de_nascimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear();\n  \n  var aspectos_socioeconomicos = {\n    escolaridade: getSelectedTexts(form_answers, \"escolaridade\"),\n  }\n\n  var moradia = {\n    local_de_risco: getSelectedTexts(form_answers, \"local_de_risco\"),\n  }\n   \n  var historico_violencia = {\n    tipos_violencia: getSelectedTexts(form_answers, \"tipos_violencia\"),\n    violencia_fisica_grave: getSelectedTexts(form_answers, \"violencia_fisica_grave\"),\n    violencia_fisica_extrema: getSelectedTexts(form_answers, \"violencia_fisica_extrema\"),\n    se_sente_isolada: getSelectedTexts(form_answers, \"se_sente_isolada\"),\n    autor_tem_acesso_arma_fogo: getSelectedTexts(form_answers, \"autor_tem_acesso_arma_fogo\"),\n    como_ameacou: getSelectedTexts(form_answers, \"como_ameacou\"), \n    explique_como_ameacou:  form_answers.find(objeto => objeto.label == \"explique\").value?form_answers.find(objeto => objeto.label == \"explique\").value: \"\" ,\n    autor_ameacou_familiar: getSelectedTexts(form_answers,\"autor_ameacou_familiar\"), \n    autor_obrigou_ato_sexual:getSelectedTexts(form_answers, \"autor_obrigou_ato_sexual\"),\n    violencia_durante_gravidez:getSelectedTexts(form_answers, \"violencia_durante_gravidez\"),\n    autor_comportamentos_abusivos:getSelectedTexts(form_answers, \"autor_comportamentos_abusivos\"),\n    acolhida_atendimento_medico:getSelectedTexts(form_answers, \"acolhida_atendimento_medico\"),\n    acolhida_teve_interrese_em_separar: getSelectedTexts(form_answers, \"acolhida_teve_interrese_em_separar\"),\n    acolhida_tem_dependencia_emocional: getSelectedTexts(form_answers, \"acolhida_tem_dependencia_emocional\"),\n    frequencia_violencia_aumentou: getSelectedTexts(form_answers, \"frequencia_violencia_aumentou\"),\n    autor_agrediu_outras_pessoas: getSelectedTexts(form_answers, \"autor_agrediu_outras_pessoas\"),\n     outros_autor_agrediu: form_answers.find(objeto => objeto.label == \"outros_autor_agrediu\").value?form_answers.find(objeto => objeto.label == \"outros_autor_agrediu\").value: \"\" ,\n  }\n\n  var autor_da_violencia = {\n    quais_dominios: getSelectedTexts(form_answers, \"quais_dominios\"),\n    tem_dominio: getSelectedTexts(form_answers, \"tem_dominio\"),\n    usa_substancias_psicoativas: getSelectedTexts(form_answers, \"usa_substancias_psicoativas\"),\n    quais_substancias: getSelectedTexts(form_answers, \"quais_substancias\"),\n    diagnostico_doenca_psiquiatrica: getSelectedTexts(form_answers, \"diagnostico_doenca_psiquiatrica\"),\n  }\n\n  var servico_publico = {\n    acolhida_criticou_servicos_publicos: getSelectedTexts(form_answers, \"acolhida_criticou_servicos_publicos\"),\n    quais_servicos_publicos: getSelectedTexts(form_answers, \"quais_servicos_publicos\"),\n  }\n\n var processo_juridico = {\n    objetivo_da_demanda: getSelectedTexts(form_answers, \"objetivo_da_demanda\"),\n    lei_maria_da_penha: getSelectedTexts(form_answers, \"lei_maria_da_penha\"),\n    forma_de_viloencia: getSelectedTexts(form_answers, \"forma_de_viloencia\"),\n    lei_que_se_enquadra: form_answers.find(objeto => objeto.label == \"lei_que_se_enquadra\").value,\n    resumo_demanda: form_answers.find(objeto => objeto.label == \"resumo_demanda\").value,\n    encaminhamento: getSelectedTexts(form_answers, \"encaminhamento\"),\n  }\n  var contato_contrato_com_acolhida = {\n    inicio_atendimento: form_answers.find(objeto => objeto.label == \"inicio_atendimento\").value,\n    contrato_pro_bono: getSelectedTexts(form_answers, \"contrato_pro_bono\"),\n    horas_atendimento_por_semana: getSelectedTexts(form_answers, \"horas_atendimento_por_semana\"),\n    qual_fluxo_comunicao: getSelectedTexts(form_answers, \"qual_fluxo_comunicao\"),\n    frequencia_comunicacao: getSelectedTexts(form_answers, \"frequencia_comunicacao\"),\n    forma_segura_contato_com_acolhida: getSelectedTexts(form_answers, \"forma_segura_contato_com_acolhida\"),\n  }\n//  data = new Date(contato_contrato_com_acolhida.inicio_atendimento);\n//  let inicio_atendimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear();\n  \n/*  var assistencia_psicologica = {\n    tem_acompanhamento_psicologico: results[\"40_a_acolhida_esta_em_aco\"],\n    via_mapa_do_acolhimento: results[\"401_esse_acompanhamento_e\"],\n    entrou_em_contato_com_psicologa: results[\"402_voce_profissional_adv\"]\n  }\n\n  //risco moderado \n  if(moradia.local_de_risco === 'Sim' || autor_da_violencia.tem_dominio === 'Sim'){\n    risco = 'moderado'\n    priority = 'normal'\n  }\n  //risco grave\n  if (dados_acolhida.pcd === 'Sim' || \n      dados_acolhida.filhos_pcd === 'Sim' || \n      dados_acolhida.gravida_ou_tem_recem_nascido === 'Sim' || \n      historico_violencia.violencia_fisica_grave !== 'Nenhuma agressão física' ||\n      historico_violencia.autor_obrigou_ato_sexual === 'Sim' || \n      historico_violencia.violencia_durante_gravidez === 'Sim' ||\n      historico_violencia.acolhida_atendimento_medico.includes('Sim') || \n      historico_violencia.frequencia_violencia_aumentou === 'Sim' ||\n      autor_da_violencia.usa_substancias_psicoativas === 'Sim' ||\n      autor_da_violencia.diagnostico_doenca_psiquiatrica === 'Sim'){\n  \n   risco = 'grave'\n   priority = 'high'\n  }\n\n  //risco extremo \n  if (historico_violencia.violencia_fisica_extrema !== 'Nenhuma agressão física' ||\n      historico_violencia.autor_tem_acesso_arma_fogo === 'Sim' ||\n      historico_violencia.autor_ameacou_familiar === 'Sim' ||\n      historico_violencia.autor_comportamentos_abusivos || \n      historico_violencia.autor_agrediu_outras_pessoas.includes('Sim') ){\n    risco = 'extremo'\n    priority = 'urgent'\n  }\n  item.json.priority = priority;\n  item.json.answers = { dados_voluntaria,dados_acolhida,aspectos_socioeconomicos,moradia,historico_violencia,autor_da_violencia,servico_publico,processo_juridico,contato_contrato_com_acolhida,assistencia_psicologica, risco: risco}\n  \n  item.json.body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS VOLUNTARIA\\\\nNome: '+ dados_voluntaria.nome + '\\\\nemail: ' + dados_voluntaria.email +\n  '\\\\n\\\\nDADOS ACOLHIDA\\\\nNome: ' + dados_acolhida.nome+ '\\\\nData de nascimento: ' + data_de_nascimento_br + \n  '\\\\nIdentidade racial: ' + dados_acolhida.identidade_racial + '\\\\nIdentidade de genero: ' + dados_acolhida.identidade_genero +\n  '\\\\nÉ uma pessoa com deficiência: ' + dados_acolhida.pcd + \n  //codicao pcd\n  (dados_acolhida.pcd.toUpperCase() === 'SIM' ? '\\\\nQual deficiencia: ' + dados_acolhida.deficiencia : '') +\n  '\\\\nEstado cívil: ' + dados_acolhida.estado_civil + \n  //condicao estado civil\n  (dados_acolhida.estado_civil === 'Solteira'? '' : '\\\\nRegime de bens: ' + dados_acolhida.regime_de_bens) + '\\\\nTem filhos: ' + dados_acolhida.tem_filhos +\n  //condicao filhos\n  (dados_acolhida.tem_filhos === 'Sim'? '\\\\nFaixa etaria dos filhos(as): ' + dados_acolhida.filhos_faixa_etaria + '\\\\nAlgum dos filhos tem difciência: ' + dados_acolhida.filhos_pcd + \n  //condicao filhos pcd\n  (dados_acolhida.filhos_pcd === 'Sim' ?  '\\\\nDeficiencia do filho: ' + dados_acolhida.deficiencia_filhos: '') : '') +\n  '\\\\nGravida ou esteve grávida nos últimos 18 meses: ' + dados_acolhida.gravida_ou_tem_recem_nascido +\n  '\\\\n\\\\nASPECTOS SOCIOECONÔMICOS\\\\nEscolaridade: ' + aspectos_socioeconomicos.escolaridade +\n  '\\\\n\\\\nMORADIA\\\\nConsidera que mora num local com risco de violência: ' + moradia.local_de_risco + \n  '\\\\n\\\\nHISTÓRICO DE VIOLÊNCIA\\\\nTipos de violência: ' + historico_violencia.tipos_violencia + '\\\\nTipos de viloencia física (grave): ' + historico_violencia.violencia_fisica_grave +\n  '\\\\nTipos de viloencia física (extrema): ' + historico_violencia.violencia_fisica_extrema + '\\\\nSe sente isolada: ' + historico_violencia.se_sente_isolada +\n  '\\\\nO autor da violência tem acesso a uma arma fogo: ' + historico_violencia.autor_tem_acesso_arma_fogo +  \n  '\\\\nO autor da violência já ameaçou algum familiar: ' + historico_violencia.autor_ameacou_familiar +\n  //condicao ja ameacou \n  (historico_violencia.autor_ameacou_familiar === 'Sim'? '\\\\nComo ameaçou: ' + historico_violencia.como_ameacou : '') +\n  '\\\\nO autor da violência obrigou a acolhida a ter relações sexuais ou praticar atos sexuais: ' + historico_violencia.autor_obrigou_ato_sexual + \n  '\\\\nA acolhida sofreu algum tipo de violência durante a gravidez ou nos três meses posteriores ao parto: ' + historico_violencia.violencia_durante_gravidez +\n  '\\\\nO autor da violência teve algum destes comportamentos com a acolhida: ' + historico_violencia.autor_comportamentos_abusivos +\n  '\\\\nA acolhida necessitou de atendimento médico e/ou internação: ' + historico_violencia.acolhida_atendimento_medico +\n  '\\\\nA acolhida se separou ou teve interrese em separar: ' + historico_violencia.acolhida_teve_interrese_em_separar + \n  '\\\\nA acolhida apresenta dependência emocional do autor da violência: ' + historico_violencia.acolhida_tem_dependencia_emocional +\n  '\\\\nAs agressões ou ameaças do autor da violência contra a acolhida se tornaram mais frequentes ou mais graves nos últimos meses: ' + historico_violencia.frequencia_violencia_aumentou +\n  '\\\\nO autor da violência já ameaçou ou agrediu outras pessoas ou animais: ' + historico_violencia.autor_agrediu_outras_pessoas +\n  '\\\\n\\\\nSOBRE O(A) AUTOR(A) DA VIOLÊNCIA\\\\nTem domínio/poder social e/ou financeiro sobre a acolhida: ' + autor_da_violencia.tem_dominio +\n  //condicao dominio socila/financeiro\n  (autor_da_violencia.tem_dominio === 'Sim'? '\\\\nQuais dominios/poderes: ' + autor_da_violencia.quais_dominios : '') +\n  '\\\\nFaz uso de substâncias psicoativas: ' + autor_da_violencia.usa_substancias_psicoativas +\n  //condicao uso substancias\n  (autor_da_violencia.usa_substancias_psicoativas === 'Sim'? '\\\\nQuais substâncias psicoativas: ' + autor_da_violencia.quais_substancias : '') +\n  '\\\\nTem algum diagnóstico (verbal ou laudo) de doença psiquiátrica: ' +  autor_da_violencia.diagnostico_doenca_psiquiatrica +\n  '\\\\n\\\\nSERVIÇO PÚBLICO\\\\nA acolhida já manifestou alguma resistência, má experiência ou estranhamento sobre o atendimento em serviços públicos: ' + servico_publico.acolhida_criticou_servicos_publicos +\n  //condicao servicao publicos\n  (servico_publico.acolhida_criticou_servicos_publicos === 'Sim'? '\\\\nQuais serviços públicos: ' + servico_publico.quais_servicos_publicos : '') +\n  '\\\\n\\\\nPROCESSO JURÍDICO\\\\nObjetivo da demanda: '  + processo_juridico.objetivo_da_demanda + '\\\\nSe enquadra na lei Maria da Penha: ' +  processo_juridico.lei_maria_da_penha +\n  //condicao lei maria da penha \n  (processo_juridico.lei_maria_da_penha === 'Sim'? '\\\\nQual forma de violência se enquadra na lei Maria da Penha: ' + processo_juridico.forma_de_viloencia : \n   '\\\\nEm qual lei_que se enquadra: ' + processo_juridico.lei_que_se_enquadra) +\n  '\\\\nResumo da demanda: ' + processo_juridico.resumo_demanda + '\\\\nEncaminhamento: ' + processo_juridico.encaminhamento +\n  '\\\\n\\\\nCONTATRO E CONTRATO COM A ACOLHIDA\\\\nData do inicio do atendimento: ' + inicio_atendimento_br + \n  '\\\\nEstabeleceu um contrato de serviços pro bono: ' + contato_contrato_com_acolhida.contrato_pro_bono +\n  '\\\\nHoras de atendimento por semana: ' + contato_contrato_com_acolhida.horas_atendimento_por_semana +\n  '\\\\nEstabeleceram um tipo de fluxo de comunição: ' + contato_contrato_com_acolhida.qual_fluxo_comunicao +\n  //condicao fluxo de comunicacao\n  (contato_contrato_com_acolhida.qual_fluxo_comunicao.includes('Sim')? '\\\\nFoi estabelecida uma frequência de comunicacao: ' + contato_contrato_com_acolhida.frequencia_comunicacao : '') +\n  '\\\\nQual a forma segura de entrar em contato com a acolhida: ' + contato_contrato_com_acolhida.forma_segura_contato_com_acolhida +\n  '\\\\n\\\\nASSISTÊNCIA PSICOLÓGICA\\\\nA acolhida está em acompanhamento psicológico: ' + assistencia_psicologica.tem_acompanhamento_psicologico +\n  //condica tem acompanhamento\n  (assistencia_psicologica.tem_acompanhamento_psicologico === 'Sim'? '\\\\nIntermediado pelo Mapa do Acolhimento: ' + assistencia_psicologica.via_mapa_do_acolhimento +\n  '\\\\nA voluntária entrou em contato com a psicologa: ' + assistencia_psicologica.entrou_em_contato_com_psicologa : '')\n  \n  dados_acolhida.deficiencia = dados_acolhida.deficiencia?.replaceAll('Deficiência ','');\n  dados_acolhida.deficiencia_filhos = dados_acolhida.deficiencia_filhos?.replaceAll('Deficiência ','');\n  historico_violencia.como_ameacou = historico_violencia.como_ameacou?.replaceAll('Utilizando ','');\n  historico_violencia.acolhida_atendimento_medico = historico_violencia.acolhida_atendimento_medico?.replaceAll('Sim, ', '');\n  historico_violencia.autor_ameacou_familiar = historico_violencia.autor_ameacou_familiar?.replaceAll('Sim, ', ''); \n  historico_violencia.autor_agrediu_outras_pessoas = historico_violencia.autor_agrediu_outras_pessoas?.replaceAll('Sim, ', ''); \n  historico_violencia.acolhida_tem_dependencia_emocional = historico_violencia.acolhida_tem_dependencia_emocional.replace('Sim', true).replace('Não', false)\n  historico_violencia.violencia_durante_gravidez = historico_violencia.violencia_durante_gravidez?.replace('Sim', true).replace('Não', false);\n  processo_juridico.forma_de_viloencia = processo_juridico.forma_de_viloencia?.replaceAll('Violência ',''); \n  contato_contrato_com_acolhida.qual_fluxo_comunicao = contato_contrato_com_acolhida.qual_fluxo_comunicao\n                                                        .replaceAll('Sim, pelo WhatsApp', 'whatsapp')\n                                                        .replaceAll('Sim, por ligação telefônica', 'ligação telefônica')\n                                                        .replaceAll('Não, a comunicação se dará por livre demanda', 'livre')\n  item.json.answers_txt = '\"dados_voluntaria\": ' + JSON.stringify(dados_voluntaria)\n  item.json.answers_txt = item.json.answers_txt + ', \"dados_acolhida\":'+JSON.stringify(dados_acolhida).replaceAll('Sim', true).replaceAll('Não', false) ; \n  item.json.answers_txt =  item.json.answers_txt + ', \"moradia\":' + JSON.stringify(moradia).replaceAll('Sim', true).replaceAll('Não', false) ; \n  historico_violencia.se_sente_isolada = historico_violencia.se_sente_isolada?.replace('Sim', true).replace('Não', false);\n  historico_violencia.autor_tem_acesso_arma_fogo = historico_violencia.autor_tem_acesso_arma_fogo?.replace('Sim', true).replace('Não', false);\n  historico_violencia.autor_ameacou_familiar = historico_violencia.autor_ameacou_familiar?.replace('Sim', true).replace('Não', false);\n  historico_violencia.autor_obrigou_ato_sexual = historico_violencia.autor_obrigou_ato_sexual?.replace('Sim', true).replace('Não', false);\n  historico_violencia.acolhida_teve_interrese_em_separar = historico_violencia.acolhida_teve_interrese_em_separar?.replace('Sim', true).replace('Não', false);\n  historico_violencia.frequencia_violencia_aumentou = historico_violencia.frequencia_violencia_aumentou?.replace('Sim', true).replace('Não', false);\n  servico_publico.acolhida_criticou_servicos_publicos = servico_publico.acolhida_criticou_servicos_publicos?.replaceAll('Sim', true).replaceAll('Não',false); \n  processo_juridico.lei_maria_da_penha = processo_juridico.lei_maria_da_penha?.replaceAll('Sim',true).replaceAll('Não',false);\n  autor_da_violencia.tem_dominio = autor_da_violencia.tem_dominio.replaceAll('Sim', true).replaceAll('Não',false);\n  autor_da_violencia.usa_substancias_psicoativas = autor_da_violencia.usa_substancias_psicoativas.replaceAll('Sim', true).replaceAll('Não',false);\n  autor_da_violencia.diagnostico_doenca_psiquiatrica = autor_da_violencia.diagnostico_doenca_psiquiatrica.replaceAll('Sim', true).replaceAll('Não',false);\n\n  item.json.answers_txt = '{' + item.json.answers_txt + ',\"historico_violencia\":' + JSON.stringify(historico_violencia) + \n                          ', \"autor_da_violencia\": ' +  JSON.stringify(autor_da_violencia) + \n                          ', \"servico_publico\":' + JSON.stringify(servico_publico) + \n                          ', \"aspectos_socioeconomicos\":' + JSON.stringify(aspectos_socioeconomicos) +\n                          ', \"processo_juridico\":' + JSON.stringify(processo_juridico) +\n                          ', \"contato_contrato_com_acolhida\":' + JSON.stringify(contato_contrato_com_acolhida).replaceAll('Sim', true).replaceAll('Não', false) + \n                          ', \"assistencia_psicologica\":' + JSON.stringify(assistencia_psicologica).replaceAll('Sim', true).replaceAll('Não', false) + ', \"risco\": \"' + risco + '\"}'\n  item.json.answers_txt = item.json.answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')*/\n}\n\n\n// You can write logs to the browser console\nconsole.log('Done!');\n\nreturn {dados_voluntaria,\n        dados_acolhida, \n        moradia,\n        aspectos_socioeconomicos,\n        historico_violencia,\n        autor_da_violencia,\n        servico_publico,\n        processo_juridico,\n        contato_contrato_com_acolhida};"
       },
       "id": "95064496-7d5e-4d6b-9ee6-4cece63fd917",
       "name": "Formata - Triagem Juridico 2",
@@ -3723,6 +3729,1839 @@
           "executionMode": "test"
         }
       }
+    ],
+    "Webhook2": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "34979",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "baggage": "sentry-environment=production,sentry-release=4cc73c28652c945ac2d5cd475afbd993353dcb7d,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=6e29dd0fd011ffb407415f72b06a5ece,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.37254570818275434,sentry-sample_rate=0.01",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.62.87",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "BE",
+            "cf-ray": "9754347c144193f7-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "sentry-trace": "6e29dd0fd011ffb407415f72b06a5ece-8cfd70e6ab0cd54a-0",
+            "x-forwarded-for": "34.96.62.87, 172.70.162.52",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-g62vb",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.62.87"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "37fb0d6e-c3e7-4099-ae81-df6299cf8cad",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2025-08-26T14:59:01.546Z",
+            "data": {
+              "responseId": "2EbpbDp",
+              "submissionId": "2EbpbDp",
+              "respondentId": "JbMD2K",
+              "formId": "nrZEZ2",
+              "formName": "Instrumental Triagem Jurídico II - Voluntárias",
+              "createdAt": "2025-08-26T14:59:00.000Z",
+              "fields": [
+                {
+                  "key": "question_Z29d2V",
+                  "label": "nome_completo",
+                  "type": "INPUT_TEXT",
+                  "value": "Teste"
+                },
+                {
+                  "key": "question_N7qA70",
+                  "label": "email_de_cadastro",
+                  "type": "INPUT_EMAIL",
+                  "value": "dev.adv.mapa@gmail.com"
+                },
+                {
+                  "key": "question_Q7oA7Y",
+                  "label": "nome_da_acolhida",
+                  "type": "INPUT_TEXT",
+                  "value": "Msr Teste"
+                },
+                {
+                  "key": "question_97Nd7E",
+                  "label": "data_de_nascimento",
+                  "type": "INPUT_DATE",
+                  "value": "2025-08-05"
+                },
+                {
+                  "key": "question_kNWzG6",
+                  "label": "identidade_racial",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "2e17f3d9-c048-4966-b06a-8f5d85b8a19a"
+                  ],
+                  "options": [
+                    {
+                      "id": "2e17f3d9-c048-4966-b06a-8f5d85b8a19a",
+                      "text": "Branca"
+                    },
+                    {
+                      "id": "d06e7f6f-6bd9-4aa2-9894-bb26521a4566",
+                      "text": "Parda"
+                    },
+                    {
+                      "id": "983838cb-b026-43f0-91e6-569914311a39",
+                      "text": "Preta"
+                    },
+                    {
+                      "id": "1da650ef-bafb-47e7-8672-d35e76ea3a78",
+                      "text": "Indígena"
+                    },
+                    {
+                      "id": "a4e628ae-6cfd-45b0-946d-5ed7984985c0",
+                      "text": "Amarela"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_ea5Bax",
+                  "label": "identidade_genero",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "546bc5e0-b115-4076-8257-980cb48faa5c"
+                  ],
+                  "options": [
+                    {
+                      "id": "546bc5e0-b115-4076-8257-980cb48faa5c",
+                      "text": "Mulher cisgênero (que se identifica com o sexo que lhe foi designado ao nascer)"
+                    },
+                    {
+                      "id": "10db76d9-34ec-40d2-8dcc-bdd6b30f08e5",
+                      "text": "Mulher transgênero/travesti (possui outra identidade de gênero, diferente da que lhe foi designada ao nascer)"
+                    },
+                    {
+                      "id": "a6d4ece1-11f3-450a-b737-a594c9566b18",
+                      "text": "Prefere não responder"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_W8JA8e",
+                  "label": "pcd",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "5dfed337-eb5a-4161-8137-be715c9853d3"
+                  ],
+                  "options": [
+                    {
+                      "id": "5dfed337-eb5a-4161-8137-be715c9853d3",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "3ea2a54c-4a6b-42a4-8ef9-3424ce3c5203",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_6ZDdZA",
+                  "label": "deficiencia",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8d64f79f-2bc6-4173-86e2-d666d45e4d6c"
+                  ],
+                  "options": [
+                    {
+                      "id": "79b55f29-1631-4af6-9e31-48c3a8a72c3e",
+                      "text": "Deficiência física"
+                    },
+                    {
+                      "id": "8d64f79f-2bc6-4173-86e2-d666d45e4d6c",
+                      "text": "Deficiência visual"
+                    },
+                    {
+                      "id": "0e6f7f8b-f007-4991-8292-c4202b857026",
+                      "text": "Deficiência motora"
+                    },
+                    {
+                      "id": "e6ec63a3-25a9-4cfd-858b-41c6a02bf7e7",
+                      "text": "Deficiência mental/cognitiva"
+                    },
+                    {
+                      "id": "26125e90-2f5c-45cc-bf33-f01868fd4fb7",
+                      "text": "Deficiência auditiva"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_a2OB2Z",
+                  "label": "estado_civil",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "c9eb63f7-babd-42fd-9fbc-5ff61c6456dc"
+                  ],
+                  "options": [
+                    {
+                      "id": "7e851366-774f-4084-be5f-575fbaaf28c8",
+                      "text": "Solteira"
+                    },
+                    {
+                      "id": "f53458ad-9df2-40be-97c8-bfcb01c8d63b",
+                      "text": "Casada8"
+                    },
+                    {
+                      "id": "72d1a6bf-0e3f-4326-9a25-6c6738a011b8",
+                      "text": "União Estável"
+                    },
+                    {
+                      "id": "da5fa3b4-468a-4511-9adc-fef7f37669b4",
+                      "text": "Viúva"
+                    },
+                    {
+                      "id": "c9eb63f7-babd-42fd-9fbc-5ff61c6456dc",
+                      "text": "Divorciada"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_vPLzDA",
+                  "label": "regime_de_bens",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "888d3e1c-c812-47c5-b64d-486cc1888ae3"
+                  ],
+                  "options": [
+                    {
+                      "id": "888d3e1c-c812-47c5-b64d-486cc1888ae3",
+                      "text": "Comunhão Parcial de Bens"
+                    },
+                    {
+                      "id": "179ac9d7-6d32-4727-91f5-683c3338d2f3",
+                      "text": "Comunhão Universal de Bens"
+                    },
+                    {
+                      "id": "7749408a-f9fd-4df5-9c4e-aff4a20e5806",
+                      "text": "Separação Total de Bens"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_vPLzDA_888d3e1c-c812-47c5-b64d-486cc1888ae3",
+                  "label": "regime_de_bens (Comunhão Parcial de Bens)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_vPLzDA_179ac9d7-6d32-4727-91f5-683c3338d2f3",
+                  "label": "regime_de_bens (Comunhão Universal de Bens)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_vPLzDA_7749408a-f9fd-4df5-9c4e-aff4a20e5806",
+                  "label": "regime_de_bens (Separação Total de Bens)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_KVDGxM",
+                  "label": "tem_filhos",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "5b66d769-1864-41fa-ac8e-152f7b818d12"
+                  ],
+                  "options": [
+                    {
+                      "id": "5b66d769-1864-41fa-ac8e-152f7b818d12",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "99294c47-1272-40de-b5d9-10aa8199167a",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_LPYOKG",
+                  "label": "filhos_faixa_etaria",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8d8158e2-28c7-4256-8b71-75f6a6e5b6da",
+                    "02de7ca2-e647-4748-aa98-d6cc8678f50f"
+                  ],
+                  "options": [
+                    {
+                      "id": "1db21d9a-d789-4545-84bd-5a6d9433448b",
+                      "text": "0 a 3 anos"
+                    },
+                    {
+                      "id": "8d8158e2-28c7-4256-8b71-75f6a6e5b6da",
+                      "text": "3 a 6 anos"
+                    },
+                    {
+                      "id": "762af47e-f77f-4d50-9474-0350ee2d71bd",
+                      "text": "7 a 11 anos"
+                    },
+                    {
+                      "id": "2b68953a-6207-462f-9995-fa6aed955cb5",
+                      "text": "12 a 15 anos"
+                    },
+                    {
+                      "id": "02de7ca2-e647-4748-aa98-d6cc8678f50f",
+                      "text": "16 a 17 anos"
+                    },
+                    {
+                      "id": "ae1ec073-db95-4fb2-9144-3d615f3b41cd",
+                      "text": "A partir de 18 anos"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_7NXdNa",
+                  "label": "filhos_pcd",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "513c6c79-12c2-4401-bb24-528b25dba49f",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "4c90e5ce-83e5-4855-be85-ed2dda45596d",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_bWZlW6",
+                  "label": "deficiencia_filhos",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "7ee8e191-f138-444b-8ab2-dd227cf00545",
+                      "text": "Deficiência física"
+                    },
+                    {
+                      "id": "3492a1d2-1c84-4a1f-ba61-0e3bec0aeaec",
+                      "text": "Deficiência visual"
+                    },
+                    {
+                      "id": "44643a99-4017-439e-823d-aa59d6138cbf",
+                      "text": "Deficiência motora"
+                    },
+                    {
+                      "id": "c0257426-4858-4c8c-9d41-b5e802a5b830",
+                      "text": "Deficiência mental/cognitiva"
+                    },
+                    {
+                      "id": "ad99dc6a-615e-4743-8d45-f11a271cc082",
+                      "text": "Deficiência auditiva"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_ABrlBy",
+                  "label": "gravida_ou_tem_recem_nascido",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "43a6049a-6dc4-4af1-9744-280fe8b14578"
+                  ],
+                  "options": [
+                    {
+                      "id": "43a6049a-6dc4-4af1-9744-280fe8b14578",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "cbac7290-33d2-46f0-b5a7-cf0addbd54bb",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_pDWzoV",
+                  "label": "escolaridade",
+                  "type": "DROPDOWN",
+                  "value": [
+                    "720806ca-8509-44d1-86fe-2e65294534ce"
+                  ],
+                  "options": [
+                    {
+                      "id": "ab7fb6de-4b1c-419e-a5ec-527e87d74bab",
+                      "text": "Ensino fundamental incompleto"
+                    },
+                    {
+                      "id": "2c29ee94-216d-4f38-9a78-98ad6dda67d3",
+                      "text": "Ensino fundamental completo"
+                    },
+                    {
+                      "id": "afa7c15c-43ae-4cf7-9f41-3322e13e2121",
+                      "text": "Ensino médio incompleto"
+                    },
+                    {
+                      "id": "720806ca-8509-44d1-86fe-2e65294534ce",
+                      "text": "Ensino médio completo"
+                    },
+                    {
+                      "id": "b8c50d5c-7164-4cf3-9f0e-38dd34eb5bc7",
+                      "text": "Ensino superior incompleto"
+                    },
+                    {
+                      "id": "2d433cf3-db85-4025-95da-e1db05d5bbac",
+                      "text": "Ensino superior completo"
+                    },
+                    {
+                      "id": "733af331-f5ac-4b4b-8cb7-7967133ecbe5",
+                      "text": "Pós-graduação"
+                    },
+                    {
+                      "id": "7b497f04-bee8-47c0-aa6a-01be863468bb",
+                      "text": "Mestrado"
+                    },
+                    {
+                      "id": "a3b3082d-802c-428f-9656-b000f6e3a45b",
+                      "text": "Doutorado"
+                    },
+                    {
+                      "id": "57ca2854-31bc-44e2-b3fe-b9f72e8e320d",
+                      "text": "Pós-doutorado"
+                    },
+                    {
+                      "id": "2151e75a-ebe3-40ff-9182-1501255496fd",
+                      "text": "Nunca frequentou/procurou"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_BxEGxe",
+                  "label": "local_de_risco",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "00792cf6-ccfb-4d30-aab4-44d62c2f30c7"
+                  ],
+                  "options": [
+                    {
+                      "id": "00792cf6-ccfb-4d30-aab4-44d62c2f30c7",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "c44bdfa5-db6b-4399-991b-0900826c539b",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_19vR4M",
+                  "label": "tipos_violencia",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "bc9642af-c641-4ff8-9e1e-377d5a6b7893",
+                    "01994590-491d-44ad-b229-08c1523d6cd4"
+                  ],
+                  "options": [
+                    {
+                      "id": "bc9642af-c641-4ff8-9e1e-377d5a6b7893",
+                      "text": "Física"
+                    },
+                    {
+                      "id": "09c9b587-1258-4833-a52b-180ffc078cea",
+                      "text": "Psicológica"
+                    },
+                    {
+                      "id": "91e8d5d9-b7d5-411a-9cae-20975014a901",
+                      "text": "Moral"
+                    },
+                    {
+                      "id": "76e0ef42-a19b-4135-999f-ae86af6d69c7",
+                      "text": "Patrimonial"
+                    },
+                    {
+                      "id": "509f4874-4932-4ded-8159-6911c2b45d64",
+                      "text": "Sexual"
+                    },
+                    {
+                      "id": "41d1a260-56b3-4cdf-bbc5-ca94ddb53d91",
+                      "text": "Obstétrica"
+                    },
+                    {
+                      "id": "c74b8b41-9eb6-4a5b-b419-7178a6cdbf8b",
+                      "text": "Institucional"
+                    },
+                    {
+                      "id": "c5d07f16-4416-4b8a-b1c9-208c63e787eb",
+                      "text": "LGBTFobia"
+                    },
+                    {
+                      "id": "01994590-491d-44ad-b229-08c1523d6cd4",
+                      "text": "Racismo"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_19vR4M_bc9642af-c641-4ff8-9e1e-377d5a6b7893",
+                  "label": "tipos_violencia (Física)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_19vR4M_09c9b587-1258-4833-a52b-180ffc078cea",
+                  "label": "tipos_violencia (Psicológica)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_19vR4M_91e8d5d9-b7d5-411a-9cae-20975014a901",
+                  "label": "tipos_violencia (Moral)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_19vR4M_76e0ef42-a19b-4135-999f-ae86af6d69c7",
+                  "label": "tipos_violencia (Patrimonial)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_19vR4M_509f4874-4932-4ded-8159-6911c2b45d64",
+                  "label": "tipos_violencia (Sexual)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_19vR4M_41d1a260-56b3-4cdf-bbc5-ca94ddb53d91",
+                  "label": "tipos_violencia (Obstétrica)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_19vR4M_c74b8b41-9eb6-4a5b-b419-7178a6cdbf8b",
+                  "label": "tipos_violencia (Institucional)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_19vR4M_c5d07f16-4416-4b8a-b1c9-208c63e787eb",
+                  "label": "tipos_violencia (LGBTFobia)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_19vR4M_01994590-491d-44ad-b229-08c1523d6cd4",
+                  "label": "tipos_violencia (Racismo)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_MEYVaY",
+                  "label": "violencia_fisica_grave",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "361546d9-06a2-4289-90c7-7fbd23e70af9",
+                    "d2a65cc4-c038-4b05-8dc8-32c8fae1669e"
+                  ],
+                  "options": [
+                    {
+                      "id": "60c7220c-3af7-4e9d-8837-95caa9dd995c",
+                      "text": "Soco"
+                    },
+                    {
+                      "id": "361546d9-06a2-4289-90c7-7fbd23e70af9",
+                      "text": "Chute"
+                    },
+                    {
+                      "id": "d0f4050b-3064-4727-b4bf-1ab22b5420e9",
+                      "text": "Tapa"
+                    },
+                    {
+                      "id": "d2a65cc4-c038-4b05-8dc8-32c8fae1669e",
+                      "text": "Empurrão"
+                    },
+                    {
+                      "id": "ec9dfb1b-320b-4dfb-b18f-992c466b85b7",
+                      "text": "Puxão de cabelo"
+                    },
+                    {
+                      "id": "e9021977-507a-45e7-bde1-3e004b7985df",
+                      "text": "Outros"
+                    },
+                    {
+                      "id": "9b3cbf35-c5b2-4d3d-a1e0-7411329d3f22",
+                      "text": "Nenhuma agressão física"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_MEYVaY_60c7220c-3af7-4e9d-8837-95caa9dd995c",
+                  "label": "violencia_fisica_grave (Soco)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_MEYVaY_361546d9-06a2-4289-90c7-7fbd23e70af9",
+                  "label": "violencia_fisica_grave (Chute)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_MEYVaY_d0f4050b-3064-4727-b4bf-1ab22b5420e9",
+                  "label": "violencia_fisica_grave (Tapa)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_MEYVaY_d2a65cc4-c038-4b05-8dc8-32c8fae1669e",
+                  "label": "violencia_fisica_grave (Empurrão)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_MEYVaY_ec9dfb1b-320b-4dfb-b18f-992c466b85b7",
+                  "label": "violencia_fisica_grave (Puxão de cabelo)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_MEYVaY_e9021977-507a-45e7-bde1-3e004b7985df",
+                  "label": "violencia_fisica_grave (Outros)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_MEYVaY_9b3cbf35-c5b2-4d3d-a1e0-7411329d3f22",
+                  "label": "violencia_fisica_grave (Nenhuma agressão física)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ",
+                  "label": "violencia_fisica_extrema",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "b9732f7b-1558-4add-9a7c-66550d9b907f",
+                    "415d537c-5a08-4218-81ff-4754eb3d39de"
+                  ],
+                  "options": [
+                    {
+                      "id": "f9c773b2-69b0-41e6-9204-839e0fdbca0f",
+                      "text": "Queimadura"
+                    },
+                    {
+                      "id": "2d02597c-1373-488e-a999-8fb43fb684fe",
+                      "text": "Enforcamento"
+                    },
+                    {
+                      "id": "ec37c676-a1c3-41c6-9a60-8e1f8cdab4da",
+                      "text": "Sufocamento"
+                    },
+                    {
+                      "id": "4f01b394-3be6-4d2a-9e63-b24f7850f5ba",
+                      "text": "Estrangulamento"
+                    },
+                    {
+                      "id": "5cfd2ca0-350b-468d-a8ee-9030421c2eaa",
+                      "text": "Tiro"
+                    },
+                    {
+                      "id": "b9732f7b-1558-4add-9a7c-66550d9b907f",
+                      "text": "Afogamento"
+                    },
+                    {
+                      "id": "415d537c-5a08-4218-81ff-4754eb3d39de",
+                      "text": "Facada"
+                    },
+                    {
+                      "id": "7b7eacc3-d2df-4c22-904f-a185d3fe482f",
+                      "text": "Paulada"
+                    },
+                    {
+                      "id": "ea6d18ec-4e2b-4c48-9e33-b198589ab431",
+                      "text": "Outros"
+                    },
+                    {
+                      "id": "3e060d52-7cec-4419-8f62-4c5932a651db",
+                      "text": "Nenhuma agressão física"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_JODolJ_f9c773b2-69b0-41e6-9204-839e0fdbca0f",
+                  "label": "violencia_fisica_extrema (Queimadura)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ_2d02597c-1373-488e-a999-8fb43fb684fe",
+                  "label": "violencia_fisica_extrema (Enforcamento)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ_ec37c676-a1c3-41c6-9a60-8e1f8cdab4da",
+                  "label": "violencia_fisica_extrema (Sufocamento)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ_4f01b394-3be6-4d2a-9e63-b24f7850f5ba",
+                  "label": "violencia_fisica_extrema (Estrangulamento)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ_5cfd2ca0-350b-468d-a8ee-9030421c2eaa",
+                  "label": "violencia_fisica_extrema (Tiro)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ_b9732f7b-1558-4add-9a7c-66550d9b907f",
+                  "label": "violencia_fisica_extrema (Afogamento)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_JODolJ_415d537c-5a08-4218-81ff-4754eb3d39de",
+                  "label": "violencia_fisica_extrema (Facada)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_JODolJ_7b7eacc3-d2df-4c22-904f-a185d3fe482f",
+                  "label": "violencia_fisica_extrema (Paulada)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ_ea6d18ec-4e2b-4c48-9e33-b198589ab431",
+                  "label": "violencia_fisica_extrema (Outros)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_JODolJ_3e060d52-7cec-4419-8f62-4c5932a651db",
+                  "label": "violencia_fisica_extrema (Nenhuma agressão física)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_g9ZzqN",
+                  "label": "se_sente_isolada",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "5b0ccb64-f1c1-4f9b-b4bf-db6a9d98d9b2"
+                  ],
+                  "options": [
+                    {
+                      "id": "2ee75e5d-8fb3-4765-b058-d7a550a34391",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "5b0ccb64-f1c1-4f9b-b4bf-db6a9d98d9b2",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_yJv140",
+                  "label": "autor_tem_acesso_arma_fogo",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "f3ab6394-5d98-44ac-8c16-08b1fb926b6b"
+                  ],
+                  "options": [
+                    {
+                      "id": "f3ab6394-5d98-44ac-8c16-08b1fb926b6b",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "f0f61357-b6cc-45ce-af81-8becda4eb42c",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_X4YQoO",
+                  "label": "autor_ameacou_familiar",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "f623f346-8b40-4be8-b0b9-72a154b27fbf"
+                  ],
+                  "options": [
+                    {
+                      "id": "f623f346-8b40-4be8-b0b9-72a154b27fbf",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "e0dd2e0f-0b0e-4bf8-a5ca-6af040ed77a3",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_8Z8rLA",
+                  "label": "como_ameacou",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "f09bb4d9-efcb-4022-8d44-f3c2208001b1"
+                  ],
+                  "options": [
+                    {
+                      "id": "26160796-73d4-48fc-8a84-23891e39fa83",
+                      "text": "Utilizando arma de fogo"
+                    },
+                    {
+                      "id": "4865eb78-65cc-43c8-8657-8aa5d455ffee",
+                      "text": "Utilizando faca"
+                    },
+                    {
+                      "id": "f09bb4d9-efcb-4022-8d44-f3c2208001b1",
+                      "text": "Outro"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_0evk8Z",
+                  "label": "explique",
+                  "type": "INPUT_TEXT",
+                  "value": "hoi"
+                },
+                {
+                  "key": "question_z7JdM1",
+                  "label": "autor_obrigou_ato_sexual",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "d72df2f0-a6ec-4542-b526-ac1da528254d"
+                  ],
+                  "options": [
+                    {
+                      "id": "dc4254ce-5140-4908-8f9a-3eae90764bb3",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "d72df2f0-a6ec-4542-b526-ac1da528254d",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_5ZvV9M",
+                  "label": "violencia_durante_gravidez",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "780c0ab1-efd6-4a2a-899f-6d44957e1f7d"
+                  ],
+                  "options": [
+                    {
+                      "id": "780c0ab1-efd6-4a2a-899f-6d44957e1f7d",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "30e78dd6-e606-44b6-9f6a-da507b1899cf",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_d9jz0z",
+                  "label": "autor_comportamentos_abusivos",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "9cac88f4-7d3f-4c43-9839-d4f2c4470a73",
+                    "b6a95186-a292-4c08-8f5a-df0b9d9c8d26"
+                  ],
+                  "options": [
+                    {
+                      "id": "9cac88f4-7d3f-4c43-9839-d4f2c4470a73",
+                      "text": "Disse algo parecido com a frase: “se não for minha/meu, não será de mais ninguém”"
+                    },
+                    {
+                      "id": "f61fe623-b38b-4fbc-a93c-b65e285bed2d",
+                      "text": "Perturbou, perseguiu ou vigiou a pessoa acolhida nos locais que frequenta"
+                    },
+                    {
+                      "id": "67b4183e-7e19-4a15-b398-323ac2d4ceeb",
+                      "text": "Proibiu a pessoa acolhida de visitar familiares ou amigos"
+                    },
+                    {
+                      "id": "22229d27-5823-41c6-9234-899d8836edd1",
+                      "text": "Proibiu a pessoa acolhida de trabalhar ou estudar"
+                    },
+                    {
+                      "id": "25ffc51d-7f47-468b-987a-d72a8722c014",
+                      "text": "Fez telefonemas, enviou mensagens pelo celular ou e-mails de forma insistente"
+                    },
+                    {
+                      "id": "6038b2e3-f30d-43e9-b79e-7cd32672dcd9",
+                      "text": "Impediu a pessoa acolhida de ter acesso a dinheiro, conta bancária ou outros bens (como documentos pessoais, carro, etc)"
+                    },
+                    {
+                      "id": "a5bb80d0-e896-457f-8775-762cfc2eea9f",
+                      "text": "Teve outros comportamentos de ciúme excessivo e de controle sobre a pessoa acolhida (tenta controlar sua vida e as coisas que ela faz, onde a pessoa acolhida vai, com quem conversa, o tipo de roupa que usa, etc.)"
+                    },
+                    {
+                      "id": "cca400ff-8b48-4518-a989-a4381d89f197",
+                      "text": "Proibiu a pessoa acolhida de ir ao médico ou pedir ajuda a outros profissionais"
+                    },
+                    {
+                      "id": "b6a95186-a292-4c08-8f5a-df0b9d9c8d26",
+                      "text": "Ameaçou a pessoa acolhida"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_d9jz0z_9cac88f4-7d3f-4c43-9839-d4f2c4470a73",
+                  "label": "autor_comportamentos_abusivos (Disse algo parecido com a frase: “se não for minha/meu, não será de mais ninguém”)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_d9jz0z_f61fe623-b38b-4fbc-a93c-b65e285bed2d",
+                  "label": "autor_comportamentos_abusivos (Perturbou, perseguiu ou vigiou a pessoa acolhida nos locais que frequenta)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_d9jz0z_67b4183e-7e19-4a15-b398-323ac2d4ceeb",
+                  "label": "autor_comportamentos_abusivos (Proibiu a pessoa acolhida de visitar familiares ou amigos)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_d9jz0z_22229d27-5823-41c6-9234-899d8836edd1",
+                  "label": "autor_comportamentos_abusivos (Proibiu a pessoa acolhida de trabalhar ou estudar)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_d9jz0z_25ffc51d-7f47-468b-987a-d72a8722c014",
+                  "label": "autor_comportamentos_abusivos (Fez telefonemas, enviou mensagens pelo celular ou e-mails de forma insistente)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_d9jz0z_6038b2e3-f30d-43e9-b79e-7cd32672dcd9",
+                  "label": "autor_comportamentos_abusivos (Impediu a pessoa acolhida de ter acesso a dinheiro, conta bancária ou outros bens (como documentos pessoais, carro, etc))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_d9jz0z_a5bb80d0-e896-457f-8775-762cfc2eea9f",
+                  "label": "autor_comportamentos_abusivos (Teve outros comportamentos de ciúme excessivo e de controle sobre a pessoa acolhida (tenta controlar sua vida e as coisas que ela faz, onde a pessoa acolhida vai, com quem conversa, o tipo de roupa que usa, etc.))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_d9jz0z_cca400ff-8b48-4518-a989-a4381d89f197",
+                  "label": "autor_comportamentos_abusivos (Proibiu a pessoa acolhida de ir ao médico ou pedir ajuda a outros profissionais)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_d9jz0z_b6a95186-a292-4c08-8f5a-df0b9d9c8d26",
+                  "label": "autor_comportamentos_abusivos (Ameaçou a pessoa acolhida)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_Y4Y9Gq",
+                  "label": "acolhida_atendimento_medico",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "66be8823-5526-4b59-a83c-1e7eeaa1af13"
+                  ],
+                  "options": [
+                    {
+                      "id": "66be8823-5526-4b59-a83c-1e7eeaa1af13",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "7bc8a5cf-39df-4e00-afc9-b10c57310758",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_D7Dapb",
+                  "label": "acolhida_teve_interrese_em_separar",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "bbe0dc1e-eb86-454c-9cde-9e32a11935cf"
+                  ],
+                  "options": [
+                    {
+                      "id": "f62604ad-0779-4aef-8e14-655e233354ae",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "bbe0dc1e-eb86-454c-9cde-9e32a11935cf",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_l6WzO5",
+                  "label": "acolhida_tem_dependencia_emocional",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8409e10f-a82f-4f61-82ba-1d42818005ce"
+                  ],
+                  "options": [
+                    {
+                      "id": "8409e10f-a82f-4f61-82ba-1d42818005ce",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "9463d355-06b4-4494-99ac-1731fb96a8d0",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_RDYjol",
+                  "label": "frequencia_violencia_aumentou",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "20fce42f-bcb9-4119-84fd-deba04ad12e4"
+                  ],
+                  "options": [
+                    {
+                      "id": "b76bf7e6-ff81-426d-a2aa-b22e1d9b3d07",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "20fce42f-bcb9-4119-84fd-deba04ad12e4",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_o2dzR1",
+                  "label": "autor_agrediu_outras_pessoas",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "bf279c44-ebbb-4c3e-95a1-62ac98928513",
+                    "e79bd17f-f6e5-4b77-bb4d-ee8d78ce776b"
+                  ],
+                  "options": [
+                    {
+                      "id": "12f8308b-a308-4d86-a9f4-43f00c255fdd",
+                      "text": "Sim, filhos"
+                    },
+                    {
+                      "id": "e79bd17f-f6e5-4b77-bb4d-ee8d78ce776b",
+                      "text": "Sim, outros familiares"
+                    },
+                    {
+                      "id": "3a923634-2f02-4f8e-a1ba-7699521279dd",
+                      "text": "Sim, amigos"
+                    },
+                    {
+                      "id": "bf279c44-ebbb-4c3e-95a1-62ac98928513",
+                      "text": "Sim, colegas de trabalho"
+                    },
+                    {
+                      "id": "36ac2273-c18c-4dfa-871d-69ff94c258b4",
+                      "text": "Sim, animais"
+                    },
+                    {
+                      "id": "8e43c5b2-2f93-4677-a16f-a323f945a907",
+                      "text": "Sim,  outras pessoas"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_o2dzR1_12f8308b-a308-4d86-a9f4-43f00c255fdd",
+                  "label": "autor_agrediu_outras_pessoas (Sim, filhos)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_o2dzR1_e79bd17f-f6e5-4b77-bb4d-ee8d78ce776b",
+                  "label": "autor_agrediu_outras_pessoas (Sim, outros familiares)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_o2dzR1_3a923634-2f02-4f8e-a1ba-7699521279dd",
+                  "label": "autor_agrediu_outras_pessoas (Sim, amigos)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_o2dzR1_bf279c44-ebbb-4c3e-95a1-62ac98928513",
+                  "label": "autor_agrediu_outras_pessoas (Sim, colegas de trabalho)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_o2dzR1_36ac2273-c18c-4dfa-871d-69ff94c258b4",
+                  "label": "autor_agrediu_outras_pessoas (Sim, animais)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_o2dzR1_55dca3cb-75d5-4d0c-8874-9841e3ea1be6",
+                  "label": "autor_agrediu_outras_pessoas (Sim, outras pessoas)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_o2dzR1_8e43c5b2-2f93-4677-a16f-a323f945a907",
+                  "label": "autor_agrediu_outras_pessoas (Sim,  outras pessoas)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_GRDbpj",
+                  "label": "outros_autor_agrediu",
+                  "type": "INPUT_TEXT",
+                  "value": "gkjkg"
+                },
+                {
+                  "key": "question_O7YEXK",
+                  "label": "tem_dominio",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "31178a5c-05fe-49d1-94cd-5426a378274e"
+                  ],
+                  "options": [
+                    {
+                      "id": "31178a5c-05fe-49d1-94cd-5426a378274e",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "cc600c57-cb85-4db0-8df6-223226dad325",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_VzYNPa",
+                  "label": "quais_dominios",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "4642d557-e9b9-4132-8404-99aecbb9eb98"
+                  ],
+                  "options": [
+                    {
+                      "id": "4642d557-e9b9-4132-8404-99aecbb9eb98",
+                      "text": "Financeiro"
+                    },
+                    {
+                      "id": "b398c0d3-a0a2-47db-b60e-8a8b5e4caa8c",
+                      "text": "Social"
+                    },
+                    {
+                      "id": "8e3e4937-d04c-4223-8973-ffe6926589ea",
+                      "text": "Político"
+                    },
+                    {
+                      "id": "d9524b02-9869-48e0-b8ad-95788f8f1df1",
+                      "text": "Religioso"
+                    },
+                    {
+                      "id": "3582b224-9ea1-4ee6-b82d-7c74a3692af3",
+                      "text": "Jurídico"
+                    },
+                    {
+                      "id": "ddbc5633-8d7b-4314-8606-e0fe56fafa73",
+                      "text": "Milícia"
+                    },
+                    {
+                      "id": "bfc97933-c406-4cba-a442-7bb2ed17d3bc",
+                      "text": "Tráfico"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_VzYNPa_4642d557-e9b9-4132-8404-99aecbb9eb98",
+                  "label": "quais_dominios (Financeiro)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_VzYNPa_b398c0d3-a0a2-47db-b60e-8a8b5e4caa8c",
+                  "label": "quais_dominios (Social)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYNPa_8e3e4937-d04c-4223-8973-ffe6926589ea",
+                  "label": "quais_dominios (Político)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYNPa_d9524b02-9869-48e0-b8ad-95788f8f1df1",
+                  "label": "quais_dominios (Religioso)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYNPa_3582b224-9ea1-4ee6-b82d-7c74a3692af3",
+                  "label": "quais_dominios (Jurídico)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYNPa_ddbc5633-8d7b-4314-8606-e0fe56fafa73",
+                  "label": "quais_dominios (Milícia)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYNPa_bfc97933-c406-4cba-a442-7bb2ed17d3bc",
+                  "label": "quais_dominios (Tráfico)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_PzYr9Q",
+                  "label": "usa_substancias_psicoativas",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "28843085-c14c-402e-a23d-55ff7bb0d8a8"
+                  ],
+                  "options": [
+                    {
+                      "id": "28843085-c14c-402e-a23d-55ff7bb0d8a8",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "5b94483a-f49c-4213-8b10-78c478c2b56d",
+                      "text": "Não2"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_ExD6lo",
+                  "label": "quais_substancias",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "cea7ddc5-eb70-47ad-bab9-e8613bc3d4d7",
+                      "text": "Álcool"
+                    },
+                    {
+                      "id": "7790a26b-dc2e-4b47-a76d-d97f807ccf1c",
+                      "text": "Maconha"
+                    },
+                    {
+                      "id": "a824357c-9acc-4aef-b2ff-85423dfcc1e4",
+                      "text": "Cocaína"
+                    },
+                    {
+                      "id": "8d886372-cbbe-480c-a4ee-7f8dcb05eed4",
+                      "text": "LSD"
+                    },
+                    {
+                      "id": "a9f24142-d1d0-48c1-9b2c-88d109ce5d15",
+                      "text": "Outros"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_roLYOM",
+                  "label": "diagnostico_doenca_psiquiatrica",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "67e8674a-babf-4d0a-a63b-5f09f9fddaf1"
+                  ],
+                  "options": [
+                    {
+                      "id": "67e8674a-babf-4d0a-a63b-5f09f9fddaf1",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "8d33257c-ffc2-43aa-9625-a3fecc073361",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_4KvO7b",
+                  "label": "acolhida_criticou_servicos_publicos",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8d645236-efbf-4825-be73-c90383d38461"
+                  ],
+                  "options": [
+                    {
+                      "id": "8d645236-efbf-4825-be73-c90383d38461",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "120d56f7-46af-4c55-9a48-3d40dd09aa94",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_jlWzoR",
+                  "label": "quais_servicos_publicos",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "00c9d099-dbc2-4d5d-b485-a6914c4e8f18",
+                      "text": "CREAS"
+                    },
+                    {
+                      "id": "f218c7f4-ae5f-405a-8c59-404ae5b53455",
+                      "text": "CRAS"
+                    },
+                    {
+                      "id": "fd5b9769-7426-4307-9731-93e760d90dbf",
+                      "text": "UBS"
+                    },
+                    {
+                      "id": "6abaa012-47cd-4591-bc8a-d2d71b68d443",
+                      "text": "CRM; CDCM; CRAM; CIAM"
+                    },
+                    {
+                      "id": "aa68cac4-9744-422f-be88-155a379d47ba",
+                      "text": "Delegacia Especializada da Mulher"
+                    },
+                    {
+                      "id": "f2d163d1-f869-4676-a429-494c7486562f",
+                      "text": "Delegacia Civil"
+                    },
+                    {
+                      "id": "24e3a335-c96f-4e4c-9608-49f514232458",
+                      "text": "Hospital de Abortamento Legal"
+                    },
+                    {
+                      "id": "3fb01011-49bb-402d-af2f-d0d5d8040c40",
+                      "text": "Defensoria Pública/NUDEM"
+                    },
+                    {
+                      "id": "fd2369ed-7679-4834-aa2c-f5a7f30e7e95",
+                      "text": "Ministério Público"
+                    },
+                    {
+                      "id": "9e18a8fc-568d-4e56-832d-edcaf7f8b510",
+                      "text": "Não quis informar"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_2KvoAp",
+                  "label": "objetivo_da_demanda",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "7d1bdaae-ce58-4b8f-82e6-0678c98197f3",
+                    "b139816b-be9f-4a7f-800d-e0025c20296c"
+                  ],
+                  "options": [
+                    {
+                      "id": "7d1bdaae-ce58-4b8f-82e6-0678c98197f3",
+                      "text": "Medida Protetiva Urgência"
+                    },
+                    {
+                      "id": "b139816b-be9f-4a7f-800d-e0025c20296c",
+                      "text": "Divórcio/dissolução de união estável"
+                    },
+                    {
+                      "id": "7521041f-e615-4493-8944-a3c2b010d21a",
+                      "text": "Guarda/ regulamentação de visitas"
+                    },
+                    {
+                      "id": "48652d47-f3f8-431d-a57a-b89e35878a83",
+                      "text": "Pensão"
+                    },
+                    {
+                      "id": "6484b2c8-662a-4d71-a058-c8f2c20da87c",
+                      "text": "Interdição"
+                    },
+                    {
+                      "id": "4a6a6487-590a-4aa2-99b9-ccb7806c4d48",
+                      "text": "Curatela"
+                    },
+                    {
+                      "id": "f0cb581b-0d15-4390-ab15-19c587c3b2e6",
+                      "text": "Condominial"
+                    },
+                    {
+                      "id": "bc095db1-aa43-4db3-abec-9f4cdc7f4e49",
+                      "text": "Responsabilidade civil / Indenização por violência/dano"
+                    },
+                    {
+                      "id": "9431afc0-af51-47d5-a960-57746e23f20b",
+                      "text": "Ação Penal decorrente de violência sexual (exemplo: estupro)"
+                    },
+                    {
+                      "id": "e46a8c1a-9bc9-43e1-a918-1f49928af690",
+                      "text": "Ação Penal decorrente de violência doméstica (exemplo: agressão física, ameaça, injúria, retenção de documento)"
+                    },
+                    {
+                      "id": "b7446b61-6921-49fa-8d4a-a116ee35ce5b",
+                      "text": "Assédio moral no ambiente de trabalho"
+                    },
+                    {
+                      "id": "8a4c9ccc-0085-4df6-bca3-30f588b9e3e2",
+                      "text": "Sextorsão"
+                    },
+                    {
+                      "id": "26889b56-5270-4a24-b7ca-85791896b41d",
+                      "text": "Divulgação de imagens íntimas"
+                    },
+                    {
+                      "id": "c5b4ccd8-d959-4ed3-8da4-ca5431f3ae55",
+                      "text": "Stalking"
+                    },
+                    {
+                      "id": "5df879ac-7fc8-46ec-884c-757f27b141a9",
+                      "text": "Invasão de dispositivo e/ou conta"
+                    },
+                    {
+                      "id": "f4dc7848-9104-4ce0-b4fa-fb4eefe0a3bb",
+                      "text": "Obtenção ilegal de conteúdo"
+                    },
+                    {
+                      "id": "26e00d12-f297-447d-8b99-987588b71fbd",
+                      "text": "Crimes contra a honra no meio digital"
+                    },
+                    {
+                      "id": "1fecfcc7-5131-44e9-ae6b-2f09773107ce",
+                      "text": "Outros"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_2KvoAp_7d1bdaae-ce58-4b8f-82e6-0678c98197f3",
+                  "label": "objetivo_da_demanda (Medida Protetiva Urgência)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_2KvoAp_b139816b-be9f-4a7f-800d-e0025c20296c",
+                  "label": "objetivo_da_demanda (Divórcio/dissolução de união estável)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_2KvoAp_7521041f-e615-4493-8944-a3c2b010d21a",
+                  "label": "objetivo_da_demanda (Guarda/ regulamentação de visitas)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_48652d47-f3f8-431d-a57a-b89e35878a83",
+                  "label": "objetivo_da_demanda (Pensão)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_6484b2c8-662a-4d71-a058-c8f2c20da87c",
+                  "label": "objetivo_da_demanda (Interdição)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_4a6a6487-590a-4aa2-99b9-ccb7806c4d48",
+                  "label": "objetivo_da_demanda (Curatela)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_f0cb581b-0d15-4390-ab15-19c587c3b2e6",
+                  "label": "objetivo_da_demanda (Condominial)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_bc095db1-aa43-4db3-abec-9f4cdc7f4e49",
+                  "label": "objetivo_da_demanda (Responsabilidade civil / Indenização por violência/dano)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_9431afc0-af51-47d5-a960-57746e23f20b",
+                  "label": "objetivo_da_demanda (Ação Penal decorrente de violência sexual (exemplo: estupro))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_e46a8c1a-9bc9-43e1-a918-1f49928af690",
+                  "label": "objetivo_da_demanda (Ação Penal decorrente de violência doméstica (exemplo: agressão física, ameaça, injúria, retenção de documento))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_b7446b61-6921-49fa-8d4a-a116ee35ce5b",
+                  "label": "objetivo_da_demanda (Assédio moral no ambiente de trabalho)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_8a4c9ccc-0085-4df6-bca3-30f588b9e3e2",
+                  "label": "objetivo_da_demanda (Sextorsão)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_26889b56-5270-4a24-b7ca-85791896b41d",
+                  "label": "objetivo_da_demanda (Divulgação de imagens íntimas)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_c5b4ccd8-d959-4ed3-8da4-ca5431f3ae55",
+                  "label": "objetivo_da_demanda (Stalking)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_5df879ac-7fc8-46ec-884c-757f27b141a9",
+                  "label": "objetivo_da_demanda (Invasão de dispositivo e/ou conta)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_f4dc7848-9104-4ce0-b4fa-fb4eefe0a3bb",
+                  "label": "objetivo_da_demanda (Obtenção ilegal de conteúdo)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_26e00d12-f297-447d-8b99-987588b71fbd",
+                  "label": "objetivo_da_demanda (Crimes contra a honra no meio digital)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_2KvoAp_1fecfcc7-5131-44e9-ae6b-2f09773107ce",
+                  "label": "objetivo_da_demanda (Outros)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_xJyzDG",
+                  "label": "lei_maria_da_penha",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "0f7e29d9-6898-4915-b1c5-0b460173e2ee"
+                  ],
+                  "options": [
+                    {
+                      "id": "0f7e29d9-6898-4915-b1c5-0b460173e2ee",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "1dddcd5b-635f-4e64-a012-3340443f3ad4",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_RDYjop",
+                  "label": "forma_de_viloencia",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "5b489da8-0257-475d-9035-42b6b6fb8a1a"
+                  ],
+                  "options": [
+                    {
+                      "id": "07117963-9880-4c73-b786-ab6cca308646",
+                      "text": "Violência Patrimonial"
+                    },
+                    {
+                      "id": "5b489da8-0257-475d-9035-42b6b6fb8a1a",
+                      "text": "Violência Psicológica"
+                    },
+                    {
+                      "id": "6fafb418-a58b-498e-91e7-f72d1178aed6",
+                      "text": "Violência Física"
+                    },
+                    {
+                      "id": "7a34c8a7-841d-4c05-84de-efd088eb4bf3",
+                      "text": "Violência Moral"
+                    },
+                    {
+                      "id": "fda14876-f11c-454b-a1ac-bb9d5acc45f1",
+                      "text": "Violência Sexual"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_RDYjop_07117963-9880-4c73-b786-ab6cca308646",
+                  "label": "forma_de_viloencia (Violência Patrimonial)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_RDYjop_5b489da8-0257-475d-9035-42b6b6fb8a1a",
+                  "label": "forma_de_viloencia (Violência Psicológica)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_RDYjop_6fafb418-a58b-498e-91e7-f72d1178aed6",
+                  "label": "forma_de_viloencia (Violência Física)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_RDYjop_7a34c8a7-841d-4c05-84de-efd088eb4bf3",
+                  "label": "forma_de_viloencia (Violência Moral)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_RDYjop_fda14876-f11c-454b-a1ac-bb9d5acc45f1",
+                  "label": "forma_de_viloencia (Violência Sexual)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_o2dzRX",
+                  "label": "lei_que_se_enquadra",
+                  "type": "INPUT_TEXT",
+                  "value": null
+                },
+                {
+                  "key": "question_GRDbp2",
+                  "label": "resumo_demanda",
+                  "type": "TEXTAREA",
+                  "value": "lhhyioyioy8oy8"
+                },
+                {
+                  "key": "question_O7YEXp",
+                  "label": "encaminhamento",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "52352243-d407-445d-b8af-55c6ef417388"
+                  ],
+                  "options": [
+                    {
+                      "id": "9557b1cb-20f5-4489-a16b-d5210354e6c2",
+                      "text": "Atendimento contínuo"
+                    },
+                    {
+                      "id": "2cd69762-a453-4b90-bb56-b3df092e0d3b",
+                      "text": "Encaminhamento para serviço público e interrupção do atendimento pelo projeto"
+                    },
+                    {
+                      "id": "1ef6bbb0-d038-45d5-9557-325e279de8d4",
+                      "text": "Articulação com o serviço público e continuidade de atendimento pelo projeto"
+                    },
+                    {
+                      "id": "52352243-d407-445d-b8af-55c6ef417388",
+                      "text": "Interrupção do atendimento"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_VzYNzE",
+                  "label": "inicio_atendimento",
+                  "type": "INPUT_DATE",
+                  "value": "2025-08-05"
+                },
+                {
+                  "key": "question_ExD6xq",
+                  "label": "contrato_pro_bono",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "2b9c9a32-2a2b-4760-8aae-6d0295a356fa"
+                  ],
+                  "options": [
+                    {
+                      "id": "2b9c9a32-2a2b-4760-8aae-6d0295a356fa",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "74b04b06-2285-40ae-8806-c2befd1320ed",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_BxD5LR",
+                  "label": "horas_atendimento_por_semana",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "f41042b1-594a-45bf-8862-539663f3700e"
+                  ],
+                  "options": [
+                    {
+                      "id": "f41042b1-594a-45bf-8862-539663f3700e",
+                      "text": "1h"
+                    },
+                    {
+                      "id": "f383ff3b-97e7-47cc-864c-c756a3009876",
+                      "text": "2h"
+                    },
+                    {
+                      "id": "f65174d4-5570-4b10-ae0e-e900e728ade6",
+                      "text": "3h a 5h"
+                    },
+                    {
+                      "id": "f3bd89dd-fb10-40c9-bb0d-89e3d734b212",
+                      "text": "Mais de 5h"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_4KvOKB",
+                  "label": "qual_fluxo_comunicao",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "7bb925ae-7d50-4a40-86a1-788df2569e77"
+                  ],
+                  "options": [
+                    {
+                      "id": "7bb925ae-7d50-4a40-86a1-788df2569e77",
+                      "text": "Sim, pelo WhatsApp"
+                    },
+                    {
+                      "id": "591910ea-58b7-4d9a-a6ec-79cf90efca81",
+                      "text": "Sim, por ligação telefônica"
+                    },
+                    {
+                      "id": "e2710665-6930-4367-9f90-2c800085c981",
+                      "text": "Não, a comunicação se dará por livre demanda"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_4KvOKB_7bb925ae-7d50-4a40-86a1-788df2569e77",
+                  "label": "qual_fluxo_comunicao (Sim, pelo WhatsApp)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_4KvOKB_591910ea-58b7-4d9a-a6ec-79cf90efca81",
+                  "label": "qual_fluxo_comunicao (Sim, por ligação telefônica)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_4KvOKB_e2710665-6930-4367-9f90-2c800085c981",
+                  "label": "qual_fluxo_comunicao (Não, a comunicação se dará por livre demanda)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_kNWx0o",
+                  "label": "frequencia_comunicacao",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "4ebd5a6d-2511-458a-972a-482a7a7e2727"
+                  ],
+                  "options": [
+                    {
+                      "id": "4ebd5a6d-2511-458a-972a-482a7a7e2727",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "29d22234-0a83-4ab3-adc2-6c79579e7aa7",
+                      "text": "Nào"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_PzYrzd",
+                  "label": "forma_segura_contato_com_acolhida",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "63b6d147-63e7-4726-b9c7-89c4c689f059"
+                  ],
+                  "options": [
+                    {
+                      "id": "63b6d147-63e7-4726-b9c7-89c4c689f059",
+                      "text": "Ligação telefônica"
+                    },
+                    {
+                      "id": "063baacf-0022-42e8-a4e5-2a86f528052b",
+                      "text": "SMS"
+                    },
+                    {
+                      "id": "3e339450-be29-4972-babb-b9273bdea49b",
+                      "text": "Áudio Whatsapp"
+                    },
+                    {
+                      "id": "6103ba0a-861d-4f77-badd-e844edebe501",
+                      "text": "Chamada de vídeo"
+                    },
+                    {
+                      "id": "b507bd67-76b7-46b9-8fed-29b081ca06de",
+                      "text": "E-mail"
+                    },
+                    {
+                      "id": "335e5d35-1518-4089-8588-760e34d95fc4",
+                      "text": "Pessoalmente"
+                    },
+                    {
+                      "id": "bfe2fbf0-6952-4210-8d7c-5d115d1622eb",
+                      "text": "Outros"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_2KvoKA",
+                  "label": "tem_acompanhamento_psicologico",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "556eb8ab-e201-418d-aa60-06b1cc2fe759"
+                  ],
+                  "options": [
+                    {
+                      "id": "556eb8ab-e201-418d-aa60-06b1cc2fe759",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "2f3aa44a-f4ca-48e1-8bf4-557cf4f80358",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_xJyzJJ",
+                  "label": "via_mapa_do_acolhimento",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "af905646-f3e0-4eeb-9372-decc7750a17f"
+                  ],
+                  "options": [
+                    {
+                      "id": "af905646-f3e0-4eeb-9372-decc7750a17f",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "a3ac41d7-561c-4513-8c6d-087b019cf096",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_Z2Ye2a",
+                  "label": "entrou_em_contato_com_psicologa",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8b08f211-97c5-4c7b-a256-60a25b42c26d"
+                  ],
+                  "options": [
+                    {
+                      "id": "8b08f211-97c5-4c7b-a256-60a25b42c26d",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "110c44e8-1382-4a81-bf49-a74b94eef3d7",
+                      "text": "Não"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook-test/triagem-jur-2",
+          "executionMode": "test"
+        }
+      }
     ]
   },
   "settings": {
@@ -3781,6 +5620,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-08-25T21:18:24.000Z",
-  "versionId": "4b79bd8f-3836-44de-a727-68477563faa0"
+  "updatedAt": "2025-08-26T18:47:34.000Z",
+  "versionId": "91e019b4-170d-4317-b170-6b9281164cd1"
 }
