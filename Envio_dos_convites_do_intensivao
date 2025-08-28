@@ -41,6 +41,11 @@
             "node": "Busca segmento de voluntarias em capacitaçao1",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -50,7 +55,7 @@
         [],
         [
           {
-            "node": "Envia email segundo convite não receberam",
+            "node": "Envia email terceiro convite SE INSCREVERAM",
             "type": "main",
             "index": 0
           }
@@ -62,7 +67,7 @@
         [],
         [
           {
-            "node": "Envia mensagem whatsapp segundo convite1",
+            "node": "Envia mensagem whatsapp terceiro convite",
             "type": "main",
             "index": 0
           }
@@ -91,7 +96,18 @@
         ]
       ]
     },
-    "Envia email segundo convite não receberam": {
+    "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão": {
+      "main": [
+        [
+          {
+            "node": "loop email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email terceiro convite SE INSCREVERAM": {
       "main": [
         [
           {
@@ -102,11 +118,82 @@
         ]
       ]
     },
+    "Envia mensagem whatsapp terceiro convite": {
+      "main": [
+        [
+          {
+            "node": "Wait14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntárias que não finalizaram a capacitação1": {
+      "main": [
+        [
+          {
+            "node": "Insere na volunteer_segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger segment1": {
+      "main": [
+        [
+          {
+            "node": "Busca voluntárias que não finalizaram a capacitação1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca segmento de voluntarias em capacitaçao": {
+      "main": [
+        [
+          {
+            "node": "loop whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Wait": {
       "main": [
         [
           {
+            "node": "loop whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait16": {
+      "main": [
+        [
+          {
             "node": "loop email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao",
             "type": "main",
             "index": 0
           }
@@ -118,52 +205,26 @@
         [],
         [
           {
-            "node": "Envia email segundo convite se inscreveram",
+            "node": "Envia email ultimo convite convite",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Envia email segundo convite se inscreveram": {
+    "loop whatsapp1": {
       "main": [
+        [],
         [
           {
-            "node": "Wait",
+            "node": "Envia mensagem whatsapp ultimo convite",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Envia mensagem whatsapp segundo convite1": {
-      "main": [
-        [
-          {
-            "node": "Wait14",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Busca segmento de voluntarias em capacitaçao se inscreveram",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca segmento de voluntarias em capacitaçao não responderam",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca segmento de voluntarias em capacitaçao se inscreveram": {
+    "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão1": {
       "main": [
         [
           {
@@ -174,11 +235,22 @@
         ]
       ]
     },
-    "Busca segmento de voluntarias em capacitaçao não responderam": {
+    "Envia email ultimo convite convite": {
       "main": [
         [
           {
-            "node": "loop email",
+            "node": "Wait16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp ultimo convite": {
+      "main": [
+        [
+          {
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -203,8 +275,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -920,
-        140
+        -900,
+        -240
       ],
       "credentials": {
         "postgres": {
@@ -220,8 +292,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        40,
-        160
+        60,
+        -220
       ],
       "id": "eb2dd193-3656-4e9b-9feb-7f9ff3f29909",
       "name": "Wait14",
@@ -236,8 +308,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -200,
-        -120
+        -180,
+        -500
       ],
       "webhookId": "18fae65f-82d5-4d83-a49f-f97a0dbd6ea3"
     },
@@ -247,7 +319,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "13 11 26 8 *"
+              "expression": "13 10 29 8 *"
             }
           ]
         }
@@ -256,7 +328,7 @@
       "typeVersion": 1.2,
       "position": [
         -1180,
-        140
+        -400
       ],
       "id": "611b3081-5423-4c0d-a236-f0ff1f528b6a",
       "name": "Schedule Trigger"
@@ -271,8 +343,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -740,
-        -140
+        -720,
+        -520
       ]
     },
     {
@@ -285,8 +357,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -540,
-        140
+        -520,
+        -240
       ]
     },
     {
@@ -300,7 +372,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -340,
+        -640,
         -760
       ],
       "credentials": {
@@ -321,7 +393,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -640,
+        -940,
         -760
       ],
       "credentials": {
@@ -337,7 +409,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "01 11 26 8 *"
+              "expression": "01 10 29 8 *"
             }
           ]
         }
@@ -345,7 +417,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -880,
+        -1180,
         -760
       ],
       "id": "b4b0447b-086d-4016-bce5-6693a3e8fbd9",
@@ -353,96 +425,17 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmerjks9z06wk4e0ijguc1268\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\":\"{{ $json.occupation }}\",\n    \"phone\": \"{{ $json.phone }}\"\n  }\n}",
-        "options": {}
-      },
-      "id": "a737a4df-149b-444c-bf4f-77cc94334d39",
-      "name": "Envia email segundo convite não receberam",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        -460,
-        -120
-      ],
-      "retryOnFail": true,
-      "notesInFlow": true,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      },
-      "onError": "continueRegularOutput",
-      "notes": "Vixi"
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email not in ('fabiola879@gmail.com', 'eumifasanaropsi@gmail.com', 'thabata.campos@terra.com.br', 'psicollopes@gmail.com', 'mariluizacoelhos@gmail.com', 'helen.oliveira@irbm.com.br', 'psi.marinascardo@gmail.com', 'claudialimadireito@gmail.com', 'adrianasviotto@gmail.com', 'suzanagarcia_@hotmail.com', 'nathaliatxt@gmail.com', 'aldicarvalho2@gmail.com', 'psicopaulamachado@gmail.com', 'racheltavareselleres@gmail.com', 'ttmb.estudoeprofissional@gmail.com', 'claratavares.cardoso@hotmail.com', 'psiluciapaz@gmail.com', 'anaferrarespsi@gmail.com', 'alessandraareque@gmail.com', 'sandydaluz.psicologia@gmail.com', 'wagpsicologia@gmail.com', 'laramguilherme@gmail.com', 'amandafurtado.psicologia@gmail.com', 'evelinfreixopsi@gmail.com', 'renataribeirocyrillo@gmail.com', 'tilanas2@gmail.com', 'gabriela.bueno.rodrigues@hotmail.com', 'themyspordeus@gmail.com', 'rhayssaferreirag@gmail.com', 'catarinearaujomoreira@gmail.com', 'psiluanafelix@gmail.com', 'luciam.l.queres@gmail.com', 'nathaliafernandespsi@gmail.com', 'vsilvaalves924@gmail.com', 'tayla.adv@gmail.com', 'annepaivadealencar@hotmail.com', 'alinecn.nasc@gmail.com', 'psico.lorrainy@gmail.com', 'meiryaquino02@gmail.com', 'karlabeatriz54@gmail.com', 'valeriadbdias@gmail.com', 'barbaravicka@gmail.com', 'gislaine_calheiros@hotmail.com', 'mihreis@hotmail.com', 'brunasalgado.adv@gmail.com', 'kamilakyarafb@hotmail.com', 'vanessasantos.psi011@gmail.com', 'helen.oliveira@irbm.com.br', 'mary_sch20@hotmail.com', 'daniellalaso@gmail.com', 'al.rodrigues.psi@gmail.com', 'nataliecatarina@outlook.com', 'daniellalaso@gmail.com', 'renata.vmb@gmail.com', 'fabimonteiro84@gmail.com', 'psicologadaynacristines@gmail.com', 'sidileiaalmeida@hotmail.com', 'melisaborges@uol.com.br')",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' and email in ('michele.lany@hotmail.com', 'meiryaquino02@gmail.com', 'nataliabsouza.adv@gmail.com', 'ligia.sconceica@gmail.com', 'a_komp@hotmail.com', 'psigabrielammoura@gmail.com', 'catarinearaujomoreira@gmail.com', 'encarnacionbenite@bol.com.br', 'nath.castrosouza@gmail.com', 'alvesoliveiramg31@gmail.com', 'erika_bolognani@hotmail.com', 'luanacris2606@gmail.com', 'evelinfreixopsi@gmail.com', 'r_fialho@hotmail.com', 'tatiane_santamos@hotmail.com', 'macyelmamourapsi@gmail.com', 'jessicacostaramos.adv@gmail.com', 'rspsico2013@gmail.com', 'vsilvaalves924@gmail.com', 'fabiacr76@gmail.com', 'dalvaluzpsicologa@gmail.com', 'tanisemateus@hotmail.com', 'zeliapsilva@hotmail.com', 'daniellebrasil.advpr@gmail.com', 'fabianadefatimacordeiro@gmail.com', 'carolasilg@hotmail.com', 'marianapsiepsi@gmail.com', 'kainnarelli@gmail.com', 'inezaraujo.adv@hotmail.com', 'roseananda99@gmail.com', 'adv.pamsoares@gmail.con', 'a_komp@hotmail.com', 'nathaliatxt@gmail.com', 'psiangelanovaes@outlook.com')\n",
         "options": {}
       },
-      "id": "3375c239-6e56-49bd-aeec-ba132f02ee08",
-      "name": "Busca segmento de voluntarias em capacitaçao não responderam",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        -960,
-        -140
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "amount": 1
-      },
-      "id": "dcca9316-4180-4cd4-adee-fbe14998de47",
-      "name": "Wait",
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [
-        -200,
-        -420
-      ],
-      "webhookId": "18fae65f-82d5-4d83-a49f-f97a0dbd6ea3"
-    },
-    {
-      "parameters": {
-        "batchSize": 6,
-        "options": {}
-      },
-      "id": "1d738b3a-f93d-419b-9396-7b0ab1feb7d3",
-      "name": "loop email1",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        -740,
-        -440
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email in ('fabiola879@gmail.com', 'eumifasanaropsi@gmail.com', 'thabata.campos@terra.com.br', 'psicollopes@gmail.com', 'mariluizacoelhos@gmail.com', 'helen.oliveira@irbm.com.br', 'psi.marinascardo@gmail.com', 'claudialimadireito@gmail.com', 'adrianasviotto@gmail.com', 'suzanagarcia_@hotmail.com', 'nathaliatxt@gmail.com', 'aldicarvalho2@gmail.com', 'psicopaulamachado@gmail.com', 'racheltavareselleres@gmail.com', 'ttmb.estudoeprofissional@gmail.com', 'claratavares.cardoso@hotmail.com', 'psiluciapaz@gmail.com', 'anaferrarespsi@gmail.com', 'alessandraareque@gmail.com', 'sandydaluz.psicologia@gmail.com', 'wagpsicologia@gmail.com', 'laramguilherme@gmail.com', 'amandafurtado.psicologia@gmail.com', 'evelinfreixopsi@gmail.com', 'renataribeirocyrillo@gmail.com', 'tilanas2@gmail.com', 'gabriela.bueno.rodrigues@hotmail.com', 'themyspordeus@gmail.com', 'rhayssaferreirag@gmail.com', 'catarinearaujomoreira@gmail.com', 'psiluanafelix@gmail.com', 'luciam.l.queres@gmail.com', 'nathaliafernandespsi@gmail.com', 'vsilvaalves924@gmail.com', 'tayla.adv@gmail.com', 'annepaivadealencar@hotmail.com', 'alinecn.nasc@gmail.com', 'psico.lorrainy@gmail.com', 'meiryaquino02@gmail.com', 'karlabeatriz54@gmail.com', 'valeriadbdias@gmail.com', 'barbaravicka@gmail.com', 'gislaine_calheiros@hotmail.com', 'mihreis@hotmail.com', 'brunasalgado.adv@gmail.com', 'kamilakyarafb@hotmail.com', 'vanessasantos.psi011@gmail.com', 'helen.oliveira@irbm.com.br', 'mary_sch20@hotmail.com', 'daniellalaso@gmail.com', 'al.rodrigues.psi@gmail.com', 'nataliecatarina@outlook.com', 'daniellalaso@gmail.com', 'renata.vmb@gmail.com', 'fabimonteiro84@gmail.com', 'psicologadaynacristines@gmail.com', 'sidileiaalmeida@hotmail.com', 'melisaborges@uol.com.br')",
-        "options": {}
-      },
-      "id": "a79611a8-1650-47c9-bb81-856403f9b3d1",
-      "name": "Busca segmento de voluntarias em capacitaçao se inscreveram",
+      "id": "36ba186b-de40-4fe8-a38a-af5834a991bf",
+      "name": "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
         -980,
-        -440
+        -520
       ],
       "credentials": {
         "postgres": {
@@ -459,16 +452,16 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmer44p4g7gunzc0igmuhmowg\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "jsonBody": "={\n  \"transactionalId\": \"cmeu15jp10f890h0im37agqvr\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n\n  }\n}",
         "options": {}
       },
-      "id": "935af320-12d2-49c4-8467-0cf985d014e5",
-      "name": "Envia email segundo convite se inscreveram",
+      "id": "a737a4df-149b-444c-bf4f-77cc94334d39",
+      "name": "Envia email terceiro convite SE INSCREVERAM",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -460,
-        -420
+        -440,
+        -500
       ],
       "retryOnFail": true,
       "notesInFlow": true,
@@ -501,7 +494,7 @@
             },
             {
               "name": "ContentSid",
-              "value": "HX64565be5362b4f40851be4977d55f578"
+              "value": "HXaecf4a53015f2d787c3ed8c51d88eb99"
             },
             {
               "name": "ContentVariables",
@@ -512,12 +505,12 @@
         "options": {}
       },
       "id": "db2fc553-3427-48ea-98cd-585e0746523c",
-      "name": "Envia mensagem whatsapp segundo convite1",
+      "name": "Envia mensagem whatsapp terceiro convite",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -240,
-        160
+        -220,
+        -220
       ],
       "retryOnFail": true,
       "credentials": {
@@ -529,15 +522,287 @@
       "onError": "continueRegularOutput"
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO volunteer_segments (segment_name, volunteer_id, volunteer_segment_group, created_at, updated_at)\nVALUES ('incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}', {{ $json.volunteer_id }}, '{{ $json.condition }}', NOW(), NOW())",
+        "options": {}
+      },
+      "id": "7e4f0f2a-cfc9-4ea2-9cc0-d66d30b40b15",
+      "name": "Insere na volunteer_segments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
       "position": [
-        -1280,
-        -260
+        -640,
+        300
       ],
-      "id": "42e6ac6a-2626-47be-a41c-8b11a2188f0b",
-      "name": "When clicking ‘Execute workflow’"
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as volunteer_id, condition from public.volunteers where condition in ('cadastrada','capacitacao')",
+        "options": {}
+      },
+      "id": "5dd4aff5-7f01-4b16-91fc-f64b8d2d8f07",
+      "name": "Busca voluntárias que não finalizaram a capacitação1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -940,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "01 08 01 09 *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1180,
+        300
+      ],
+      "id": "e1601a3a-9a21-4463-a19b-a46ae89b44e7",
+      "name": "Schedule Trigger segment1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \n",
+        "options": {}
+      },
+      "id": "f84a1a52-5946-4641-95a2-1e18d872c5f7",
+      "name": "Busca segmento de voluntarias em capacitaçao",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -880,
+        780
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        800
+      ],
+      "id": "6ea00cec-db55-47a1-9b0a-730ea9d8d3ff",
+      "name": "Wait",
+      "webhookId": "2d87d2da-cbd7-46e3-a477-a814cef0922e"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "e73d1d52-9495-4950-91c1-7f29e235e63a",
+      "name": "Wait16",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        520
+      ],
+      "webhookId": "18fae65f-82d5-4d83-a49f-f97a0dbd6ea3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "11 08 01 09 *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1160,
+        620
+      ],
+      "id": "702e780e-891a-4cad-92c3-a136fb4e093d",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "batchSize": 6,
+        "options": {}
+      },
+      "id": "39834771-660a-434c-98b4-8a2dcf7c19b9",
+      "name": "loop email1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -700,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "id": "887d85c1-12cd-4313-a884-853aa58a7865",
+      "name": "loop whatsapp1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -500,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' and email in ('michele.lany@hotmail.com', 'meiryaquino02@gmail.com', 'nataliabsouza.adv@gmail.com', 'ligia.sconceica@gmail.com', 'a_komp@hotmail.com', 'psigabrielammoura@gmail.com', 'catarinearaujomoreira@gmail.com', 'encarnacionbenite@bol.com.br', 'nath.castrosouza@gmail.com', 'alvesoliveiramg31@gmail.com', 'erika_bolognani@hotmail.com', 'luanacris2606@gmail.com', 'evelinfreixopsi@gmail.com', 'r_fialho@hotmail.com', 'tatiane_santamos@hotmail.com', 'macyelmamourapsi@gmail.com', 'jessicacostaramos.adv@gmail.com', 'rspsico2013@gmail.com', 'vsilvaalves924@gmail.com', 'fabiacr76@gmail.com', 'dalvaluzpsicologa@gmail.com', 'tanisemateus@hotmail.com', 'zeliapsilva@hotmail.com', 'daniellebrasil.advpr@gmail.com', 'fabianadefatimacordeiro@gmail.com', 'carolasilg@hotmail.com', 'marianapsiepsi@gmail.com', 'kainnarelli@gmail.com', 'inezaraujo.adv@hotmail.com', 'roseananda99@gmail.com', 'adv.pamsoares@gmail.con', 'a_komp@hotmail.com', 'nathaliatxt@gmail.com', 'psiangelanovaes@outlook.com')\n",
+        "options": {}
+      },
+      "id": "ba92a65c-01df-460a-acbd-3b9cd4771f05",
+      "name": "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -960,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Convite 29/08",
+        "height": 80,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1180,
+        -900
+      ],
+      "typeVersion": 1,
+      "id": "34271a53-796f-4d2f-9ff9-bd5ed61f7e26",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Convite 01/09",
+        "height": 80,
+        "width": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1180,
+        180
+      ],
+      "typeVersion": 1,
+      "id": "ed5750a3-cad4-4e39-b1af-5d78e66f7d0d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmevons930gk4yg0il64snlkp\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n\n  }\n}",
+        "options": {}
+      },
+      "id": "0b70a6ee-e07d-48d0-ba50-f7b33a5e4e35",
+      "name": "Envia email ultimo convite convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -420,
+        520
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX9d4553bda34f353594a8e255abd1ff23"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b0a58a00-126c-4618-bbe2-b475a0a487e6",
+      "name": "Envia mensagem whatsapp ultimo convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -200,
+        800
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -602,10 +867,16 @@
     },
     "node:Schedule Trigger segment": {
       "recurrenceRules": []
+    },
+    "node:Schedule Trigger segment1": {
+      "recurrenceRules": []
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
     }
   },
   "tags": [],
-  "triggerCount": 2,
-  "updatedAt": "2025-08-26T22:30:05.000Z",
-  "versionId": "aea18204-15f1-4cc4-a954-663040bec7b4"
+  "triggerCount": 4,
+  "updatedAt": "2025-08-28T18:05:13.000Z",
+  "versionId": "f1ac55b9-f32a-4592-8d7c-06196cc1a2a5"
 }
