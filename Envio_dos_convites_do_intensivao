@@ -188,11 +188,6 @@
       "main": [
         [
           {
-            "node": "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão1",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Busca segmento de voluntarias em capacitaçao",
             "type": "main",
             "index": 0
@@ -251,6 +246,17 @@
         [
           {
             "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao que se inscreveram no intensivão1",
             "type": "main",
             "index": 0
           }
@@ -646,8 +652,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1160,
-        620
+        -1180,
+        780
       ],
       "id": "702e780e-891a-4cad-92c3-a136fb4e093d",
       "name": "Schedule Trigger1"
@@ -683,7 +689,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' and email in ('michele.lany@hotmail.com', 'meiryaquino02@gmail.com', 'nataliabsouza.adv@gmail.com', 'ligia.sconceica@gmail.com', 'a_komp@hotmail.com', 'psigabrielammoura@gmail.com', 'catarinearaujomoreira@gmail.com', 'encarnacionbenite@bol.com.br', 'nath.castrosouza@gmail.com', 'alvesoliveiramg31@gmail.com', 'erika_bolognani@hotmail.com', 'luanacris2606@gmail.com', 'evelinfreixopsi@gmail.com', 'r_fialho@hotmail.com', 'tatiane_santamos@hotmail.com', 'macyelmamourapsi@gmail.com', 'jessicacostaramos.adv@gmail.com', 'rspsico2013@gmail.com', 'vsilvaalves924@gmail.com', 'fabiacr76@gmail.com', 'dalvaluzpsicologa@gmail.com', 'tanisemateus@hotmail.com', 'zeliapsilva@hotmail.com', 'daniellebrasil.advpr@gmail.com', 'fabianadefatimacordeiro@gmail.com', 'carolasilg@hotmail.com', 'marianapsiepsi@gmail.com', 'kainnarelli@gmail.com', 'inezaraujo.adv@hotmail.com', 'roseananda99@gmail.com', 'adv.pamsoares@gmail.con', 'a_komp@hotmail.com', 'nathaliatxt@gmail.com', 'psiangelanovaes@outlook.com')\n",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' and email not in ('michele.lany@hotmail.com', 'meiryaquino02@gmail.com', 'nataliabsouza.adv@gmail.com', 'ligia.sconceica@gmail.com', 'a_komp@hotmail.com', 'psigabrielammoura@gmail.com', 'catarinearaujomoreira@gmail.com', 'encarnacionbenite@bol.com.br', 'nath.castrosouza@gmail.com', 'alvesoliveiramg31@gmail.com', 'erika_bolognani@hotmail.com', 'luanacris2606@gmail.com', 'evelinfreixopsi@gmail.com', 'r_fialho@hotmail.com', 'tatiane_santamos@hotmail.com', 'macyelmamourapsi@gmail.com', 'jessicacostaramos.adv@gmail.com', 'rspsico2013@gmail.com', 'vsilvaalves924@gmail.com', 'fabiacr76@gmail.com', 'dalvaluzpsicologa@gmail.com', 'tanisemateus@hotmail.com', 'zeliapsilva@hotmail.com', 'daniellebrasil.advpr@gmail.com', 'fabianadefatimacordeiro@gmail.com', 'carolasilg@hotmail.com', 'marianapsiepsi@gmail.com', 'kainnarelli@gmail.com', 'inezaraujo.adv@hotmail.com', 'roseananda99@gmail.com', 'adv.pamsoares@gmail.con', 'a_komp@hotmail.com', 'nathaliatxt@gmail.com', 'psiangelanovaes@outlook.com')\n",
         "options": {}
       },
       "id": "ba92a65c-01df-460a-acbd-3b9cd4771f05",
@@ -803,6 +809,26 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "31 08 01 09 *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1240,
+        480
+      ],
+      "id": "2b113e69-ebd5-44a8-8fe8-ee040b230df0",
+      "name": "Schedule Trigger2"
     }
   ],
   "pinData": {},
@@ -873,10 +899,13 @@
     },
     "node:Schedule Trigger1": {
       "recurrenceRules": []
+    },
+    "node:Schedule Trigger2": {
+      "recurrenceRules": []
     }
   },
   "tags": [],
-  "triggerCount": 4,
-  "updatedAt": "2025-08-28T18:05:13.000Z",
-  "versionId": "f1ac55b9-f32a-4592-8d7c-06196cc1a2a5"
+  "triggerCount": 5,
+  "updatedAt": "2025-09-01T11:22:35.000Z",
+  "versionId": "ec0b407a-8dd6-495b-a24f-682f1ff7f374"
 }
