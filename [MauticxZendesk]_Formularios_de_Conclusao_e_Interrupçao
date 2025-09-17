@@ -204,7 +204,7 @@
       "typeVersion": 1,
       "position": [
         -320,
-        580
+        592
       ]
     },
     {
@@ -217,7 +217,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        -380,
+        -384,
         800
       ],
       "webhookId": "a3fe4491-fda9-4537-ac2e-6d3ba4d9a86c",
@@ -285,8 +285,8 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        1020,
-        700
+        1024,
+        704
       ],
       "id": "84730c65-8595-45db-8f49-c05afb138f5f",
       "credentials": {
@@ -309,7 +309,7 @@
       "typeVersion": 1,
       "position": [
         1040,
-        460
+        464
       ],
       "id": "f35e5ba0-7651-4282-81c6-a2df3de317d5",
       "credentials": {
@@ -327,21 +327,21 @@
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
       "position": [
-        460,
-        460
+        464,
+        464
       ],
       "id": "295840e3-6fbd-48c1-843b-4b1fb0cec851"
     },
     {
       "parameters": {
-        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nlet risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n  dados_voluntaria = {\n\t\tnome: results[\"1_nome_completo\"],\n\t\temail_cadastro: results[\"2_email_de_cadastro\"]\n\t}\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"],\n\t}\n\n\tlet sobre_o_atendimento = {\n\t\tdata_do_encerramento: results[\"4_data_de_encerramento_do\"],\n\t\tseguirao_em_atendimento: results[\"5_voce_e_a_acolhida_segui\"],\n\t\tatraves_do_atendimento: results['5_atraves_do_atendimento'],\n\t\timpactos_sofrendo_acolhida_moderado: results[\"7_quais_impactos_a_acolhi\"],\n\t\timpactos_sofrendo_acolhida_grave: results[\"8_quais_impactos_a_acolhi\"],\n\t\timpactos_superados: results[\"9_quais_impactos_em_decor\"],\n\t\tdesfecho_psicoterapia: results[\"10_descreva_sucintamente\"]\n\t}\n\n\tlet experiencia_voluntaria = {\n\t\texperiencia_psicologa: results[\"11_se_desejar_descreva_su\"], \n\t\taprendizagens: results[\"12_quais_aprendizagens_es\"],\n\t\tdesafios: results[\"13_e_os_desafios\"],\n\t\tsolicitou_ajuda_mapa: results[\"14_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_mapa: results[\"141_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_mapa: results[\"142_sentiuse_acolhida_pel\"],\n\t\tsolicitou_ajuda_voluntaria: results[\"15_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_voluntaria: results[\"151_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_voluntaria: results[\"152_sentiuse_acolhida_pel\"]\n\t}\n\t\n\tlet melhorias = {\n\t\tmelhorias: results[\"16_se_desejar_deixe_suges\"],\n\t}\t\n\n\tif(sobre_o_atendimento.impactos_sofrendo_acolhida_moderado !== 'A acolhida não está sofrendo nenhum dos impactos citados acima') {\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\tif(sobre_o_atendimento.impactos_sofrendo_acolhida_grave !== 'A acolhida não está sofrendo nenhum dos impactos citados acima') {\n\t\tpriority = 'high'\n\t\trisco = 'grave'\t\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, sobre_o_atendimento, experiencia_voluntaria, melhorias, risco: risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"] \n\n\tlet data = new Date(sobre_o_atendimento.data_do_encerramento)\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA:\\\\nNome: ' + dados_voluntaria.nome +'\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome:' + dados_acolhida.nome + \n\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData de encerramento do atendimento: ' +  ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear() +\n\t'\\\\nVoluntária e acolhida seguirão em atendimento: ' + sobre_o_atendimento.seguirao_em_atendimento +\n\t'\\\\nAtravés do atendimento, resultados da acolhida: ' + sobre_o_atendimento.atraves_do_atendimento +\n\t'\\\\nImpactos moderados que a acolhida ainda está sofrendo: ' + sobre_o_atendimento.impactos_sofrendo_acolhida_moderado +\n\t'\\\\nImpactos graves que a acolhida ainda está sofrendo: ' + sobre_o_atendimento.impactos_sofrendo_acolhida_grave +\n\t'\\\\nImpactos superados: ' + sobre_o_atendimento.impactos_superados +\n\t'\\\\nDesfecho do processo psicoterapêutico: ' + sobre_o_atendimento.desfecho_psicoterapia\n\n\t'\\\\n\\\\nSOBRE A EXPERIÊNCIA DA VOLUNTÁRIA' +\n\t(experiencia_voluntaria.experiencia_psicologa ? '\\\\nDescrição da experiência: ' + experiencia_voluntaria.experiencia_psicologa : '') +\n\t'\\\\nAprendizagens da psicóloga: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios da psicóloga: ' + experiencia_voluntaria.desafios +\n\t'\\\\nSolicitou ajuda do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa + \n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim' ? \n\t'\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada_mapa +\n\t'\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida_mapa : ''\n\t) +\n\t'\\\\nSolicitou ajuda voluntária: ' + experiencia_voluntaria.solicitou_ajuda_voluntaria +\n\t(experiencia_voluntaria.solicitou_ajuda_voluntaria === 'Sim' ?\n\t'\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada_voluntaria +\n\t'\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida_voluntaria : ''\n\t) +\n\n\t(melhorias.melhorias ? '\\\\n\\\\MELHORIAS E SUGESTÕES\\\\nSugestões de melhoridas: ' + melhorias.melhorias : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\titem.json.answers.risco =item.json.answers.risco.toUpperCase();\n}\n\nreturn items[items.length - 1]; "
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nlet risco = 'nenhum';\nlet priority = 'low';\nfor (item of items) {\n\n  const results =  item.json.submission.results; \n  dados_voluntaria = {\n\t\tnome: results[\"1_nome_completo\"],\n\t\temail_cadastro: results[\"2_email_de_cadastro\"]\n\t}\n\tlet dados_acolhida = {\n\t\tnome: results[\"3_nome_da_acolhida\"],\n\t}\n\n\tlet sobre_o_atendimento = {\n\t\tdata_do_encerramento: results[\"4_data_de_encerramento_do\"],\n\t\tseguirao_em_atendimento: results[\"5_voce_e_a_acolhida_segui\"],\n\t\tatraves_do_atendimento: results['5_atraves_do_atendimento'],\n\t\timpactos_sofrendo_acolhida_moderado: results[\"7_quais_impactos_a_acolhi\"],\n\t\timpactos_sofrendo_acolhida_grave: results[\"8_quais_impactos_a_acolhi\"],\n\t\timpactos_superados: results[\"9_quais_impactos_em_decor\"],\n\t\tdesfecho_psicoterapia: results[\"10_descreva_sucintamente\"]\n\t}\n\n\tlet experiencia_voluntaria = {\n\t\texperiencia_psicologa: results[\"11_se_desejar_descreva_su\"], \n\t\taprendizagens: results[\"12_quais_aprendizagens_es\"],\n\t\tdesafios: results[\"13_e_os_desafios\"],\n\t\tsolicitou_ajuda_mapa: results[\"14_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_mapa: results[\"141_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_mapa: results[\"142_sentiuse_acolhida_pel\"],\n\t\tsolicitou_ajuda_voluntaria: results[\"15_voce_solicitou_ajuda_d\"],\n\t\tse_sentiu_orientada_voluntaria: results[\"151_sentiuse_orientada\"],\n\t\tse_sentiu_acolhida_voluntaria: results[\"152_sentiuse_acolhida_pel\"]\n\t}\n\t\n\tlet melhorias = {\n\t\tmelhorias: results[\"16_se_desejar_deixe_suges\"],\n\t}\t\n\n\tif(sobre_o_atendimento.impactos_sofrendo_acolhida_moderado !== 'A acolhida não está sofrendo nenhum dos impactos citados acima') {\n\t\tpriority = 'normal'\n\t\trisco = 'moderado'\n\t}\n\n\tif(sobre_o_atendimento.impactos_sofrendo_acolhida_grave !== 'A acolhida não está sofrendo nenhum dos impactos citados acima') {\n\t\tpriority = 'high'\n\t\trisco = 'grave'\t\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, sobre_o_atendimento, experiencia_voluntaria, melhorias, risco: risco}\n\tconst user_id = item.json[\"submission\"][\"lead\"][\"fields\"][\"core\"][\"user_id\"][\"value\"] \n\n\tlet data = new Date(sobre_o_atendimento.data_do_encerramento)\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA:\\\\nNome: ' + dados_voluntaria.nome +'\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome:' + dados_acolhida.nome + \n\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData de encerramento do atendimento: ' +  ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear() +\n\t'\\\\nVoluntária e acolhida seguirão em atendimento: ' + sobre_o_atendimento.seguirao_em_atendimento +\n\t'\\\\nAtravés do atendimento, resultados da acolhida: ' + sobre_o_atendimento.atraves_do_atendimento +\n\t'\\\\nImpactos moderados que a acolhida ainda está sofrendo: ' + sobre_o_atendimento.impactos_sofrendo_acolhida_moderado +\n\t'\\\\nImpactos graves que a acolhida ainda está sofrendo: ' + sobre_o_atendimento.impactos_sofrendo_acolhida_grave +\n\t'\\\\nImpactos superados: ' + sobre_o_atendimento.impactos_superados +\n\t'\\\\nDesfecho do processo psicoterapêutico: ' + sobre_o_atendimento.desfecho_psicoterapia\n     +\n\t'\\\\n\\\\nSOBRE A EXPERIÊNCIA DA VOLUNTÁRIA' +\n\t(experiencia_voluntaria.experiencia_psicologa ? '\\\\nDescrição da experiência: ' + experiencia_voluntaria.experiencia_psicologa : '') +\n\t'\\\\nAprendizagens da psicóloga: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios da psicóloga: ' + experiencia_voluntaria.desafios +\n\t'\\\\nSolicitou ajuda do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa + \n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim' ? \n\t'\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada_mapa +\n\t'\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida_mapa : ''\n\t) +\n\t'\\\\nSolicitou ajuda voluntária: ' + experiencia_voluntaria.solicitou_ajuda_voluntaria +\n\t(experiencia_voluntaria.solicitou_ajuda_voluntaria === 'Sim' ?\n\t'\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada_voluntaria +\n\t'\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida_voluntaria : ''\n\t) +\n\n\t(melhorias.melhorias ? '\\\\n\\\\nMELHORIAS E SUGESTÕES\\\\nSugestões de melhorias: ' + melhorias.melhorias : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\tuser_id,\n              answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\titem.json.answers.risco =item.json.answers.risco.toUpperCase();\n}\n\nreturn items[items.length - 1]; "
       },
       "name": "Formata - Conclusão Psicológico",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
       "position": [
-        440,
-        700
+        448,
+        704
       ],
       "id": "1acd0ba4-e376-4cdc-9dc0-8def6617bb09"
     },
@@ -360,8 +360,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        820,
-        460
+        832,
+        464
       ],
       "id": "8564933e-93ac-478c-a0b9-1f2abb782698",
       "credentials": {
@@ -387,7 +387,7 @@
       "typeVersion": 1,
       "position": [
         800,
-        700
+        704
       ],
       "id": "811cceb1-a1a0-4091-9dac-fb923a06b60c",
       "credentials": {
@@ -405,8 +405,8 @@
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
       "position": [
-        440,
-        940
+        448,
+        944
       ],
       "id": "0e7b8d8b-6848-49e4-8b24-09e93ab1c99e"
     },
@@ -418,8 +418,8 @@
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
       "position": [
-        260,
-        1180
+        272,
+        1184
       ],
       "id": "e6a6cddd-afd8-4a32-add5-1824359c352a"
     },
@@ -438,8 +438,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        760,
-        1180
+        768,
+        1184
       ],
       "id": "f516d6f9-8f0c-499c-908b-bb968dc2aaaa",
       "credentials": {
@@ -464,8 +464,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
       "position": [
-        840,
-        940
+        848,
+        944
       ],
       "id": "c3f86fea-d62b-4490-aaf7-052981bc78f7",
       "credentials": {
@@ -487,8 +487,8 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        980,
-        1180
+        992,
+        1184
       ],
       "id": "2ce1240b-c924-465f-8c10-d735f4578ee1",
       "credentials": {
@@ -511,7 +511,7 @@
       "typeVersion": 1,
       "position": [
         1040,
-        940
+        944
       ],
       "id": "0087fbbe-8d38-437c-9400-18eb7684a68c",
       "credentials": {
@@ -533,7 +533,7 @@
       "typeVersion": 2.4,
       "position": [
         640,
-        460
+        464
       ],
       "credentials": {
         "postgres": {
@@ -554,7 +554,7 @@
       "typeVersion": 2.4,
       "position": [
         640,
-        700
+        704
       ],
       "credentials": {
         "postgres": {
@@ -575,7 +575,7 @@
       "typeVersion": 2.4,
       "position": [
         640,
-        940
+        944
       ],
       "credentials": {
         "postgres": {
@@ -595,8 +595,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        520,
-        1180
+        528,
+        1184
       ],
       "credentials": {
         "postgres": {
@@ -613,25 +613,25 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "GuzzleHttp/7",
-            "content-length": "11037",
+            "content-length": "10813",
             "accept-encoding": "gzip, br",
-            "cdn-loop": "cloudflare; subreqs=1",
-            "cf-connecting-ip": "54.85.56.248",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "54.89.113.183",
             "cf-ew-via": "15",
             "cf-ipcountry": "US",
-            "cf-ray": "8b95700097ad081e-IAD",
+            "cf-ray": "98093c9020d3206f-IAD",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json",
-            "webhook-signature": "w/DFwzxiHJ86LJe1qMLMJwQ/OMjXRtl/lsuEhhAuVwM=",
-            "x-forwarded-for": "54.85.56.248, 172.70.39.18",
+            "webhook-signature": "UjnC6Bs0Cr9dZ3YzN7jNjzeptXzslh/6n8sYeaB+X9s=",
+            "x-forwarded-for": "54.89.113.183, 172.71.223.86",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-fb6d78f9-jvss5",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-vdndp",
             "x-is-trusted": "yes",
             "x-origin-base-url": "https://mautic.nossas.org",
-            "x-real-ip": "54.85.56.248"
+            "x-real-ip": "54.89.113.183"
           },
           "params": {},
           "query": {},
@@ -639,10 +639,10 @@
             "mautic.form_on_submit": [
               {
                 "submission": {
-                  "id": 8874,
+                  "id": 10005,
                   "ipAddress": {
-                    "ipAddress": "189.96.226.115",
-                    "id": 66448,
+                    "ipAddress": "191.195.8.183",
+                    "id": 70402,
                     "ipDetails": {
                       "city": "",
                       "region": "",
@@ -663,8 +663,8 @@
                     "category": null
                   },
                   "lead": {
-                    "id": 1325,
-                    "points": 2,
+                    "id": 172639,
+                    "points": 0,
                     "color": null,
                     "fields": {
                       "core": {
@@ -691,8 +691,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "Sabrina Alcoceba Green",
-                          "normalizedValue": "Sabrina Alcoceba Green"
+                          "value": "Dev Psi",
+                          "normalizedValue": "Dev Psi"
                         },
                         "data_de_inscricao_no_bond1": {
                           "id": "60",
@@ -704,8 +704,8 @@
                           "is_fixed": "0",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "2018-07-17",
-                          "normalizedValue": "2018-07-17"
+                          "value": "2024-04-01",
+                          "normalizedValue": "2024-04-01"
                         },
                         "lastname": {
                           "id": "3",
@@ -756,8 +756,8 @@
                           "is_fixed": "0",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "Vila Apiai, Santo André - SP, 09190-610, Brazil",
-                          "normalizedValue": "Vila Apiai, Santo André - SP, 09190-610, Brazil"
+                          "value": "Cerqueira César, Brazil",
+                          "normalizedValue": "Cerqueira César, Brazil"
                         },
                         "user_id": {
                           "id": "55",
@@ -769,8 +769,8 @@
                           "is_fixed": "0",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "377501582252",
-                          "normalizedValue": "377501582252"
+                          "value": "417544904932",
+                          "normalizedValue": "417544904932"
                         },
                         "email": {
                           "id": "6",
@@ -782,8 +782,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "Sabrina.green@greendh.com.br",
-                          "normalizedValue": "Sabrina.green@greendh.com.br"
+                          "value": "dev.psi.mapa@gmail.com",
+                          "normalizedValue": "dev.psi.mapa@gmail.com"
                         },
                         "tipo_de_acolhimento": {
                           "id": "50",
@@ -821,8 +821,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "11995602578",
-                          "normalizedValue": "11995602578"
+                          "value": "(11) 9 1109-1520",
+                          "normalizedValue": "(11) 9 1109-1520"
                         },
                         "website": {
                           "id": "22",
@@ -847,8 +847,8 @@
                           "is_fixed": "0",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "11995602578",
-                          "normalizedValue": "11995602578"
+                          "value": "(11) 9 1109-1520",
+                          "normalizedValue": "(11) 9 1109-1520"
                         },
                         "f_condition": {
                           "id": "48",
@@ -860,8 +860,8 @@
                           "is_fixed": "0",
                           "properties": "a:1:{s:4:\"list\";a:16:{i:0;a:2:{s:5:\"label\";s:11:\"Anti-ética\";s:5:\"value\";s:10:\"anti-etica\";}i:1;a:2:{s:5:\"label\";s:8:\"Aprovada\";s:5:\"value\";s:8:\"aprovada\";}i:2;a:2:{s:5:\"label\";s:30:\"Reprovada - Registro inválido\";s:5:\"value\";s:28:\"reprovada_registro_inválido\";}i:3;a:2:{s:5:\"label\";s:30:\"Reprovada - Diretrizes do Mapa\";s:5:\"value\";s:28:\"reprovada_diretrizes_do_mapa\";}i:4;a:2:{s:5:\"label\";s:26:\"Reprovada - Estudo de Caso\";s:5:\"value\";s:24:\"reprovada_estudo_de_caso\";}i:5;a:2:{s:5:\"label\";s:13:\"Descadastrada\";s:5:\"value\";s:13:\"descadastrada\";}i:6;a:2:{s:5:\"label\";s:12:\"Desabilitada\";s:5:\"value\";s:12:\"desabilitada\";}i:7;a:2:{s:5:\"label\";s:25:\"Dados incompletos - Email\";s:5:\"value\";s:23:\"dados_incompletos_email\";}i:8;a:2:{s:5:\"label\";s:28:\"Dados incompletos - Telefone\";s:5:\"value\";s:26:\"dados_incompletos_telefone\";}i:9;a:2:{s:5:\"label\";s:29:\"Dados incompletos - Endereço\";s:5:\"value\";s:27:\"dados_incompletos_endereço\";}i:10;a:2:{s:5:\"label\";s:28:\"Indisponível - Sem Resposta\";s:5:\"value\";s:27:\"indisponível_-sem_resposta\";}i:11;a:2:{s:5:\"label\";s:22:\"Indisponível - Agenda\";s:5:\"value\";s:20:\"indisponível_agenda\";}i:12;a:2:{s:5:\"label\";s:27:\"Indisponível - Maternidade\";s:5:\"value\";s:25:\"indisponível_maternidade\";}i:13;a:2:{s:5:\"label\";s:23:\"Indisponível - Férias\";s:5:\"value\";s:21:\"indisponível_férias\";}i:14;a:2:{s:5:\"label\";s:11:\"Disponível\";s:5:\"value\";s:10:\"disponivel\";}i:15;a:2:{s:5:\"label\";s:12:\"MSR-Inscrita\";s:5:\"value\";s:8:\"inscrita\";}}}",
                           "default_value": "desabilitada",
-                          "value": "desabilitada",
-                          "normalizedValue": "Desabilitada"
+                          "value": "disponivel",
+                          "normalizedValue": "Disponível"
                         },
                         "city": {
                           "id": "13",
@@ -873,8 +873,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "Santo André",
-                          "normalizedValue": "Santo André"
+                          "value": "São Paulo",
+                          "normalizedValue": "São Paulo"
                         },
                         "country": {
                           "id": "16",
@@ -886,8 +886,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "Brazil",
-                          "normalizedValue": "Brazil"
+                          "value": null,
+                          "normalizedValue": null
                         },
                         "last_active": {
                           "id": "19",
@@ -899,8 +899,8 @@
                           "is_fixed": "1",
                           "properties": "a:0:{}",
                           "default_value": null,
-                          "value": "2024-07-30 22:59:41",
-                          "normalizedValue": "2024-07-30 22:59:41"
+                          "value": "2025-09-10 12:23:05",
+                          "normalizedValue": "2025-09-10 12:23:05"
                         }
                       },
                       "social": {
@@ -987,30 +987,34 @@
                       "professional": []
                     }
                   },
-                  "trackingId": "9agay8ajjmjpopaeh2d2xki",
-                  "dateSubmitted": "2024-08-26T17:10:47+00:00",
+                  "trackingId": null,
+                  "dateSubmitted": "2025-09-17T14:19:04+00:00",
                   "referer": "https://mautic.nossas.org/conclusao-psicologico",
                   "page": null,
                   "results": {
-                    "1_nome_completo": "Sabrina Alcoceba Green ",
-                    "2_email_de_cadastro": "Sabrina.green@greendh.com.br",
-                    "3_nome_da_acolhida": "Stephanie Virgínia Custódio de Oliveira",
-                    "4_data_de_encerramento_do": "2024-08-20",
-                    "5_voce_e_a_acolhida_segui": "Não",
-                    "6_atraves_do_atendimento": "Saiu do ciclo da violência, Resgatou sua autoestima",
-                    "7_quais_impactos_a_acolhi": "A acolhida não está sofrendo nenhum dos impactos citados acima",
+                    "1_nome_completo": "Dev Psi Teste",
+                    "2_email_de_cadastro": "dev.psi.mapa@gmail.com",
+                    "3_nome_da_acolhida": "Msr Teste",
+                    "4_data_de_encerramento_do": "2025-09-05",
+                    "5_voce_e_a_acolhida_segui": "Sim",
+                    "6_atraves_do_atendimento": "Conseguiu construir sua autonomia, Conseguiu construir sua autonomia financeira",
+                    "7_quais_impactos_a_acolhi": "Pesadelos, Falta de concentração",
                     "8_quais_impactos_a_acolhi": "A acolhida não está sofrendo nenhum dos impactos citados acima",
-                    "9_quais_impactos_em_decor": "Insônia, Irritabilidade, Sérios impactos na saúde mental como: depressão, ansiedade e/ou síndrome do pânico, Comprometimento da autoestima",
-                    "10_descreva_sucintamente": "A acolhida conseguiu desenvolver sua autoestima e autocuidado, saindo do processo de depressão e buscando e desenvolvendo novos recursos para sua independência profissional e socialização. ",
-                    "11_se_desejar_descreva_su": "",
-                    "12_quais_aprendizagens_es": "Cada vez ampliar a escuta ativa e rapport",
-                    "13_e_os_desafios": "Alavancar o processo de ação diante do processo de dor da acolhida ",
-                    "14_voce_solicitou_ajuda_d": "Não",
-                    "15_voce_solicitou_ajuda_d": "Não",
-                    "16_se_desejar_deixe_suges": ""
+                    "9_quais_impactos_em_decor": "Dependência afetiva e financeira, Uso abusivo de substância psicoativa",
+                    "10_descreva_sucintamente": "o desfecho do processo pssicoterapêutico",
+                    "11_se_desejar_descreva_su": "descreva sua experiência como psicóloga voluntária &#13;&#10;do Mapa do Acolhimento",
+                    "12_quais_aprendizagens_es": "aprendizagens este atendimento te forneceu",
+                    "13_e_os_desafios": "os desafios",
+                    "14_voce_solicitou_ajuda_d": "Sim",
+                    "141_sentiuse_orientada": "Sim",
+                    "142_sentiuse_acolhida_pel": "Sim",
+                    "15_voce_solicitou_ajuda_d": "Sim",
+                    "151_sentiuse_orientada": "Não",
+                    "152_sentiuse_acolhida_pel": "Não",
+                    "16_se_desejar_deixe_suges": "deixe sugestões de melhorias:"
                   }
                 },
-                "timestamp": "2024-08-26T17:10:49+00:00"
+                "timestamp": "2025-09-17T14:19:05+00:00"
               }
             ]
           },
@@ -1049,7 +1053,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-09-16T11:09:20.000Z",
+              "updatedAt": "2025-09-17T13:33:01.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -1068,7 +1072,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-09-16",
+              "lastActiveAt": "2025-09-17",
               "isPending": false
             }
           }
@@ -1086,6 +1090,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2024-08-26T21:22:42.000Z",
-  "versionId": "b06082a2-68a2-4c00-9f71-537c16da016e"
+  "updatedAt": "2025-09-17T14:27:54.000Z",
+  "versionId": "b12e48c3-41d6-4f1a-8f4f-77183ec83ca8"
 }
