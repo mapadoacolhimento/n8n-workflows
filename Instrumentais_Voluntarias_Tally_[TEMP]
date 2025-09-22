@@ -1496,7 +1496,7 @@
     },
     {
       "parameters": {
-        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\n\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\n\nfor (item of items) {\n\n   var form_answers = item.json.body.data.fields;\n\n    var dados_voluntaria = {\n      nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n      email_cadastro: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    }\n    var dados_acolhida = {\n       nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value //\"Acholhida teste\",\n    }\n\t\n\tlet atendimento = {\n\t\tdata_inicio_atendimento: form_answers.find(objeto => objeto.label == \"data_inicio_atendimento\").value,\n\t\tdata_encerramento: form_answers.find(objeto => objeto.label == \"data_encerramento\").value, //11/11/2022\n\t\tdemanda_atendimento: form_answers.find(objeto => objeto.label == \"demanda_atendimento\").value,\n\t\tmotivo_interrupcao: getSelectedTexts(form_answers, \"motivo_interrupcao\"),\n\t\tprofissionais_reencaminhamento: getSelectedTexts(form_answers, \"profissionais_reencaminhamento\"),\n\t\tequipes_servico_publico: getSelectedTexts(form_answers, \"equipes_servico_publico\"),\n\t\tatendimento_fora_do_projeto: getSelectedTexts(form_answers, \"atendimento_fora_do_projeto\")\n\t}\n\n\tlet disponibilidade = {\n\t\tcontinuara_disponivel: getSelectedTexts(form_answers, \"continuara_disponivel\"),\n\t\tvoce_deseja: getSelectedTexts(form_answers, \"voce_deseja\"),\n\t\tcategoria_suspensao_cadastro: getSelectedTexts(form_answers, \"categoria_suspensao_cadastro\")\n\t}\n\n\tlet experiencia_voluntaria = {\t\n\t\tsolicitou_ajuda_mapa: getSelectedTexts(form_answers, \"solicitou_ajuda_mapa\"),\n\t\tse_sentiu_orientada: getSelectedTexts(form_answers, \"se_sentiu_orientada\"),\n\t\tse_sentiu_acolhida: getSelectedTexts(form_answers, \"se_sentiu_acolhida\"),\n\t\taprendizagens: form_answers.find(objeto => objeto.label == \"aprendizagens\").value,\n\t\tdesafios: form_answers.find(objeto => objeto.label == \"desafios\").value,\n\t\tdescricao_experiencia: form_answers.find(objeto => objeto.label == \"descricao_experiencia\").value\n\t}\n\n\n\tlet answers = {dados_voluntaria, dados_acolhida, atendimento, disponibilidade, experiencia_voluntaria, risco}\n\t\n\tlet data_inicio = new Date(atendimento.data_inicio_atendimento)\n\tlet data_encerramento = new Date(atendimento.data_encerramento)\n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData do início: ' + ((data_inicio.getDate() )) + \"/\" + ((data_inicio.getMonth() + 1)) + \"/\" + data_inicio.getFullYear() +\n\t'\\\\nData do encerramento: ' + ((data_encerramento.getDate() )) + \"/\" + ((data_encerramento.getMonth() + 1)) + \"/\" + data_encerramento.getFullYear() +\n\t'\\\\nDemanda da acolhida: ' + atendimento.demanda_atendimento +\n\t'\\\\nMotivo da interrupção: ' + atendimento.motivo_interrupcao +\n\t(atendimento.profissionais_reencaminhamento ? '\\\\nÁrea de profissionais para reencaminhamento da acolhida: ' + atendimento.profissionais_reencaminhamento : '') +\n\t(atendimento.equipes_servico_publico ? '\\\\nServiços públicos para reencaminhamento da acolhida: ' + atendimento.equipes_servico_publico : '') +\n\t'\\\\nVoluntária e acolhida seguirão em atendimento fora do projeto: ' + atendimento.atendimento_fora_do_projeto +\n\n\t//Disponibilidade\n\t'\\\\n\\\\nSOBRE A DISPONIBILIDADE\\\\nVoluntária continuará disponível: ' + disponibilidade.continuara_disponivel +\n\t(disponibilidade.continuara_disponivel === 'Não' ?\n\t(disponibilidade.voce_deseja ? '\\\\nVocê deseja: ' + disponibilidade.voce_deseja : '') +\n\t(disponibilidade.categoria_suspensao_cadastro ? '\\\\nCategoria da suspensão: ' + disponibilidade.categoria_suspensao_cadastro : '')\n\t: '')\t+\n\n\t//Experiência como voluntária\n\t'\\\\n\\\\nEXPERIÊNCIA COMO VOLUNTÁRIA\\\\nSolicitou ajuda da equipe do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa +\n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim'?\n\t(experiencia_voluntaria.se_sentiu_orientada ? '\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada : '')+\n\t(experiencia_voluntaria.se_sentiu_acolhida ? '\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida : '')\n\t: '') +\n\t'\\\\nAprendizagens do atendimento: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios do atendimento: ' + experiencia_voluntaria.desafios +\n\t(experiencia_voluntaria.descricao_experiencia ? '\\\\nDescrição da experiência como voluntária: ' + experiencia_voluntaria.descricao_experiencia : '')\t\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\n                            answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\n\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\n\nfor (item of items) {\n\n   var form_answers = item.json.body.data.fields;\n\n    var dados_voluntaria = {\n      nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n      email_cadastro: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    }\n    var dados_acolhida = {\n       nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value //\"Acholhida teste\",\n    }\n\t\n\tlet atendimento = {\n\t\tdata_inicio_atendimento: form_answers.find(objeto => objeto.label == \"data_inicio_atendimento\").value,\n\t\tdata_encerramento: form_answers.find(objeto => objeto.label == \"data_encerramento\").value, //11/11/2022\n\t\tdemanda_atendimento: form_answers.find(objeto => objeto.label == \"demanda_atendimento\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tmotivo_interrupcao: getSelectedTexts(form_answers, \"motivo_interrupcao\"),\n\t\tprofissionais_reencaminhamento: getSelectedTexts(form_answers, \"profissionais_reencaminhamento\"),\n\t\tequipes_servico_publico: getSelectedTexts(form_answers, \"equipes_servico_publico\"),\n\t\tatendimento_fora_do_projeto: getSelectedTexts(form_answers, \"atendimento_fora_do_projeto\")\n\t}\n\n\tlet disponibilidade = {\n\t\tcontinuara_disponivel: getSelectedTexts(form_answers, \"continuara_disponivel\"),\n\t\tvoce_deseja: getSelectedTexts(form_answers, \"voce_deseja\"),\n\t\tcategoria_suspensao_cadastro: getSelectedTexts(form_answers, \"categoria_suspensao_cadastro\")\n\t}\n\n\tlet experiencia_voluntaria = {\t\n\t\tsolicitou_ajuda_mapa: getSelectedTexts(form_answers, \"solicitou_ajuda_mapa\"),\n\t\tse_sentiu_orientada: getSelectedTexts(form_answers, \"se_sentiu_orientada\"),\n\t\tse_sentiu_acolhida: getSelectedTexts(form_answers, \"se_sentiu_acolhida\"),\n\t\taprendizagens: form_answers.find(objeto => objeto.label == \"aprendizagens\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tdesafios: form_answers.find(objeto => objeto.label == \"desafios\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tdescricao_experiencia: form_answers.find(objeto => objeto.label == \"descricao_experiencia\").value?.replaceAll(/\\n/g, '\\\\n')\n\t}\n\n\n\tlet answers = {dados_voluntaria, dados_acolhida, atendimento, disponibilidade, experiencia_voluntaria, risco}\n\t\n\tlet data_inicio = new Date(atendimento.data_inicio_atendimento)\n\tlet data_encerramento = new Date(atendimento.data_encerramento)\n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData do início: ' + ((data_inicio.getDate() )) + \"/\" + ((data_inicio.getMonth() + 1)) + \"/\" + data_inicio.getFullYear() +\n\t'\\\\nData do encerramento: ' + ((data_encerramento.getDate() )) + \"/\" + ((data_encerramento.getMonth() + 1)) + \"/\" + data_encerramento.getFullYear() +\n\t'\\\\nDemanda da acolhida: ' + atendimento.demanda_atendimento +\n\t'\\\\nMotivo da interrupção: ' + atendimento.motivo_interrupcao +\n\t(atendimento.profissionais_reencaminhamento ? '\\\\nÁrea de profissionais para reencaminhamento da acolhida: ' + atendimento.profissionais_reencaminhamento : '') +\n\t(atendimento.equipes_servico_publico ? '\\\\nServiços públicos para reencaminhamento da acolhida: ' + atendimento.equipes_servico_publico : '') +\n\t'\\\\nVoluntária e acolhida seguirão em atendimento fora do projeto: ' + atendimento.atendimento_fora_do_projeto +\n\n\t//Disponibilidade\n\t'\\\\n\\\\nSOBRE A DISPONIBILIDADE\\\\nVoluntária continuará disponível: ' + disponibilidade.continuara_disponivel +\n\t(disponibilidade.continuara_disponivel === 'Não' ?\n\t(disponibilidade.voce_deseja ? '\\\\nVocê deseja: ' + disponibilidade.voce_deseja : '') +\n\t(disponibilidade.categoria_suspensao_cadastro ? '\\\\nCategoria da suspensão: ' + disponibilidade.categoria_suspensao_cadastro : '')\n\t: '')\t+\n\n\t//Experiência como voluntária\n\t'\\\\n\\\\nEXPERIÊNCIA COMO VOLUNTÁRIA\\\\nSolicitou ajuda da equipe do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa +\n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim'?\n\t(experiencia_voluntaria.se_sentiu_orientada ? '\\\\nSentiu-se orientada: ' + experiencia_voluntaria.se_sentiu_orientada : '')+\n\t(experiencia_voluntaria.se_sentiu_acolhida ? '\\\\nSentiu-se acolhida: ' + experiencia_voluntaria.se_sentiu_acolhida : '')\n\t: '') +\n\t'\\\\nAprendizagens do atendimento: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios do atendimento: ' + experiencia_voluntaria.desafios +\n\t(experiencia_voluntaria.descricao_experiencia ? '\\\\nDescrição da experiência como voluntária: ' + experiencia_voluntaria.descricao_experiencia : '')\t\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n\t\t\t\t\t\t\n                            answers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
       },
       "name": "Formata - Interrupção Atendimento",
       "type": "n8n-nodes-base.function",
@@ -1509,7 +1509,7 @@
     },
     {
       "parameters": {
-        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return null;\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\n\nfor (item of items) {\n\n   var form_answers = item.json.body.data.fields;\n\n    var dados_voluntaria = {\n      nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n      email_cadastro: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    }\n    var dados_acolhida = {\n       nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value //\"Acholhida teste\",\n    }\n\tlet encaminhamento = {\n\t\tacolhida_estabeleceu_contato: getSelectedTexts(form_answers, \"acolhida_estabeleceu_contato\"),\n\t\tdata_primeiro_contato: form_answers.find(objeto => objeto.label == \"data_primeiro_contato\").value,\n\t\tteve_conhecimento_demanda: getSelectedTexts(form_answers, \"teve_conhecimento_demanda\"),\n\t\tdemanda: form_answers.find(objeto => objeto.label == \"demanda\").value,\n\t\tdata_interrupcao: form_answers.find(objeto => objeto.label == \"data_interrupcao\").value, //11/11/2022\n\t\tmotivo_interrupcao: getSelectedTexts(form_answers, \"motivo_interrupcao\"),\n\t\tprofissionais_reencaminhamento: getSelectedTexts(form_answers, \"profissionais_reencaminhamento\"),\n\t\tequipes_servico_publico: getSelectedTexts(form_answers, \"equipes_servico_publico\"),\n\t}\n\n   let disponibilidade = {\n\t\tcontinuara_disponivel: getSelectedTexts(form_answers, \"continuara_disponivel\"),\n\t\tvoce_deseja: getSelectedTexts(form_answers, \"voce_deseja\"),\n\t\tcategoria_suspensao_cadastro: getSelectedTexts(form_answers, \"categoria_suspensao_cadastro\")\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, encaminhamento, disponibilidade, risco}\n\n\tlet data_contato = new Date(encaminhamento.data_primeiro_contato)\n\tlet data_interrupcao = new Date(encaminhamento.data_interrupcao)\n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\t'\\\\n\\\\nSOBRE O ENCAMINHAMENTO\\\\nAcolhida estabeleu contato: ' + encaminhamento.acolhida_estabeleceu_contato +\n\t(encaminhamento.acolhida_estabeleceu_contato === 'Sim' ?\n\t(encaminhamento.data_primeiro_contato ? '\\\\nData do primeiro contato: ' + ((data_contato.getDate() )) + \"/\" + ((data_contato.getMonth() + 1)) + \"/\" + data_contato.getFullYear()  : '')\n\t: '')\t+\n\t'\\\\nTeve conhecimento da demanda da acolhida: ' + encaminhamento.teve_conhecimento_demanda +\n\t(encaminhamento.teve_conhecimento_demanda === 'Sim'?\n\t(encaminhamento.demanda ? '\\\\nDemanda da acolhida: ' + encaminhamento.demanda : '')\n\t: '') +\t\n\t'\\\\nData de interrupção: ' + \t((data_interrupcao.getDate() )) + \"/\" + ((data_interrupcao.getMonth() + 1)) + \"/\" + data_interrupcao.getFullYear() +\t\n\t'\\\\nMotivo da interrupção: ' + encaminhamento.motivo_interrupcao +\n\t(encaminhamento.profissionais_reencaminhamento ? '\\\\nÁrea de profissionais para reencaminhamento da acolhida: ' + encaminhamento.profissionais_reencaminhamento : '') +\n\t(encaminhamento.equipes_servico_publico ? \t'\\\\nServiços públicos para reencaminhamento da acolhida: ' + encaminhamento.equipes_servico_publico : '') +\n\n\t//Disponibilidade\n\t'\\\\n\\\\nSOBRE A DISPONIBILIDADE\\\\nVoluntária continuará disponível: ' + disponibilidade.continuara_disponivel +\n\t(disponibilidade.continuara_disponivel === 'Não' ?\n\t(disponibilidade.voce_deseja ? '\\\\nVocê deseja: ' + disponibilidade.voce_deseja : '') \n\t: '')\t+\n\t(disponibilidade.categoria_suspensao_cadastro ? '\\\\nCategoria da suspensão: ' + disponibilidade.categoria_suspensao_cadastro : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n    \t\t\t\t\t\tanswers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return null;\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\n\nfor (item of items) {\n\n   var form_answers = item.json.body.data.fields;\n\n    var dados_voluntaria = {\n      nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n      email_cadastro: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    }\n    var dados_acolhida = {\n       nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value //\"Acholhida teste\",\n    }\n\tlet encaminhamento = {\n\t\tacolhida_estabeleceu_contato: getSelectedTexts(form_answers, \"acolhida_estabeleceu_contato\"),\n\t\tdata_primeiro_contato: form_answers.find(objeto => objeto.label == \"data_primeiro_contato\").value,\n\t\tteve_conhecimento_demanda: getSelectedTexts(form_answers, \"teve_conhecimento_demanda\"),\n\t\tdemanda: form_answers.find(objeto => objeto.label == \"demanda\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tdata_interrupcao: form_answers.find(objeto => objeto.label == \"data_interrupcao\").value, //11/11/2022\n\t\tmotivo_interrupcao: getSelectedTexts(form_answers, \"motivo_interrupcao\"),\n\t\tprofissionais_reencaminhamento: getSelectedTexts(form_answers, \"profissionais_reencaminhamento\"),\n\t\tequipes_servico_publico: getSelectedTexts(form_answers, \"equipes_servico_publico\"),\n\t}\n\n   let disponibilidade = {\n\t\tcontinuara_disponivel: getSelectedTexts(form_answers, \"continuara_disponivel\"),\n\t\tvoce_deseja: getSelectedTexts(form_answers, \"voce_deseja\"),\n\t\tcategoria_suspensao_cadastro: getSelectedTexts(form_answers, \"categoria_suspensao_cadastro\")\n\t}\n\n\tlet answers = {dados_voluntaria, dados_acolhida, encaminhamento, disponibilidade, risco}\n\n\tlet data_contato = new Date(encaminhamento.data_primeiro_contato)\n\tlet data_interrupcao = new Date(encaminhamento.data_interrupcao)\n\n  let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\t'\\\\n\\\\nSOBRE O ENCAMINHAMENTO\\\\nAcolhida estabeleu contato: ' + encaminhamento.acolhida_estabeleceu_contato +\n\t(encaminhamento.acolhida_estabeleceu_contato === 'Sim' ?\n\t(encaminhamento.data_primeiro_contato ? '\\\\nData do primeiro contato: ' + ((data_contato.getDate() )) + \"/\" + ((data_contato.getMonth() + 1)) + \"/\" + data_contato.getFullYear()  : '')\n\t: '')\t+\n\t'\\\\nTeve conhecimento da demanda da acolhida: ' + encaminhamento.teve_conhecimento_demanda +\n\t(encaminhamento.teve_conhecimento_demanda === 'Sim'?\n\t(encaminhamento.demanda ? '\\\\nDemanda da acolhida: ' + encaminhamento.demanda : '')\n\t: '') +\t\n\t'\\\\nData de interrupção: ' + \t((data_interrupcao.getDate() )) + \"/\" + ((data_interrupcao.getMonth() + 1)) + \"/\" + data_interrupcao.getFullYear() +\t\n\t'\\\\nMotivo da interrupção: ' + encaminhamento.motivo_interrupcao +\n\t(encaminhamento.profissionais_reencaminhamento ? '\\\\nÁrea de profissionais para reencaminhamento da acolhida: ' + encaminhamento.profissionais_reencaminhamento : '') +\n\t(encaminhamento.equipes_servico_publico ? \t'\\\\nServiços públicos para reencaminhamento da acolhida: ' + encaminhamento.equipes_servico_publico : '') +\n\n\t//Disponibilidade\n\t'\\\\n\\\\nSOBRE A DISPONIBILIDADE\\\\nVoluntária continuará disponível: ' + disponibilidade.continuara_disponivel +\n\t(disponibilidade.continuara_disponivel === 'Não' ?\n\t(disponibilidade.voce_deseja ? '\\\\nVocê deseja: ' + disponibilidade.voce_deseja : '') \n\t: '')\t+\n\t(disponibilidade.categoria_suspensao_cadastro ? '\\\\nCategoria da suspensão: ' + disponibilidade.categoria_suspensao_cadastro : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n    \t\t\t\t\t\tanswers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
       },
       "name": "Formata - Interrupção Encaminhamento",
       "type": "n8n-nodes-base.function",
@@ -11989,504 +11989,6 @@
         }
       }
     ],
-    "Webhook10": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Tally Webhooks",
-            "content-length": "9498",
-            "accept": "application/json, text/plain, */*",
-            "accept-encoding": "gzip, br",
-            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
-            "baggage": "sentry-environment=production,sentry-release=9fbb636f41686fe4e29ada484c24a46a29f8f0ad,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=61c54ba9b30aaf35291d1f3ba5e29dc9,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.40359341152021555,sentry-sample_rate=0.001",
-            "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "34.96.41.74",
-            "cf-ew-via": "15",
-            "cf-ipcountry": "BE",
-            "cf-ray": "98096a59757735dd-LHR",
-            "cf-visitor": "{\"scheme\":\"https\"}",
-            "cf-worker": "n8n.cloud",
-            "content-type": "application/json",
-            "sentry-trace": "61c54ba9b30aaf35291d1f3ba5e29dc9-f5f671e91101f2f1-0",
-            "x-forwarded-for": "34.96.41.74, 172.70.86.197",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-vdndp",
-            "x-is-trusted": "yes",
-            "x-real-ip": "34.96.41.74"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "eventId": "63c0b7c6-da1c-4155-8b0b-54a4b3b7df54",
-            "eventType": "FORM_RESPONSE",
-            "createdAt": "2025-09-17T14:50:20.934Z",
-            "data": {
-              "responseId": "NpbEGGW",
-              "submissionId": "NpbEGGW",
-              "respondentId": "JbMD2K",
-              "formId": "mKjEgg",
-              "formName": "Instrumental de Interrupção do Atendimento",
-              "createdAt": "2025-09-17T14:50:20.000Z",
-              "fields": [
-                {
-                  "key": "question_roOA05",
-                  "label": "nome_completo",
-                  "type": "INPUT_TEXT",
-                  "value": "Dev Psi Adv"
-                },
-                {
-                  "key": "question_4K7x1B",
-                  "label": "email_de_cadastro",
-                  "type": "INPUT_EMAIL",
-                  "value": "dev.psi.mapa@gmail.com"
-                },
-                {
-                  "key": "question_jloQ06",
-                  "label": "nome_da_acolhida",
-                  "type": "INPUT_TEXT",
-                  "value": "Msr Teste"
-                },
-                {
-                  "key": "question_o2dgpN",
-                  "label": "data_inicio_atendimento",
-                  "type": "INPUT_DATE",
-                  "value": "2025-09-08"
-                },
-                {
-                  "key": "question_GRDkgO",
-                  "label": "data_encerramento",
-                  "type": "INPUT_DATE",
-                  "value": "2025-09-15"
-                },
-                {
-                  "key": "question_O7YrgM",
-                  "label": "demanda_atendimento",
-                  "type": "TEXTAREA",
-                  "value": "demanda da acolhida"
-                },
-                {
-                  "key": "question_VzYqd6",
-                  "label": "motivo_interrupcao",
-                  "type": "CHECKBOXES",
-                  "value": [
-                    "fd5cb7a3-77c2-4d28-80ca-ffdb5ee9b876",
-                    "abf9157e-d6f1-4af2-a2da-942df8ff1c11",
-                    "c1b97c7f-cbec-471c-bef5-e705350100fb"
-                  ],
-                  "options": [
-                    {
-                      "id": "feb8f3de-4bc1-4b5b-92e5-6428bcd4b4d7",
-                      "text": "A acolhida deixou de se enquadrar no perfil do projeto"
-                    },
-                    {
-                      "id": "3fdf974f-0e6d-4393-93b3-85ecc0b78b36",
-                      "text": "Perda de vínculo com a acolhida"
-                    },
-                    {
-                      "id": "866212dc-2deb-4a97-a7d0-530f6f14a7ec",
-                      "text": "Acolhida optou por não seguir com o acolhimento"
-                    },
-                    {
-                      "id": "fd5cb7a3-77c2-4d28-80ca-ffdb5ee9b876",
-                      "text": "Incompatibilidade de horários"
-                    },
-                    {
-                      "id": "abf9157e-d6f1-4af2-a2da-942df8ff1c11",
-                      "text": "Área de atuação divergente da demanda da acolhida (para atendimentos jurídicos)"
-                    },
-                    {
-                      "id": "c1b97c7f-cbec-471c-bef5-e705350100fb",
-                      "text": "Necessidade de encaminhamento da acolhida para o serviço público"
-                    },
-                    {
-                      "id": "d3545c74-127d-49d1-8a95-ad7eebf58a20",
-                      "text": "Necessidade da acolhida de atendimento presencial"
-                    },
-                    {
-                      "id": "d98e4e4f-2132-43c7-b7a9-2563375bf91c",
-                      "text": "Necessidade de suspensão de cadastro ou desligamento do projeto"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_VzYqd6_feb8f3de-4bc1-4b5b-92e5-6428bcd4b4d7",
-                  "label": "motivo_interrupcao (A acolhida deixou de se enquadrar no perfil do projeto)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_VzYqd6_3fdf974f-0e6d-4393-93b3-85ecc0b78b36",
-                  "label": "motivo_interrupcao (Perda de vínculo com a acolhida)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_VzYqd6_866212dc-2deb-4a97-a7d0-530f6f14a7ec",
-                  "label": "motivo_interrupcao (Acolhida optou por não seguir com o acolhimento)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_VzYqd6_fd5cb7a3-77c2-4d28-80ca-ffdb5ee9b876",
-                  "label": "motivo_interrupcao (Incompatibilidade de horários)",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_VzYqd6_abf9157e-d6f1-4af2-a2da-942df8ff1c11",
-                  "label": "motivo_interrupcao (Área de atuação divergente da demanda da acolhida (para atendimentos jurídicos))",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_VzYqd6_c1b97c7f-cbec-471c-bef5-e705350100fb",
-                  "label": "motivo_interrupcao (Necessidade de encaminhamento da acolhida para o serviço público)",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_VzYqd6_d3545c74-127d-49d1-8a95-ad7eebf58a20",
-                  "label": "motivo_interrupcao (Necessidade da acolhida de atendimento presencial)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_VzYqd6_d98e4e4f-2132-43c7-b7a9-2563375bf91c",
-                  "label": "motivo_interrupcao (Necessidade de suspensão de cadastro ou desligamento do projeto)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_PzY4gx",
-                  "label": "profissionais_reencaminhamento",
-                  "type": "CHECKBOXES",
-                  "value": [
-                    "e840f12e-dee9-4607-9d0b-56e402326745"
-                  ],
-                  "options": [
-                    {
-                      "id": "28b27025-5e69-429f-a181-1db46e6daa76",
-                      "text": "Cível"
-                    },
-                    {
-                      "id": "e840f12e-dee9-4607-9d0b-56e402326745",
-                      "text": "Família"
-                    },
-                    {
-                      "id": "69a597a6-0114-4d4b-8c1d-7bcdc124a010",
-                      "text": "Trabalhista"
-                    },
-                    {
-                      "id": "535f29e1-4adb-47c0-ae40-d76a353dc05c",
-                      "text": "Criminal"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_PzY4gx_28b27025-5e69-429f-a181-1db46e6daa76",
-                  "label": "profissionais_reencaminhament (Cível)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_PzY4gx_e840f12e-dee9-4607-9d0b-56e402326745",
-                  "label": "profissionais_reencaminhament (Família)",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_PzY4gx_69a597a6-0114-4d4b-8c1d-7bcdc124a010",
-                  "label": "profissionais_reencaminhament (Trabalhista)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_PzY4gx_535f29e1-4adb-47c0-ae40-d76a353dc05c",
-                  "label": "profissionais_reencaminhament (Criminal)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2",
-                  "label": "equipes_servico_publico",
-                  "type": "CHECKBOXES",
-                  "value": [
-                    "af07c837-b4ed-478b-8bb4-a4e92f8e9923"
-                  ],
-                  "options": [
-                    {
-                      "id": "fc169df6-b4da-4bd1-87ac-7af4b037ab22",
-                      "text": "CREAS"
-                    },
-                    {
-                      "id": "d27afb8c-80f1-43d8-8a61-e7368b0afd20",
-                      "text": "CRAS"
-                    },
-                    {
-                      "id": "af07c837-b4ed-478b-8bb4-a4e92f8e9923",
-                      "text": "UBS"
-                    },
-                    {
-                      "id": "495efb2c-d7e2-4d8f-9e3a-ec6c7d448f0a",
-                      "text": "CRM;CDCM; CRAM; CIAM"
-                    },
-                    {
-                      "id": "c9130ade-25c7-4fdc-b052-8dedd953ef43",
-                      "text": "Delegacia especializada da Mulher"
-                    },
-                    {
-                      "id": "64188301-1ad0-4259-8a80-55f777762430",
-                      "text": "Delegacia civil"
-                    },
-                    {
-                      "id": "a70289a2-11bf-426f-8b5b-27ce57fd8626",
-                      "text": "Hospital de abortamento legal"
-                    },
-                    {
-                      "id": "4bc935ee-859b-4b58-bd9e-8dee6137daeb",
-                      "text": "Defensoria pública/NUDEM"
-                    },
-                    {
-                      "id": "9a37562d-9c95-477b-953d-ab68d2303cbf",
-                      "text": "Ministério público"
-                    },
-                    {
-                      "id": "e5f220cf-bce7-45b3-8ca7-983d658d2472",
-                      "text": "CAPS"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_ExDAg2_fc169df6-b4da-4bd1-87ac-7af4b037ab22",
-                  "label": "equipes_servico_publico (CREAS)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_d27afb8c-80f1-43d8-8a61-e7368b0afd20",
-                  "label": "equipes_servico_publico (CRAS)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_af07c837-b4ed-478b-8bb4-a4e92f8e9923",
-                  "label": "equipes_servico_publico (UBS)",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_ExDAg2_495efb2c-d7e2-4d8f-9e3a-ec6c7d448f0a",
-                  "label": "equipes_servico_publico (CRM;CDCM; CRAM; CIAM)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_c9130ade-25c7-4fdc-b052-8dedd953ef43",
-                  "label": "equipes_servico_publico (Delegacia especializada da Mulher)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_64188301-1ad0-4259-8a80-55f777762430",
-                  "label": "equipes_servico_publico (Delegacia civil)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_a70289a2-11bf-426f-8b5b-27ce57fd8626",
-                  "label": "equipes_servico_publico (Hospital de abortamento legal)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_4bc935ee-859b-4b58-bd9e-8dee6137daeb",
-                  "label": "equipes_servico_publico (Defensoria pública/NUDEM)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_9a37562d-9c95-477b-953d-ab68d2303cbf",
-                  "label": "equipes_servico_publico (Ministério público)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_ExDAg2_e5f220cf-bce7-45b3-8ca7-983d658d2472",
-                  "label": "equipes_servico_publico (CAPS)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_roLgpX",
-                  "label": "atendimento_fora_do_projeto",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "e003b1e1-00dd-4b9f-b5a0-893e54b59b77"
-                  ],
-                  "options": [
-                    {
-                      "id": "bae4951a-b7d4-49d3-a60a-105737ae2baa",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "e003b1e1-00dd-4b9f-b5a0-893e54b59b77",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_4KvEq5",
-                  "label": "continuara_disponivel",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "b66b6c30-a3d8-4e4c-a46a-86b67bc65251"
-                  ],
-                  "options": [
-                    {
-                      "id": "726a0e4e-5290-4eef-9e35-aafb3c1a01ef",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "b66b6c30-a3d8-4e4c-a46a-86b67bc65251",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_jlWgp1",
-                  "label": "voce_deseja",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "6657162a-37e9-44ba-8af6-58f0c2723360"
-                  ],
-                  "options": [
-                    {
-                      "id": "46b20e44-8362-4efe-8ec3-72e48c19d6d2",
-                      "text": "Se desligar do projeto"
-                    },
-                    {
-                      "id": "6657162a-37e9-44ba-8af6-58f0c2723360",
-                      "text": "Suspender temporariamente o seu cadastro"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_2KvVZM",
-                  "label": "categoria_suspensao_cadastro",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "4823ef8d-3143-46b9-be70-ad7b8feb6817"
-                  ],
-                  "options": [
-                    {
-                      "id": "d09c0a1f-0b93-4d9e-933f-a31ceb4ed33c",
-                      "text": "Suspensão - férias - 01 mês"
-                    },
-                    {
-                      "id": "8f912466-93b7-40f7-a0c1-eae13f7a087d",
-                      "text": "Suspensão - trabalho - 06 meses"
-                    },
-                    {
-                      "id": "4823ef8d-3143-46b9-be70-ad7b8feb6817",
-                      "text": "Suspensão - estudo - 06 meses"
-                    },
-                    {
-                      "id": "c89abc5e-2eb4-464c-8138-16b3a10929b6",
-                      "text": "Suspensão - maternidade - 06 meses"
-                    },
-                    {
-                      "id": "89caaa5a-a722-4191-a8e2-cf08d29f6735",
-                      "text": "Suspensão - saúde - 01 mês"
-                    },
-                    {
-                      "id": "e528476e-7975-407c-b145-31ceb92af1da",
-                      "text": "Suspensão - outros - 03 meses"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_xJygok",
-                  "label": "solicitou_ajuda_mapa",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "663c8518-208c-482c-bf44-5d4acc931e71"
-                  ],
-                  "options": [
-                    {
-                      "id": "663c8518-208c-482c-bf44-5d4acc931e71",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "993ff78a-0a81-4d76-ac3e-660d3c13a3a3",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_RDY2lK",
-                  "label": "se_sentiu_orientada",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "6ce83187-2143-4ac5-9ad8-8743b7c05847"
-                  ],
-                  "options": [
-                    {
-                      "id": "6ce83187-2143-4ac5-9ad8-8743b7c05847",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "ae0e3554-1eb1-402b-8dd6-9d5c452812d3",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_o2dgQb",
-                  "label": "se_sentiu_acolhida",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "9150c6ac-6f46-4657-92fc-d6112c7a9e6f"
-                  ],
-                  "options": [
-                    {
-                      "id": "6bfe0ca4-aef1-4973-946c-322c91157c97",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "9150c6ac-6f46-4657-92fc-d6112c7a9e6f",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_GRDkye",
-                  "label": "aprendizagens",
-                  "type": "TEXTAREA",
-                  "value": "aprendizagens este atendimento te forneceu"
-                },
-                {
-                  "key": "question_O7Yrya",
-                  "label": "desafios",
-                  "type": "TEXTAREA",
-                  "value": "desafios você enfrentou neste atendimento"
-                },
-                {
-                  "key": "question_VzYqyj",
-                  "label": "descricao_experiencia",
-                  "type": "TEXTAREA",
-                  "value": " descreva sua experiência como voluntária do Mapa do Acolhimento"
-                }
-              ]
-            }
-          },
-          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/interrupcao-atendimento",
-          "executionMode": "production"
-        }
-      }
-    ],
     "Webhook11": [
       {
         "json": {
@@ -12940,6 +12442,494 @@
           "executionMode": "test"
         }
       }
+    ],
+    "Webhook10": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "10485",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "baggage": "sentry-environment=production,sentry-release=5951121f9345639dde2be70426b1893e5ec23454,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=c449cbdec8c046f21771303777124551,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.3455424569951704,sentry-sample_rate=0.001",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.41.99",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "BE",
+            "cf-ray": "98336efb634553a4-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "sentry-trace": "c449cbdec8c046f21771303777124551-46ec7110862fd7db-0",
+            "x-forwarded-for": "34.96.41.99, 172.71.26.98",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-vdndp",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.99"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "a0216a01-867d-4247-94d8-bbf7ea2a2a2b",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2025-09-22T17:13:32.561Z",
+            "data": {
+              "responseId": "5BpdxXb",
+              "submissionId": "5BpdxXb",
+              "respondentId": "RGGG7ov",
+              "formId": "mKjEgg",
+              "formName": "Instrumental de Interrupção do Atendimento",
+              "createdAt": "2025-09-22T17:13:32.000Z",
+              "fields": [
+                {
+                  "key": "question_roOA05",
+                  "label": "nome_completo",
+                  "type": "INPUT_TEXT",
+                  "value": "Keiti Santos Severino"
+                },
+                {
+                  "key": "question_4K7x1B",
+                  "label": "email_de_cadastro",
+                  "type": "INPUT_EMAIL",
+                  "value": "keitisantos.psi@gmail.com"
+                },
+                {
+                  "key": "question_jloQ06",
+                  "label": "nome_da_acolhida",
+                  "type": "INPUT_TEXT",
+                  "value": "Priscila"
+                },
+                {
+                  "key": "question_o2dgpN",
+                  "label": "data_inicio_atendimento",
+                  "type": "INPUT_DATE",
+                  "value": "2025-03-17"
+                },
+                {
+                  "key": "question_GRDkgO",
+                  "label": "data_encerramento",
+                  "type": "INPUT_DATE",
+                  "value": "2025-09-05"
+                },
+                {
+                  "key": "question_O7YrgM",
+                  "label": "demanda_atendimento",
+                  "type": "TEXTAREA",
+                  "value": "A paciente passou por situação de violência, sendo agredida pelo ex-marido de forma física, moral e psicológica. Relata que os filhos presenciaram as agressões sofridas por ela, e que o ex-marido já tentou agredir a filha mais nova.\nA acolhida demonstra se sentir culpada pela violência que viveu e se sentir culpada pelos filhos terem presenciado as agressões..\nRelata sobre o cansaço do dia a dia e da mudança de rotina já que foi necessário que ela e os filhos mudassem de cidade para se afastar do ex-marido. A acolhida precisou se afastar da família e relata se sentir sozinha e não tem rede de apoio na cidade em que reside atualmente. \nRelata ter crises de ansiedade com frequência, falta de apetite e não consegue dormir bem durante a noite, pois relata que “os pensamentos não param”, porque tem medo que o ex-marido apareça na casa dela, mesmo que ele não saiba onde ela mora, ela acredita que ele pode descobrir e ir atrás dos filhos.\n"
+                },
+                {
+                  "key": "question_VzYqd6",
+                  "label": "motivo_interrupcao",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "d98e4e4f-2132-43c7-b7a9-2563375bf91c"
+                  ],
+                  "options": [
+                    {
+                      "id": "feb8f3de-4bc1-4b5b-92e5-6428bcd4b4d7",
+                      "text": "A acolhida deixou de se enquadrar no perfil do projeto"
+                    },
+                    {
+                      "id": "3fdf974f-0e6d-4393-93b3-85ecc0b78b36",
+                      "text": "Perda de vínculo com a acolhida"
+                    },
+                    {
+                      "id": "866212dc-2deb-4a97-a7d0-530f6f14a7ec",
+                      "text": "Acolhida optou por não seguir com o acolhimento"
+                    },
+                    {
+                      "id": "fd5cb7a3-77c2-4d28-80ca-ffdb5ee9b876",
+                      "text": "Incompatibilidade de horários"
+                    },
+                    {
+                      "id": "abf9157e-d6f1-4af2-a2da-942df8ff1c11",
+                      "text": "Área de atuação divergente da demanda da acolhida (para atendimentos jurídicos)"
+                    },
+                    {
+                      "id": "c1b97c7f-cbec-471c-bef5-e705350100fb",
+                      "text": "Necessidade de encaminhamento da acolhida para o serviço público"
+                    },
+                    {
+                      "id": "d3545c74-127d-49d1-8a95-ad7eebf58a20",
+                      "text": "Necessidade da acolhida de atendimento presencial"
+                    },
+                    {
+                      "id": "d98e4e4f-2132-43c7-b7a9-2563375bf91c",
+                      "text": "Necessidade de suspensão de cadastro ou desligamento do projeto"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_VzYqd6_feb8f3de-4bc1-4b5b-92e5-6428bcd4b4d7",
+                  "label": "motivo_interrupcao (A acolhida deixou de se enquadrar no perfil do projeto)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYqd6_3fdf974f-0e6d-4393-93b3-85ecc0b78b36",
+                  "label": "motivo_interrupcao (Perda de vínculo com a acolhida)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYqd6_866212dc-2deb-4a97-a7d0-530f6f14a7ec",
+                  "label": "motivo_interrupcao (Acolhida optou por não seguir com o acolhimento)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYqd6_fd5cb7a3-77c2-4d28-80ca-ffdb5ee9b876",
+                  "label": "motivo_interrupcao (Incompatibilidade de horários)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYqd6_abf9157e-d6f1-4af2-a2da-942df8ff1c11",
+                  "label": "motivo_interrupcao (Área de atuação divergente da demanda da acolhida (para atendimentos jurídicos))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYqd6_c1b97c7f-cbec-471c-bef5-e705350100fb",
+                  "label": "motivo_interrupcao (Necessidade de encaminhamento da acolhida para o serviço público)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYqd6_d3545c74-127d-49d1-8a95-ad7eebf58a20",
+                  "label": "motivo_interrupcao (Necessidade da acolhida de atendimento presencial)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_VzYqd6_d98e4e4f-2132-43c7-b7a9-2563375bf91c",
+                  "label": "motivo_interrupcao (Necessidade de suspensão de cadastro ou desligamento do projeto)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_PzY4gx",
+                  "label": "profissionais_reencaminhamento",
+                  "type": "CHECKBOXES",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "28b27025-5e69-429f-a181-1db46e6daa76",
+                      "text": "Cível"
+                    },
+                    {
+                      "id": "e840f12e-dee9-4607-9d0b-56e402326745",
+                      "text": "Família"
+                    },
+                    {
+                      "id": "69a597a6-0114-4d4b-8c1d-7bcdc124a010",
+                      "text": "Trabalhista"
+                    },
+                    {
+                      "id": "535f29e1-4adb-47c0-ae40-d76a353dc05c",
+                      "text": "Criminal"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_PzY4gx_28b27025-5e69-429f-a181-1db46e6daa76",
+                  "label": "profissionais_reencaminhamento (Cível)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_PzY4gx_e840f12e-dee9-4607-9d0b-56e402326745",
+                  "label": "profissionais_reencaminhamento (Família)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_PzY4gx_69a597a6-0114-4d4b-8c1d-7bcdc124a010",
+                  "label": "profissionais_reencaminhamento (Trabalhista)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_PzY4gx_535f29e1-4adb-47c0-ae40-d76a353dc05c",
+                  "label": "profissionais_reencaminhamento (Criminal)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2",
+                  "label": "equipes_servico_publico",
+                  "type": "CHECKBOXES",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "fc169df6-b4da-4bd1-87ac-7af4b037ab22",
+                      "text": "CREAS"
+                    },
+                    {
+                      "id": "d27afb8c-80f1-43d8-8a61-e7368b0afd20",
+                      "text": "CRAS"
+                    },
+                    {
+                      "id": "af07c837-b4ed-478b-8bb4-a4e92f8e9923",
+                      "text": "UBS"
+                    },
+                    {
+                      "id": "495efb2c-d7e2-4d8f-9e3a-ec6c7d448f0a",
+                      "text": "CRM;CDCM; CRAM; CIAM"
+                    },
+                    {
+                      "id": "c9130ade-25c7-4fdc-b052-8dedd953ef43",
+                      "text": "Delegacia especializada da Mulher"
+                    },
+                    {
+                      "id": "64188301-1ad0-4259-8a80-55f777762430",
+                      "text": "Delegacia civil"
+                    },
+                    {
+                      "id": "a70289a2-11bf-426f-8b5b-27ce57fd8626",
+                      "text": "Hospital de abortamento legal"
+                    },
+                    {
+                      "id": "4bc935ee-859b-4b58-bd9e-8dee6137daeb",
+                      "text": "Defensoria pública/NUDEM"
+                    },
+                    {
+                      "id": "9a37562d-9c95-477b-953d-ab68d2303cbf",
+                      "text": "Ministério público"
+                    },
+                    {
+                      "id": "e5f220cf-bce7-45b3-8ca7-983d658d2472",
+                      "text": "CAPS"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_ExDAg2_fc169df6-b4da-4bd1-87ac-7af4b037ab22",
+                  "label": "equipes_servico_publico (CREAS)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_d27afb8c-80f1-43d8-8a61-e7368b0afd20",
+                  "label": "equipes_servico_publico (CRAS)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_af07c837-b4ed-478b-8bb4-a4e92f8e9923",
+                  "label": "equipes_servico_publico (UBS)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_495efb2c-d7e2-4d8f-9e3a-ec6c7d448f0a",
+                  "label": "equipes_servico_publico (CRM;CDCM; CRAM; CIAM)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_c9130ade-25c7-4fdc-b052-8dedd953ef43",
+                  "label": "equipes_servico_publico (Delegacia especializada da Mulher)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_64188301-1ad0-4259-8a80-55f777762430",
+                  "label": "equipes_servico_publico (Delegacia civil)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_a70289a2-11bf-426f-8b5b-27ce57fd8626",
+                  "label": "equipes_servico_publico (Hospital de abortamento legal)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_4bc935ee-859b-4b58-bd9e-8dee6137daeb",
+                  "label": "equipes_servico_publico (Defensoria pública/NUDEM)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_9a37562d-9c95-477b-953d-ab68d2303cbf",
+                  "label": "equipes_servico_publico (Ministério público)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_ExDAg2_e5f220cf-bce7-45b3-8ca7-983d658d2472",
+                  "label": "equipes_servico_publico (CAPS)",
+                  "type": "CHECKBOXES",
+                  "value": null
+                },
+                {
+                  "key": "question_roLgpX",
+                  "label": "atendimento_fora_do_projeto",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "e003b1e1-00dd-4b9f-b5a0-893e54b59b77"
+                  ],
+                  "options": [
+                    {
+                      "id": "bae4951a-b7d4-49d3-a60a-105737ae2baa",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "e003b1e1-00dd-4b9f-b5a0-893e54b59b77",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_4KvEq5",
+                  "label": "continuara_disponivel",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "726a0e4e-5290-4eef-9e35-aafb3c1a01ef"
+                  ],
+                  "options": [
+                    {
+                      "id": "726a0e4e-5290-4eef-9e35-aafb3c1a01ef",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "b66b6c30-a3d8-4e4c-a46a-86b67bc65251",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_jlWgp1",
+                  "label": "voce_deseja",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "46b20e44-8362-4efe-8ec3-72e48c19d6d2",
+                      "text": "Se desligar do projeto"
+                    },
+                    {
+                      "id": "6657162a-37e9-44ba-8af6-58f0c2723360",
+                      "text": "Suspender temporariamente o seu cadastro"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_2KvVZM",
+                  "label": "categoria_suspensao_cadastro",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "d09c0a1f-0b93-4d9e-933f-a31ceb4ed33c",
+                      "text": "Suspensão - férias - 01 mês"
+                    },
+                    {
+                      "id": "8f912466-93b7-40f7-a0c1-eae13f7a087d",
+                      "text": "Suspensão - trabalho - 06 meses"
+                    },
+                    {
+                      "id": "4823ef8d-3143-46b9-be70-ad7b8feb6817",
+                      "text": "Suspensão - estudo - 06 meses"
+                    },
+                    {
+                      "id": "c89abc5e-2eb4-464c-8138-16b3a10929b6",
+                      "text": "Suspensão - maternidade - 06 meses"
+                    },
+                    {
+                      "id": "89caaa5a-a722-4191-a8e2-cf08d29f6735",
+                      "text": "Suspensão - saúde - 01 mês"
+                    },
+                    {
+                      "id": "e528476e-7975-407c-b145-31ceb92af1da",
+                      "text": "Suspensão - outros - 03 meses"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_xJygok",
+                  "label": "solicitou_ajuda_mapa",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "663c8518-208c-482c-bf44-5d4acc931e71"
+                  ],
+                  "options": [
+                    {
+                      "id": "663c8518-208c-482c-bf44-5d4acc931e71",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "993ff78a-0a81-4d76-ac3e-660d3c13a3a3",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_RDY2lK",
+                  "label": "se_sentiu_orientada",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "6ce83187-2143-4ac5-9ad8-8743b7c05847"
+                  ],
+                  "options": [
+                    {
+                      "id": "6ce83187-2143-4ac5-9ad8-8743b7c05847",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "ae0e3554-1eb1-402b-8dd6-9d5c452812d3",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_o2dgQb",
+                  "label": "se_sentiu_acolhida",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "6bfe0ca4-aef1-4973-946c-322c91157c97"
+                  ],
+                  "options": [
+                    {
+                      "id": "6bfe0ca4-aef1-4973-946c-322c91157c97",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "9150c6ac-6f46-4657-92fc-d6112c7a9e6f",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_GRDkye",
+                  "label": "aprendizagens",
+                  "type": "TEXTAREA",
+                  "value": "O atendimento com a acolhida pode me oferecer melhor compreensão sobre os atendimentos clínicos em situações de vulnerabilidade e a oportunidade de oferecer um atendimento acolhedor, ético e seguro."
+                },
+                {
+                  "key": "question_O7Yrya",
+                  "label": "desafios",
+                  "type": "TEXTAREA",
+                  "value": "Conseguir entender que algumas coisas que a paciente trazia para os atendimentos saiam da minha mão, e dependiam das politicas publicas e da segurança que a lei poderia oferecer para ela. "
+                },
+                {
+                  "key": "question_VzYqyj",
+                  "label": "descricao_experiencia",
+                  "type": "TEXTAREA",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/interrupcao-atendimento",
+          "executionMode": "production"
+        }
+      }
     ]
   },
   "settings": {
@@ -12970,7 +12960,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-09-21T23:13:21.000Z",
+              "updatedAt": "2025-09-22T17:23:47.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -12989,7 +12979,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-09-21",
+              "lastActiveAt": "2025-09-22",
               "isPending": false
             }
           }
@@ -13000,6 +12990,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 12,
-  "updatedAt": "2025-09-17T15:47:44.000Z",
-  "versionId": "f15154db-7f0a-4317-ab23-ceae526fa893"
+  "updatedAt": "2025-09-22T17:56:37.000Z",
+  "versionId": "85ee0e1d-b950-4be2-8deb-5c4b2d03bd5b"
 }
