@@ -84,6 +84,11 @@
             "node": "Salvar Respostas2",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Insert mda_forms-answers8",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -93,6 +98,11 @@
         [
           {
             "node": "Salvar Respostas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert mda_forms-answers9",
             "type": "main",
             "index": 0
           }
@@ -128,6 +138,11 @@
             "node": "Salvar Respostas1",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Insert mda_forms-answers11",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -137,6 +152,11 @@
         [
           {
             "node": "Salvar Respostas3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert mda_forms-answers10",
             "type": "main",
             "index": 0
           }
@@ -286,7 +306,7 @@
       "typeVersion": 1,
       "position": [
         1024,
-        704
+        672
       ],
       "id": "84730c65-8595-45db-8f49-c05afb138f5f",
       "credentials": {
@@ -308,8 +328,8 @@
       "type": "n8n-nodes-base.graphql",
       "typeVersion": 1,
       "position": [
-        1040,
-        464
+        1088,
+        368
       ],
       "id": "f35e5ba0-7651-4282-81c6-a2df3de317d5",
       "credentials": {
@@ -602,6 +622,90 @@
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
           "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO legacy_support_assessments.mda_forms_answers\n( form, form_id, created_at, updated_at, organization_id, volunteer_email, msr_name, ticket_id, answers)\nVALUES( 'conclusao-juridico', 29, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 360269610652, '{{$node[\"Formata - Conclusão Jurídico\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}', '{{$node[\"Formata - Conclusão Jurídico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}', {{$node[\"Criar novo ticket (conclusao juridico)\"].json[\"ticket\"][\"id\"]}}, '{{$node[\"Formata - Conclusão Jurídico\"].json[\"answers_txt\"]}}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1120,
+        528
+      ],
+      "id": "995d5018-ce3f-4ea1-879a-64d2c3849ced",
+      "name": "Insert mda_forms-answers8",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO legacy_support_assessments.mda_forms_answers\n( form, form_id, created_at, updated_at, organization_id, volunteer_email, msr_name, ticket_id, answers)\nVALUES( 'conclusao-psicologico', 30, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 360282119532, '{{$node[\"Formata - Conclusão Psicológico\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}', '{{$node[\"Formata - Conclusão Psicológico\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}', {{$node[\"Criar novo ticket (conclusao psicologico)\"].json[\"ticket\"][\"id\"]}}, '{{$node[\"Formata - Conclusão Psicológico\"].json[\"answers_txt\"]}}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1136,
+        800
+      ],
+      "id": "0c7dc6a6-c926-4fdf-8b66-b679fb32300e",
+      "name": "Insert mda_forms-answers9",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO legacy_support_assessments.mda_forms_answers\n( form, form_id, created_at, updated_at, organization_id, volunteer_email, msr_name, ticket_id, answers)\nVALUES( 'interrupcao-atendimento', 32, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, {{ $('Busca Zendesk User ID2').item.json[\"organization_id\"] }}, '{{$node[\"Formata - Interrupção Atendimento\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}', '{{$node[\"Formata - Interrupção Atendimento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}', {{$node[\"Criar novo ticket (interrupcao atendimento)\"].json[\"ticket\"][\"id\"]}}, '{{$node[\"Formata - Interrupção Atendimento\"].json[\"answers_txt\"]}}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1216,
+        1040
+      ],
+      "id": "97ad6bdf-aee4-4993-9941-5481736da3f6",
+      "name": "Insert mda_forms-answers10",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO legacy_support_assessments.mda_forms_answers\n( form, form_id, created_at, updated_at, organization_id, volunteer_email, msr_name, ticket_id, answers)\nVALUES( 'interrupcao-encaminhamento', 31, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, {{ $('Busca Zendesk User ID3').item.json[\"organization_id\"] }}, '{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers\"][\"dados_voluntaria\"][\"email_cadastro\"]}}', '{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers\"][\"dados_acolhida\"][\"nome\"]}}', {{$node[\"Criar novo ticket (interrupcao encaminhamento)\"].json[\"ticket\"][\"id\"]}}, '{{$node[\"Formata - Interrupção Encaminhamento\"].json[\"answers_txt\"]}}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1104,
+        1376
+      ],
+      "id": "19d1b648-0537-44c4-9e08-33561ac93295",
+      "name": "Insert mda_forms-answers11",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
     }
@@ -1053,7 +1157,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-10-12T23:13:06.000Z",
+              "updatedAt": "2025-10-13T14:06:58.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -1072,7 +1176,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-12",
+              "lastActiveAt": "2025-10-13",
               "isPending": false
             }
           }
@@ -1090,6 +1194,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2025-09-17T14:27:54.000Z",
-  "versionId": "b12e48c3-41d6-4f1a-8f4f-77183ec83ca8"
+  "updatedAt": "2025-10-13T20:27:59.000Z",
+  "versionId": "3676f2b4-f242-4340-bc17-4e1c3dc0378d"
 }
