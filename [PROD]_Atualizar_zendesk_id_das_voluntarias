@@ -65,13 +65,7 @@
     },
     "Busca voluntarias sem zendesk ID": {
       "main": [
-        [
-          {
-            "node": "Make a iterteration with workflows array",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Salva zendesk id": {
@@ -83,6 +77,11 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Create a user": {
+      "main": [
+        []
       ]
     }
   },
@@ -101,8 +100,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        220,
-        300
+        224,
+        304
       ]
     },
     {
@@ -119,7 +118,7 @@
       "typeVersion": 1,
       "position": [
         960,
-        300
+        304
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -153,8 +152,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.2,
       "position": [
-        1420,
-        280
+        1424,
+        288
       ]
     },
     {
@@ -165,8 +164,8 @@
       "name": "Make a iterteration with workflows array",
       "type": "n8n-nodes-base.splitInBatches",
       "position": [
-        740,
-        300
+        752,
+        304
       ],
       "typeVersion": 1,
       "id": "766acdba-5491-49d1-bb6a-00c7af007418"
@@ -200,8 +199,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1160,
-        300
+        1168,
+        304
       ]
     },
     {
@@ -233,8 +232,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        440,
-        300
+        448,
+        304
       ],
       "credentials": {
         "postgres": {
@@ -254,13 +253,80 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        1720,
-        280
+        1728,
+        288
       ],
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
           "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "name": "={{ $json.first_name }} {{ $json.last_name }}",
+        "additionalFields": {
+          "email": "={{ $json.email }}",
+          "organization_id": 360282119532,
+          "phone": "={{ $json.phone }}",
+          "role": "end-user",
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "={{ $json.condition }}"
+              },
+              {
+                "field": "state",
+                "value": "={{ $json.state }}"
+              },
+              {
+                "field": "city",
+                "value": "={{ $json.city }}"
+              },
+              {
+                "field": "cep",
+                "value": "={{ $json.zipcode }}"
+              },
+              {
+                "field": "whatsapp",
+                "value": "=https://wa.me/55{{ $json.phone }}"
+              },
+              {
+                "field": "cor",
+                "value": "branca"
+              },
+              {
+                "field": "registration_number",
+                "value": "={{ $json.register_number }}"
+              },
+              {
+                "field": "disponibilidade_de_atendimentos",
+                "value": "=2"
+              },
+              {
+                "field": "date_of_birth",
+                "value": "={{ $json.birth_date }}"
+              }
+            ]
+          },
+          "verified": true
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        672,
+        128
+      ],
+      "id": "450efb88-dd2a-4cdf-80a3-2e4d4a991646",
+      "name": "Create a user",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
         }
       }
     }
@@ -292,7 +358,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-10-21T12:04:35.000Z",
+              "updatedAt": "2025-10-22T20:49:55.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -311,7 +377,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-21",
+              "lastActiveAt": "2025-10-22",
               "isPending": false
             }
           }
@@ -322,6 +388,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-04-16T19:41:26.000Z",
-  "versionId": "039419f3-ea8e-43aa-85cf-63a7b34efdf2"
+  "updatedAt": "2025-10-22T21:05:43.000Z",
+  "versionId": "41b1bef5-a93a-4c3e-bc63-f2e5ef4c00dd"
 }
