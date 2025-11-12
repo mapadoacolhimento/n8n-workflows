@@ -263,8 +263,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        680,
-        60
+        688,
+        64
       ]
     },
     {
@@ -279,7 +279,7 @@
       "typeVersion": 1,
       "position": [
         720,
-        200
+        208
       ]
     },
     {
@@ -293,8 +293,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        940,
-        340
+        944,
+        352
       ],
       "credentials": {
         "postgres": {
@@ -312,8 +312,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1180,
-        340
+        1184,
+        352
       ]
     },
     {
@@ -325,8 +325,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1400,
-        360
+        1408,
+        368
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -337,7 +337,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1400,
+        1408,
         160
       ]
     },
@@ -357,8 +357,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1620,
-        360
+        1632,
+        368
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -378,7 +378,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        700,
+        704,
         720
       ]
     },
@@ -391,8 +391,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1160,
-        860
+        1168,
+        864
       ]
     },
     {
@@ -404,7 +404,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1380,
+        1392,
         880
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
@@ -416,14 +416,14 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1380,
-        680
+        1392,
+        688
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY'",
+        "query": "SELECT DISTINCT\n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY' and m.status = 'registered'",
         "options": {}
       },
       "id": "8aa1ee77-1abb-4386-b382-af9ddcd0a087",
@@ -431,8 +431,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        920,
-        860
+        928,
+        864
       ],
       "credentials": {
         "postgres": {
@@ -478,8 +478,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        700,
-        1300
+        704,
+        1312
       ]
     },
     {
@@ -491,7 +491,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1160,
+        1168,
         1440
       ]
     },
@@ -504,8 +504,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1380,
-        1460
+        1392,
+        1472
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -516,14 +516,14 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1380,
-        1260
+        1392,
+        1264
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '180 DAY'",
+        "query": "SELECT DISTINCT\n    msr_id,\n    email,\n    first_name\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii p USING(msr_id)\nWHERE m.created_at::DATE = CURRENT_DATE - INTERVAL '180 DAY' and m.status = 'registered'",
         "options": {}
       },
       "id": "8d4658dd-27da-45d1-b014-7069392a6e93",
@@ -531,7 +531,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        920,
+        928,
         1440
       ],
       "credentials": {
@@ -558,7 +558,7 @@
       "typeVersion": 4.1,
       "position": [
         1600,
-        1460
+        1472
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -582,8 +582,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        120,
-        860
+        128,
+        864
       ]
     },
     {
@@ -602,7 +602,7 @@
       "typeVersion": 1.2,
       "position": [
         720,
-        340
+        352
       ]
     },
     {
@@ -616,8 +616,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2840,
-        20
+        2848,
+        32
       ]
     },
     {
@@ -636,7 +636,7 @@
       "typeVersion": 1.2,
       "position": [
         2880,
-        260
+        272
       ]
     },
     {
@@ -650,8 +650,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        3100,
-        260
+        3104,
+        272
       ],
       "credentials": {
         "postgres": {
@@ -670,7 +670,7 @@
       "typeVersion": 3,
       "position": [
         3360,
-        260
+        272
       ]
     },
     {
@@ -682,8 +682,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        3580,
-        280
+        3584,
+        288
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -694,8 +694,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3580,
-        60
+        3584,
+        64
       ]
     },
     {
@@ -714,8 +714,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        3800,
-        280
+        3808,
+        288
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -755,7 +755,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-11-11T13:03:08.000Z",
+              "updatedAt": "2025-11-12T13:34:04.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -774,7 +774,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-11",
+              "lastActiveAt": "2025-11-12",
               "isPending": false
             }
           }
@@ -795,6 +795,6 @@
   },
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2025-04-25T14:49:06.000Z",
-  "versionId": "fa86cf3a-fcff-451e-90f6-26500016a679"
+  "updatedAt": "2025-11-12T13:39:08.000Z",
+  "versionId": "b44df95d-42aa-488a-be68-9384fe78f21d"
 }
