@@ -90,7 +90,7 @@
       "typeVersion": 1,
       "position": [
         -528,
-        96
+        128
       ],
       "id": "c767eb89-8a53-4622-9167-571191dbf57d",
       "name": "When clicking ‘Execute workflow’"
@@ -98,14 +98,14 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT latitude, longitude,zipcode ,state, city, neighborhood, street, first_name, condition, created_at\nFROM public.volunteers\nWHERE   latitude NOT BETWEEN -33.75 AND 5.27\n        and longitude NOT BETWEEN -73.98 AND -34.79\n   and city != 'INTERNACIONAL'\nORDER BY created_at;",
+        "query": "SELECT latitude, longitude, zipcode, state, city, neighborhood, street, first_name, condition, created_at\nFROM public.volunteers\nWHERE (latitude NOT BETWEEN -33.75 AND 5.27 OR longitude NOT BETWEEN -73.98 AND -34.79)\n    AND city != 'INTERNACIONAL'\nORDER BY created_at;",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
         -240,
-        112
+        128
       ],
       "id": "0f339e47-dde3-4b93-be8e-cab982bc0542",
       "name": "Execute a SQL query",
@@ -118,14 +118,14 @@
     },
     {
       "parameters": {
-        "url": "=https://voluntaria.mapadoacolhimento.org/address?zipcode={{ $json.zipcode }}",
+        "url": "=https://voluntaria.mapadoacolhimento.org/address?city={{$json.city}}&state={{$json.state}}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        528,
-        -112
+        544,
+        -16
       ],
       "id": "12eb6e9b-9d2f-4654-9f1c-93acd9aa2487",
       "name": "HTTP Request"
@@ -138,7 +138,7 @@
       "typeVersion": 3,
       "position": [
         0,
-        112
+        128
       ],
       "id": "35f739f1-6ee0-4565-89cb-f9b6045fab23",
       "name": "Loop Over Items"
@@ -155,8 +155,8 @@
           "conditions": [
             {
               "id": "01a3c7d9-b0db-45a1-ad04-68af14cb443e",
-              "leftValue": "",
-              "rightValue": "",
+              "leftValue": "={{ $json.zipcode }}",
+              "rightValue": "not_found",
               "operator": {
                 "type": "string",
                 "operation": "equals",
@@ -171,8 +171,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        224,
-        144
+        240,
+        128
       ],
       "id": "119486a6-ccec-401f-91f5-da6a1bf4f8e0",
       "name": "If"
@@ -185,8 +185,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        560,
-        160
+        544,
+        304
       ],
       "id": "d9c2867d-b89f-4d6d-9382-ba3c9c406c59",
       "name": "HTTP Request1"
@@ -219,7 +219,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-11-12T13:34:04.000Z",
+              "updatedAt": "2025-11-13T14:01:03.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -238,7 +238,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-12",
+              "lastActiveAt": "2025-11-13",
               "isPending": false
             }
           }
@@ -249,6 +249,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-11-12T19:40:39.000Z",
-  "versionId": "4280ea42-ee92-40d5-a5f2-4a511608a6e9"
+  "updatedAt": "2025-11-13T19:26:53.000Z",
+  "versionId": "87d9ff38-1daf-42ec-a86c-d8353ccc4bd3"
 }
