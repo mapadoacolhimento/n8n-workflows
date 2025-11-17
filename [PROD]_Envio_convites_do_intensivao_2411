@@ -1,5 +1,5 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
     "Wait14": {
       "main": [
@@ -92,6 +92,11 @@
             "node": "loop email1",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "loop whatsapp1",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -150,7 +155,7 @@
         [],
         [
           {
-            "node": "Envia email segundo convite NÃO SE INSCREVERAM1",
+            "node": "Envia segundo conviteJÁ SE INSCREVERAM1",
             "type": "main",
             "index": 0
           }
@@ -158,6 +163,22 @@
       ]
     },
     "Envia email segundo convite NÃO SE INSCREVERAM1": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia segundo conviteJÁ SE INSCREVERAM1": {
       "main": [
         [
           {
@@ -168,11 +189,34 @@
         ]
       ]
     },
-    "Schedule Trigger1": {
+    "Wait": {
       "main": [
         [
           {
-            "node": "Busca segmento de voluntarias em capacitaçao",
+            "node": "loop whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "loop whatsapp1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp segundo convite1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp segundo convite1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -430,7 +474,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email not in ('p.alinecristina@gmail.com', 'mayarakrempp@hotmail.com', 'amanda.canalli@hotmail.com', 'clara@just.trd.br', 'mariassoares971@gmail.com', 'themyspordeus@gmail.com', 'rosilanecosta@gmail.com', 'jessicarocha.criminalista@gmail.com', 'daniellalaso@gmail.com', 'anelisesgf@gmail.com', 'lilianmendesadvogada@gmail.com', 'estagiariasueli@gmail.com', 'miriam.mi1996@gmail.com', 'annamuzio@yahoo.com', 'marina.m.boni@gmail.com', 'hertakehrle@hotmail.com', 'elizabetpereiteixeira64@hotmail.com', 'ericapfelix@hotmail.com', 'juliaferrazpsi@gmail.com', 'adv.bnvalentim@gmail.com', 'jeanamaia13@hotmail.com', 'maibecastro.advogada@gmail.com', 'carolgusmao.psico@hotmail.com', 'almeidaftanna@gmail.com', 'daniellebatistela.psicologia@gmail.com', 'beatrizsouza11@hotmail.com', 'cintiafigueiredo.adv@gmail.com', 'lilimoreiranunes@gmail.com', 'claudiadesafortes@gmail.com', 'lucianarodolfogeraldo01@gmail.com', 'moreiradhewsla@gmail.com', 'crissfonteslr@gmail.com', 'dannynacano@gmail.com', 'nelisemansan@hotmail.com', 'alvesfe1986@gmail.com', 'psicologabrunamuer@gmail.com', 'oliveirnv@gmail.com', 'fernandabarrosfernandes@gmail.com', 'yasminmoraesg@gmail.com', 'fabizorn@gmail.com', 'thamyresgerard@gmail.com', 'glorissa14@gmail.com', 'marciagloriap@gmail.com', 'danielle.lucenti@hotmail.com', 'psiluizafelix@gmail.com', 'psicandidatoste@gmail.com', 'mariaeduardatnc.adv@gmail.com', 'sandraoliveira682025@hotmail.com', 'thaisrithielli1410@gmail.com', 'anabeatriz_teles@icloud.con', 'tathyanne@gmail.com', 'velososalgado@uol.com.br', 'sidileiaalmeida@hotmail.com', 'advhellenpinho@gmail.com', 'leticiamilagresp@gmail.com', 'psicologajulianebarbieri@gmail.com', 'aestevaocruz@gmail.com', 'miriajesus.adv@gmail.com', 'patricia.macedo2014@yahoo.com.br', 'dulci.caldas@gmail.com', 'wanessabr41@gmail.com', 'adv.emyllegomes@gmail.com', 'juliana-granieri@hotmail.com', 'annekarinaf@gmail.com', 'cianealvesmoreira@gmail.com', 'laenamedeiros@gmail.com', 'dulcineiafsouza@gmail.com', 'deboranegreiros.adv7@gmail.com', 'brasildanielaadv@gmail.com', 'amandakaren.dias@gmail.com', 'rivanebrazadv@gmail.com', 'fschettino13@gmail.com', 'sandraabilio33@hotmail.com', 'veridianaadvmg@gmail.com', 'luciana.albuquerque@hotmail.com', 'carolinaescobarvalle@hotmail.com', 'sirlane@adv.oabsp.org.br', 'rosangelalevan@gmail.com', 'veronicajcbalonso@gmail.com', 'danny__13@live.com', 'laramguilherme@gmail.com', 'clausds2707@gmail.com', 'celinagallerani.psi@gmail.com', 'keywillavenceslau.adv@gmail.com', 'adriannadainezi@gmail.com', 'dinat.ribeiro@gmail.com', 'candidaanascimento@gmail.com', 'ravanholivaz@gmail.com', 'dra.annacorina@adv.oabsp.org.br', 'ana_novelino@yahoo.com.br', 'psipatifreitas@gmail.com', 'laurendrumond.psi@gmail.com', 'a.carolinesrodrigues@hotmail.com', 'silvana.transcosta@gmail.com', 'psicologamarianabarcelos@gmail.com', 'brunaritzmannroo@gmail.com', 'brasildanielaadv@gmail.com', 'tamyallemao@outlook.com', 'tais.jesus240@outlook.com', 'leidiane.lrsc@gmail.com', 'geovanadapalma.psi@gmail.con', 'eveline71@gmai.com', 'jaciane.chaves@gmail.com', 'karlabeatriz54@gmail.com', 'amabile.vr@gmail.com', 'lelasant204@gmail.com', 'rose.sm.aquino@gmail.com', 'adv.jaquekinemeira@gmail.com', 'vasconcelos.paulaa@gmail.com', 'lor.reine@hotmail.com', 'denisemacenas@yahoo.com.br', 'thelmadepss@gmail.com', 'etienemoraes@yahoo.com.br', 'aestevaocruz@gmail.com', 'raquel.frinhani@gmail.com', 'psi.maiarabarbosa@gmail.com', 'maricelmaoliver@gmail.com', 'alcionelopes.advogada@gmail.com', 'i.faria@hotmail.com', 'magaliandradediniz@gmail.com', 'lucianesantosadv@gmail.com', 'drdaianerodrigues128@gmail.com', 'psiflaviacurvello@gmail.com', 'soniabfon@gmail.com', 'psiflaviacurvello@gmail.com', 'fabizorn@gmail.com')",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' \nAND email in ('p.alinecristina@gmail.com', 'mayarakrempp@hotmail.com', 'amanda.canalli@hotmail.com', 'clara@just.trd.br', 'mariassoares971@gmail.com', 'themyspordeus@gmail.com', 'rosilanecosta@gmail.com', 'jessicarocha.criminalista@gmail.com', 'daniellalaso@gmail.com', 'anelisesgf@gmail.com', 'lilianmendesadvogada@gmail.com', 'estagiariasueli@gmail.com', 'miriam.mi1996@gmail.com', 'annamuzio@yahoo.com', 'marina.m.boni@gmail.com', 'hertakehrle@hotmail.com', 'elizabetpereiteixeira64@hotmail.com', 'ericapfelix@hotmail.com', 'juliaferrazpsi@gmail.com', 'adv.bnvalentim@gmail.com', 'jeanamaia13@hotmail.com', 'maibecastro.advogada@gmail.com', 'carolgusmao.psico@hotmail.com', 'almeidaftanna@gmail.com', 'daniellebatistela.psicologia@gmail.com', 'beatrizsouza11@hotmail.com', 'cintiafigueiredo.adv@gmail.com', 'lilimoreiranunes@gmail.com', 'claudiadesafortes@gmail.com', 'lucianarodolfogeraldo01@gmail.com', 'moreiradhewsla@gmail.com', 'crissfonteslr@gmail.com', 'dannynacano@gmail.com', 'nelisemansan@hotmail.com', 'alvesfe1986@gmail.com', 'psicologabrunamuer@gmail.com', 'oliveirnv@gmail.com', 'fernandabarrosfernandes@gmail.com', 'yasminmoraesg@gmail.com', 'fabizorn@gmail.com', 'thamyresgerard@gmail.com', 'glorissa14@gmail.com', 'marciagloriap@gmail.com', 'danielle.lucenti@hotmail.com', 'psiluizafelix@gmail.com', 'psicandidatoste@gmail.com', 'mariaeduardatnc.adv@gmail.com', 'sandraoliveira682025@hotmail.com', 'thaisrithielli1410@gmail.com', 'anabeatriz_teles@icloud.con', 'tathyanne@gmail.com', 'velososalgado@uol.com.br', 'sidileiaalmeida@hotmail.com', 'advhellenpinho@gmail.com', 'leticiamilagresp@gmail.com', 'psicologajulianebarbieri@gmail.com', 'aestevaocruz@gmail.com', 'miriajesus.adv@gmail.com', 'patricia.macedo2014@yahoo.com.br', 'dulci.caldas@gmail.com', 'wanessabr41@gmail.com', 'adv.emyllegomes@gmail.com', 'juliana-granieri@hotmail.com', 'annekarinaf@gmail.com', 'cianealvesmoreira@gmail.com', 'laenamedeiros@gmail.com', 'dulcineiafsouza@gmail.com', 'deboranegreiros.adv7@gmail.com', 'brasildanielaadv@gmail.com', 'amandakaren.dias@gmail.com', 'rivanebrazadv@gmail.com', 'fschettino13@gmail.com', 'sandraabilio33@hotmail.com', 'veridianaadvmg@gmail.com', 'luciana.albuquerque@hotmail.com', 'carolinaescobarvalle@hotmail.com', 'sirlane@adv.oabsp.org.br', 'rosangelalevan@gmail.com', 'veronicajcbalonso@gmail.com', 'danny__13@live.com', 'laramguilherme@gmail.com', 'clausds2707@gmail.com', 'celinagallerani.psi@gmail.com', 'keywillavenceslau.adv@gmail.com', 'adriannadainezi@gmail.com', 'dinat.ribeiro@gmail.com', 'candidaanascimento@gmail.com', 'ravanholivaz@gmail.com', 'dra.annacorina@adv.oabsp.org.br', 'ana_novelino@yahoo.com.br', 'psipatifreitas@gmail.com', 'laurendrumond.psi@gmail.com', 'a.carolinesrodrigues@hotmail.com', 'silvana.transcosta@gmail.com', 'psicologamarianabarcelos@gmail.com', 'brunaritzmannroo@gmail.com', 'brasildanielaadv@gmail.com', 'tamyallemao@outlook.com', 'tais.jesus240@outlook.com', 'leidiane.lrsc@gmail.com', 'geovanadapalma.psi@gmail.con', 'eveline71@gmai.com', 'jaciane.chaves@gmail.com', 'karlabeatriz54@gmail.com', 'amabile.vr@gmail.com', 'lelasant204@gmail.com', 'rose.sm.aquino@gmail.com', 'adv.jaquekinemeira@gmail.com', 'vasconcelos.paulaa@gmail.com', 'lor.reine@hotmail.com', 'denisemacenas@yahoo.com.br', 'thelmadepss@gmail.com', 'etienemoraes@yahoo.com.br', 'aestevaocruz@gmail.com', 'raquel.frinhani@gmail.com', 'psi.maiarabarbosa@gmail.com', 'maricelmaoliver@gmail.com', 'alcionelopes.advogada@gmail.com', 'i.faria@hotmail.com', 'magaliandradediniz@gmail.com', 'lucianesantosadv@gmail.com', 'drdaianerodrigues128@gmail.com', 'psiflaviacurvello@gmail.com', 'soniabfon@gmail.com', 'psiflaviacurvello@gmail.com', 'fabizorn@gmail.com', 'claratavares.cardoso@hotmail.com', 'borgatomari29@gmail.com', 'thaisyamada7@gmail.com', 'fernandaramospsico@gmail.com', 'psi.emmanoelly@gmail.com', 'estergattiborges@gmail.com', 'pastroemendes@adv.oabsp.org.br', 'danielaogodoi@outlook.com', 'deborah.mmari@gmail.com', 'adrianabelintani@belintani.adv.br', 'fabiananogueira@gmail.com', 'juremaboscardin@gmail.com', 'psi.giovannaeliziario@gmail.com', 'amandadesanti.adv@gmail.com', 'brunamatiza@yahoo.com.br', 'f.marluce@yahoo.com.br', 'gkelibernardes@gmail.com', 'luana_vaz_19@hotmail.com', 'elizapdg@yahoo.com.br', 'psicologapriscilasimiao@gmail.com', 'alinecn.nasc@gmail.com', 'natannafmotta@gmail.com', 'psiangelanovaes@outlook.com', 'ddra.ana.claudia@gmail.com', 'contato.juridicosc@gmail.com', 'junascimento071@gmail.com', 'contatodedayane@gmail.com', 'dra.andrearossiadv@outlook.com', 'sandramara.go@gmail.com')",
         "options": {}
       },
       "id": "5738d76e-fa75-4d2e-8017-313ff86a549c",
@@ -439,7 +483,7 @@
       "typeVersion": 2.5,
       "position": [
         1440,
-        -352
+        -128
       ],
       "credentials": {
         "postgres": {
@@ -464,8 +508,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1984,
-        -336
+        1152,
+        160
       ],
       "retryOnFail": true,
       "notesInFlow": true,
@@ -498,7 +542,7 @@
             },
             {
               "name": "ContentSid",
-              "value": "HX2972022239acd577862a06acd35ffe92"
+              "value": "HX8e9d3e4ed6c0c0b9bca43dc37561eb1a"
             },
             {
               "name": "ContentVariables",
@@ -513,8 +557,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1168,
-        -64
+        2000,
+        -16
       ],
       "retryOnFail": true,
       "credentials": {
@@ -721,7 +765,7 @@
       "typeVersion": 1.1,
       "position": [
         2320,
-        -336
+        -272
       ],
       "webhookId": "18fae65f-82d5-4d83-a49f-f97a0dbd6ea3"
     },
@@ -735,8 +779,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1680,
-        -352
+        1696,
+        -288
       ]
     },
     {
@@ -747,7 +791,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmd6dbz980cg3190ia5khe5r5\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
+        "jsonBody": "={\n  \"transactionalId\": \"cmi3ezs7t0d7lvj0iruaai1ne\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
         "options": {}
       },
       "id": "7ee12bbe-d82c-42a5-9876-66a44b559503",
@@ -755,8 +799,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1168,
-        112
+        1984,
+        -272
       ],
       "retryOnFail": true,
       "notesInFlow": true,
@@ -775,7 +819,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "27 10 11 11 *"
+              "expression": "01 10 18 11 *"
             }
           ]
         }
@@ -783,11 +827,39 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        1232,
-        -352
+        1248,
+        -128
       ],
       "id": "59bc61c7-5b51-4df3-9e55-fd18b4791b2b",
       "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2288,
+        -16
+      ],
+      "id": "9eb28346-d260-4c85-9355-ea4b6e1ba3c5",
+      "name": "Wait",
+      "webhookId": "2d87d2da-cbd7-46e3-a477-a814cef0922e"
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "id": "394d078d-98da-4f72-9c5a-11fc71171815",
+      "name": "loop whatsapp1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        -32
+      ]
     }
   ],
   "pinData": {},
@@ -817,7 +889,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-11-16T23:13:53.000Z",
+              "updatedAt": "2025-11-17T17:50:03.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -836,7 +908,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-16",
+              "lastActiveAt": "2025-11-17",
               "isPending": false
             }
           }
@@ -856,7 +928,7 @@
     }
   },
   "tags": [],
-  "triggerCount": 2,
-  "updatedAt": "2025-11-10T17:03:08.000Z",
-  "versionId": "54391744-5c97-4f05-84c7-f3363b4b8b79"
+  "triggerCount": 3,
+  "updatedAt": "2025-11-17T19:47:11.000Z",
+  "versionId": "1492cb05-8eaa-494a-a7cc-6ab3783da056"
 }
