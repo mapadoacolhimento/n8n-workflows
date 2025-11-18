@@ -1,0 +1,286 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "query de update de voluntárias1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "query de update de voluntárias1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "query de update de voluntárias1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-17T19:11:24.637Z",
+  "id": "3Bu1z1PkjkrV2gTm",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Corrigir coordenadas tabela support_requests",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        128
+      ],
+      "id": "8bf1f41c-63f8-4808-9996-60d5b0242a6e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  sr.support_request_id,\n  sr.lat,\n  sr.lng,\n  sr.state,\n  sr.city,\n  msr.zipcode,\n  msr.neighborhood,\n  msr.status,\n  sr.created_at,\n  sr.msr_id\nFROM match.support_requests sr\nJOIN msr.msrs msr ON sr.msr_id = msr.msr_id\nWHERE (sr.lat NOT BETWEEN -33.75 AND 5.27 \n       OR sr.lng NOT BETWEEN -73.98 AND -34.79)\n  AND sr.city != 'INTERNACIONAL'\nORDER BY sr.created_at\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -288,
+        128
+      ],
+      "id": "9443d079-9790-4aaf-9f2f-af864471fa96",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://voluntaria.mapadoacolhimento.org/address?city={{$json.city}}&state={{$json.state}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        -32
+      ],
+      "id": "50f3e50f-e84f-4f22-8fb5-44f20463672f",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -64,
+        128
+      ],
+      "id": "5d9fbd78-de27-41f8-b18d-9822a0cbdea4",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "01a3c7d9-b0db-45a1-ad04-68af14cb443e",
+              "leftValue": "={{ $json.zipcode }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        144
+      ],
+      "id": "10d7e0f7-2b3d-4ae9-8090-df0a6d01657d",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "url": "=https://voluntaria.mapadoacolhimento.org/address?zipcode={{ $json.zipcode }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        192
+      ],
+      "id": "de1706d4-8edf-4850-876c-6147f80a6b8d",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.support_requests\nSET lat = {{ $json.coordinates.lat }},\n    lng = {{ $json.coordinates.lng }}\nWHERE support_request_id = {{ $('If1').item.json.support_request_id }}\nRETURNING *;\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1024,
+        176
+      ],
+      "id": "570dc4fa-5067-4be5-bc81-164ce1444baf",
+      "name": "query de update de voluntárias1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-11-17T19:11:24.641Z",
+      "updatedAt": "2025-11-17T19:11:24.641Z",
+      "role": "workflow:owner",
+      "workflowId": "3Bu1z1PkjkrV2gTm",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2025-11-18T12:12:17.000Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1749493410027
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-11-18",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-18T21:02:17.000Z",
+  "versionId": "4a23eaf6-16d5-4ce0-92c6-33ab6fe076c2"
+}
