@@ -1,0 +1,151 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-11-19T12:55:20.284Z",
+  "id": "g4SqfJDo0m05OhuL",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[wip] envia email match",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clv5c4mim008rjwf7bqgvk2ga\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\":\"{{ $json.first_name }}\",\n    \"volunteer_phone\": \"{{ $json.phone }}\",\n    \"msr_first_name\": \"Alice\",\n    \"volunteer_zendesk_ticket_id\": {{ $json.volunteer_zendesk_ticket_id }}\n  }\n\n}",
+        "options": {}
+      },
+      "id": "c70f987f-e8e3-4d8c-ad92-564940c01091",
+      "name": "Envia email primeiro convite1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        240,
+        -80
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -64
+      ],
+      "id": "25587e83-4daa-4cb4-8fae-6e3622d93065",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from match.matches m, public.volunteers va\n\nwhere va.id= 28240 and va.id = m.volunteer_id and m.match_id = 29916",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        16,
+        -64
+      ],
+      "id": "b4febf95-5b5e-4ceb-94c9-f034373933ce",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-11-19T12:55:20.288Z",
+      "updatedAt": "2025-11-19T12:55:20.288Z",
+      "role": "workflow:owner",
+      "workflowId": "g4SqfJDo0m05OhuL",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "updatedAt": "2025-11-19T12:42:45.000Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1749493410027
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-11-19",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-19T12:58:09.000Z",
+  "versionId": "da212711-a550-49f5-8041-8ed228b677c4"
+}
