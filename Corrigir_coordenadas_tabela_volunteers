@@ -119,7 +119,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, latitude, longitude, zipcode, state, city, neighborhood, street, first_name, condition, created_at\nFROM public.volunteers\nWHERE (latitude NOT BETWEEN -33.75 AND 5.27 OR longitude NOT BETWEEN -73.98 AND -34.79)\n    AND city != 'INTERNACIONAL'\nORDER BY created_at\nLIMIT 1;",
+        "query": "SELECT id, latitude, longitude, zipcode, state, city, neighborhood, street, first_name, condition, created_at\nFROM public.volunteers\nWHERE (latitude NOT BETWEEN -33.75 AND 5.27 OR longitude NOT BETWEEN -73.98 AND -34.79)\n    AND city != 'INTERNACIONAL'\nORDER BY created_at;",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -215,7 +215,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE public.volunteers\nSET latitude = {{$json[\"coordinates\"][\"lat\"]}},\n    longitude = {{$json[\"coordinates\"][\"lng\"]}}\nWHERE id = {{ $('If').item.json.id }}\nRETURNING *;\n",
+        "query": "UPDATE public.volunteers\nSET \n  latitude  = COALESCE({{$json[\"coordinates\"][\"lat\"]}}, latitude),\n  longitude = COALESCE({{$json[\"coordinates\"][\"lng\"]}}, longitude),\n  updated_at = NOW()\nWHERE id = {{ $('If').item.json.id }}\nRETURNING *;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -261,7 +261,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-11-18T12:12:17.000Z",
+              "updatedAt": "2025-11-19T12:42:45.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -280,7 +280,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-18",
+              "lastActiveAt": "2025-11-19",
               "isPending": false
             }
           }
@@ -291,6 +291,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-11-18T21:00:44.000Z",
-  "versionId": "8ad5bd22-c7c6-4f2b-9b3b-a8cf4ef2ee9e"
+  "updatedAt": "2025-11-19T22:12:53.000Z",
+  "versionId": "693efa03-6a98-4c17-83a5-4709bd868b11"
 }
