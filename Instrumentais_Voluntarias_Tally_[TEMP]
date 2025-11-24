@@ -424,7 +424,7 @@
             "index": 0
           },
           {
-            "node": "Insert mda_forms-answers8",
+            "node": "Insert rows in a table3",
             "type": "main",
             "index": 0
           }
@@ -1483,7 +1483,7 @@
     },
     {
       "parameters": {
-        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\n\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\n\nfor (item of items) {\n\n   var form_answers = item.json.body.data.fields;\n\n    var dados_voluntaria = {\n      nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n      email_cadastro: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    }\n    var dados_acolhida = {\n       nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value //\"Acholhida teste\",\n    }\n\t\n\tlet atendimento = {\n\t\tdata_encerramento: form_answers.find(objeto => objeto.label == \"data_encerramento\").value?.replaceAll(/\\n/g, '\\\\n'), //11/11/2022\n\t\tatraves_do_atendimento: getSelectedTexts(form_answers,\"atraves_do_atendimento\"),\n\t\tprocessos_acolhida: getSelectedTexts(form_answers,\"processos_acolhida\"),\n\t\tstatus_processo: getSelectedTexts(form_answers,\"status_processo\"),\n\t\tdescricao_processo_juridico: form_answers.find(objeto => objeto.label == \"descricao_processo_juridico\").value?.replaceAll(/\\n/g, '\\\\n')\n\t}\n\n\tlet experiencia_voluntaria = {\n\t\tdescricao_experiencia: form_answers.find(objeto => objeto.label == \"descricao_experiencia\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\taprendizagens: form_answers.find(objeto => objeto.label == \"aprendizagens\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tdesafios: form_answers.find(objeto => objeto.label == \"desafios\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tsolicitou_ajuda_mapa: getSelectedTexts(form_answers,\"solicitou_ajuda_mapa\"),\n\t\tse_sentiu_orientada_mapa: getSelectedTexts(form_answers,\"se_sentiu_orientada_mapa\"),\n\t\tse_sentiu_acolhida_mapa: getSelectedTexts(form_answers,\"se_sentiu_acolhida_mapa\"),\n\t\tsolicitou_ajuda_voluntaria:getSelectedTexts(form_answers,\"solicitou_ajuda_voluntaria\"),\n\t\tse_sentiu_orientada_volutaria: getSelectedTexts(form_answers,\"se_sentiu_orientada_volutaria\"),\n\t\tse_sentiu_acolhida_volutaria: getSelectedTexts(form_answers,\"se_sentiu_acolhida_volutaria\")\n\t}\n\n\tlet melhorias = {\n\t\tmelhorias: form_answers.find(objeto => objeto.label == \"melhorias\").value?.replaceAll(/\\n/g, '\\\\n')\n\t}\n\n\n\tlet answers = {dados_voluntaria, dados_acolhida, atendimento, experiencia_voluntaria, melhorias, risco}\n\t\n\t\n\tlet data = new Date(atendimento.data_encerramento)\n    let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData de encerramento: ' + ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear() +\n\t'\\\\nAtravés do atendimento, a acolhida: ' + atendimento.atraves_do_atendimento +\n\t(atendimento.processos_acolhida ? '\\\\nA voluntária atuou em algum processo: ' + atendimento.processos_acolhida : '') +\n\t(atendimento.status_processo ? '\\\\nStatus do processo: ' + atendimento.status_processo : '') +\n\t'\\\\nDescrição do desfecho do processo: ' + atendimento.descricao_processo_juridico +\n\t//experiência como voluntária\n\t'\\\\n\\\\nEXPERIÊNCIA COMO VOLUNTÁRIA' +\n\t//TODO\n\t(experiencia_voluntaria.descricao_experiencia ? '\\\\nDescrição da experiência como voluntária: ' + experiencia_voluntaria.descricao_experiencia : '') +\n\t'\\\\nAprendizagens: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios: ' + experiencia_voluntaria.desafios +\n\t'\\\\nSolicitou ajuda da equipe do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa +\n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim'?\n\t\t(experiencia_voluntaria.se_sentiu_orientada_mapa ? '\\\\nSe sentiu orientada pela equipe: ' + experiencia_voluntaria.se_sentiu_orientada_mapa : '') +\n\t(experiencia_voluntaria.se_sentiu_acolhida_mapa ? '\\\\nSe sentiu acolhida pela equipe: ' + experiencia_voluntaria.se_sentiu_acolhida_mapa : '') : ''\t\n\t) +\n\t'\\\\nSolicitou ajuda de uma colega voluntária: ' + experiencia_voluntaria.solicitou_ajuda_voluntaria +\n\t(experiencia_voluntaria.solicitou_ajuda_voluntaria === 'Sim' ?\n\t\t(experiencia_voluntaria.se_sentiu_orientada_volutaria ? '\\\\nSe sentiu orientada pela voluntária: ' + experiencia_voluntaria.se_sentiu_orientada_volutaria : '') +\n\t(experiencia_voluntaria.se_sentiu_acolhida_volutaria ? '\\\\nSe sentiu acolhida pela voluntária: ' + experiencia_voluntaria.se_sentiu_acolhida_volutaria : '') : ''\n\t) +\n\t'\\\\n\\\\nMELHORIAS' +\n\t(melhorias.melhorias ? '\\\\nMelhorias: ' + melhorias.melhorias : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n    \t\t\t\t\t\tanswers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
+        "functionCode": "let risco = 'nenhum';\nlet priority = 'low';\n\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\n\nfor (item of items) {\n\n   var form_answers = item.json.body.data.fields;\n\n    var dados_voluntaria = {\n      nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n      email_cadastro: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    }\n    var dados_acolhida = {\n       nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value //\"Acholhida teste\",\n    }\n\t\n\tlet atendimento = {\n\t\tdata_encerramento: form_answers.find(objeto => objeto.label == \"data_encerramento\").value?.replaceAll(/\\n/g, '\\\\n'), //11/11/2022\n\t\tatraves_do_atendimento: getSelectedTexts(form_answers,\"atraves_do_atendimento\"),\n\t\tprocessos_acolhida: getSelectedTexts(form_answers,\"processos_acolhida\"),\n\t\tstatus_processo: getSelectedTexts(form_answers,\"status_processo\"),\n\t\tdescricao_processo_juridico: form_answers.find(objeto => objeto.label == \"descricao_processo_juridico\").value?.replaceAll(/\\n/g, '\\\\n')?.replaceAll('\"', \"'\")\n\t}\n\n\tlet experiencia_voluntaria = {\n\t\tdescricao_experiencia: form_answers.find(objeto => objeto.label == \"descricao_experiencia\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\taprendizagens: form_answers.find(objeto => objeto.label == \"aprendizagens\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tdesafios: form_answers.find(objeto => objeto.label == \"desafios\").value?.replaceAll(/\\n/g, '\\\\n'),\n\t\tsolicitou_ajuda_mapa: getSelectedTexts(form_answers,\"solicitou_ajuda_mapa\"),\n\t\tse_sentiu_orientada_mapa: getSelectedTexts(form_answers,\"se_sentiu_orientada_mapa\"),\n\t\tse_sentiu_acolhida_mapa: getSelectedTexts(form_answers,\"se_sentiu_acolhida_mapa\"),\n\t\tsolicitou_ajuda_voluntaria:getSelectedTexts(form_answers,\"solicitou_ajuda_voluntaria\"),\n\t\tse_sentiu_orientada_volutaria: getSelectedTexts(form_answers,\"se_sentiu_orientada_volutaria\"),\n\t\tse_sentiu_acolhida_volutaria: getSelectedTexts(form_answers,\"se_sentiu_acolhida_volutaria\")\n\t}\n\n\tlet melhorias = {\n\t\tmelhorias: form_answers.find(objeto => objeto.label == \"melhorias\").value?.replaceAll(/\\n/g, '\\\\n')\n\t}\n\n\n\tlet answers = {dados_voluntaria, dados_acolhida, atendimento, experiencia_voluntaria, melhorias, risco}\n\t\n\t\n\tlet data = new Date(atendimento.data_encerramento)\n    let body_ticket = 'RISCO: ' + risco.toUpperCase() + '\\\\n\\\\nDADOS DA VOLUNTÁRIA\\\\nNome: ' + dados_voluntaria.nome + '\\\\nEmail: ' + dados_voluntaria.email_cadastro +\n\t'\\\\n\\\\nDADOS DA ACOLHIDA\\\\nNome: ' + dados_acolhida.nome + \n\t//atendimento\n\n\t'\\\\n\\\\nSOBRE O ATENDIMENTO\\\\nData de encerramento: ' + ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear() +\n\t'\\\\nAtravés do atendimento, a acolhida: ' + atendimento.atraves_do_atendimento +\n\t(atendimento.processos_acolhida ? '\\\\nA voluntária atuou em algum processo: ' + atendimento.processos_acolhida : '') +\n\t(atendimento.status_processo ? '\\\\nStatus do processo: ' + atendimento.status_processo : '') +\n\t'\\\\nDescrição do desfecho do processo: ' + atendimento.descricao_processo_juridico +\n\t//experiência como voluntária\n\t'\\\\n\\\\nEXPERIÊNCIA COMO VOLUNTÁRIA' +\n\t//TODO\n\t(experiencia_voluntaria.descricao_experiencia ? '\\\\nDescrição da experiência como voluntária: ' + experiencia_voluntaria.descricao_experiencia : '') +\n\t'\\\\nAprendizagens: ' + experiencia_voluntaria.aprendizagens +\n\t'\\\\nDesafios: ' + experiencia_voluntaria.desafios +\n\t'\\\\nSolicitou ajuda da equipe do mapa: ' + experiencia_voluntaria.solicitou_ajuda_mapa +\n\t(experiencia_voluntaria.solicitou_ajuda_mapa === 'Sim'?\n\t\t(experiencia_voluntaria.se_sentiu_orientada_mapa ? '\\\\nSe sentiu orientada pela equipe: ' + experiencia_voluntaria.se_sentiu_orientada_mapa : '') +\n\t(experiencia_voluntaria.se_sentiu_acolhida_mapa ? '\\\\nSe sentiu acolhida pela equipe: ' + experiencia_voluntaria.se_sentiu_acolhida_mapa : '') : ''\t\n\t) +\n\t'\\\\nSolicitou ajuda de uma colega voluntária: ' + experiencia_voluntaria.solicitou_ajuda_voluntaria +\n\t(experiencia_voluntaria.solicitou_ajuda_voluntaria === 'Sim' ?\n\t\t(experiencia_voluntaria.se_sentiu_orientada_volutaria ? '\\\\nSe sentiu orientada pela voluntária: ' + experiencia_voluntaria.se_sentiu_orientada_volutaria : '') +\n\t(experiencia_voluntaria.se_sentiu_acolhida_volutaria ? '\\\\nSe sentiu acolhida pela voluntária: ' + experiencia_voluntaria.se_sentiu_acolhida_volutaria : '') : ''\n\t) +\n\t'\\\\n\\\\nMELHORIAS' +\n\t(melhorias.melhorias ? '\\\\nMelhorias: ' + melhorias.melhorias : '')\n\n\tlet answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll('Não',false)\n\tanswers_txt = answers_txt.replaceAll('false quis informar','Não quis informar').replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false')\n\titem.json= {\n\t\t\t\t\t\t\tpriority,\n    \t\t\t\t\t\tanswers,\n\t\t\t\t\t\t\tbody_ticket,\t\n\t\t\t\t\t\t\tanswers_txt\t\t\t\t\t\n\t\t\t\t\t\t}\n\t\n}\n\nreturn items; "
       },
       "name": "Formata - Conclusão Jurídico",
       "type": "n8n-nodes-base.function",
@@ -2114,8 +2114,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        496,
-        2096
+        512,
+        2032
       ],
       "id": "fc404c35-7f7c-4739-9bd2-89466c38d848",
       "name": "Insert mda_forms-answers8",
@@ -2611,6 +2611,149 @@
       ],
       "id": "d233e4e3-22f7-41d1-8bef-cf5e7ef45426",
       "name": "Insert rows in a table2",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "legacy_support_assessments",
+          "mode": "list",
+          "cachedResultName": "legacy_support_assessments"
+        },
+        "table": {
+          "__rl": true,
+          "value": "mda_forms_answers",
+          "mode": "list",
+          "cachedResultName": "mda_forms_answers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "organization_id": 360282119532,
+            "ticket_id": "={{ $json.ticket.id }}",
+            "form": "conclusao-juridico",
+            "form_id": 29,
+            "updated_at": "2025-10-21T09:15:42",
+            "volunteer_email": "={{ $('Busca Zendesk User ID8').item.json.email }}",
+            "msr_name": "={{ $('Formata - Conclusão Jurídico').item.json.answers.dados_acolhida.nome }}",
+            "answers": "={{ $('Formata - Conclusão Jurídico').item.json.answers }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "form",
+              "displayName": "form",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "form_id",
+              "displayName": "form_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_id",
+              "displayName": "organization_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "volunteer_email",
+              "displayName": "volunteer_email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "msr_name",
+              "displayName": "msr_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "answers",
+              "displayName": "answers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        256,
+        2112
+      ],
+      "id": "a8b5bf8c-8a17-42de-a98e-8f0eb93be575",
+      "name": "Insert rows in a table3",
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
@@ -9046,360 +9189,6 @@
         }
       }
     ],
-    "Webhook8": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Tally Webhooks",
-            "content-length": "6146",
-            "accept": "application/json, text/plain, */*",
-            "accept-encoding": "gzip, br",
-            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
-            "baggage": "sentry-environment=production,sentry-release=9fbb636f41686fe4e29ada484c24a46a29f8f0ad,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=3d26e35e0e07b1695cddc8dfc940d337,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.9155053495267105,sentry-sample_rate=0.001",
-            "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "34.96.41.224",
-            "cf-ew-via": "15",
-            "cf-ipcountry": "BE",
-            "cf-ray": "9809137f94584f00-LHR",
-            "cf-visitor": "{\"scheme\":\"https\"}",
-            "cf-worker": "n8n.cloud",
-            "content-type": "application/json",
-            "sentry-trace": "3d26e35e0e07b1695cddc8dfc940d337-c342b4e9e13e08b4-0",
-            "x-forwarded-for": "34.96.41.224, 162.158.216.201",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-n8pcb",
-            "x-is-trusted": "yes",
-            "x-real-ip": "34.96.41.224"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "eventId": "892cdf80-7177-4aa7-bbf4-70ba639cc14c",
-            "eventType": "FORM_RESPONSE",
-            "createdAt": "2025-09-17T13:51:03.529Z",
-            "data": {
-              "responseId": "b5YgzP2",
-              "submissionId": "b5YgzP2",
-              "respondentId": "JbMD2K",
-              "formId": "mDG0zb",
-              "formName": "Instrumental de Conclusão dos Atendimentos Jurídicos",
-              "createdAt": "2025-09-17T13:51:03.000Z",
-              "fields": [
-                {
-                  "key": "question_O7alR7",
-                  "label": "nome_completo",
-                  "type": "INPUT_TEXT",
-                  "value": "Dev Adv Teste"
-                },
-                {
-                  "key": "question_VzGjrJ",
-                  "label": "email_de_cadastro",
-                  "type": "INPUT_EMAIL",
-                  "value": "dev.adv.mapa@gmail.com"
-                },
-                {
-                  "key": "question_PzpDo5",
-                  "label": "nome_da_acolhida",
-                  "type": "INPUT_TEXT",
-                  "value": "Msr Teste"
-                },
-                {
-                  "key": "question_N7YE7j",
-                  "label": "data_encerramento",
-                  "type": "INPUT_DATE",
-                  "value": "2025-09-16"
-                },
-                {
-                  "key": "question_qRWgR9",
-                  "label": "atraves_do_atendimento",
-                  "type": "CHECKBOXES",
-                  "value": [
-                    "c48fa283-4ae4-4d1d-bb80-2846b0f2499b",
-                    "4abbc384-4400-4e46-af2a-0de2e902d1ef",
-                    "053a79e8-0674-4ed5-a6e6-1ee41a2dc50e"
-                  ],
-                  "options": [
-                    {
-                      "id": "80d082ba-b56c-4d9c-9565-3048cfd0bca1",
-                      "text": "Saiu do ciclo da violência"
-                    },
-                    {
-                      "id": "344f08ab-ae99-4c63-913a-9f336dff1467",
-                      "text": "Se manteve no ciclo da violência"
-                    },
-                    {
-                      "id": "c48fa283-4ae4-4d1d-bb80-2846b0f2499b",
-                      "text": "Se sente mais fortalecida"
-                    },
-                    {
-                      "id": "ca27bc99-6314-4e5b-9c2f-99b7781cb68a",
-                      "text": "Resgatou sua autoestima"
-                    },
-                    {
-                      "id": "4abbc384-4400-4e46-af2a-0de2e902d1ef",
-                      "text": "Conseguiu construir sua autonomia"
-                    },
-                    {
-                      "id": "986024b3-c2d3-4f55-bffd-8441f1db8b02",
-                      "text": "Conseguiu construir sua autonomia financeira"
-                    },
-                    {
-                      "id": "32138719-d1cf-40c1-a25f-7027352ac49e",
-                      "text": "Conseguiu construir uma estratégia para lidar com a violência (Plano de Segurança)"
-                    },
-                    {
-                      "id": "f73bae2f-6110-441f-9034-c0e9cc5d9534",
-                      "text": "Teve consciência dos seus direitos"
-                    },
-                    {
-                      "id": "053a79e8-0674-4ed5-a6e6-1ee41a2dc50e",
-                      "text": "Teve os seus direitos garantidos"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_qRWgR9_80d082ba-b56c-4d9c-9565-3048cfd0bca1",
-                  "label": "atraves_do_atendimento (Saiu do ciclo da violência)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_qRWgR9_344f08ab-ae99-4c63-913a-9f336dff1467",
-                  "label": "atraves_do_atendimento (Se manteve no ciclo da violência)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_qRWgR9_c48fa283-4ae4-4d1d-bb80-2846b0f2499b",
-                  "label": "atraves_do_atendimento (Se sente mais fortalecida)",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_qRWgR9_ca27bc99-6314-4e5b-9c2f-99b7781cb68a",
-                  "label": "atraves_do_atendimento (Resgatou sua autoestima)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_qRWgR9_4abbc384-4400-4e46-af2a-0de2e902d1ef",
-                  "label": "atraves_do_atendimento (Conseguiu construir sua autonomia)",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_qRWgR9_986024b3-c2d3-4f55-bffd-8441f1db8b02",
-                  "label": "atraves_do_atendimento (Conseguiu construir sua autonomia financeira)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_qRWgR9_32138719-d1cf-40c1-a25f-7027352ac49e",
-                  "label": "atraves_do_atendimento (Conseguiu construir uma estratégia para lidar com a violência (Plano de Segurança))",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_qRWgR9_f73bae2f-6110-441f-9034-c0e9cc5d9534",
-                  "label": "atraves_do_atendimento (Teve consciência dos seus direitos)",
-                  "type": "CHECKBOXES",
-                  "value": false
-                },
-                {
-                  "key": "question_qRWgR9_053a79e8-0674-4ed5-a6e6-1ee41a2dc50e",
-                  "label": "atraves_do_atendimento (Teve os seus direitos garantidos)",
-                  "type": "CHECKBOXES",
-                  "value": true
-                },
-                {
-                  "key": "question_Q7Yj7G",
-                  "label": "processos_acolhida",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "7ce050e6-f5cd-45ba-9af6-4f28142c66d0"
-                  ],
-                  "options": [
-                    {
-                      "id": "7ce050e6-f5cd-45ba-9af6-4f28142c66d0",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "00f6f522-f843-4762-a35d-8df3f59ec5e8",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_97vx7V",
-                  "label": "status_processo",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "744434ca-52b9-4b2b-9851-318fadc198f1"
-                  ],
-                  "options": [
-                    {
-                      "id": "793748bc-90d1-45de-8ac1-158103928c9b",
-                      "text": "Iniciado"
-                    },
-                    {
-                      "id": "744434ca-52b9-4b2b-9851-318fadc198f1",
-                      "text": "Em andamento"
-                    },
-                    {
-                      "id": "221186d4-9baf-48c8-b15c-948acd77fcea",
-                      "text": "Extinto ou arquivado"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_ea2yak",
-                  "label": "descricao_processo_juridico",
-                  "type": "TEXTAREA",
-                  "value": " o desfecho do processo jurídico"
-                },
-                {
-                  "key": "question_W8YQ8v",
-                  "label": "descricao_experiencia",
-                  "type": "TEXTAREA",
-                  "value": "descreva sua experiência como advogada voluntária do Mapa do Acolhimento"
-                },
-                {
-                  "key": "question_a2Ek2b",
-                  "label": "aprendizagens",
-                  "type": "TEXTAREA",
-                  "value": " aprendizagens este atendimento te forneceu"
-                },
-                {
-                  "key": "question_6Zv4NJ",
-                  "label": "desafios",
-                  "type": "TEXTAREA",
-                  "value": " os desafios\n os desafios"
-                },
-                {
-                  "key": "question_7NvjxR",
-                  "label": "solicitou_ajuda_mapa",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "57b560c6-5296-49d1-a93c-92208bcb3648"
-                  ],
-                  "options": [
-                    {
-                      "id": "57b560c6-5296-49d1-a93c-92208bcb3648",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "8e9d28ae-b560-44a9-a3a7-d338bc5ce023",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_RD1JRQ",
-                  "label": "se_sentiu_acolhida_mapa",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "0617dd77-3d17-4581-871b-2809f1a6754a"
-                  ],
-                  "options": [
-                    {
-                      "id": "0617dd77-3d17-4581-871b-2809f1a6754a",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "09ae3b7f-1979-4adc-91a9-26055aca0f54",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_ABDavz",
-                  "label": "se_sentiu_orientada_mapa",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "56b6b7ce-ab38-4598-bbc1-0d21ddf456af"
-                  ],
-                  "options": [
-                    {
-                      "id": "7c75d226-aa9f-4f4b-9161-e2d29b4ebc95",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "56b6b7ce-ab38-4598-bbc1-0d21ddf456af",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_BxD67K",
-                  "label": "solicitou_ajuda_voluntaria",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "82ee3ed5-1d49-440c-a215-1d3f8334b625"
-                  ],
-                  "options": [
-                    {
-                      "id": "82ee3ed5-1d49-440c-a215-1d3f8334b625",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "8b290b93-ec5a-44a3-baea-18fab5fc093f",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_kNWgEe",
-                  "label": "se_sentiu_acolhida_volutaria",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "07ac6a52-d6e5-4259-88c6-fff2552137fa"
-                  ],
-                  "options": [
-                    {
-                      "id": "07ac6a52-d6e5-4259-88c6-fff2552137fa",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "2b20c02d-1675-4fc4-9c26-2cb1d4536495",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_vPLgYD",
-                  "label": "se_sentiu_orientada_volutaria",
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "d78480f6-6de8-4b65-a3df-87e6df71379c"
-                  ],
-                  "options": [
-                    {
-                      "id": "08ccb1a3-75bb-4700-8f01-2c099c2dc22d",
-                      "text": "Sim"
-                    },
-                    {
-                      "id": "d78480f6-6de8-4b65-a3df-87e6df71379c",
-                      "text": "Não"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_KVDO1V",
-                  "label": "melhorias",
-                  "type": "TEXTAREA",
-                  "value": "sugestões de melhorias"
-                }
-              ]
-            }
-          },
-          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/conclusao-jur",
-          "executionMode": "production"
-        }
-      }
-    ],
     "Webhook": [
       {
         "json": {
@@ -15040,6 +14829,348 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Webhook8": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Tally Webhooks",
+            "content-length": "6978",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
+            "baggage": "sentry-environment=production,sentry-release=04c7475b8d5e9c384527520249b000a844f98b16,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=d5a6aa057c045153093e2d41f514c100,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.45858542516846323,sentry-sample_rate=0.0001",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.96.41.89",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "BE",
+            "cf-ray": "9a3b2bdf10cb9580-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "sentry-trace": "d5a6aa057c045153093e2d41f514c100-0f30d3ba007b4330-0",
+            "x-forwarded-for": "34.96.41.89, 172.70.163.78",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-g62vb",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.96.41.89"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "eventId": "695fc823-15ad-4d6c-ae19-c64003868005",
+            "eventType": "FORM_RESPONSE",
+            "createdAt": "2025-11-24T19:04:18.969Z",
+            "data": {
+              "responseId": "LZN81x2",
+              "submissionId": "LZN81x2",
+              "respondentId": "J9qXvxd",
+              "formId": "mDG0zb",
+              "formName": "Instrumental de Conclusão dos Atendimentos Jurídicos",
+              "createdAt": "2025-11-24T19:04:18.000Z",
+              "fields": [
+                {
+                  "key": "question_O7alR7",
+                  "label": "nome_completo",
+                  "type": "INPUT_TEXT",
+                  "value": "Amanda Ribeiro Martins"
+                },
+                {
+                  "key": "question_VzGjrJ",
+                  "label": "email_de_cadastro",
+                  "type": "INPUT_EMAIL",
+                  "value": "contato.martinsamanda@gmail.com"
+                },
+                {
+                  "key": "question_PzpDo5",
+                  "label": "nome_da_acolhida",
+                  "type": "INPUT_TEXT",
+                  "value": "Stefanny Vieira Cintra Marques"
+                },
+                {
+                  "key": "question_N7YE7j",
+                  "label": "data_encerramento",
+                  "type": "INPUT_DATE",
+                  "value": "2025-11-11"
+                },
+                {
+                  "key": "question_qRWgR9",
+                  "label": "atraves_do_atendimento",
+                  "type": "CHECKBOXES",
+                  "value": [
+                    "f73bae2f-6110-441f-9034-c0e9cc5d9534"
+                  ],
+                  "options": [
+                    {
+                      "id": "80d082ba-b56c-4d9c-9565-3048cfd0bca1",
+                      "text": "Saiu do ciclo da violência"
+                    },
+                    {
+                      "id": "344f08ab-ae99-4c63-913a-9f336dff1467",
+                      "text": "Se manteve no ciclo da violência"
+                    },
+                    {
+                      "id": "c48fa283-4ae4-4d1d-bb80-2846b0f2499b",
+                      "text": "Se sente mais fortalecida"
+                    },
+                    {
+                      "id": "ca27bc99-6314-4e5b-9c2f-99b7781cb68a",
+                      "text": "Resgatou sua autoestima"
+                    },
+                    {
+                      "id": "4abbc384-4400-4e46-af2a-0de2e902d1ef",
+                      "text": "Conseguiu construir sua autonomia"
+                    },
+                    {
+                      "id": "986024b3-c2d3-4f55-bffd-8441f1db8b02",
+                      "text": "Conseguiu construir sua autonomia financeira"
+                    },
+                    {
+                      "id": "32138719-d1cf-40c1-a25f-7027352ac49e",
+                      "text": "Conseguiu construir uma estratégia para lidar com a violência (Plano de Segurança)"
+                    },
+                    {
+                      "id": "f73bae2f-6110-441f-9034-c0e9cc5d9534",
+                      "text": "Teve consciência dos seus direitos"
+                    },
+                    {
+                      "id": "053a79e8-0674-4ed5-a6e6-1ee41a2dc50e",
+                      "text": "Teve os seus direitos garantidos"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_qRWgR9_80d082ba-b56c-4d9c-9565-3048cfd0bca1",
+                  "label": "atraves_do_atendimento (Saiu do ciclo da violência)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_qRWgR9_344f08ab-ae99-4c63-913a-9f336dff1467",
+                  "label": "atraves_do_atendimento (Se manteve no ciclo da violência)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_qRWgR9_c48fa283-4ae4-4d1d-bb80-2846b0f2499b",
+                  "label": "atraves_do_atendimento (Se sente mais fortalecida)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_qRWgR9_ca27bc99-6314-4e5b-9c2f-99b7781cb68a",
+                  "label": "atraves_do_atendimento (Resgatou sua autoestima)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_qRWgR9_4abbc384-4400-4e46-af2a-0de2e902d1ef",
+                  "label": "atraves_do_atendimento (Conseguiu construir sua autonomia)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_qRWgR9_986024b3-c2d3-4f55-bffd-8441f1db8b02",
+                  "label": "atraves_do_atendimento (Conseguiu construir sua autonomia financeira)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_qRWgR9_32138719-d1cf-40c1-a25f-7027352ac49e",
+                  "label": "atraves_do_atendimento (Conseguiu construir uma estratégia para lidar com a violência (Plano de Segurança))",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_qRWgR9_f73bae2f-6110-441f-9034-c0e9cc5d9534",
+                  "label": "atraves_do_atendimento (Teve consciência dos seus direitos)",
+                  "type": "CHECKBOXES",
+                  "value": true
+                },
+                {
+                  "key": "question_qRWgR9_053a79e8-0674-4ed5-a6e6-1ee41a2dc50e",
+                  "label": "atraves_do_atendimento (Teve os seus direitos garantidos)",
+                  "type": "CHECKBOXES",
+                  "value": false
+                },
+                {
+                  "key": "question_Q7Yj7G",
+                  "label": "processos_acolhida",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "00f6f522-f843-4762-a35d-8df3f59ec5e8"
+                  ],
+                  "options": [
+                    {
+                      "id": "7ce050e6-f5cd-45ba-9af6-4f28142c66d0",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "00f6f522-f843-4762-a35d-8df3f59ec5e8",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_97vx7V",
+                  "label": "status_processo",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "793748bc-90d1-45de-8ac1-158103928c9b",
+                      "text": "Iniciado"
+                    },
+                    {
+                      "id": "744434ca-52b9-4b2b-9851-318fadc198f1",
+                      "text": "Em andamento"
+                    },
+                    {
+                      "id": "221186d4-9baf-48c8-b15c-948acd77fcea",
+                      "text": "Extinto ou arquivado"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_ea2yak",
+                  "label": "descricao_processo_juridico",
+                  "type": "TEXTAREA",
+                  "value": "Foi uma consulta jurídica. Verifiquei com a acolhida que ela ainda está em risco de sofrer uma nova agressão; esclareci como funciona o ciclo da violência e reforcei que a protetiva é a melhor aliada dela nesse momento. Não há bens a partilhar, nem filhos em comum com o agressor. Há em andamento um processo de lesão corporal leve contra ele, no qual a acolhida manifestou (antes do atendimento do mapa) desejo de \"retirar a denúncia\". Expliquei a ela que essa manifestação não tem efeito; o MP apenas não vai mais ouvi-la no processo, mas o processo seguirá contra o agressor e com a oitiva das demais testemunhas. Não localizei nenhum outro processo em nome da acolhida."
+                },
+                {
+                  "key": "question_W8YQ8v",
+                  "label": "descricao_experiencia",
+                  "type": "TEXTAREA",
+                  "value": "Foi uma experiência de muito aprendizado."
+                },
+                {
+                  "key": "question_a2Ek2b",
+                  "label": "aprendizagens",
+                  "type": "TEXTAREA",
+                  "value": "Experiência no acolhimento de vítimas de violência; experiência na coleta de informações e mensuração de risco de violência; experiência na orientação de vítimas de violência."
+                },
+                {
+                  "key": "question_6Zv4NJ",
+                  "label": "desafios",
+                  "type": "TEXTAREA",
+                  "value": "Não houve desafios significativos nesse momento; o maior deles foi estabelecer uma relação de confiança com a acolhida e entender o que ela realmente desejava esclarecer (só mencionou o processo ao final da consulta)."
+                },
+                {
+                  "key": "question_7NvjxR",
+                  "label": "solicitou_ajuda_mapa",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8e9d28ae-b560-44a9-a3a7-d338bc5ce023"
+                  ],
+                  "options": [
+                    {
+                      "id": "57b560c6-5296-49d1-a93c-92208bcb3648",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "8e9d28ae-b560-44a9-a3a7-d338bc5ce023",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_RD1JRQ",
+                  "label": "se_sentiu_acolhida_mapa",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "0617dd77-3d17-4581-871b-2809f1a6754a",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "09ae3b7f-1979-4adc-91a9-26055aca0f54",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_ABDavz",
+                  "label": "se_sentiu_orientada_mapa",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "7c75d226-aa9f-4f4b-9161-e2d29b4ebc95",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "56b6b7ce-ab38-4598-bbc1-0d21ddf456af",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_BxD67K",
+                  "label": "solicitou_ajuda_voluntaria",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": [
+                    "8b290b93-ec5a-44a3-baea-18fab5fc093f"
+                  ],
+                  "options": [
+                    {
+                      "id": "82ee3ed5-1d49-440c-a215-1d3f8334b625",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "8b290b93-ec5a-44a3-baea-18fab5fc093f",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_kNWgEe",
+                  "label": "se_sentiu_acolhida_volutaria",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "07ac6a52-d6e5-4259-88c6-fff2552137fa",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "2b20c02d-1675-4fc4-9c26-2cb1d4536495",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_vPLgYD",
+                  "label": "se_sentiu_orientada_volutaria",
+                  "type": "MULTIPLE_CHOICE",
+                  "value": null,
+                  "options": [
+                    {
+                      "id": "08ccb1a3-75bb-4700-8f01-2c099c2dc22d",
+                      "text": "Sim"
+                    },
+                    {
+                      "id": "d78480f6-6de8-4b65-a3df-87e6df71379c",
+                      "text": "Não"
+                    }
+                  ]
+                },
+                {
+                  "key": "question_KVDO1V",
+                  "label": "melhorias",
+                  "type": "TEXTAREA",
+                  "value": "Gostaria de elogiar a organização do Mapa, pois sempre que precisei consegui ajuda de forma simples, rápida e eficaz."
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/conclusao-jur",
+          "executionMode": "production"
+        }
+      }
     ]
   },
   "settings": {
@@ -15070,7 +15201,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-11-23T20:02:22.000Z",
+              "updatedAt": "2025-11-24T11:45:39.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -15089,7 +15220,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-23",
+              "lastActiveAt": "2025-11-24",
               "isPending": false
             }
           }
@@ -15100,6 +15231,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 12,
-  "updatedAt": "2025-11-06T16:34:27.000Z",
-  "versionId": "d21c9a79-e068-431b-8d01-e4badd941a24"
+  "updatedAt": "2025-11-24T19:55:14.000Z",
+  "versionId": "f3de13eb-8df3-4778-887c-2b80d52ad0b6"
 }
