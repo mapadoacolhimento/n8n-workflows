@@ -237,6 +237,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -486,6 +493,11 @@
             "node": "Merge2",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -591,6 +603,62 @@
       ]
     },
     "Envia certificado para as voluntárias2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Slack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive3": {
+      "main": [
+        [
+          {
+            "node": "Edit Image3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image3": {
+      "main": [
+        [
+          {
+            "node": "Extract From File3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract From File3": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Envia certificado para as voluntárias3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia certificado para as voluntárias3": {
       "main": [
         [],
         [
@@ -1253,6 +1321,31 @@
               },
               "renameOutput": true,
               "outputKey": "Intensivão outubro"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8fa62819-b270-4e02-9376-064f7ca8e44c",
+                    "leftValue": "={{ $json.form_id }}",
+                    "rightValue": "mOpk7p",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "intensivão novembro"
             }
           ]
         },
@@ -2067,6 +2160,112 @@
         }
       },
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://drive.google.com/file/d/1zeVziQZo-5AD6B5-wxabWpxX35UnmB5W/view?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        224,
+        1600
+      ],
+      "id": "92a8efb1-302b-4d1e-89ca-4c813f34e766",
+      "name": "Google Drive3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "31vgqoSRas2e7TQe",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "dataPropertyName": "=data",
+        "text": "={{ $json.name }}",
+        "fontSize": 60,
+        "fontColor": "#622565",
+        "positionX": 136,
+        "positionY": 610,
+        "lineLength": 42,
+        "options": {
+          "fileName": "certificado",
+          "format": "png"
+        }
+      },
+      "id": "ef6cfb77-e17d-404f-a79a-2d7c823a8f53",
+      "name": "Edit Image3",
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        496,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "353beb62-edbb-4e1c-8a16-08cd497bbe17",
+      "name": "Extract From File3",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        736,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "d7fb90ff-7695-4049-82d1-6377606da274",
+      "name": "Merge3",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        1568
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmh3sguac0umh3m0is5299o1v\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b3760946-f266-48e7-bd68-f90f8d948a84",
+      "name": "Envia certificado para as voluntárias3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1280,
+        1568
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueErrorOutput"
     }
   ],
   "pinData": {
@@ -2165,104 +2364,6 @@
           "executionMode": "production"
         }
       }
-    ],
-    "Webhook1": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Tally Webhooks",
-            "content-length": "1212",
-            "accept": "application/json, text/plain, */*",
-            "accept-encoding": "gzip, br",
-            "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
-            "baggage": "sentry-environment=production,sentry-release=284baa402be800a139167d9703bf15455f24bdd0,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=281a9bec0cb7993b836d094f352d7175,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.2992472624670546,sentry-sample_rate=0.0001",
-            "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "34.96.41.98",
-            "cf-ew-via": "15",
-            "cf-ipcountry": "BE",
-            "cf-ray": "9954661a40048862-LHR",
-            "cf-visitor": "{\"scheme\":\"https\"}",
-            "cf-worker": "n8n.cloud",
-            "content-type": "application/json",
-            "sentry-trace": "281a9bec0cb7993b836d094f352d7175-2dc6782076d0e2b8-0",
-            "x-forwarded-for": "34.96.41.98, 172.71.26.98",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-g62vb",
-            "x-is-trusted": "yes",
-            "x-real-ip": "34.96.41.98"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "eventId": "fa9dca7e-624a-4894-8f30-5192103593c9",
-            "eventType": "FORM_RESPONSE",
-            "createdAt": "2025-10-27T18:53:53.526Z",
-            "data": {
-              "responseId": "J9GYgyJ",
-              "submissionId": "J9GYgyJ",
-              "respondentId": "Po9KPB",
-              "formId": "3j1dPQ",
-              "formName": "Confirmação de Presença\nIntensivão - Outubro/2025",
-              "createdAt": "2025-10-27T18:53:53.000Z",
-              "fields": [
-                {
-                  "key": "question_YaRYGB",
-                  "label": "Nome completo:",
-                  "type": "INPUT_TEXT",
-                  "value": "Ana Maria Ferreira Lima "
-                },
-                {
-                  "key": "question_DzKDpR",
-                  "label": "email_provided",
-                  "type": "INPUT_TEXT",
-                  "value": "annafelima@gmail.com"
-                },
-                {
-                  "key": "question_lrqWOk",
-                  "label": null,
-                  "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "37ab1a6f-b3ef-4fb7-89df-14bb5d1ed48b"
-                  ],
-                  "options": [
-                    {
-                      "id": "161a29aa-8a71-4f40-b245-f58d659e8652",
-                      "text": "Advogada"
-                    },
-                    {
-                      "id": "37ab1a6f-b3ef-4fb7-89df-14bb5d1ed48b",
-                      "text": "Psicóloga"
-                    }
-                  ]
-                },
-                {
-                  "key": "question_RPdYo9",
-                  "label": "Qual é a sua especialidade? (Exemplo: Direito penal, Direito de família / TCC, Psicanálise, Gestalt)",
-                  "type": "INPUT_TEXT",
-                  "value": "Gestalt "
-                },
-                {
-                  "key": "question_oGDdRP_e6712589-b5ed-4932-bdae-3f563ce64a9c",
-                  "label": "email",
-                  "type": "HIDDEN_FIELDS",
-                  "value": null
-                },
-                {
-                  "key": "question_oGDdRP_cdfcaa94-9394-44ad-bb23-1b6bb848ad84",
-                  "label": "occupation",
-                  "type": "HIDDEN_FIELDS",
-                  "value": null
-                }
-              ]
-            }
-          },
-          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/new-intensive-course",
-          "executionMode": "production"
-        }
-      }
     ]
   },
   "settings": {
@@ -2294,7 +2395,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2025-11-23T20:02:22.000Z",
+              "updatedAt": "2025-11-24T11:45:39.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -2313,7 +2414,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-23",
+              "lastActiveAt": "2025-11-24",
               "isPending": false
             }
           }
@@ -2324,6 +2425,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-11-12T14:24:16.000Z",
-  "versionId": "1d3c2330-61a4-4b3e-9fa1-6cbd8c525333"
+  "updatedAt": "2025-11-24T18:11:19.000Z",
+  "versionId": "a89e5765-585a-4603-abf6-062f46d35573"
 }
