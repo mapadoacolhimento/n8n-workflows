@@ -1,82 +1,37 @@
 {
   "active": false,
   "connections": {},
-  "createdAt": "2025-05-12T20:52:33.167Z",
-  "id": "mKWKp44UIkwG7Zh5",
-  "meta": {
-    "templateCredsSetupCompleted": true
-  },
+  "createdAt": "2025-12-17T22:11:42.929Z",
+  "id": "XHBbTBib1o7Gqujm",
+  "isArchived": true,
+  "meta": null,
   "name": "My workflow 7",
   "nodes": [
     {
       "parameters": {
-        "filePath": "/data/agenda_com_vagas.csv"
-      },
-      "id": "453a735a-b318-427b-a0d3-eb6260e729b1",
-      "name": "Ler Planilha CSV",
-      "type": "n8n-nodes-base.readBinaryFile",
-      "typeVersion": 1,
-      "position": [
-        700,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "functionCode": "\nconst horarioSelecionado = $json[\"body\"][\"horario\"];\nconst email = $json[\"body\"][\"email\"];\n\nlet csvContent = $binary.data.data.toString();\nlet rows = csvContent.split(\"\\n\").map(l => l.split(\",\"));\nlet header = rows[0];\nlet idx = rows.findIndex(r => r[0] === horarioSelecionado);\n\nif (idx === -1) {\n  throw new Error(\"Horário inválido.\");\n}\n\nlet vagasRestantes = parseInt(rows[idx][3]);\nlet inscritos = rows[idx][2] ? rows[idx][2].split(\";\") : [];\n\nif (vagasRestantes <= 0) {\n  return [{ json: { status: \"cheio\", mensagem: \"Este horário está cheio.\" } }];\n}\n\ninscritos.push(email);\nrows[idx][2] = inscritos.join(\";\");\nrows[idx][3] = (vagasRestantes - 1).toString();\n\nconst newCsv = [header.join(\",\")].concat(rows.slice(1).map(r => r.join(\",\"))).join(\"\\n\");\n\nitems[0].json = {\n  status: \"confirmado\",\n  horario: horarioSelecionado,\n  email: email,\n  meet_link: rows[idx][4],\n  csvAtualizado: newCsv\n};\n\nreturn items;\n"
-      },
-      "id": "a7922f9b-7e8a-4e6a-86ab-f7249245e146",
-      "name": "Verifica e Atualiza Vaga",
-      "type": "n8n-nodes-base.function",
-      "typeVersion": 1,
-      "position": [
-        940,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "fileName": "/data/agenda_com_vagas.csv",
-        "dataPropertyName": "csvAtualizado",
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"adriele@mapa.org.br\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"Adriele\",\n    \"msr_first_name\": \"MSR\",\n    \"match_id\": \"1234\",\n    \"volunteer_zendesk_ticket_id\": \"4567\"\n  }\n}",
         "options": {}
       },
-      "id": "e8d7ac07-036e-45ca-99d3-2857c574c36d",
-      "name": "Salvar Planilha Atualizada",
-      "type": "n8n-nodes-base.writeBinaryFile",
-      "typeVersion": 1,
+      "id": "70f3ea8f-5232-417c-9875-d53f47d5b3f9",
+      "name": "[Voluntaria] Envia email de lembrete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
       "position": [
-        1180,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "8edfac3d-d7eb-4932-9c74-2a6b223e7d4c",
-      "name": "Responder ao Formulário",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1,
-      "position": [
-        1400,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "inscricao-reuniao",
-        "options": {}
-      },
-      "id": "5d7090cd-5994-4779-a531-f1a9cd47a4b9",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        460,
-        440
+        0,
+        0
       ],
-      "webhookId": "1e626a8d-e495-4812-9a77-50cc0059d611"
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -85,10 +40,10 @@
   },
   "shared": [
     {
-      "createdAt": "2025-05-12T20:52:33.172Z",
-      "updatedAt": "2025-05-12T20:52:33.172Z",
+      "createdAt": "2025-12-17T22:11:42.932Z",
+      "updatedAt": "2025-12-17T22:11:42.932Z",
       "role": "workflow:owner",
-      "workflowId": "mKWKp44UIkwG7Zh5",
+      "workflowId": "XHBbTBib1o7Gqujm",
       "projectId": "rfgBK87HsySgxYKT",
       "project": {
         "createdAt": "2024-11-15T08:07:36.637Z",
@@ -96,16 +51,17 @@
         "id": "rfgBK87HsySgxYKT",
         "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
         "type": "personal",
+        "icon": null,
+        "description": null,
         "projectRelations": [
           {
             "createdAt": "2024-11-15T08:07:36.637Z",
             "updatedAt": "2024-11-15T08:07:36.637Z",
-            "role": "project:personalOwner",
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2024-12-10T20:48:45.029Z",
+              "updatedAt": "2025-12-17T20:57:54.535Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -118,14 +74,14 @@
                 "userActivatedAt": 1731658062996,
                 "npsSurvey": {
                   "responded": true,
-                  "lastShownAt": 1733863720858
-                }
+                  "lastShownAt": 1766005013760
+                },
+                "easyAIWorkflowOnboarded": true
               },
-              "role": "global:owner",
               "disabled": false,
               "mfaEnabled": false,
-              "isPending": false,
-              "isOwner": true
+              "lastActiveAt": "2025-12-17",
+              "isPending": false
             }
           }
         ]
@@ -135,6 +91,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-05-12T20:52:33.167Z",
-  "versionId": "a8d8e125-dec6-46d8-a8a0-a1af82cc12a2"
+  "updatedAt": "2025-12-17T22:12:56.000Z",
+  "versionId": "09874e4b-82ae-4a7c-b777-bb5143230803"
 }
