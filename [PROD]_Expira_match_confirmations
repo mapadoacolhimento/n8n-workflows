@@ -1,5 +1,5 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
     "Envia erro por Slack": {
       "main": [
@@ -34,7 +34,7 @@
         ],
         [
           {
-            "node": "Chama o endpoint /expire",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -96,10 +96,21 @@
           }
         ]
       ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Chama o endpoint /expire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "createdAt": "2024-09-12T17:42:58.883Z",
-  "id": "U9fkpwxd277nohfU",
+  "createdAt": "2024-09-23T17:38:15.600Z",
+  "id": "IuoAGzXsaHTi8XfF",
   "isArchived": false,
   "meta": {
     "templateCredsSetupCompleted": true
@@ -112,13 +123,13 @@
         "query": "SELECT match_confirmation_id\nFROM match.match_confirmations\nWHERE (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - created_at))/3600) >= 23\nAND status = 'waiting'",
         "options": {}
       },
-      "id": "0e24031e-4d5f-46bc-83c1-d06cfd4100e6",
+      "id": "f75f54e2-92f9-4d35-bc09-40a1011dd686",
       "name": "Busca match_confirmations que precisam ser expiradas",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1020,
-        340
+        1024,
+        352
       ],
       "credentials": {
         "postgres": {
@@ -132,12 +143,12 @@
         "url": "={{ $vars.PROD_CONFIRMACAO_LAMBDA_URL }}/sign",
         "options": {}
       },
-      "id": "efc61d9c-6239-458f-a5c5-261964f42b0f",
+      "id": "9c9ace8f-3d34-4846-b929-31b6c4963cf7",
       "name": "Faz autenticação",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1020,
+        1024,
         80
       ]
     },
@@ -154,14 +165,15 @@
         "text": "=ERROR: Não foi possível expirar o match_confirmation.\n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
         "otherOptions": {}
       },
-      "id": "c1c6c3a0-3c57-42cf-a39c-77316a45a427",
+      "id": "5cd7fe98-9a67-438f-a868-c3bdb0060679",
       "name": "Envia erro por Slack",
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        2040,
-        420
+        2336,
+        400
       ],
+      "webhookId": "5e22a540-9789-49bb-ba04-99c28060494c",
       "credentials": {
         "slackOAuth2Api": {
           "id": "01G85hUbLT4VlY92",
@@ -175,12 +187,12 @@
         "combinationMode": "multiplex",
         "options": {}
       },
-      "id": "741f36c5-1ac5-4b83-819a-00d2ddfe45b3",
+      "id": "34bc371d-09a5-41a4-bcab-db48123c8f98",
       "name": "Une os dados com a autenticação",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        1340,
+        1344,
         320
       ]
     },
@@ -188,24 +200,24 @@
       "parameters": {
         "options": {}
       },
-      "id": "7d678495-3014-4b66-84e0-dbb8f03c1dc7",
+      "id": "88dca570-7a8a-4a3d-a921-0c1fab1a2994",
       "name": "Loop Over Items",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1580,
+        1584,
         320
       ]
     },
     {
       "parameters": {},
-      "id": "0d733ae4-42e0-4243-8683-9774605fe5ec",
+      "id": "659a0313-eeb9-4b2c-b860-47a11b43acd7",
       "name": "No Operation, do nothing",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1780,
-        60
+        1792,
+        64
       ]
     },
     {
@@ -216,7 +228,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \n  \"matchConfirmationId\": 2\n}",
+        "jsonBody": "={ \n  \"matchConfirmationId\": {{ $json.match_confirmation_id }}\n}",
         "options": {
           "batching": {
             "batch": {
@@ -225,13 +237,13 @@
           }
         }
       },
-      "id": "f74b99bf-536d-4b18-81a3-a3440e8bf59a",
+      "id": "ff9745d2-ba91-4f2a-811a-5e07d70d208d",
       "name": "Chama o endpoint /expire",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1800,
-        340
+        2048,
+        336
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -247,19 +259,34 @@
         "rule": {
           "interval": [
             {
-              "field": "hours"
+              "field": "hours",
+              "triggerAtMinute": 30
             }
           ]
         }
       },
-      "id": "13358e7a-44b0-49d1-b3d5-3b6e74f6f178",
+      "id": "ecf4ee48-cd39-4d2a-a8a1-ba556c8d1e3b",
       "name": "Schedule Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        700,
-        340
+        720,
+        352
       ]
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1808,
+        336
+      ],
+      "id": "4628b2fb-328a-4e45-9760-e7128f14e4c8",
+      "name": "Wait",
+      "webhookId": "07b33728-c808-44a7-b578-7a1a3c04a1b6"
     }
   ],
   "pinData": {},
@@ -271,10 +298,10 @@
   },
   "shared": [
     {
-      "createdAt": "2024-09-12T17:42:58.886Z",
-      "updatedAt": "2024-09-12T17:42:58.886Z",
+      "createdAt": "2024-09-23T17:38:15.602Z",
+      "updatedAt": "2024-09-23T17:38:15.602Z",
       "role": "workflow:owner",
-      "workflowId": "U9fkpwxd277nohfU",
+      "workflowId": "IuoAGzXsaHTi8XfF",
       "projectId": "rfgBK87HsySgxYKT",
       "project": {
         "createdAt": "2024-11-15T08:07:36.637Z",
@@ -292,7 +319,7 @@
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2026-01-26T13:32:09.000Z",
+              "updatedAt": "2026-01-27T13:38:40.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -311,7 +338,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-01-26",
+              "lastActiveAt": "2026-01-27",
               "isPending": false
             }
           }
@@ -321,11 +348,12 @@
   ],
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrencyRules": []
+      "recurrencyRules": [],
+      "recurrenceRules": []
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-09-20T14:05:02.000Z",
-  "versionId": "f4949ce8-5d85-43c3-9fe9-ec6d19333254"
+  "updatedAt": "2025-10-30T17:27:58.000Z",
+  "versionId": "dcc7d943-cc0f-4147-929a-5bf41dd16a55"
 }
