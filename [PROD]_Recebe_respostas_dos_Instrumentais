@@ -1,5 +1,1445 @@
 {
   "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-02-27T02:22:11.327Z",
+    "createdAt": "2026-02-27T02:22:11.327Z",
+    "versionId": "a547795c-c62c-489e-ad86-0dc91c4a57d3",
+    "workflowId": "LKwgNGg7olUZhIGF",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "### Instrumental de Qualidade de Vida - d0",
+          "height": 80,
+          "width": 356.8337467037675
+        },
+        "id": "27365a71-1d9c-4169-93a2-047ce0bc1a23",
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          720,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getArrayAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
+        },
+        "id": "3b7eecc3-9e64-42ba-89de-11f0915f7a62",
+        "name": "Obtém os dados",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          940,
+          340
+        ]
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "value": "survey",
+            "mode": "list",
+            "cachedResultName": "survey"
+          },
+          "table": {
+            "__rl": true,
+            "value": "survey_quality_of_life_d0",
+            "mode": "list",
+            "cachedResultName": "survey_quality_of_life_d0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "msr_id": "={{ $json.msr_id }}",
+              "quality_of_life": "={{ $json.quality_of_life }}",
+              "security": "={{ $json.security }}",
+              "self_esteem": "={{ $json.self_esteem }}",
+              "controlling_situations": "={{ $json.controlling_situations }}",
+              "feelings": "={{ $json.feelings }}",
+              "handle_violence_impact": "={{ $json.handle_violence_impact }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "answer_id",
+                "displayName": "answer_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "msr_id",
+                "displayName": "msr_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "quality_of_life",
+                "displayName": "quality_of_life",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "security",
+                "displayName": "security",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "controlling_situations",
+                "displayName": "controlling_situations",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "self_esteem",
+                "displayName": "self_esteem",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "feelings",
+                "displayName": "feelings",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "handle_violence_impact",
+                "displayName": "handle_violence_impact",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ae811895-3591-4893-aaf4-31236ff7782c",
+        "name": "Insere na survey_quality_of_life_d0",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1220,
+          340
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Instrumental de Qualidade de Vida - d90",
+          "height": 80,
+          "width": 356.8337467037675
+        },
+        "id": "737eb7f4-de13-4fa7-9fde-d4c7c72fd23e",
+        "name": "Sticky Note1",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          720,
+          840
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getArrayAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact\n    }\n  )\n}\n\nreturn output;"
+        },
+        "id": "b932f09b-bf85-496c-93e0-706eb65043b2",
+        "name": "Obtém os dados1",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          940,
+          960
+        ]
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "value": "survey",
+            "mode": "list",
+            "cachedResultName": "survey"
+          },
+          "table": {
+            "__rl": true,
+            "value": "survey_quality_of_life_d90",
+            "mode": "list",
+            "cachedResultName": "survey_quality_of_life_d90"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "msr_id": "={{ $json.msr_id }}",
+              "quality_of_life": "={{ $json.quality_of_life }}",
+              "security": "={{ $json.security }}",
+              "controlling_situations": "={{ $json.controlling_situations }}",
+              "self_esteem": "={{ $json.self_esteem }}",
+              "feelings": "={{ $json.feelings }}",
+              "handle_violence_impact": "={{ $json.handle_violence_impact }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "answer_id",
+                "displayName": "answer_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "msr_id",
+                "displayName": "msr_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "quality_of_life",
+                "displayName": "quality_of_life",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "security",
+                "displayName": "security",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "controlling_situations",
+                "displayName": "controlling_situations",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "self_esteem",
+                "displayName": "self_esteem",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "feelings",
+                "displayName": "feelings",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "handle_violence_impact",
+                "displayName": "handle_violence_impact",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "9321da02-51fb-4564-85e9-5a18e62c03f6",
+        "name": "Insere na survey_quality_of_life_d90",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1160,
+          960
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Instrumental de Qualidade de Vida - d180",
+          "height": 80,
+          "width": 356.8337467037675
+        },
+        "id": "df1cb4f4-6ab9-4e1c-b231-7c9f9ea05252",
+        "name": "Sticky Note2",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          700,
+          1560
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const msrId = getHiddenFieldValue(item, \"msr_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const qualityOfLife = getUniqueAnswer(item, \"qualidade_de_vida\")\n  const security = getUniqueAnswer(item, \"seguranca\")\n  const controllingSituations = getArrayAnswer(item, \"situacoes_controle\")\n  const selfEsteem = getUniqueAnswer(item, \"percepcao_si_mesma\")\n  const feelings = getArrayAnswer(item, \"sentimentos_sensacoes_emocoes\")\n  const handleViolenceImpact = getUniqueAnswer(item, \"lidar_impactos_da_violencia\")\n  const substanceUse = getUniqueAnswer(item, \"uso_de_drogas\")\n\n\n  output.push(\n    {\n      msr_id: msrId,\n      msr_first_name: msrFirstName,\n      quality_of_life: qualityOfLife,\n      security: security,\n      controlling_situations: controllingSituations,\n      self_esteem: selfEsteem,\n      feelings: feelings,\n      handle_violence_impact: handleViolenceImpact,\n      substance_use: substanceUse\n    }\n  )\n}\n\nreturn output;"
+        },
+        "id": "481749e1-9192-4e3a-ae9f-7e3c4b2c4be6",
+        "name": "Obtém os dados2",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          920,
+          1680
+        ]
+      },
+      {
+        "parameters": {
+          "content": "# Instrumentais de Qualidade de Vida (MSR)",
+          "height": 80,
+          "width": 809.4240912520488
+        },
+        "id": "d4d726bf-3c06-4338-87cf-989cb9516021",
+        "name": "Sticky Note3",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          680,
+          40
+        ]
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "value": "survey",
+            "mode": "list",
+            "cachedResultName": "survey"
+          },
+          "table": {
+            "__rl": true,
+            "value": "survey_quality_of_life_d180",
+            "mode": "list",
+            "cachedResultName": "survey_quality_of_life_d180"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "msr_id": "={{ $json.msr_id }}",
+              "quality_of_life": "={{ $json.quality_of_life }}",
+              "security": "={{ $json.security }}",
+              "controlling_situations": "={{ $json.controlling_situations }}",
+              "self_esteem": "={{ $json.self_esteem }}",
+              "feelings": "={{ $json.feelings }}",
+              "handle_violence_impact": "={{ $json.handle_violence_impact }}",
+              "substance_use": "={{ $json.substance_use }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "answer_id",
+                "displayName": "answer_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "msr_id",
+                "displayName": "msr_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "quality_of_life",
+                "displayName": "quality_of_life",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "security",
+                "displayName": "security",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "controlling_situations",
+                "displayName": "controlling_situations",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "self_esteem",
+                "displayName": "self_esteem",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "feelings",
+                "displayName": "feelings",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "handle_violence_impact",
+                "displayName": "handle_violence_impact",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "substance_use",
+                "displayName": "substance_use",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "849fefe2-db4a-4535-abfe-592d86960083",
+        "name": "Insere na survey_quality_of_life_d180",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1140,
+          1680
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "survey-quality-of-life-d0",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "d7a0e47e-3788-4d1b-a91b-fd7b793319f9",
+        "name": "Qualidade de Vida - d0",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          720,
+          340
+        ],
+        "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "survey-quality-of-life-d90",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "53befad4-c25b-492d-bf68-04192379b83b",
+        "name": "Qualidade de Vida - d90",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          720,
+          960
+        ],
+        "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "survey-quality-of-life-d180",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "90d0d314-fae9-45a5-b220-e9da15f29d88",
+        "name": "Qualidade de Vida - d180",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          700,
+          1680
+        ],
+        "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "a75d0fff-cf2f-4c68-a188-9040b33c78cf",
+        "name": "Loop Over Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1440,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "id": "be0bd91f-98d7-403a-b0ba-cc47f4491304",
+        "name": "Wait",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1660,
+          580
+        ],
+        "webhookId": "56853d24-2179-472a-a765-51f4ca9adf77"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n  REPLACE(email, '@', '%40') AS email,\n  zendesk_ticket_id\nFROM match.support_requests\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}\nAND status != 'closed'",
+          "options": {}
+        },
+        "id": "e0b29d98-593e-4b29-9b9f-8b45f16edf37",
+        "name": "Busca tickets no Zendesk e email da MSR",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1220,
+          560
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json.zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A MSR preencheu o <a href=\"https://app.hex.tech/b5ca4b0e-47ba-4dee-a2be-6acac72f7305/app/13034fe3-c927-42b2-abd8-eebf0c8c3b13/latest?_msr_email=%22{{ $json.email }}%22\">Instrumental de Qualidade de Vida - dia de cadastro</a>"
+          }
+        },
+        "id": "33e46ccb-7d7f-430c-8fc1-9a159fa39c50",
+        "name": "Adiciona comentário interno",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1820,
+          580
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "c307d70c-8ede-4562-ba82-8cb3f0f7216b",
+        "name": "Loop Over Items1",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1420,
+          1200
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "id": "f83c9619-e734-4d7e-b1d8-b0b1a2e2a993",
+        "name": "Wait1",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1640,
+          1220
+        ],
+        "webhookId": "56853d24-2179-472a-a765-51f4ca9adf77"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n  REPLACE(email, '@', '%40') AS email,\n  zendesk_ticket_id\nFROM match.support_requests\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}\nAND status != 'closed'",
+          "options": {}
+        },
+        "id": "51fce8d8-9487-4c9c-b89b-56e5b74f9e30",
+        "name": "Busca tickets no Zendesk e email da MSR1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1180,
+          1200
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json.zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A MSR preencheu o <a href=\"https://app.hex.tech/b5ca4b0e-47ba-4dee-a2be-6acac72f7305/app/13034fe3-c927-42b2-abd8-eebf0c8c3b13/latest?_msr_email=%22{{ $json.email }}%22\">Instrumental de Qualidade de Vida - 90 dias</a>"
+          }
+        },
+        "id": "66721579-8925-44a2-8e5c-7ad37eef5c3b",
+        "name": "Adiciona comentário interno1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1800,
+          1220
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "d08b86c2-bd5a-40b1-b9c8-8d243e85faec",
+        "name": "Loop Over Items2",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1380,
+          1920
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "id": "0685cb1d-da8e-4b8e-b86f-69197909e330",
+        "name": "Wait2",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1600,
+          1940
+        ],
+        "webhookId": "56853d24-2179-472a-a765-51f4ca9adf77"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n  REPLACE(email, '@', '%40') AS email,\n  zendesk_ticket_id\nFROM match.support_requests\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}\nAND status != 'closed'",
+          "options": {}
+        },
+        "id": "3cea1f44-b92a-48c3-bb40-910640a31377",
+        "name": "Busca tickets no Zendesk e email da MSR2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1140,
+          1920
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json.zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A MSR preencheu o <a href=\"https://app.hex.tech/b5ca4b0e-47ba-4dee-a2be-6acac72f7305/app/13034fe3-c927-42b2-abd8-eebf0c8c3b13/latest?_msr_email=%22{{ $json.email }}%22\">Instrumental de Qualidade de Vida - 180 dias</a>"
+          }
+        },
+        "id": "82fed991-8a86-4904-84b2-17ea62d335a0",
+        "name": "Adiciona comentário interno2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          1940
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "content": "# Instrumentais de Avaliação do Atendimento (MSR)",
+          "height": 80,
+          "width": 970.5490398269451
+        },
+        "id": "36e63f4d-4456-4af0-8a32-f365f7ebe56f",
+        "name": "Sticky Note4",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3640,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "content": "### Instrumental de Avaliação do Atendimento - Psicológico",
+          "height": 80,
+          "width": 356.8337467037675
+        },
+        "id": "4f5e9e15-8510-4994-8fe6-0d0afe88b8f4",
+        "name": "Sticky Note5",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3660,
+          200
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\nfunction getTextAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'TEXTAREA' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.value;\n\n  return answer\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const matchId = getHiddenFieldValue(item, \"match_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const volunteerFirstName = getHiddenFieldValue(item, \"volunteer_first_name\")\n  const hadToPayForSupport = getUniqueAnswer(item, \"had_to_pay_for_support\")\n  const isStrategyUseful = getUniqueAnswer(item, \"is_strategy_useful\")\n  const handleStressAnxiety = getUniqueAnswer(item, \"handle_stress_anxiety\")\n  const satisfactionLevel = getUniqueAnswer(item, \"satisfaction_level\")\n  const expectationsMet = getUniqueAnswer(item, \"expectations_met\")\n  const writtenEvaluation = getTextAnswer(item, \"written_evaluation\")\n\n\n  output.push(\n    {\n      match_id: matchId,\n      msr_first_name: msrFirstName,\n      volunteer_first_name: volunteerFirstName,\n      had_to_pay_for_support: hadToPayForSupport,\n      is_strategy_useful: isStrategyUseful,\n      handle_stress_anxiety: handleStressAnxiety,\n      satisfaction_level: satisfactionLevel,\n      expectations_met: expectationsMet,\n      written_evaluation: writtenEvaluation\n    }\n  )\n}\n\nreturn output;"
+        },
+        "id": "c1306ee2-ceca-4e74-aa2f-3115a825fc4f",
+        "name": "Obtém os dados3",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3880,
+          360
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "psychological-support-evaluation",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "da3a525c-a16b-4d49-b018-0a3b35677a95",
+        "name": "Avaliação do Atendimento - Psicológico",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          3680,
+          360
+        ],
+        "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "value": "survey",
+            "mode": "list",
+            "cachedResultName": "survey"
+          },
+          "table": {
+            "__rl": true,
+            "value": "psychological_support_evaluation",
+            "mode": "list",
+            "cachedResultName": "psychological_support_evaluation"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "match_id": "={{ $json.match_id }}",
+              "had_to_pay_for_support": "={{ $json.had_to_pay_for_support }}",
+              "is_strategy_useful": "={{ $json.is_strategy_useful }}",
+              "handle_stress_anxiety": "={{ $json.handle_stress_anxiety }}",
+              "satisfaction_level": "={{ $json.satisfaction_level }}",
+              "expectations_met": "={{ $json.expectations_met }}",
+              "written_evaluation": "={{ $json.written_evaluation }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "answer_id",
+                "displayName": "answer_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "match_id",
+                "displayName": "match_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "had_to_pay_for_support",
+                "displayName": "had_to_pay_for_support",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "is_strategy_useful",
+                "displayName": "is_strategy_useful",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "handle_stress_anxiety",
+                "displayName": "handle_stress_anxiety",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "satisfaction_level",
+                "displayName": "satisfaction_level",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "expectations_met",
+                "displayName": "expectations_met",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "written_evaluation",
+                "displayName": "written_evaluation",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "2c73ccec-19c7-407b-8701-3ed37097b5ce",
+        "name": "Insere na psychological_support_evaluation",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          4080,
+          360
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Instrumental de Avaliação do Atendimento - Jurídico",
+          "height": 80,
+          "width": 356.8337467037675
+        },
+        "id": "bc5e8aa8-8b71-49db-b961-b18f0da9e222",
+        "name": "Sticky Note6",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3660,
+          620
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "function getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\nfunction getTextAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'TEXTAREA' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.value;\n\n  return answer\n}\n\n\noutput = []\nfor (const item of $input.all()) {\n  const matchId = getHiddenFieldValue(item, \"match_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const volunteerFirstName = getHiddenFieldValue(item, \"volunteer_first_name\")\n  const hadToPayForSupport = getUniqueAnswer(item, \"had_to_pay_for_support\")\n  const hasReceivedClearInformation = getUniqueAnswer(item, \"has_received_clear_information\")\n  const handleStressAnxiety = getUniqueAnswer(item, \"handle_stress_anxiety\")\n  const caseProgress = getUniqueAnswer(item, \"case_progress\")\n  const satisfactionLevel = getUniqueAnswer(item, \"satisfaction_level\")\n  const expectationsMet = getUniqueAnswer(item, \"expectations_met\")\n  const writtenEvaluation = getTextAnswer(item, \"written_evaluation\")\n\n\n  output.push(\n    {\n      match_id: matchId,\n      msr_first_name: msrFirstName,\n      volunteer_first_name: volunteerFirstName,\n      had_to_pay_for_support: hadToPayForSupport,\n      has_received_clear_information: hasReceivedClearInformation,\n      handle_stress_anxiety: handleStressAnxiety,\n      case_progress: caseProgress,\n      satisfaction_level: satisfactionLevel,\n      expectations_met: expectationsMet,\n      written_evaluation: writtenEvaluation\n    }\n  )\n}\n\nreturn output;"
+        },
+        "id": "baa92b91-6fc4-42d8-b1eb-37c477f4f2ad",
+        "name": "Obtém os dados4",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3880,
+          780
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "legal-support-evaluation",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "64bf6dd4-6a71-4b2a-beff-9c6495babbb9",
+        "name": "Avaliação do Atendimento - Jurídico",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          3680,
+          780
+        ],
+        "webhookId": "81fe1c4a-2e1e-4099-bb8a-1beabef67b12",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "value": "survey",
+            "mode": "list",
+            "cachedResultName": "survey"
+          },
+          "table": {
+            "__rl": true,
+            "value": "legal_support_evaluation",
+            "mode": "list",
+            "cachedResultName": "legal_support_evaluation"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "match_id": "={{ $json.match_id }}",
+              "had_to_pay_for_support": "={{ $json.had_to_pay_for_support }}",
+              "has_received_clear_information": "={{ $json.has_received_clear_information }}",
+              "handle_stress_anxiety": "={{ $json.handle_stress_anxiety }}",
+              "case_progress": "={{ $json.case_progress }}",
+              "satisfaction_level": "={{ $json.satisfaction_level }}",
+              "expectations_met": "={{ $json.expectations_met }}",
+              "written_evaluation": "={{ $json.written_evaluation }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "answer_id",
+                "displayName": "answer_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "match_id",
+                "displayName": "match_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "had_to_pay_for_support",
+                "displayName": "had_to_pay_for_support",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "has_received_clear_information",
+                "displayName": "has_received_clear_information",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "handle_stress_anxiety",
+                "displayName": "handle_stress_anxiety",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "case_progress",
+                "displayName": "case_progress",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "satisfaction_level",
+                "displayName": "satisfaction_level",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "expectations_met",
+                "displayName": "expectations_met",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "written_evaluation",
+                "displayName": "written_evaluation",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "04ebd0bc-0079-49f3-b511-0006cfa38bfe",
+        "name": "Insere na legal_support_evaluation",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          4080,
+          780
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Obtém os dados": {
+        "main": [
+          [
+            {
+              "node": "Insere na survey_quality_of_life_d0",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca tickets no Zendesk e email da MSR",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Obtém os dados1": {
+        "main": [
+          [
+            {
+              "node": "Insere na survey_quality_of_life_d90",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca tickets no Zendesk e email da MSR1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Obtém os dados2": {
+        "main": [
+          [
+            {
+              "node": "Insere na survey_quality_of_life_d180",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca tickets no Zendesk e email da MSR2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Qualidade de Vida - d0": {
+        "main": [
+          [
+            {
+              "node": "Obtém os dados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Qualidade de Vida - d90": {
+        "main": [
+          [
+            {
+              "node": "Obtém os dados1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Qualidade de Vida - d180": {
+        "main": [
+          [
+            {
+              "node": "Obtém os dados2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca tickets no Zendesk e email da MSR": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca tickets no Zendesk e email da MSR1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait2": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca tickets no Zendesk e email da MSR2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Avaliação do Atendimento - Psicológico": {
+        "main": [
+          [
+            {
+              "node": "Obtém os dados3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Obtém os dados3": {
+        "main": [
+          [
+            {
+              "node": "Insere na psychological_support_evaluation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Avaliação do Atendimento - Jurídico": {
+        "main": [
+          [
+            {
+              "node": "Obtém os dados4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Obtém os dados4": {
+        "main": [
+          [
+            {
+              "node": "Insere na legal_support_evaluation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null
+  },
+  "activeVersionId": "a547795c-c62c-489e-ad86-0dc91c4a57d3",
   "connections": {
     "Obtém os dados": {
       "main": [
@@ -263,6 +1703,7 @@
     }
   },
   "createdAt": "2024-12-19T18:18:10.371Z",
+  "description": null,
   "id": "LKwgNGg7olUZhIGF",
   "isArchived": false,
   "meta": {
@@ -2185,14 +3626,14 @@
   },
   "shared": [
     {
-      "createdAt": "2024-12-19T18:18:10.376Z",
       "updatedAt": "2024-12-19T18:18:10.376Z",
+      "createdAt": "2024-12-19T18:18:10.376Z",
       "role": "workflow:owner",
       "workflowId": "LKwgNGg7olUZhIGF",
       "projectId": "rfgBK87HsySgxYKT",
       "project": {
-        "createdAt": "2024-11-15T08:07:36.637Z",
         "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
         "id": "rfgBK87HsySgxYKT",
         "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
         "type": "personal",
@@ -2200,13 +3641,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2024-11-15T08:07:36.637Z",
             "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
+              "updatedAt": "2026-03-01T22:30:41.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2026-02-26T12:14:45.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -2225,7 +3666,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-02-26",
+              "lastActiveAt": "2026-03-01",
               "isPending": false
             }
           }
@@ -2237,5 +3678,6 @@
   "tags": [],
   "triggerCount": 5,
   "updatedAt": "2025-01-28T18:33:31.000Z",
+  "versionCounter": 4,
   "versionId": "a547795c-c62c-489e-ad86-0dc91c4a57d3"
 }
