@@ -1,5 +1,833 @@
 {
   "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-02-27T02:22:11.327Z",
+    "createdAt": "2026-02-27T02:22:11.327Z",
+    "versionId": "fb582da4-3f96-4348-b536-9a63c1f0d0b0",
+    "workflowId": "tD7IUqILripwa5x2",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 9
+              }
+            ]
+          }
+        },
+        "id": "c28897cb-5c47-4bbe-a363-4bed14e6d1fa",
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          180,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
+          "options": {}
+        },
+        "id": "34b41c7b-b19b-49b7-b30b-5579d163a502",
+        "name": "Busca matches aguardando contato há 14 ou 28 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          440,
+          560
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"volunteer_zendesk_ticket_id\": \"{{ $json.volunteer_zendesk_ticket_id }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "74428330-795b-46a3-8193-a5aec63e7df2",
+        "name": "[Voluntaria] Envia email de lembrete",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1360,
+          580
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    first_name AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    '{{ $json.volunteer_zendesk_ticket_id }}' AS volunteer_zendesk_ticket_id\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+          "options": {}
+        },
+        "id": "d0587f8e-cb35-4dce-b90d-3d19ef715436",
+        "name": "Busca informações da MSR e da Voluntária",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          700,
+          560
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Lembretes para atualização do status do acolhimento (3, 10 e 14 dias)",
+          "height": 80,
+          "width": 469.3469390685987,
+          "color": 6
+        },
+        "id": "9d5aad7e-695e-4b0b-bf77-c6c6bbb96514",
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          140,
+          440
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "8cca9dc8-249e-4b5d-bf52-a52e9d552a0f",
+        "name": "Loop Over Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          920,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "ddea4954-dc6b-42b4-b0dd-8ca586b275e3",
+        "name": "Wait",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1140,
+          580
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {},
+        "id": "9036b336-5b84-46b2-bfad-6c7fea851b60",
+        "name": "No Operation, do nothing",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1140,
+          380
+        ]
+      },
+      {
+        "parameters": {
+          "options": {
+            "reset": false
+          }
+        },
+        "id": "e0b0c727-8353-437c-b853-a8324a081101",
+        "name": "Loop Over Items1",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1600,
+          1520
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "554fe1ee-f9ab-48f4-bdac-e8c2b8ffb8d6",
+        "name": "Wait1",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1840,
+          1540
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {},
+        "id": "c685072f-06eb-4c05-ab26-6377570d8942",
+        "name": "No Operation, do nothing1",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1800,
+          1300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"{{ $json.email_transactional_id }}\",\n  \"email\": \"{{ $json.email  }}\",\n  \"dataVariables\": {\n    \"name\": \"{{ $json.first_name }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "afe22a75-859b-4c8f-a676-79d299db769b",
+        "name": "Lembrete para iniciar a capacitação",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          2020,
+          1540
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "0a11a0f5-656a-46aa-8591-07c45674285c",
+        "name": "Loop Over Items2",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1860,
+          980
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "id": "d3f62158-dc15-4d25-94b1-8cfe46923390",
+        "name": "Wait2",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2100,
+          1000
+        ],
+        "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
+      },
+      {
+        "parameters": {},
+        "id": "956f1df6-8e5d-4d80-b5f9-f41005cdf10e",
+        "name": "No Operation, do nothing2",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2080,
+          780
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "f83831d9-13f7-4ff6-9ff8-e7b9a2c2852c",
+                "leftValue": "={{ $json.content_template_sid }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "856f01d7-d085-47ee-a646-d9a0034da1ab",
+        "name": "Voluntárias que vão receber Whatsapp",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2,
+        "position": [
+          1560,
+          1000
+        ]
+      },
+      {
+        "parameters": {
+          "compare": "selectedFields",
+          "fieldsToCompare": "email",
+          "options": {}
+        },
+        "id": "f4856135-f223-46a6-a110-03aea6fa4a97",
+        "name": "Remove Duplicates",
+        "type": "n8n-nodes-base.removeDuplicates",
+        "typeVersion": 1,
+        "position": [
+          1260,
+          1260
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "ba260eeb-9b47-45f1-988c-1b0427eae51f",
+        "name": "Merge2",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 2.1,
+        "position": [
+          1040,
+          1260
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "WITH status_history AS (\n  SELECT \n    volunteer_id,\n    status, \n    created_at, \n    ROW_NUMBER() OVER(PARTITION BY volunteer_id ORDER BY created_at DESC) AS rn\n  FROM volunteer_status_history\n) \nSELECT \n  volunteer_id, \n  CURRENT_DATE - created_at::DATE AS days_since_started_training\nFROM status_history\nWHERE \n  rn = 1 AND \n  status = 'capacitacao' AND \n  (\n    DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR\n    DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '15 DAY' OR\n    DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '30 DAY' OR\n    DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '35 DAY'\n  );",
+          "options": {}
+        },
+        "id": "a609c1b4-8055-4c55-84d3-0ee26b423453",
+        "name": "Voluntárias em capacitação",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          420,
+          1140
+        ],
+        "alwaysOutputData": false,
+        "executeOnce": false,
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "WITH status_history AS (\n  SELECT \n    volunteer_id,\n    status, \n    created_at, \n    ROW_NUMBER() OVER(PARTITION BY volunteer_id ORDER BY created_at DESC) AS rn\n  FROM volunteer_status_history\n) \nSELECT \n  volunteer_id, \n  CURRENT_DATE - created_at::DATE AS days_since_started_training\nFROM status_history\nWHERE \n  rn = 1 AND \n  status = 'cadastrada' AND \n  (\n    DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '5 DAY' OR\n    DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '15 DAY' OR\n    DATE_TRUNC('DAY', created_at) = CURRENT_DATE - INTERVAL '30 DAY'\n  );",
+          "options": {}
+        },
+        "id": "21684878-c435-418f-b8be-34b7ff799b03",
+        "name": "Voluntárias cadastradas",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          420,
+          1360
+        ],
+        "alwaysOutputData": false,
+        "executeOnce": false,
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  email, \n  INITCAP(first_name) AS first_name,\n  CONCAT('whatsapp:+55', phone) AS phone,\n  CASE \n    WHEN {{ $json.days_since_started_training }} = 10 THEN 'cm159vq2i02csfnef9uzk0nfp'\n    WHEN {{ $json.days_since_started_training }} = 15 THEN 'cm15aisxg03pp5kvwo7lm6s1d'\n    WHEN {{ $json.days_since_started_training }} = 30 THEN 'cm15axdy6005t13nr24i0nsi1'\n    WHEN {{ $json.days_since_started_training }} = 35 THEN 'cm15fldrc0029mfdugkhxb0nk'\n  END AS email_transactional_id,\n  CASE \n    WHEN {{ $json.days_since_started_training }} = 10 THEN 'HX01a1eb725ac60f0ad17114813249b361'\n    WHEN {{ $json.days_since_started_training }} = 15 THEN 'HX8ad1dde388eada97dcd35e500943cef6'\n  END AS content_template_sid\nFROM volunteers\nWHERE id  = {{ $json.volunteer_id }};\n",
+          "options": {}
+        },
+        "id": "7f611839-cb18-448f-b388-6a74922a7317",
+        "name": "Busca infos da voluntária e email/whatsapp id",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          800,
+          1120
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  email, \n  INITCAP(first_name) AS first_name,\n  CONCAT('whatsapp:+55', phone) AS phone,\n  CASE \n    WHEN {{ $json.days_since_started_training }} = 5 THEN 'cm15ad1xr01eix2174vir8stq'\n    WHEN {{ $json.days_since_started_training }} = 15 THEN 'cm15aovdr00imezrjjme37pd6'\n    WHEN {{ $json.days_since_started_training }} = 30 THEN 'cm15b1ysb00r2ezrjnjra5w7f'\n  END AS email_transactional_id,\n  CASE \n    WHEN {{ $json.days_since_started_training }} = 5 THEN 'HX932dae28fc0509de7547041bf90cf0f1'\n    WHEN {{ $json.days_since_started_training }} = 15 THEN 'HX8ad1dde388eada97dcd35e500943cef6'\n  END AS content_template_sid\nFROM volunteers\nWHERE id  = {{ $json.volunteer_id }};",
+          "options": {}
+        },
+        "id": "37b21583-0eea-4188-a3b2-2759f588f99f",
+        "name": "Busca infos da voluntária e email/whatsapp id1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          800,
+          1340
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Régua de relacionamento com voluntárias que ainda não concluíram a capacitação",
+          "height": 80,
+          "width": 515.5214357128939,
+          "color": 6
+        },
+        "id": "20dfa80b-2341-4693-a8f8-9625e66715b4",
+        "name": "Sticky Note2",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          160,
+          1020
+        ]
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 9
+              }
+            ]
+          }
+        },
+        "id": "ff148444-79e4-4a75-95c4-82c9995b2075",
+        "name": "Schedule Trigger1",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          200,
+          1260
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendBody": true,
+          "contentType": "form-urlencoded",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "To",
+                "value": "={{ $json.phone }}"
+              },
+              {
+                "name": "From",
+                "value": "MGd8a9962347e338326e9237641454191f"
+              },
+              {
+                "name": "ContentSid",
+                "value": "={{ $json.content_template_sid }}"
+              },
+              {
+                "name": "ContentVariables",
+                "value": "={\n  \"first_name\": \"{{ $json.first_name }}\"\n}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "d798f76c-274e-485d-83da-f1553f89fc83",
+        "name": "Envia mensagem por WhatsApp",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2320,
+          1000
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "SFhrb3m76win1cJr",
+            "name": "Twilio API"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "83632a28-f207-4b96-8f55-5afdd4923d7d",
+                "leftValue": "={{ $json.volunteer_id }}",
+                "rightValue": "oi",
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "eecfe976-a3a2-4fec-ab43-77a4897d2128",
+        "name": "Encontrou?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          600,
+          1360
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "83632a28-f207-4b96-8f55-5afdd4923d7d",
+                "leftValue": "={{ $json.volunteer_id }}",
+                "rightValue": "oi",
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "cf52b6aa-83a1-4132-b5b2-08dd47117b42",
+        "name": "Encontrou?1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          600,
+          1140
+        ]
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Busca matches aguardando contato há 14 ou 28 dias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca matches aguardando contato há 14 ou 28 dias": {
+        "main": [
+          [
+            {
+              "node": "Busca informações da MSR e da Voluntária",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca informações da MSR e da Voluntária": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "[Voluntaria] Envia email de lembrete",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "[Voluntaria] Envia email de lembrete": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Lembrete para iniciar a capacitação",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lembrete para iniciar a capacitação": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait2": {
+        "main": [
+          [
+            {
+              "node": "Envia mensagem por WhatsApp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Remove Duplicates": {
+        "main": [
+          [
+            {
+              "node": "Voluntárias que vão receber Whatsapp",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge2": {
+        "main": [
+          [
+            {
+              "node": "Remove Duplicates",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Voluntárias cadastradas": {
+        "main": [
+          [
+            {
+              "node": "Encontrou?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca infos da voluntária e email/whatsapp id": {
+        "main": [
+          [
+            {
+              "node": "Merge2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca infos da voluntária e email/whatsapp id1": {
+        "main": [
+          [
+            {
+              "node": "Merge2",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Voluntárias em capacitação",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Voluntárias cadastradas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Voluntárias que vão receber Whatsapp": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia mensagem por WhatsApp": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Encontrou?": {
+        "main": [
+          [
+            {
+              "node": "Busca infos da voluntária e email/whatsapp id1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Voluntárias em capacitação": {
+        "main": [
+          [
+            {
+              "node": "Encontrou?1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Encontrou?1": {
+        "main": [
+          [
+            {
+              "node": "Busca infos da voluntária e email/whatsapp id",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null
+  },
+  "activeVersionId": "fb582da4-3f96-4348-b536-9a63c1f0d0b0",
   "connections": {
     "Schedule Trigger": {
       "main": [
@@ -276,6 +1104,7 @@
     }
   },
   "createdAt": "2024-07-24T18:23:24.856Z",
+  "description": null,
   "id": "tD7IUqILripwa5x2",
   "isArchived": false,
   "meta": {
@@ -852,14 +1681,14 @@
   },
   "shared": [
     {
-      "createdAt": "2024-07-24T18:23:24.858Z",
       "updatedAt": "2024-07-24T18:23:24.858Z",
+      "createdAt": "2024-07-24T18:23:24.858Z",
       "role": "workflow:owner",
       "workflowId": "tD7IUqILripwa5x2",
       "projectId": "rfgBK87HsySgxYKT",
       "project": {
-        "createdAt": "2024-11-15T08:07:36.637Z",
         "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
         "id": "rfgBK87HsySgxYKT",
         "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
         "type": "personal",
@@ -867,13 +1696,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2024-11-15T08:07:36.637Z",
             "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
+              "updatedAt": "2026-03-01T22:30:41.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
-              "updatedAt": "2026-02-26T12:14:45.000Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
               "firstName": "Desenvolvimento",
@@ -892,7 +1721,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-02-26",
+              "lastActiveAt": "2026-03-01",
               "isPending": false
             }
           }
@@ -913,5 +1742,6 @@
   "tags": [],
   "triggerCount": 2,
   "updatedAt": "2025-01-29T13:53:20.000Z",
+  "versionCounter": 4,
   "versionId": "fb582da4-3f96-4348-b536-9a63c1f0d0b0"
 }
