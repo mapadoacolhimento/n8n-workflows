@@ -1,0 +1,350 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "formatValues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formatValues": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-03-02T21:07:13.328Z",
+  "description": null,
+  "id": "CDu6gUSi9y5agzKF",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[FIX] Fluxo para cadastrar MSRs",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        32
+      ],
+      "id": "e93f17e3-a6c5-4108-9286-5cc66ed5bb7c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://atendimento.mapadoacolhimento.org/handle-request",
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ $('formatValues').item.json.formatValues }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        704,
+        32
+      ],
+      "id": "37155a97-c495-4d71-88b5-2eb798aae589",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        32
+      ],
+      "id": "dacf03d9-6792-4bb0-8577-459f9d04c13d",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://drive.google.com/file/d/1U8A6rUTwU5XloXxXTAei6ObKRz1u9n09/view?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -672,
+        32
+      ],
+      "id": "5e2d6fa9-51b5-4b7e-9383-ec331bd1b2d5",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "31vgqoSRas2e7TQe",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -272,
+        32
+      ],
+      "id": "bad7dff2-6752-44de-a562-87a229098f36",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "pii_sec",
+          "mode": "list",
+          "cachedResultName": "pii_sec"
+        },
+        "table": {
+          "__rl": true,
+          "value": "msr_pii",
+          "mode": "list",
+          "cachedResultName": "msr_pii"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "email",
+              "value": "={{ $json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        256,
+        48
+      ],
+      "id": "92e36194-9d89-4e51-a872-fd2b5dc0505d",
+      "name": "Select rows from a table",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fab348a4-b140-4ea8-8e3e-45079ca12fe9",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        48
+      ],
+      "id": "67aca99e-11e1-48fa-ae4b-80b924cb1986",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nfunction transformSupportType(obj) {\n  const result = {};\n  const supportType = [];\n  \n  for (let key in obj) {\n    // Verifica se a chave corresponde ao padrão supportType[n]\n    const match = key.match(/^supportType\\[(\\d+)\\]$/);\n    \n    if (match) {\n      const index = parseInt(match[1]);\n      supportType[index] = obj[key];\n    } else {\n      result[key] = obj[key];\n    }\n  }\n  // Remove elementos vazios (caso haja lacunas no array)\n  const cleanSupportTypes = supportType.filter(item => item !== undefined);\n  \n  if (cleanSupportTypes.length > 0) {\n    result.supportType = cleanSupportTypes;\n  }\n  \n  return result;\n}\n\n  function transformViolenceType(obj) {\n  const result = {};\n  const violenceType = [];\n  \n  for (let key in obj) {\n    // Verifica se a chave corresponde ao padrão supportType[n]\n    const match = key.match(/^violenceType\\[(\\d+)\\]$/);\n    \n    if (match) {\n      const index = parseInt(match[1]);\n     violenceType[index] = obj[key];\n    } else {\n      result[key] = obj[key];\n    }\n  }\n    // Remove elementos vazios (caso haja lacunas no array)\n  const cleanSupportTypes = violenceType.filter(item => item !== undefined);\n  \n  if (cleanSupportTypes.length > 0) {\n    result.violenceType = cleanSupportTypes;\n  }\n  \n  return result;\n  }\n\n  function transformExternalSupport(obj) {\n  const result = {};\n  const externalSupport = [];\n  \n  for (let key in obj) {\n    // Verifica se a chave corresponde ao padrão supportType[n]\n    const match = key.match(/^externalSupport\\[(\\d+)\\]$/);\n    \n    if (match) {\n      const index = parseInt(match[1]);\n      externalSupport[index] = obj[key];\n    } else {\n      result[key] = obj[key];\n    }\n  }  \n  \n  // Remove elementos vazios (caso haja lacunas no array)\n  const cleanSupportTypes = externalSupport.filter(item => item !== undefined);\n  \n  if (cleanSupportTypes.length > 0) {\n    result.externalSupport = cleanSupportTypes;\n  }\n  \n  return result;\n}\nfunction capitalizeFirst(string) {\n\tif (!string) return \"\";\n\treturn string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();\n}\n\nfunction getFirstName(value) {\n\ttry {\n\t\tif (!value) return \"\";\n\n\t\tconst split = value.split(\" \");\n\t\treturn capitalizeFirst(split[0]);\n\t} catch {\n\t\treturn \"\";\n\t}\n}\n\nfunction formatZipcode(zipcode) {\n\ttry {\n\t\tif (!zipcode) return \"not_found\";\n\n\t\treturn zipcode.replace(/\\D/g, \"\").slice(0, 8);\n\t} catch {\n\t\treturn \"not_found\";\n\t}\n}\n\nfunction normalizeCity(city) {\n\ttry {\n\t\tif (city === \"not_found\" || !city) return \"not_found\";\n\n\t\treturn city\n\t\t\t.normalize(\"NFD\")\n\t\t\t.replace(/[\\u0300-\\u036f]/g, \"\")\n\t\t\t.replace(/['\"]/g, \"\")\n\t\t\t.replace(/\\([^()]*\\)/g, \"\")\n\t\t\t.toUpperCase()\n\t\t\t.trim();\n\t} catch {\n\t\treturn \"not_found\";\n}}\n\nfunction formatDate(date) {\n\tif (!date) return \"\";\n\n\tconst [day, month, year] = date.split(\"/\");\n\n\treturn `${year}-${month}-${day}`;\n}\n  \nconst yesNoToBoolean = (value) =>\n\tvalue == null || value === \"\" ? null : value === \"yes\";\n\n\n function formatRegisterFormValues(values) {\n\tconst parseValues = {\n\t\t...values,\n\t\temail: values.email.toLowerCase(),\n\t\tfirstName: getFirstName(values.firstName),\n\t\tneighborhood: capitalizeFirst(values.neighborhood),\n\t\tdateOfBirth: new Date(formatDate(values.dateOfBirth)).toISOString(),\n\t\tzipcode: formatZipcode(values.zipcode),\n\t\tphone: values.phone.replace(/\\D/g, \"\"),\n\t\tcity:  normalizeCity(values.city),\n\t\tdependants: yesNoToBoolean(values.dependants),\n\t\tpropertyOwnership: yesNoToBoolean(values.propertyOwnership),\n\t\tacceptsOnlineSupport: yesNoToBoolean(values.acceptsOnlineSupport),\n\t\thasDisability: yesNoToBoolean(values.hasDisability),\n        lat: parseFloat(values.lat),\n        lng: parseFloat(values.lng)\n\t};\n \n\treturn JSON.stringify(transformViolenceType(transformExternalSupport(transformSupportType(parseValues))));\n}\n\nfor (const item of $input.all()) {\n  \n  item.json.formatValues = formatRegisterFormValues(item.json);\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        48
+      ],
+      "id": "d930110b-a42f-4f2f-b51b-50366402b436",
+      "name": "formatValues"
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {},
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-03-02T21:07:13.333Z",
+      "createdAt": "2026-03-02T21:07:13.333Z",
+      "role": "workflow:owner",
+      "workflowId": "CDu6gUSi9y5agzKF",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "updatedAt": "2026-03-03T12:27:21.000Z",
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766005013760
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-03-03",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-03-03T14:48:27.502Z",
+  "versionCounter": 9,
+  "versionId": "8cffc57e-3d83-4fbc-973d-d8297464273a"
+}
