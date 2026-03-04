@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-02-27T02:22:11.327Z",
-    "createdAt": "2026-02-27T02:22:11.327Z",
-    "versionId": "06bd2cd3-b106-475c-86fb-99fa6df3c9c7",
+    "updatedAt": "2026-03-04T19:50:58.927Z",
+    "createdAt": "2026-03-04T19:50:58.927Z",
+    "versionId": "adbe323f-3892-41ba-9be9-64e766cddd54",
     "workflowId": "t6h9U4VSoY9xaEMA",
     "nodes": [
       {
@@ -655,7 +655,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const status = item.json.user_fields.condition === 'inscrita' ? 'registered' : 'unregistered';\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n const zendesk_status = item.json.body.status?item.json.body.status: \"\"\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
         },
         "id": "90d1d79e-95cb-4b57-bf38-08bcb4574456",
         "name": "Normalize Zendesk input from MSR",
@@ -669,7 +669,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT\n  msr_id,\n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  CASE \n    WHEN '{{ $json.body.status }}' != status \n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_status,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.id }}",
+          "query": "SELECT\n  msr_id,\n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.id }}",
           "options": {}
         },
         "id": "5103bfb6-d6e7-4aff-989e-3f3757856bda",
@@ -984,17 +984,26 @@
             "options": {
               "caseSensitive": true,
               "leftValue": "",
-              "typeValidation": "strict"
+              "typeValidation": "strict",
+              "version": 1
             },
             "conditions": [
               {
                 "id": "9bbb07e8-f753-4190-b6a4-ca7c6eee7875",
-                "leftValue": "={{ $json.should_update_status }}",
-                "rightValue": "",
+                "leftValue": "={{ $json.status }}",
+                "rightValue": "={{ $json.new_status }}",
                 "operator": {
-                  "type": "boolean",
-                  "operation": "true",
-                  "singleValue": true
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              },
+              {
+                "id": "dcbc76e4-4b96-4887-84ae-e72e136fbde9",
+                "leftValue": "={{ $json.new_status }}",
+                "rightValue": "not_found",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
                 }
               }
             ],
@@ -1669,11 +1678,11 @@
         ]
       }
     },
-    "authors": "system migration",
+    "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "06bd2cd3-b106-475c-86fb-99fa6df3c9c7",
+  "activeVersionId": "adbe323f-3892-41ba-9be9-64e766cddd54",
   "connections": {
     "Schedule Trigger": {
       "main": [
@@ -2910,7 +2919,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const status = item.json.user_fields.condition === 'inscrita' ? 'registered' : 'unregistered';\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n const zendesk_status = item.json.body.status?item.json.body.status: \"\"\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
       },
       "id": "90d1d79e-95cb-4b57-bf38-08bcb4574456",
       "name": "Normalize Zendesk input from MSR",
@@ -2924,7 +2933,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  msr_id,\n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  CASE \n    WHEN '{{ $json.body.status }}' != status \n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_status,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.id }}",
+        "query": "SELECT\n  msr_id,\n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.id }}",
         "options": {}
       },
       "id": "5103bfb6-d6e7-4aff-989e-3f3757856bda",
@@ -3239,17 +3248,26 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict"
+            "typeValidation": "strict",
+            "version": 1
           },
           "conditions": [
             {
               "id": "9bbb07e8-f753-4190-b6a4-ca7c6eee7875",
-              "leftValue": "={{ $json.should_update_status }}",
-              "rightValue": "",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "={{ $json.new_status }}",
               "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "dcbc76e4-4b96-4887-84ae-e72e136fbde9",
+              "leftValue": "={{ $json.new_status }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
               }
             }
           ],
@@ -3393,7 +3411,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-03T12:27:21.000Z",
+              "updatedAt": "2026-03-04T13:29:18.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -3413,7 +3431,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-03",
+              "lastActiveAt": "2026-03-04",
               "isPending": false
             }
           }
@@ -3436,7 +3454,7 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2025-12-10T12:14:45.000Z",
-  "versionCounter": 4,
-  "versionId": "06bd2cd3-b106-475c-86fb-99fa6df3c9c7"
+  "updatedAt": "2026-03-04T19:50:58.925Z",
+  "versionCounter": 8,
+  "versionId": "adbe323f-3892-41ba-9be9-64e766cddd54"
 }
