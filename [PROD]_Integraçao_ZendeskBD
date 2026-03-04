@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-02-27T02:22:11.327Z",
-    "createdAt": "2026-02-27T02:22:11.327Z",
-    "versionId": "9cd5e6e1-eb60-4e61-b358-9b49f8ced469",
+    "updatedAt": "2026-03-04T19:51:25.225Z",
+    "createdAt": "2026-03-04T19:51:25.225Z",
+    "versionId": "4e9529ea-9553-4807-a641-fd7553de993a",
     "workflowId": "xokKMoUPjlqi7Rpe",
     "nodes": [
       {
@@ -199,7 +199,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const status = item.json.body.status === 'inscrita' ? 'registered' : 'unregistered';\n  const phone = !!item.json.body.phone ? item.json.body.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === '' ||\n    !item.json.body.city\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.body.zipcode ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n    : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n  item.json.body.status = status;\n  item.json.body.phone = phone;\n}\n\nreturn $input.all();\n"
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n  const zendesk_status = item.json.body.status?item.json.body.status: \"\"\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.body.phone ? item.json.body.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === '' ||\n    !item.json.body.city\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.body.zipcode ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n    : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n  item.json.body.status = status;\n  item.json.body.phone = phone;\n}\n\nreturn $input.all();\n"
         },
         "id": "82934787-b998-4757-839a-d1018296ff86",
         "name": "Normalize Zendesk input from MSR",
@@ -303,7 +303,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT\n  msr_id,\n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  CASE \n    WHEN '{{ $json.body.status }}' != status \n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_status,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.body.msr_zendesk_user_id }}",
+          "query": "SELECT\n  msr_id,\n  status,\n  \n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.body.msr_zendesk_user_id }}",
           "options": {}
         },
         "id": "2d0bd14e-9eb5-4085-bf9c-2d3b737d7b51",
@@ -341,7 +341,8 @@
             "options": {
               "caseSensitive": true,
               "leftValue": "",
-              "typeValidation": "loose"
+              "typeValidation": "loose",
+              "version": 1
             },
             "conditions": [
               {
@@ -618,17 +619,36 @@
             "options": {
               "caseSensitive": true,
               "leftValue": "",
-              "typeValidation": "strict"
+              "typeValidation": "strict",
+              "version": 1
             },
             "conditions": [
               {
                 "id": "9bbb07e8-f753-4190-b6a4-ca7c6eee7875",
-                "leftValue": "={{ $json.should_update_status }}",
+                "leftValue": "={{ $json.status }}",
+                "rightValue": "={{ $json.new_status }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              },
+              {
+                "id": "67e0b240-76cc-4a6f-9473-01ab1814e2af",
+                "leftValue": "={{ $json.new_status }}",
+                "rightValue": "not_found",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              },
+              {
+                "id": "86ad9c76-a896-45c8-ab94-d9d8a47bb94c",
+                "leftValue": "",
                 "rightValue": "",
                 "operator": {
-                  "type": "boolean",
-                  "operation": "true",
-                  "singleValue": true
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
                 }
               }
             ],
@@ -656,8 +676,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          880,
-          -768
+          944,
+          -752
         ],
         "credentials": {
           "postgres": {
@@ -907,6 +927,52 @@
         ],
         "id": "432824e7-698f-4809-ac2e-f4f2e96e19e9",
         "name": "se achou as coordenadas"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "d0edd63b-1756-495c-8e4e-52de1059664f",
+                "leftValue": "={{ $json.new_status }}",
+                "rightValue": "not_found",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          832,
+          -576
+        ],
+        "id": "056e7d9b-028c-4c3c-82d9-2ac8ce71baa3",
+        "name": "new_status = not_found"
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Status  {{ $('Webhook MSR').item.json.body.status }} inválido para MSR {{ $('Webhook MSR').item.json.body.msr_zendesk_user_id }}"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          1136,
+          -608
+        ],
+        "id": "b0e49a8b-63d7-4aa5-92ca-9153333568fc",
+        "name": "Stop and Error"
       }
     ],
     "connections": {
@@ -1171,6 +1237,13 @@
               "type": "main",
               "index": 0
             }
+          ],
+          [
+            {
+              "node": "new_status = not_found",
+              "type": "main",
+              "index": 0
+            }
           ]
         ]
       },
@@ -1243,13 +1316,25 @@
             }
           ]
         ]
+      },
+      "new_status = not_found": {
+        "main": [
+          [
+            {
+              "node": "Stop and Error",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
       }
     },
-    "authors": "system migration",
+    "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "9cd5e6e1-eb60-4e61-b358-9b49f8ced469",
+  "activeVersionId": "4e9529ea-9553-4807-a641-fd7553de993a",
   "connections": {
     "Checks if we need to update volunteer": {
       "main": [
@@ -1512,6 +1597,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "new_status = not_found",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -1583,6 +1675,18 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "new_status = not_found": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     }
   },
@@ -1788,7 +1892,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const status = item.json.body.status === 'inscrita' ? 'registered' : 'unregistered';\n  const phone = !!item.json.body.phone ? item.json.body.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === '' ||\n    !item.json.body.city\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.body.zipcode ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n    : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n  item.json.body.status = status;\n  item.json.body.phone = phone;\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n  const zendesk_status = item.json.body.status?item.json.body.status: \"\"\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.body.phone ? item.json.body.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.body.city === 'ZERO_RESULTS' ||\n    item.json.body.city === '' ||\n    !item.json.body.city\n      ? 'not_found'\n      : item.json.body.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.body.zipcode ||\n    item.json.body.zipcode === ''\n      ? 'not_found'\n    : item.json.body.zipcode.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n  const zipcode = onlyNumbersZipcode || 'not_found';\n  item.json.body.city = city;\n  item.json.body.zipcode = zipcode;\n  item.json.body.state = item.json.body.state || 'not_found';\n  item.json.body.status = status;\n  item.json.body.phone = phone;\n}\n\nreturn $input.all();\n"
       },
       "id": "82934787-b998-4757-839a-d1018296ff86",
       "name": "Normalize Zendesk input from MSR",
@@ -1892,7 +1996,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  msr_id,\n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  CASE \n    WHEN '{{ $json.body.status }}' != status \n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_status,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.body.msr_zendesk_user_id }}",
+        "query": "SELECT\n  msr_id,\n  status,\n  \n  CASE \n    WHEN '{{ $json.body.phone }}' != phone THEN TRUE \n    ELSE FALSE \n  END AS should_update_msr_pii,\n  CASE \n    WHEN '{{ $json.body.zipcode }}' != zipcode \n      OR '{{ $json.body.city }}' != city \n      OR '{{ $json.body.state }}' != state\n    THEN TRUE\n    ELSE FALSE\n  END AS should_update_location,\n  '{{ $json.body.phone }}' AS phone,\n  '{{ $json.body.zipcode }}' AS new_zipcode,\n  '{{ $json.body.city }}' AS new_city,\n  '{{ $json.body.state }}' AS new_state,\n  '{{ $json.body.status }}' AS new_status\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.body.msr_zendesk_user_id }}",
         "options": {}
       },
       "id": "2d0bd14e-9eb5-4085-bf9c-2d3b737d7b51",
@@ -1930,7 +2034,8 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "loose"
+            "typeValidation": "loose",
+            "version": 1
           },
           "conditions": [
             {
@@ -2207,17 +2312,36 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict"
+            "typeValidation": "strict",
+            "version": 1
           },
           "conditions": [
             {
               "id": "9bbb07e8-f753-4190-b6a4-ca7c6eee7875",
-              "leftValue": "={{ $json.should_update_status }}",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "={{ $json.new_status }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "67e0b240-76cc-4a6f-9473-01ab1814e2af",
+              "leftValue": "={{ $json.new_status }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "86ad9c76-a896-45c8-ab94-d9d8a47bb94c",
+              "leftValue": "",
               "rightValue": "",
               "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
               }
             }
           ],
@@ -2245,8 +2369,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        880,
-        -768
+        944,
+        -752
       ],
       "credentials": {
         "postgres": {
@@ -2496,57 +2620,55 @@
       ],
       "id": "432824e7-698f-4809-ac2e-f4f2e96e19e9",
       "name": "se achou as coordenadas"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d0edd63b-1756-495c-8e4e-52de1059664f",
+              "leftValue": "={{ $json.new_status }}",
+              "rightValue": "not_found",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        -576
+      ],
+      "id": "056e7d9b-028c-4c3c-82d9-2ac8ce71baa3",
+      "name": "new_status = not_found"
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Status  {{ $('Webhook MSR').item.json.body.status }} inválido para MSR {{ $('Webhook MSR').item.json.body.msr_zendesk_user_id }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        -608
+      ],
+      "id": "b0e49a8b-63d7-4aa5-92ca-9153333568fc",
+      "name": "Stop and Error"
     }
   ],
   "pinData": {
-    "Webhook MSR": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Zendesk Webhook",
-            "content-length": "164",
-            "accept-encoding": "gzip, br",
-            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
-            "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "216.198.2.146",
-            "cf-ew-via": "15",
-            "cf-ipcountry": "US",
-            "cf-ray": "8c0864bde3519b72-SEA",
-            "cf-visitor": "{\"scheme\":\"https\"}",
-            "cf-worker": "n8n.cloud",
-            "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-66df1bb200000000df9a843637fa1281-df9a843637fa1281-00",
-            "tracestate": "dd=s:-1;p:df9a843637fa1281",
-            "x-forwarded-for": "216.198.2.146, 172.71.147.104",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-76f56c775b-ww8fm",
-            "x-is-trusted": "yes",
-            "x-real-ip": "216.198.2.146",
-            "x-request-id": "0cfd14af-8029-4174-9c2f-28f5088d01ea",
-            "x-zendesk-account-id": "9040899",
-            "x-zendesk-webhook-id": "01HSGNVFZXZ0VD5KXJJC8YG4Z7",
-            "x-zendesk-webhook-invocation-id": "01J7BR8CJ6XE6KME8WSH6R7MZB",
-            "x-zendesk-webhook-signature": "CsPkCSQ3UCn873jA7Ws7z0Q7wY20m+cKUuxW+QAhr5c=",
-            "x-zendesk-webhook-signature-timestamp": "2024-09-09T16:00:50Z"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "msr_zendesk_user_id": "19595488838932",
-            "city": "Contagem",
-            "state": "MG",
-            "zipcode": "",
-            "status": "indisponível_-sem_resposta",
-            "phone": "31983892120"
-          },
-          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-msr-info",
-          "executionMode": "production"
-        }
-      }
-    ],
     "Webhook Volunteer": [
       {
         "json": {
@@ -2597,6 +2719,57 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Webhook MSR": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "168",
+            "accept-encoding": "gzip, br",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "216.198.2.195",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9d7308e3e87bccd1-PDX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-69a87da40000000045d2ab6fba0bf856-45d2ab6fba0bf856-00",
+            "tracestate": "dd=s:-1;p:45d2ab6fba0bf856",
+            "x-forwarded-for": "216.198.2.195, 104.23.160.194",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-78ddd45589-bwht7",
+            "x-is-trusted": "yes",
+            "x-real-ip": "216.198.2.195",
+            "x-request-id": "33c9aed3-a4e6-44cd-a398-becca850803d",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HSGNVFZXZ0VD5KXJJC8YG4Z7",
+            "x-zendesk-webhook-invocation-id": "01KJX2NJCZ5Z6FX6QAC87VJXJP",
+            "x-zendesk-webhook-signature": "HCBSIZv7dl0SLSzpdO/5kur3cYxRMlWNKhB87P81lIA=",
+            "x-zendesk-webhook-signature-timestamp": "2026-03-04T18:44:52Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "msr_zendesk_user_id": "16993625577748",
+            "city": "SANTO ANTONIO DO PINHAL",
+            "state": "SP",
+            "zipcode": "12450000",
+            "status": "inscrita",
+            "phone": "12996583762"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-msr-info",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
     ]
   },
   "settings": {
@@ -2627,7 +2800,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-03T12:27:21.000Z",
+              "updatedAt": "2026-03-04T13:29:18.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -2647,7 +2820,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-03",
+              "lastActiveAt": "2026-03-04",
               "isPending": false
             }
           }
@@ -2665,7 +2838,7 @@
     }
   ],
   "triggerCount": 2,
-  "updatedAt": "2025-12-15T14:19:11.000Z",
-  "versionCounter": 4,
-  "versionId": "9cd5e6e1-eb60-4e61-b358-9b49f8ced469"
+  "updatedAt": "2026-03-04T19:51:25.224Z",
+  "versionCounter": 10,
+  "versionId": "4e9529ea-9553-4807-a641-fd7553de993a"
 }
