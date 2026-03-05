@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-03-04T19:50:58.927Z",
-    "createdAt": "2026-03-04T19:50:58.927Z",
-    "versionId": "adbe323f-3892-41ba-9be9-64e766cddd54",
+    "updatedAt": "2026-03-05T13:19:25.786Z",
+    "createdAt": "2026-03-05T13:19:25.786Z",
+    "versionId": "54e1f103-4071-4572-bea8-2810b25d8847",
     "workflowId": "t6h9U4VSoY9xaEMA",
     "nodes": [
       {
@@ -655,7 +655,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n const zendesk_status = item.json.body.status?item.json.body.status: \"\"\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n const zendesk_status = item.json.user_fields.condition?item.json.user_fields.condition: \"\";\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
         },
         "id": "90d1d79e-95cb-4b57-bf38-08bcb4574456",
         "name": "Normalize Zendesk input from MSR",
@@ -1682,7 +1682,7 @@
     "name": null,
     "description": null
   },
-  "activeVersionId": "adbe323f-3892-41ba-9be9-64e766cddd54",
+  "activeVersionId": "54e1f103-4071-4572-bea8-2810b25d8847",
   "connections": {
     "Schedule Trigger": {
       "main": [
@@ -2919,7 +2919,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n const zendesk_status = item.json.body.status?item.json.body.status: \"\"\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst msr_status = {\n    'desabilitada': 'unregistered',\n    'descadastrada': 'unregistered',\n    'inscrita': 'registered', \n    'msr_referenciada_pelo_servico_publico': 'registered_by_public_service',\n}\nfor (const item of $input.all()) {\n const zendesk_status = item.json.user_fields.condition?item.json.user_fields.condition: \"\";\n  const status =  msr_status[zendesk_status]? msr_status[zendesk_status]: 'not_found'\n  const phone = !!item.json.user_fields.phone ? item.json.user_fields.phone.replace(/\\D/g, \"\") : 'not_found';\n  const city =\n    item.json.user_fields.city === 'ZERO_RESULTS' ||\n    item.json.user_fields.city === '' \n    || !item.json.user_fields.city\n      ? 'not_found'\n      : item.json.user_fields.city\n          .normalize('NFD')\n          .replace(/[\\u0300-\\u036f]/g, '')\n          .replace(\"'\", ' ')\n          .replace(/ *\\([^)]*\\) */g, '')\n          .toUpperCase();\n  const onlyNumbersZipcode = !item.json.user_fields.cep ||\n    item.json.user_fields.cep === ''\n      ? 'not_found'\n    : item.json.user_fields.cep.replace(/[^0-9\\\\.]+/g, '').slice(0,8);\n\n  const zipcode = onlyNumbersZipcode || 'not_found';\n\n  const body = {\n    city: city,\n    zipcode: zipcode,\n    state: item.json.user_fields.state || 'not_found',\n    status: status,\n    phone: phone\n  }\n  \n  item.json.body = body;\n}\n\nreturn $input.all();\n"
       },
       "id": "90d1d79e-95cb-4b57-bf38-08bcb4574456",
       "name": "Normalize Zendesk input from MSR",
@@ -3368,17 +3368,20 @@
     "Schedule Trigger": [
       {
         "json": {
-          "timestamp": "2025-12-10T00:13:13.007-03:00",
-          "Readable date": "December 10th 2025, 12:13:13 am",
-          "Readable time": "12:13:13 am",
-          "Day of week": "Wednesday",
-          "Year": "2025",
-          "Month": "December",
-          "Day of month": "10",
+          "timestamp": "2026-03-05T00:13:20.005-03:00",
+          "Readable date": "March 5th 2026, 12:13:20 am",
+          "Readable time": "12:13:20 am",
+          "Day of week": "Thursday",
+          "Year": "2026",
+          "Month": "March",
+          "Day of month": "05",
           "Hour": "00",
           "Minute": "13",
-          "Second": "13",
+          "Second": "20",
           "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        },
+        "pairedItem": {
+          "item": 0
         }
       }
     ]
@@ -3411,7 +3414,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-04T13:29:18.000Z",
+              "updatedAt": "2026-03-05T13:16:04.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -3431,7 +3434,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-04",
+              "lastActiveAt": "2026-03-05",
               "isPending": false
             }
           }
@@ -3454,7 +3457,7 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-03-04T19:50:58.925Z",
-  "versionCounter": 8,
-  "versionId": "adbe323f-3892-41ba-9be9-64e766cddd54"
+  "updatedAt": "2026-03-05T13:19:25.785Z",
+  "versionCounter": 12,
+  "versionId": "54e1f103-4071-4572-bea8-2810b25d8847"
 }
