@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-02-27T02:22:11.327Z",
-    "createdAt": "2026-02-27T02:22:11.327Z",
-    "versionId": "f6445a7f-49bc-4ed9-a0f6-47999ad0d237",
+    "updatedAt": "2026-03-10T20:20:39.689Z",
+    "createdAt": "2026-03-10T20:20:39.689Z",
+    "versionId": "4df6aae0-193d-4bfa-a769-ffa8bd8fcec9",
     "workflowId": "xbeFBqR5GbsXgiHA",
     "nodes": [
       {
@@ -44,7 +44,7 @@
       },
       {
         "parameters": {
-          "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\nfor (item of items) {\n  form_answers = item.json.body.data.fields\n  \n  var dados_voluntaria = {  \n    nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n    email: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    whatsapp: form_answers.find(objeto => objeto.label == \"whatsapp\").value\n  };\n\nvar criterios_projeto ={\n    maior_de_18: getSelectedTexts(form_answers, \"acolhida_e_maior_de_18\"),\n    reside_no_brasil: getSelectedTexts(form_answers, \"acolhida_reside_no_br\"),\n    brasileira: getSelectedTexts(form_answers, \"acolhida_e_brasileira\"),\n    situacao_de_violencia: getSelectedTexts(form_answers, \"situacao_de_violencia\"),\n    periodo: getSelectedTexts(form_answers, \"periodo_de_tempo_vbg\"),\n    tipos_de_violencia:getSelectedTexts(form_answers, \"tipos_de_violencia\"),\n    autor_da_violencia: getSelectedTexts(form_answers, \"autor_da_violencia\"),\n    situacao_vulnerabilidade_baixa_renda: getSelectedTexts(form_answers,\"situacao_vulnerabilidade_baixa_renda\"),\n    atendida_denfensoria_publica: getSelectedTexts(form_answers,\"atendida_denfensoria_publica\"),\n    atendida_advogada_particular: getSelectedTexts(form_answers,\"atendida_advogada_particular\")\n  };\n\n  var dados_acolhida = {\n\n    nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value,\n    data_de_nascimento: form_answers.find(objeto => objeto.label == \"data_de_nascimento\").value,\n    regime_de_trabalho: getSelectedTexts(form_answers, \"regime_de_trabalho\"),\n    renda_individual: getSelectedTexts(form_answers, \"renda_individual\"),\n    tem_independencia_financeira: getSelectedTexts(form_answers, \"tem_independencia_financeira\"),\n    tem_cadunico: getSelectedTexts(form_answers,\"tem_cadunico\"),\n    recebe_algum_beneficio: getSelectedTexts(form_answers, \"recebe_algum_beneficio\"),\n    responsavel_financeiramente: getSelectedTexts(form_answers, \"responsavel_financeiramente\"),\n    divide_responsabilidade_com: getSelectedTexts(form_answers, \"divide_responsabilidade_com\"),\n    tem_dependentes_financeiros: getSelectedTexts(form_answers, \"tem_dependentes_financeiros\"),\n    quantidade_de_dependentes: getSelectedTexts(form_answers, \"quantidade_de_dependentes\") === \"\"? \"0\": getSelectedTexts(form_answers, \"quantidade_de_dependentes\").replaceAll(\"+\",\"\"),\n    recebe_pensao_alimenticia:  getSelectedTexts(form_answers, \"recebe_pensao_alimenticia\")\n    \n  }\n\n  var moradia = {\n\n    situacao_moradia: getSelectedTexts(form_answers, \"situacao_moradia\"),\n    cedida_por: getSelectedTexts(form_answers, \"cedida_por\"),\n    reside_com_o_autor_da_viloencia: getSelectedTexts(form_answers,\"reside_com_o_autor_da_viloencia\"),\n    sente_segura_em_casa: getSelectedTexts(form_answers, \"sente_segura_em_casa\"),\n    situacao_de_carcere: getSelectedTexts(form_answers, \"situacao_de_carcere\")\n  } \n \n  //Determina risco do caso\n  var risco = 'nenhum'\n  var priority = 'low'\n  if(moradia.situacao_de_carcere === 'Sim') {\n    item.json.priority = 'urgent'  \n    risco = 'extremo'\n  }\n\n var servico_publico = {\n    \n    conhece_redes_de_atendimento: getSelectedTexts(form_answers, \"conhece_redes_de_atendimento\"),\n    quais_redes_de_atendimento_conhece: getSelectedTexts(form_answers, \"quais_redes_de_atendimento_conhece\"),\n    atentendida_em_servico_publico: getSelectedTexts(form_answers, \"atentendida_em_servico_publico\"),\n    quais_servicos_publicos_atentida: getSelectedTexts(form_answers, \"quais_servicos_publicos_atentida\")\n  }\n var processo_juridico = {\n    areas_direito_demanda_se_enquadra: getSelectedTexts(form_answers, \"areas_direito_demanda_se_enquadra\"),\n    demanda_inicial: form_answers.find(objeto => objeto.label == \"demanda_inicial\").value.replaceAll(/\\n/g, '\\\\n').replaceAll('\"', \"'\").replace(/\\\\/g, '/'),\n    encaminhamento: getSelectedTexts(form_answers, \"encaminhamento\"),\n    servicos_indicados: getSelectedTexts(form_answers, \"servicos_indicados\")\n    \n  }\n  var answers = {dados_voluntaria,criterios_projeto, dados_acolhida, moradia, servico_publico, processo_juridico, risco: risco}\n  \n  //item.json.answers_txt = item.json.answers_txt.replaceAl(\"false se enquadra no perfil\", \"Não se enquadra no perfil\").replaceAll(\"false conhece\",\"Não conhece\").replaceAll(\"false se aplica\",\"Não se aplica\")\n\n  answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll(\"Não\",false);\n  answers_txt = answers_txt.replaceAll(\"false \", \"Não \").replaceAll(\"false.\",\"Não.\");\n  answers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false');\n  answers_txt = answers_txt.replaceAll(/\\n/g, ' ');  \n  let data = new Date(dados_acolhida.data_de_nascimento);\n  answers.dados_acolhida.data_de_nascimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear(); ;\n\n  answers.risco = answers.risco.toUpperCase(); \n}\nconsole.log('Done!');\n\nreturn {\n        priority,\n        risco,\n        answers,\n        answers_txt\n       }; "
+          "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\nfor (item of items) {\n  form_answers = item.json.body.data.fields\n  \n  var dados_voluntaria = {  \n    nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n    email: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    whatsapp: form_answers.find(objeto => objeto.label == \"whatsapp\").value\n  };\n\nvar criterios_projeto ={\n    maior_de_18: getSelectedTexts(form_answers, \"acolhida_e_maior_de_18\"),\n    reside_no_brasil: getSelectedTexts(form_answers, \"acolhida_reside_no_br\"),\n    brasileira: getSelectedTexts(form_answers, \"acolhida_e_brasileira\"),\n    situacao_de_violencia: getSelectedTexts(form_answers, \"situacao_de_violencia\"),\n    periodo: getSelectedTexts(form_answers, \"periodo_de_tempo_vbg\"),\n    tipos_de_violencia:getSelectedTexts(form_answers, \"tipos_de_violencia\"),\n    autor_da_violencia: getSelectedTexts(form_answers, \"autor_da_violencia\"),\n    situacao_vulnerabilidade_baixa_renda: getSelectedTexts(form_answers,\"situacao_vulnerabilidade_baixa_renda\"),\n    atendida_denfensoria_publica: getSelectedTexts(form_answers,\"atendida_denfensoria_publica\"),\n    atendida_advogada_particular: getSelectedTexts(form_answers,\"atendida_advogada_particular\")\n  };\n\n  var dados_acolhida = {\n\n    nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value,\n    data_de_nascimento: form_answers.find(objeto => objeto.label == \"data_de_nascimento\").value,\n    regime_de_trabalho: getSelectedTexts(form_answers, \"regime_de_trabalho\"),\n    renda_individual: getSelectedTexts(form_answers, \"renda_individual\"),\n    tem_independencia_financeira: getSelectedTexts(form_answers, \"tem_independencia_financeira\"),\n    tem_cadunico: getSelectedTexts(form_answers,\"tem_cadunico\"),\n    recebe_algum_beneficio: getSelectedTexts(form_answers, \"recebe_algum_beneficio\"),\n    responsavel_financeiramente: getSelectedTexts(form_answers, \"responsavel_financeiramente\"),\n    divide_responsabilidade_com: getSelectedTexts(form_answers, \"divide_responsabilidade_com\"),\n    tem_dependentes_financeiros: getSelectedTexts(form_answers, \"tem_dependentes_financeiros\"),\n    quantidade_de_dependentes: getSelectedTexts(form_answers, \"quantidade_de_dependentes\") === \"\"? \"0\": getSelectedTexts(form_answers, \"quantidade_de_dependentes\").replaceAll(\"+\",\"\"),\n    recebe_pensao_alimenticia:  getSelectedTexts(form_answers, \"recebe_pensao_alimenticia\")\n    \n  }\n\n  var moradia = {\n\n    situacao_moradia: getSelectedTexts(form_answers, \"situacao_moradia\"),\n    cedida_por: getSelectedTexts(form_answers, \"cedida_por\"),\n    reside_com_o_autor_da_viloencia: getSelectedTexts(form_answers,\"reside_com_o_autor_da_viloencia\"),\n    sente_segura_em_casa: getSelectedTexts(form_answers, \"sente_segura_em_casa\"),\n    situacao_de_carcere: getSelectedTexts(form_answers, \"situacao_de_carcere\")\n  } \n \n  //Determina risco do caso\n  var risco = 'nenhum'\n  var priority = 'low'\n  if(moradia.situacao_de_carcere === 'Sim') {\n    item.json.priority = 'urgent'  \n    risco = 'extremo'\n  }\n\n var servico_publico = {\n    \n    conhece_redes_de_atendimento: getSelectedTexts(form_answers, \"conhece_redes_de_atendimento\"),\n    quais_redes_de_atendimento_conhece: getSelectedTexts(form_answers, \"quais_redes_de_atendimento_conhece\"),\n    atentendida_em_servico_publico: getSelectedTexts(form_answers, \"atentendida_em_servico_publico\"),\n    quais_servicos_publicos_atentida: getSelectedTexts(form_answers, \"quais_servicos_publicos_atentida\")\n  }\n var processo_juridico = {\n    areas_direito_demanda_se_enquadra: getSelectedTexts(form_answers, \"areas_direito_demanda_se_enquadra\"),\n    demanda_inicial: form_answers.find(objeto => objeto.label == \"demanda_inicial\").value.replaceAll(/\\n/g, '\\\\n').replaceAll('\"', \"'\").replace(/\\n?•\\s*/g, ''),\n    encaminhamento: getSelectedTexts(form_answers, \"encaminhamento\"),\n    servicos_indicados: getSelectedTexts(form_answers, \"servicos_indicados\")\n    \n  }\n  var answers = {dados_voluntaria,criterios_projeto, dados_acolhida, moradia, servico_publico, processo_juridico, risco: risco}\n  \n  //item.json.answers_txt = item.json.answers_txt.replaceAl(\"false se enquadra no perfil\", \"Não se enquadra no perfil\").replaceAll(\"false conhece\",\"Não conhece\").replaceAll(\"false se aplica\",\"Não se aplica\")\n\n  answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll(\"Não\",false);\n  answers_txt = answers_txt.replaceAll(\"false \", \"Não \").replaceAll(\"false.\",\"Não.\");\n  answers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false');\n  answers_txt = answers_txt.replaceAll(/\\n/g, ' ');  \n  let data = new Date(dados_acolhida.data_de_nascimento);\n  answers.dados_acolhida.data_de_nascimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear(); ;\n\n  answers.risco = answers.risco.toUpperCase(); \n}\nconsole.log('Done!');\n\nreturn {\n        priority,\n        risco,\n        answers,\n        answers_txt\n       }; "
         },
         "name": "Formata - Triagem Jurídico 1",
         "type": "n8n-nodes-base.function",
@@ -2613,11 +2613,11 @@
         ]
       }
     },
-    "authors": "system migration",
+    "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "f6445a7f-49bc-4ed9-a0f6-47999ad0d237",
+  "activeVersionId": "4df6aae0-193d-4bfa-a769-ffa8bd8fcec9",
   "connections": {
     "Webhook": {
       "main": [
@@ -3200,7 +3200,7 @@
     },
     {
       "parameters": {
-        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\nfor (item of items) {\n  form_answers = item.json.body.data.fields\n  \n  var dados_voluntaria = {  \n    nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n    email: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    whatsapp: form_answers.find(objeto => objeto.label == \"whatsapp\").value\n  };\n\nvar criterios_projeto ={\n    maior_de_18: getSelectedTexts(form_answers, \"acolhida_e_maior_de_18\"),\n    reside_no_brasil: getSelectedTexts(form_answers, \"acolhida_reside_no_br\"),\n    brasileira: getSelectedTexts(form_answers, \"acolhida_e_brasileira\"),\n    situacao_de_violencia: getSelectedTexts(form_answers, \"situacao_de_violencia\"),\n    periodo: getSelectedTexts(form_answers, \"periodo_de_tempo_vbg\"),\n    tipos_de_violencia:getSelectedTexts(form_answers, \"tipos_de_violencia\"),\n    autor_da_violencia: getSelectedTexts(form_answers, \"autor_da_violencia\"),\n    situacao_vulnerabilidade_baixa_renda: getSelectedTexts(form_answers,\"situacao_vulnerabilidade_baixa_renda\"),\n    atendida_denfensoria_publica: getSelectedTexts(form_answers,\"atendida_denfensoria_publica\"),\n    atendida_advogada_particular: getSelectedTexts(form_answers,\"atendida_advogada_particular\")\n  };\n\n  var dados_acolhida = {\n\n    nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value,\n    data_de_nascimento: form_answers.find(objeto => objeto.label == \"data_de_nascimento\").value,\n    regime_de_trabalho: getSelectedTexts(form_answers, \"regime_de_trabalho\"),\n    renda_individual: getSelectedTexts(form_answers, \"renda_individual\"),\n    tem_independencia_financeira: getSelectedTexts(form_answers, \"tem_independencia_financeira\"),\n    tem_cadunico: getSelectedTexts(form_answers,\"tem_cadunico\"),\n    recebe_algum_beneficio: getSelectedTexts(form_answers, \"recebe_algum_beneficio\"),\n    responsavel_financeiramente: getSelectedTexts(form_answers, \"responsavel_financeiramente\"),\n    divide_responsabilidade_com: getSelectedTexts(form_answers, \"divide_responsabilidade_com\"),\n    tem_dependentes_financeiros: getSelectedTexts(form_answers, \"tem_dependentes_financeiros\"),\n    quantidade_de_dependentes: getSelectedTexts(form_answers, \"quantidade_de_dependentes\") === \"\"? \"0\": getSelectedTexts(form_answers, \"quantidade_de_dependentes\").replaceAll(\"+\",\"\"),\n    recebe_pensao_alimenticia:  getSelectedTexts(form_answers, \"recebe_pensao_alimenticia\")\n    \n  }\n\n  var moradia = {\n\n    situacao_moradia: getSelectedTexts(form_answers, \"situacao_moradia\"),\n    cedida_por: getSelectedTexts(form_answers, \"cedida_por\"),\n    reside_com_o_autor_da_viloencia: getSelectedTexts(form_answers,\"reside_com_o_autor_da_viloencia\"),\n    sente_segura_em_casa: getSelectedTexts(form_answers, \"sente_segura_em_casa\"),\n    situacao_de_carcere: getSelectedTexts(form_answers, \"situacao_de_carcere\")\n  } \n \n  //Determina risco do caso\n  var risco = 'nenhum'\n  var priority = 'low'\n  if(moradia.situacao_de_carcere === 'Sim') {\n    item.json.priority = 'urgent'  \n    risco = 'extremo'\n  }\n\n var servico_publico = {\n    \n    conhece_redes_de_atendimento: getSelectedTexts(form_answers, \"conhece_redes_de_atendimento\"),\n    quais_redes_de_atendimento_conhece: getSelectedTexts(form_answers, \"quais_redes_de_atendimento_conhece\"),\n    atentendida_em_servico_publico: getSelectedTexts(form_answers, \"atentendida_em_servico_publico\"),\n    quais_servicos_publicos_atentida: getSelectedTexts(form_answers, \"quais_servicos_publicos_atentida\")\n  }\n var processo_juridico = {\n    areas_direito_demanda_se_enquadra: getSelectedTexts(form_answers, \"areas_direito_demanda_se_enquadra\"),\n    demanda_inicial: form_answers.find(objeto => objeto.label == \"demanda_inicial\").value.replaceAll(/\\n/g, '\\\\n').replaceAll('\"', \"'\").replace(/\\\\/g, '/'),\n    encaminhamento: getSelectedTexts(form_answers, \"encaminhamento\"),\n    servicos_indicados: getSelectedTexts(form_answers, \"servicos_indicados\")\n    \n  }\n  var answers = {dados_voluntaria,criterios_projeto, dados_acolhida, moradia, servico_publico, processo_juridico, risco: risco}\n  \n  //item.json.answers_txt = item.json.answers_txt.replaceAl(\"false se enquadra no perfil\", \"Não se enquadra no perfil\").replaceAll(\"false conhece\",\"Não conhece\").replaceAll(\"false se aplica\",\"Não se aplica\")\n\n  answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll(\"Não\",false);\n  answers_txt = answers_txt.replaceAll(\"false \", \"Não \").replaceAll(\"false.\",\"Não.\");\n  answers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false');\n  answers_txt = answers_txt.replaceAll(/\\n/g, ' ');  \n  let data = new Date(dados_acolhida.data_de_nascimento);\n  answers.dados_acolhida.data_de_nascimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear(); ;\n\n  answers.risco = answers.risco.toUpperCase(); \n}\nconsole.log('Done!');\n\nreturn {\n        priority,\n        risco,\n        answers,\n        answers_txt\n       }; "
+        "functionCode": "// Code here will run only once, no matter how many input items there are.\n// More info and help: https://docs.n8n.io/nodes/n8n-nodes-base.function\n// Tip: You can use luxon for dates and $jmespath for querying JSON structures\n\n// Loop over inputs and add a new field called 'myNewField' to the JSON of each one\nfunction getSelectedTexts(questions, label) {\n  const question = questions.find(q => q.label === label);\n  if (!question) return [];\n\n  return question.value? question.value.map(\n    id => question.options.find(opt => opt.id === id)?.text\n  ).filter(Boolean).join(\", \"): \"\"; // remove undefined se algum id não existir\n}\nfor (item of items) {\n  form_answers = item.json.body.data.fields\n  \n  var dados_voluntaria = {  \n    nome: form_answers.find(objeto => objeto.label == \"nome_completo\").value,\n    email: form_answers.find(objeto => objeto.label == \"email_de_cadastro\").value,\n    whatsapp: form_answers.find(objeto => objeto.label == \"whatsapp\").value\n  };\n\nvar criterios_projeto ={\n    maior_de_18: getSelectedTexts(form_answers, \"acolhida_e_maior_de_18\"),\n    reside_no_brasil: getSelectedTexts(form_answers, \"acolhida_reside_no_br\"),\n    brasileira: getSelectedTexts(form_answers, \"acolhida_e_brasileira\"),\n    situacao_de_violencia: getSelectedTexts(form_answers, \"situacao_de_violencia\"),\n    periodo: getSelectedTexts(form_answers, \"periodo_de_tempo_vbg\"),\n    tipos_de_violencia:getSelectedTexts(form_answers, \"tipos_de_violencia\"),\n    autor_da_violencia: getSelectedTexts(form_answers, \"autor_da_violencia\"),\n    situacao_vulnerabilidade_baixa_renda: getSelectedTexts(form_answers,\"situacao_vulnerabilidade_baixa_renda\"),\n    atendida_denfensoria_publica: getSelectedTexts(form_answers,\"atendida_denfensoria_publica\"),\n    atendida_advogada_particular: getSelectedTexts(form_answers,\"atendida_advogada_particular\")\n  };\n\n  var dados_acolhida = {\n\n    nome: form_answers.find(objeto => objeto.label == \"nome_da_acolhida\").value,\n    data_de_nascimento: form_answers.find(objeto => objeto.label == \"data_de_nascimento\").value,\n    regime_de_trabalho: getSelectedTexts(form_answers, \"regime_de_trabalho\"),\n    renda_individual: getSelectedTexts(form_answers, \"renda_individual\"),\n    tem_independencia_financeira: getSelectedTexts(form_answers, \"tem_independencia_financeira\"),\n    tem_cadunico: getSelectedTexts(form_answers,\"tem_cadunico\"),\n    recebe_algum_beneficio: getSelectedTexts(form_answers, \"recebe_algum_beneficio\"),\n    responsavel_financeiramente: getSelectedTexts(form_answers, \"responsavel_financeiramente\"),\n    divide_responsabilidade_com: getSelectedTexts(form_answers, \"divide_responsabilidade_com\"),\n    tem_dependentes_financeiros: getSelectedTexts(form_answers, \"tem_dependentes_financeiros\"),\n    quantidade_de_dependentes: getSelectedTexts(form_answers, \"quantidade_de_dependentes\") === \"\"? \"0\": getSelectedTexts(form_answers, \"quantidade_de_dependentes\").replaceAll(\"+\",\"\"),\n    recebe_pensao_alimenticia:  getSelectedTexts(form_answers, \"recebe_pensao_alimenticia\")\n    \n  }\n\n  var moradia = {\n\n    situacao_moradia: getSelectedTexts(form_answers, \"situacao_moradia\"),\n    cedida_por: getSelectedTexts(form_answers, \"cedida_por\"),\n    reside_com_o_autor_da_viloencia: getSelectedTexts(form_answers,\"reside_com_o_autor_da_viloencia\"),\n    sente_segura_em_casa: getSelectedTexts(form_answers, \"sente_segura_em_casa\"),\n    situacao_de_carcere: getSelectedTexts(form_answers, \"situacao_de_carcere\")\n  } \n \n  //Determina risco do caso\n  var risco = 'nenhum'\n  var priority = 'low'\n  if(moradia.situacao_de_carcere === 'Sim') {\n    item.json.priority = 'urgent'  \n    risco = 'extremo'\n  }\n\n var servico_publico = {\n    \n    conhece_redes_de_atendimento: getSelectedTexts(form_answers, \"conhece_redes_de_atendimento\"),\n    quais_redes_de_atendimento_conhece: getSelectedTexts(form_answers, \"quais_redes_de_atendimento_conhece\"),\n    atentendida_em_servico_publico: getSelectedTexts(form_answers, \"atentendida_em_servico_publico\"),\n    quais_servicos_publicos_atentida: getSelectedTexts(form_answers, \"quais_servicos_publicos_atentida\")\n  }\n var processo_juridico = {\n    areas_direito_demanda_se_enquadra: getSelectedTexts(form_answers, \"areas_direito_demanda_se_enquadra\"),\n    demanda_inicial: form_answers.find(objeto => objeto.label == \"demanda_inicial\").value.replaceAll(/\\n/g, '\\\\n').replaceAll('\"', \"'\").replace(/\\n?•\\s*/g, ''),\n    encaminhamento: getSelectedTexts(form_answers, \"encaminhamento\"),\n    servicos_indicados: getSelectedTexts(form_answers, \"servicos_indicados\")\n    \n  }\n  var answers = {dados_voluntaria,criterios_projeto, dados_acolhida, moradia, servico_publico, processo_juridico, risco: risco}\n  \n  //item.json.answers_txt = item.json.answers_txt.replaceAl(\"false se enquadra no perfil\", \"Não se enquadra no perfil\").replaceAll(\"false conhece\",\"Não conhece\").replaceAll(\"false se aplica\",\"Não se aplica\")\n\n  answers_txt = JSON.stringify(answers).replaceAll('Sim',true).replaceAll(\"Não\",false);\n  answers_txt = answers_txt.replaceAll(\"false \", \"Não \").replaceAll(\"false.\",\"Não.\");\n  answers_txt = answers_txt.replaceAll('\"true\"', 'true').replaceAll('\"false\"', 'false');\n  answers_txt = answers_txt.replaceAll(/\\n/g, ' ');  \n  let data = new Date(dados_acolhida.data_de_nascimento);\n  answers.dados_acolhida.data_de_nascimento_br =   ((data.getDate() )) + \"/\" + ((data.getMonth() + 1)) + \"/\" + data.getFullYear(); ;\n\n  answers.risco = answers.risco.toUpperCase(); \n}\nconsole.log('Done!');\n\nreturn {\n        priority,\n        risco,\n        answers,\n        answers_txt\n       }; "
       },
       "name": "Formata - Triagem Jurídico 1",
       "type": "n8n-nodes-base.function",
@@ -16282,59 +16282,59 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Tally Webhooks",
-            "content-length": "26536",
+            "content-length": "27025",
             "accept": "application/json, text/plain, */*",
             "accept-encoding": "gzip, br",
             "authorization": "uoqQUEpq&&C5$AL22k3PWN4j3dMd&&",
-            "baggage": "sentry-environment=production,sentry-release=0d788c6b6d0d09aae3b48e6cdc19e34334e6ec83,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=56a1d608e27d0dfb18158959f17f5e16,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.5012373222192897,sentry-sample_rate=0.0001",
+            "baggage": "sentry-environment=production,sentry-release=9376ba45856350c7c81c6f8635eb42bea0dd11f0,sentry-public_key=6af4b6673f1648edaa8fef3f2ca43405,sentry-trace_id=f5270c292ac36fe2add512e42cb36157,sentry-org_id=407628,sentry-sampled=false,sentry-sample_rand=0.8806360215374964,sentry-sample_rate=0",
             "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "34.96.41.212",
+            "cf-connecting-ip": "34.96.62.17",
             "cf-ew-via": "15",
             "cf-ipcountry": "BE",
-            "cf-ray": "9b00afec6042bb05-LHR",
+            "cf-ray": "9d9db6bc4d1ea696-LHR",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json",
-            "sentry-trace": "56a1d608e27d0dfb18158959f17f5e16-31ecac430ce4e270-0",
-            "x-forwarded-for": "34.96.41.212, 172.64.192.200",
+            "sentry-trace": "f5270c292ac36fe2add512e42cb36157-3143f7d8bac25e99-0",
+            "x-forwarded-for": "34.96.62.17, 172.71.241.96",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-vdndp",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-78ddd45589-7c5wz",
             "x-is-trusted": "yes",
-            "x-real-ip": "34.96.41.212"
+            "x-real-ip": "34.96.62.17"
           },
           "params": {},
           "query": {},
           "body": {
-            "eventId": "b8c9de29-d60e-4d90-b3e4-4f08e682484d",
+            "eventId": "8696d5ae-04e3-4f4b-9f6a-345e16505b9d",
             "eventType": "FORM_RESPONSE",
-            "createdAt": "2025-12-18T18:22:42.531Z",
+            "createdAt": "2026-03-09T23:03:34.982Z",
             "data": {
-              "responseId": "KY44Do8",
-              "submissionId": "KY44Do8",
-              "respondentId": "2EXqaWD",
+              "responseId": "jadQak1",
+              "submissionId": "jadQak1",
+              "respondentId": "ZjNKebA",
               "formId": "mKvO6D",
               "formName": "Instrumental Triagem Jurídico I - Voluntárias",
-              "createdAt": "2025-12-18T18:22:42.000Z",
+              "createdAt": "2026-03-09T23:03:34.000Z",
               "fields": [
                 {
                   "key": "question_eDE14O",
                   "label": "nome_completo",
                   "type": "INPUT_TEXT",
-                  "value": "camila pastre "
+                  "value": "EDITE MONIQUE JANIEIDE CALDEIRA SOUZA"
                 },
                 {
                   "key": "question_Wr0Gya",
                   "label": "email_de_cadastro",
                   "type": "INPUT_EMAIL",
-                  "value": "camila.pastre3040@gmail.com"
+                  "value": "caldeiraedite2@gmail.com"
                 },
                 {
                   "key": "question_aeGbVq",
                   "label": "whatsapp",
                   "type": "INPUT_PHONE_NUMBER",
-                  "value": "+5541999365922"
+                  "value": "31986543022"
                 },
                 {
                   "key": "question_6exboB",
@@ -16359,7 +16359,7 @@
                   "label": "acolhida_reside_no_br",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "7261b59b-eb83-40f8-8267-8ab177dff69e"
+                    "2288b3ac-fd7e-41b9-9228-c4192b26ba9c"
                   ],
                   "options": [
                     {
@@ -16413,10 +16413,7 @@
                   "label": "tipos_de_violencia",
                   "type": "CHECKBOXES",
                   "value": [
-                    "0c27e694-9338-480b-8677-14fad59b7633",
-                    "b8ec661b-d759-412d-827a-53bbda4bcba3",
-                    "9c3ff2fe-4b7f-4ce1-804f-ea19023e5f49",
-                    "7aeed5cb-6c04-4175-b4cb-b1312a24f046"
+                    "d5424986-9955-42bb-b9fd-fa80c8326504"
                   ],
                   "options": [
                     {
@@ -16461,31 +16458,31 @@
                   "key": "question_BKBONN_7aeed5cb-6c04-4175-b4cb-b1312a24f046",
                   "label": "tipos_de_violencia (Física)",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_BKBONN_0c27e694-9338-480b-8677-14fad59b7633",
                   "label": "tipos_de_violencia (Psicológica)",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_BKBONN_b8ec661b-d759-412d-827a-53bbda4bcba3",
                   "label": "tipos_de_violencia (Moral)",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_BKBONN_9c3ff2fe-4b7f-4ce1-804f-ea19023e5f49",
                   "label": "tipos_de_violencia (Patrimonial)",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_BKBONN_d5424986-9955-42bb-b9fd-fa80c8326504",
                   "label": "tipos_de_violencia (Sexual)",
                   "type": "CHECKBOXES",
-                  "value": false
+                  "value": true
                 },
                 {
                   "key": "question_BKBONN_e74d628e-d61e-442f-afa9-881844cf61ec",
@@ -16516,7 +16513,7 @@
                   "label": "periodo_de_tempo_vbg",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "c983fa9e-840c-4d40-9a2e-e59d8a11b66b"
+                    "53e43cc4-ebf2-49f1-a467-fb4d514e9e80"
                   ],
                   "options": [
                     {
@@ -16550,8 +16547,7 @@
                   "label": "autor_da_violencia",
                   "type": "CHECKBOXES",
                   "value": [
-                    "3e774b16-61e9-475e-af31-d394c3d9588a",
-                    "2ed6cdad-7209-490b-b284-07bba7c7efa2"
+                    "3210ffd2-24fc-4af1-842f-03b8082bf50c"
                   ],
                   "options": [
                     {
@@ -16654,13 +16650,13 @@
                   "key": "question_vr27kQ_3e774b16-61e9-475e-af31-d394c3d9588a",
                   "label": "autor_da_violencia (Marido/Esposa/Companheiro(a))",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_vr27kQ_3210ffd2-24fc-4af1-842f-03b8082bf50c",
                   "label": "autor_da_violencia (Ex-namorado/Ex-namorada)",
                   "type": "CHECKBOXES",
-                  "value": false
+                  "value": true
                 },
                 {
                   "key": "question_vr27kQ_64ac14ae-03ad-4c78-93a9-09c30df42e33",
@@ -16684,14 +16680,14 @@
                   "key": "question_vr27kQ_2ed6cdad-7209-490b-b284-07bba7c7efa2",
                   "label": "autor_da_violencia (Outros)",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_d9lypd",
                   "label": "situacao_vulnerabilidade_baixa_renda",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "389066cb-681a-4712-a4c0-7989a58da8b8"
+                    "0aca98e1-9ecf-4d13-b962-cfaba03f0900"
                   ],
                   "options": [
                     {
@@ -16744,13 +16740,13 @@
                   "key": "question_1kEZqW",
                   "label": "nome_da_acolhida",
                   "type": "INPUT_TEXT",
-                  "value": "Suelen Medeiros dos Santos "
+                  "value": "ANA CLAUDIA "
                 },
                 {
                   "key": "question_MD5koX",
                   "label": "data_de_nascimento",
                   "type": "INPUT_DATE",
-                  "value": "1982-12-15"
+                  "value": "1995-09-19"
                 },
                 {
                   "key": "question_Jd0a5d",
@@ -16834,9 +16830,7 @@
                   "key": "question_XrqVZ4",
                   "label": "tem_cadunico",
                   "type": "MULTIPLE_CHOICE",
-                  "value": [
-                    "2856b767-9d14-467e-b4ca-232080a12a22"
-                  ],
+                  "value": null,
                   "options": [
                     {
                       "id": "0221eb15-0009-4c53-a561-69802a8d04ac",
@@ -17035,7 +17029,7 @@
                   "label": "situacao_moradia",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "562d9728-7df6-41fc-855e-fded39691c1a"
+                    "41faddac-4fc3-46be-ad10-8f2ee7a51e00"
                   ],
                   "options": [
                     {
@@ -17056,7 +17050,7 @@
                   "key": "question_lqRoJW",
                   "label": "cedida_por",
                   "type": "MULTIPLE_CHOICE",
-                  "value": [],
+                  "value": null,
                   "options": [
                     {
                       "id": "cdc6838c-ba8e-4588-aee6-61475b1162fd",
@@ -17099,7 +17093,7 @@
                   "label": "sente_segura_em_casa",
                   "type": "MULTIPLE_CHOICE",
                   "value": [
-                    "6a546bf6-3758-4545-bd15-9a38ae396b2f"
+                    "1b322f6c-26d5-4f9c-ae23-380a2b073326"
                   ],
                   "options": [
                     {
@@ -17397,7 +17391,6 @@
                   "label": "areas_direito_demanda_se_enquadra",
                   "type": "CHECKBOXES",
                   "value": [
-                    "3b491512-0895-413c-ad06-4bdcbe8e1d85",
                     "9b2631ad-3e1e-4efa-8c7f-cf75386c320f"
                   ],
                   "options": [
@@ -17427,7 +17420,7 @@
                   "key": "question_rBENzv_3b491512-0895-413c-ad06-4bdcbe8e1d85",
                   "label": "areas_direito_demanda_se_enquadra (Cível/Família)",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_rBENzv_9b2631ad-3e1e-4efa-8c7f-cf75386c320f",
@@ -17457,15 +17450,14 @@
                   "key": "question_4BjWeO",
                   "label": "demanda_inicial",
                   "type": "TEXTAREA",
-                  "value": "A vitima alega que se separou e fazer realizar a dissolução da união estavel , mas foi ameaçada indiretamente pela mãe do ex companheiro , disse ainda estar passando por humilhação , posto ainda estar morando na casa . Alega ainda ter começado um empreendimento \\ uma empresa de alimentos , onde seu ex companheiro alega que a mesma não teria direito a nada . Bem como alega que a vitima não terá direito ao seu plano de saúde mais partir do ano que vem e que precisa realizar  uma cirurgia, a qual deixou de realizar para cuidar dos negócios da empresa . "
+                  "value": "1. Motivo da procura pelo atendimento\nA assistida buscou orientação junto ao Mapa do Acolhimento para compreender:\n•\tquais medidas legais poderiam ser adotadas diante da situação relatada;\n•\ta possibilidade de registro de boletim de ocorrência;\n•\tformas seguras de denúncia ou exposição da situação dentro dos espaços de ativismo;\n•\torientações sobre proteção jurídica diante de possíveis ameaças de processo.\n\n2. Orientações iniciais\n\nDurante o atendimento, foram apresentadas orientações iniciais acerca:\n•\tda possibilidade de registro de boletim de ocorrência, caso a assistida entenda necessário;\n•\tda importância de preservação de provas e registros de conversas;\n•\tda necessidade de avaliar com cautela eventuais exposições públicas para evitar riscos jurídicos.\n\n3. Encaminhamento\nA assistida informou que irá refletir sobre as orientações recebidas e ficou de retornar após tomar uma decisão sobre as medidas que pretende adotar.\n\n\nRessalta-se que as informações acima registradas correspondem ao relato apresentado pela assistida durante o atendimento, tendo sido apenas organizadas para fins de registro e orientação inicial, não constituindo afirmação de veracidade dos fatos pela profissional responsável pelo acolhimento.\n"
                 },
                 {
                   "key": "question_jbxd1E",
                   "label": "encaminhamento",
                   "type": "CHECKBOXES",
                   "value": [
-                    "fa29891a-610e-4c15-93fb-005d797abe76",
-                    "a8fec9ae-920a-446b-b48c-d5acdd53e284"
+                    "fa29891a-610e-4c15-93fb-005d797abe76"
                   ],
                   "options": [
                     {
@@ -17504,7 +17496,7 @@
                   "key": "question_jbxd1E_a8fec9ae-920a-446b-b48c-d5acdd53e284",
                   "label": "encaminhamento (Entrada de ação/ações)",
                   "type": "CHECKBOXES",
-                  "value": true
+                  "value": false
                 },
                 {
                   "key": "question_jbxd1E_b710a496-683b-415c-9891-adf6ea7156a5",
@@ -17643,6 +17635,9 @@
           },
           "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/triagem-jur-1",
           "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
         }
       }
     ]
@@ -17674,7 +17669,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-09T13:09:38.000Z",
+              "updatedAt": "2026-03-10T11:57:23.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -17694,7 +17689,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-09",
+              "lastActiveAt": "2026-03-10",
               "isPending": false
             }
           }
@@ -17705,7 +17700,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 13,
-  "updatedAt": "2026-01-27T20:13:55.000Z",
-  "versionCounter": 4,
-  "versionId": "f6445a7f-49bc-4ed9-a0f6-47999ad0d237"
+  "updatedAt": "2026-03-10T20:20:39.685Z",
+  "versionCounter": 6,
+  "versionId": "4df6aae0-193d-4bfa-a769-ffa8bd8fcec9"
 }
