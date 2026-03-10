@@ -2,14 +2,160 @@
   "active": false,
   "activeVersion": null,
   "activeVersionId": null,
-  "connections": {},
+  "connections": {
+    "Envia Instrumental d90": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envia Instrumental d90",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "createdAt": "2026-03-09T18:53:47.099Z",
   "description": null,
   "id": "eTQCbbWza7CWSNWB",
   "isArchived": false,
   "meta": null,
   "name": "[WIP][PROD] Envio novos instrumentais voluntárias",
-  "nodes": [],
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -320,
+        -64
+      ],
+      "id": "fb7eec8e-fc8d-4017-abd9-05f71b3a7d11",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "id": "f4f89f70-f744-4ade-bf7f-53d1705aeb60",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        512,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmj3hy6n05hb0iwghjyrv3zy\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "7cfe0eac-1714-4594-a770-eac30284a0cc",
+      "name": "Envia Instrumental d90",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        720,
+        -48
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a5f8d9ad-9b47-4e62-af4c-ea61664940f5",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        240,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "60ce9874-bc76-4d4b-9b3e-31fc651db06c",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        -48
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM matches m\nINNER JOIN volunteers v             ON v.id = m.volunteer_id\nINNER JOIN msr_pii p                ON p.msr_id = m.msr_id\nINNER JOIN match_status_history msh ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '45 DAY'\n    AND m.status NOT IN (\n        'expired',\n        'interrupted_before_support',\n        'interrupted_after_support',\n        'completed',\n        'waiting_contact'\n    )\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "4c4fc450-e62a-48a3-9592-842afc581f86",
+      "name": "busca volunts PSI com status in_contact ha 45 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -96,
+        -64
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
   "pinData": {},
   "settings": {
     "executionOrder": "v1"
@@ -36,7 +182,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-09T13:09:38.000Z",
+              "updatedAt": "2026-03-10T11:57:23.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -56,7 +202,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-09",
+              "lastActiveAt": "2026-03-10",
               "isPending": false
             }
           }
@@ -67,7 +213,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-03-09T18:53:47.099Z",
-  "versionCounter": 1,
-  "versionId": "402ec6a6-c7b9-4ec7-a6b3-02d025d33aa6"
+  "updatedAt": "2026-03-10T20:20:03.376Z",
+  "versionCounter": 3,
+  "versionId": "9359365d-5aee-48ca-805a-05f834a775cb"
 }
