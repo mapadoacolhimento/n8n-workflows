@@ -3,17 +3,6 @@
   "activeVersion": null,
   "activeVersionId": null,
   "connections": {
-    "Envia Instrumental d90": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items": {
       "main": [
         [
@@ -36,7 +25,109 @@
       "main": [
         [
           {
-            "node": "Envia Instrumental d90",
+            "node": "Envia Instrumental I d45",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental I d45": {
+      "main": [
+        [
+          {
+            "node": "insere voluntária na instrumental_record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 15 dias com Instrumental Acomp I",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 15 dias com Instrumental Acomp I": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 30 dias com Instrumental Acomp I",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 30 dias com Instrumental Acomp I": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere voluntária na instrumental_record": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -64,8 +155,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        -320,
-        -64
+        -3200,
+        -128
       ],
       "id": "fb7eec8e-fc8d-4017-abd9-05f71b3a7d11",
       "name": "Schedule Trigger"
@@ -77,9 +168,57 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        512,
-        -240
+        -2432,
+        -320
       ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a5f8d9ad-9b47-4e62-af4c-ea61664940f5",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2704,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "60ce9874-bc76-4d4b-9b3e-31fc651db06c",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2432,
+        -128
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '45 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "4c4fc450-e62a-48a3-9592-842afc581f86",
+      "name": "busca volunts PSI com status in_contact ha 45 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2976,
+        -128
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     },
     {
       "parameters": {
@@ -93,12 +232,12 @@
         "options": {}
       },
       "id": "7cfe0eac-1714-4594-a770-eac30284a0cc",
-      "name": "Envia Instrumental d90",
+      "name": "Envia Instrumental I d45",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        720,
-        -48
+        -2224,
+        -128
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -109,44 +248,31 @@
     },
     {
       "parameters": {
-        "options": {}
+        "content": "Fluxo Instrumental Psicológico I ",
+        "height": 80
       },
-      "id": "a5f8d9ad-9b47-4e62-af4c-ea61664940f5",
-      "name": "Loop Over Items",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
-        240,
-        -64
-      ]
-    },
-    {
-      "parameters": {
-        "amount": 3
-      },
-      "id": "60ce9874-bc76-4d4b-9b3e-31fc651db06c",
-      "name": "Wait",
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [
-        512,
-        -48
+        -3216,
+        -288
       ],
-      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      "id": "f2d39e52-e193-4fb2-94a1-310f55a77af4",
+      "name": "Sticky Note"
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM matches m\nINNER JOIN volunteers v             ON v.id = m.volunteer_id\nINNER JOIN msr_pii p                ON p.msr_id = m.msr_id\nINNER JOIN match_status_history msh ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '45 DAY'\n    AND m.status NOT IN (\n        'expired',\n        'interrupted_before_support',\n        'interrupted_after_support',\n        'completed',\n        'waiting_contact'\n    )\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status NOT IN (\n        'expired',\n        'interrupted_before_support',\n        'interrupted_after_support',\n        'completed',\n        'waiting_contact'\n    )\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
         "options": {}
       },
-      "id": "4c4fc450-e62a-48a3-9592-842afc581f86",
-      "name": "busca volunts PSI com status in_contact ha 45 dias",
+      "id": "37803cd2-7a36-4b21-a92b-1a11087fe71a",
+      "name": "não responderam instrumental I - 15 dias ",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -96,
-        -64
+        -2976,
+        304
       ],
       "credentials": {
         "postgres": {
@@ -154,6 +280,200 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM matches m\nINNER JOIN volunteers v             ON v.id = m.volunteer_id\nINNER JOIN msr_pii p                ON p.msr_id = m.msr_id\nINNER JOIN match_status_history msh ON msh.match_id = m.match_id\nINNER JOIN volunteer_instrumental_record vir ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status NOT IN (\n        'expired',\n        'interrupted_before_support',\n        'interrupted_after_support',\n        'completed',\n        'waiting_contact'\n    )\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "0aa131cf-efe4-47fc-af7f-dade036e73f8",
+      "name": "não responderam instrumental I - 30 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2976,
+        736
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "67bbf64e-ce92-47bd-ad26-7479950262cc",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2416,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1cbba9f0-39bf-4823-805d-ae6911888dbd",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2688,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "3e0fdcad-fe9f-4a9f-9e4b-deb8ac6ce9ba",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2416,
+        320
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmj9f2br0smq0iwlal2snwcu\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "da6533c8-50ab-451b-9988-9d13fc6cb1d7",
+      "name": "Envia Lembrete 15 dias com Instrumental Acomp I",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2208,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "fa02eeb4-de37-4a37-a36b-012db2a286a6",
+      "name": "No Operation, do nothing2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2416,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "77005f93-7471-4bcb-aba7-4744816e21cd",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2688,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "0be489b3-0cbd-4210-ac8d-ac4af75d0be9",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2416,
+        752
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"/cmmj9w4zh17zk0jxxj19485u0\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "729f000b-61b0-4290-96c1-023e12c10859",
+      "name": "Envia Lembrete 30 dias com Instrumental Acomp I",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2208,
+        752
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    '{{ $json.match_id }}',\n    '{{ $json.volunteer_id }}',\n    'psychological_support_follow_up_i',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "8e9f0c5c-934e-4eba-9be9-da99c9df8fb3",
+      "name": "insere voluntária na instrumental_record",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2016,
+        -128
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Instrumental de Acompanhamento Psicológico I no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "d2a2ec95-99ac-4814-abe0-fc129a8269ed",
+      "name": "Adiciona comentário interno",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        -80
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -182,7 +502,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-10T11:57:23.000Z",
+              "updatedAt": "2026-03-11T12:23:53.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -202,7 +522,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-10",
+              "lastActiveAt": "2026-03-11",
               "isPending": false
             }
           }
@@ -213,7 +533,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-03-10T20:20:03.376Z",
-  "versionCounter": 3,
-  "versionId": "9359365d-5aee-48ca-805a-05f834a775cb"
+  "updatedAt": "2026-03-11T17:57:09.219Z",
+  "versionCounter": 11,
+  "versionId": "e415f3c5-cc00-4b0b-954d-29c5893480dd"
 }
