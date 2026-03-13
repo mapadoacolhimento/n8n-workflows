@@ -76,7 +76,7 @@
       "main": [
         [
           {
-            "node": "insere voluntária na instrumental_record1",
+            "node": "Adiciona comentário interno1",
             "type": "main",
             "index": 0
           }
@@ -161,17 +161,6 @@
         [
           {
             "node": "busca volunts PSI com status in_contact ha 45 dias",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "insere voluntária na instrumental_record1": {
-      "main": [
-        [
-          {
-            "node": "Adiciona comentário interno1",
             "type": "main",
             "index": 0
           }
@@ -329,7 +318,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status NOT IN (\n        'expired',\n        'interrupted_before_support',\n        'interrupted_after_support',\n        'completed',\n        'waiting_contact'\n    )\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'lawyer'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "37803cd2-7a36-4b21-a92b-1a11087fe71a",
@@ -342,8 +331,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
     },
@@ -414,7 +403,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmmj9f2br0smq0iwlal2snwcu\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.email }}\"\n  }\n}",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmj9f2br0smq0iwlal2snwcu\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
         "options": {}
       },
       "id": "da6533c8-50ab-451b-9988-9d13fc6cb1d7",
@@ -543,31 +532,10 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('não responderam instrumental I - 15 dias ').item.json.match_id }},\n    {{ $('não responderam instrumental I - 15 dias ').item.json.volunteer_id }},\n    'legal_support_follow_up_i',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
-        "options": {}
-      },
-      "id": "625913f6-9256-43fa-abe3-58dc666e2a5d",
-      "name": "insere voluntária na instrumental_record1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        -2000,
-        320
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
         "operation": "update",
         "id": "={{ $('não responderam instrumental I - 15 dias ').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "=A voluntária recebeu o Lembreta para preencher o Instrumental de Acompanhamento Psicológico I no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          "internalNote": "=A voluntária recebeu o Lembrete para preencher o Instrumental de Acompanhamento Psicológico I no dia {{ $now.toFormat('dd/MM/yyyy') }}"
         }
       },
       "id": "f2d99e08-c71d-467d-a8cf-ad685004986a",
@@ -575,7 +543,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        -1808,
+        -1984,
         320
       ],
       "credentials": {
@@ -632,7 +600,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-12T12:20:34.000Z",
+              "updatedAt": "2026-03-13T13:05:53.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -652,7 +620,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-12",
+              "lastActiveAt": "2026-03-13",
               "isPending": false
             }
           }
@@ -663,7 +631,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-03-12T19:52:38.800Z",
-  "versionCounter": 16,
-  "versionId": "4cbabb81-03c4-4a31-9b13-361c3ce8e8ad"
+  "updatedAt": "2026-03-13T15:07:35.401Z",
+  "versionCounter": 20,
+  "versionId": "859fc2b6-e24f-4ac0-9882-e3be54519fab"
 }
