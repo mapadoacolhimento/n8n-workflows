@@ -408,22 +408,11 @@
         ]
       ]
     },
-    "atualiza voluntária na instrumental_record": {
-      "main": [
-        [
-          {
-            "node": "Adiciona comentário interno3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Envia Instrumental II": {
       "main": [
         [
           {
-            "node": "atualiza voluntária na instrumental_record",
+            "node": "insere instrumental_type na instrumental_record",
             "type": "main",
             "index": 0
           }
@@ -697,7 +686,7 @@
       "main": [
         [
           {
-            "node": "busca volunts ADv com status in_contact ha 90 dias",
+            "node": "busca volunts ADV com status in_contact ha 90 dias",
             "type": "main",
             "index": 0
           }
@@ -857,22 +846,11 @@
         ]
       ]
     },
-    "atualiza voluntária na instrumental_record1": {
-      "main": [
-        [
-          {
-            "node": "Adiciona comentário interno11",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Envia Instrumental II1": {
       "main": [
         [
           {
-            "node": "atualiza voluntária na instrumental_record1",
+            "node": "insere instrumental_type na instrumental_record1",
             "type": "main",
             "index": 0
           }
@@ -912,11 +890,33 @@
         ]
       ]
     },
-    "busca volunts ADv com status in_contact ha 90 dias": {
+    "insere instrumental_type na instrumental_record": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca volunts ADV com status in_contact ha 90 dias": {
       "main": [
         [
           {
             "node": "Loop Over Items9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere instrumental_type na instrumental_record1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno11",
             "type": "main",
             "index": 0
           }
@@ -1052,7 +1052,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "37803cd2-7a36-4b21-a92b-1a11087fe71a",
@@ -1073,7 +1073,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "0aa131cf-efe4-47fc-af7f-dade036e73f8",
@@ -1086,8 +1086,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
     },
@@ -1310,7 +1310,7 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $('não responderam instrumental I - 30 dias ').item.json.volunteer_zendesk_ticket_id }}",
+        "id": "={{ $('não responderam instrumental I - 30 dias').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o Instrumental de Acompanhamento Psicológico I no dia {{ $now.toFormat('dd/MM/yyyy') }}"
         }
@@ -1658,27 +1658,6 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE survey.volunteer_instrumental_record\nSET\n    instrumental_type = 'psychological_support_follow_up_ii',\n    status = 'sent',\n    sent_at = NOW(),\n    updated_at = NOW()\nWHERE match_id = {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.match_id }}\n  AND volunteer_id = {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.volunteer_id }}\n  AND instrumental_type = 'psychological_support_follow_up_i'",
-        "options": {}
-      },
-      "id": "907a8255-4d4c-482a-b9e6-347e3a2e6407",
-      "name": "atualiza voluntária na instrumental_record",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        -2064,
-        1472
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -1730,7 +1709,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "ddca924a-a2c4-49e9-ad0b-ce2424e9d77a",
@@ -1751,7 +1730,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "b04d9009-c348-4d18-ae4e-d0c5a8aa9acf",
@@ -1869,7 +1848,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'legal'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'legal'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "8982480a-77da-446c-afae-ff88b541b28d",
@@ -1890,7 +1869,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'psychologist'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'lawyer'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "326a4779-2c15-4a07-875c-fabc88a6ab81",
@@ -1903,8 +1882,8 @@
       ],
       "credentials": {
         "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
     },
@@ -2475,27 +2454,6 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE survey.volunteer_instrumental_record\nSET\n    instrumental_type = 'psychological_support_follow_up_ii',\n    status = 'sent',\n    sent_at = NOW(),\n    updated_at = NOW()\nWHERE match_id = {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.match_id }}\n  AND volunteer_id = {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.volunteer_id }}\n  AND instrumental_type = 'psychological_support_follow_up_i'",
-        "options": {}
-      },
-      "id": "933fd132-aad8-41b1-b4f6-673107d7e0dd",
-      "name": "atualiza voluntária na instrumental_record1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [
-        -176,
-        1504
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
@@ -2523,7 +2481,7 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $('busca volunts ADv com status in_contact ha 90 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "id": "={{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=A voluntária recebeu o Instrumental de Acompanhamento Jurídico II no dia {{ $now.toFormat('dd/MM/yyyy') }}"
         }
@@ -2547,7 +2505,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'lawyer'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'lawyer'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "6be1b03e-07c3-424b-b4c1-fdb4ed8f6556",
@@ -2568,7 +2526,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'lawyer'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND v.occupation = 'lawyer'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "2989251b-8917-4217-b1fc-ac5b9ecb476b",
@@ -2589,16 +2547,58 @@
     {
       "parameters": {
         "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.match_id }},\n    {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.volunteer_id }},\n    'psychological_support_follow_up_ii',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "907a8255-4d4c-482a-b9e6-347e3a2e6407",
+      "name": "insere instrumental_type na instrumental_record",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2064,
+        1472
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
         "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "7b0f9e9d-002a-4d70-b587-32317e2efe63",
-      "name": "busca volunts ADv com status in_contact ha 90 dias",
+      "name": "busca volunts ADV com status in_contact ha 90 dias",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
         -1136,
         1488
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.match_id }},\n    {{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.volunteer_id }},\n    'legal_support_follow_up_ii',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "933fd132-aad8-41b1-b4f6-673107d7e0dd",
+      "name": "insere instrumental_type na instrumental_record1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -176,
+        1504
       ],
       "credentials": {
         "postgres": {
@@ -2634,7 +2634,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-15T23:13:30.000Z",
+              "updatedAt": "2026-03-16T10:58:06.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -2654,7 +2654,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-15",
+              "lastActiveAt": "2026-03-16",
               "isPending": false
             }
           }
@@ -2665,7 +2665,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-03-14T13:57:26.373Z",
-  "versionCounter": 27,
-  "versionId": "5b6306c1-739c-4080-8910-ff45c215c34f"
+  "updatedAt": "2026-03-16T15:11:28.465Z",
+  "versionCounter": 32,
+  "versionId": "d027291f-e367-442b-9545-a3e2ab0de04b"
 }
