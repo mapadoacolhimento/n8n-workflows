@@ -1,0 +1,215 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-03-18T21:26:52.557Z",
+    "createdAt": "2026-03-18T21:26:52.557Z",
+    "versionId": "f67419fa-f535-4d7a-8723-166e335d2b17",
+    "workflowId": "MwqtjrooETHGDdmp",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "### ACOMPANHAMENTO",
+          "height": 80,
+          "width": 432,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -320,
+          -208
+        ],
+        "typeVersion": 1,
+        "id": "6db7f96c-b978-4abd-85ba-195e9f0c2d8a",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "acompanha-psi-1",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -288,
+          -48
+        ],
+        "id": "7970dea5-7685-48ba-b0f4-e7560a8185e8",
+        "name": "Webhook",
+        "webhookId": "d1cb0856-2641-47a3-954f-2bf9ad0ba715",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\nfunction getTextAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'TEXTAREA' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.value;\n\n  return answer\n}\nlet answers = {}\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, \"match_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const volunteerFirstName = getHiddenFieldValue(item, \"volunteer_first_name\")\n\n  const dados_acolhida = {\n    disability_type: getArrayAnswer(item, 'disability_type')\n  }\n  const contrato_atendimento = {\n    support_start_date: getUniqueAnswer(item, 'support_start_date'),\n    has_pro_bono_contract: getUniqueAnswer(item, 'has_pro_bono_contrac'),\n    has_absence_policy: getUniqueAnswer(item, 'has_absence_policy'),\n    contract_format: getUniqueAnswer(item, 'contract_format'),\n    safe_contact_methods: getArrayAnswer(item,'safe_contact_methods')\n  } \n\n  const sobre_violencia = {\n    violence_awareness:getUniqueAnswer(item, 'violence_awareness'),\n    violence_types: getArrayAnswer(item, 'violence_types'),\n    behavioral_impacts: getArrayAnswer(item, 'behavioral_impacts'),\n    relationship_impacts: getArrayAnswer(item, 'relationship_impacts'),\n    socioeconomic_impacts: getArrayAnswer(item, 'socioeconomic_impacts'),\n    security_impacts: getArrayAnswer(item, 'security_impacts'),\n    violence_assessment: getTextAnswer(item, 'violence_assessment'),\n  }\n\n  const acompanhamento_psicologico = {\n    main_demand: getArrayAnswer(item, 'main_demand'),\n    case_conduction_details: getTextAnswer(item, 'case_conduction_details'),\n    safety_plan_used: getUniqueAnswer(item, 'safety_plan_used'),\n    safety_plan_description: getTextAnswer(item, 'safety_plan_description'),\n    clinical_difficulties_exist: getUniqueAnswer(item, 'clinical_difficulties_exist'),\n    clinical_difficulties: getTextAnswer(item, 'clinical_difficulties'),\n    bonding_strategies: getTextAnswer(item,'bonding_strategies')\n  } \n\n  const encaminhamento = {\n    case_referrals: getArrayAnswer(item, 'case_referrals'),\n    public_service_referral_reason: getUniqueAnswer(item, 'public_service_referral_reason'),\n    public_services_articulated: getArrayAnswer(item,'public_services_articulated')\n  }\n\n  const acompanhamento_juridico = {\n    lawyer_contact: getUniqueAnswer(item, 'lawyer_contact'),\n    lawyer_collaboration: getUniqueAnswer(item, 'lawyer_collaboration')\n  }\n\n  const situacoes_criticas = {\n    suicide_risk_concern: getUniqueAnswer(item, 'suicide_risk_concern'),\n    has_psychiatric_support: getUniqueAnswer(item, 'has_psychiatric_support')\n  }\n\n  const volunteer_experience = {\n    volunteer_feelings: getTextAnswer(item,'volunteer_feelings')\n  }\n\n  const suporte_mapa = {\n    need_technical_support_last_45D: getUniqueAnswer(item, 'need_technical_support_last_45D'),\n    technical_support_help: getUniqueAnswer(item, 'technical_support_help'),\n    still_need_help: getTextAnswer(item, 'still_need_help'),\n    support_satisfaction: getUniqueAnswer(item, 'support_satisfaction')\n  }\n\n  const suggestions = getTextAnswer(item, 'suggestions')\n\n  answers = {\n    dados_acolhida,\n    contrato_atendimento,\n    sobre_violencia,\n    acompanhamento_psicologico,\n    encaminhamento,\n    acompanhamento_juridico,\n    situacoes_criticas,\n    volunteer_experience,\n    suporte_mapa,\n    suggestions,\n    matchId,\n    volunteerFirstName,\n    msrFirstName\n  }\n}\n\nreturn answers;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -80,
+          -48
+        ],
+        "id": "c0aceacb-22d9-44a6-96cf-dbb66d2a155b",
+        "name": "Code in JavaScript"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Desenvolvimento Mapa",
+    "name": null,
+    "description": null
+  },
+  "activeVersionId": "f67419fa-f535-4d7a-8723-166e335d2b17",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-03-18T01:10:38.893Z",
+  "description": null,
+  "id": "MwqtjrooETHGDdmp",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Recebe Respostas dos Instrumentais Voluntárias",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "### ACOMPANHAMENTO",
+        "height": 80,
+        "width": 432,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "6db7f96c-b978-4abd-85ba-195e9f0c2d8a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "acompanha-psi-1",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -288,
+        -48
+      ],
+      "id": "7970dea5-7685-48ba-b0f4-e7560a8185e8",
+      "name": "Webhook",
+      "webhookId": "d1cb0856-2641-47a3-954f-2bf9ad0ba715",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  ).text;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return null\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\nfunction getTextAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'TEXTAREA' && element.label === fieldLabel\n  );\n\n  if(!field.value) return null\n  \n  const answer = field.value;\n\n  return answer\n}\nlet answers = {}\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, \"match_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const volunteerFirstName = getHiddenFieldValue(item, \"volunteer_first_name\")\n\n  const dados_acolhida = {\n    disability_type: getArrayAnswer(item, 'disability_type')\n  }\n  const contrato_atendimento = {\n    support_start_date: getUniqueAnswer(item, 'support_start_date'),\n    has_pro_bono_contract: getUniqueAnswer(item, 'has_pro_bono_contrac'),\n    has_absence_policy: getUniqueAnswer(item, 'has_absence_policy'),\n    contract_format: getUniqueAnswer(item, 'contract_format'),\n    safe_contact_methods: getArrayAnswer(item,'safe_contact_methods')\n  } \n\n  const sobre_violencia = {\n    violence_awareness:getUniqueAnswer(item, 'violence_awareness'),\n    violence_types: getArrayAnswer(item, 'violence_types'),\n    behavioral_impacts: getArrayAnswer(item, 'behavioral_impacts'),\n    relationship_impacts: getArrayAnswer(item, 'relationship_impacts'),\n    socioeconomic_impacts: getArrayAnswer(item, 'socioeconomic_impacts'),\n    security_impacts: getArrayAnswer(item, 'security_impacts'),\n    violence_assessment: getTextAnswer(item, 'violence_assessment'),\n  }\n\n  const acompanhamento_psicologico = {\n    main_demand: getArrayAnswer(item, 'main_demand'),\n    case_conduction_details: getTextAnswer(item, 'case_conduction_details'),\n    safety_plan_used: getUniqueAnswer(item, 'safety_plan_used'),\n    safety_plan_description: getTextAnswer(item, 'safety_plan_description'),\n    clinical_difficulties_exist: getUniqueAnswer(item, 'clinical_difficulties_exist'),\n    clinical_difficulties: getTextAnswer(item, 'clinical_difficulties'),\n    bonding_strategies: getTextAnswer(item,'bonding_strategies')\n  } \n\n  const encaminhamento = {\n    case_referrals: getArrayAnswer(item, 'case_referrals'),\n    public_service_referral_reason: getUniqueAnswer(item, 'public_service_referral_reason'),\n    public_services_articulated: getArrayAnswer(item,'public_services_articulated')\n  }\n\n  const acompanhamento_juridico = {\n    lawyer_contact: getUniqueAnswer(item, 'lawyer_contact'),\n    lawyer_collaboration: getUniqueAnswer(item, 'lawyer_collaboration')\n  }\n\n  const situacoes_criticas = {\n    suicide_risk_concern: getUniqueAnswer(item, 'suicide_risk_concern'),\n    has_psychiatric_support: getUniqueAnswer(item, 'has_psychiatric_support')\n  }\n\n  const volunteer_experience = {\n    volunteer_feelings: getTextAnswer(item,'volunteer_feelings')\n  }\n\n  const suporte_mapa = {\n    need_technical_support_last_45D: getUniqueAnswer(item, 'need_technical_support_last_45D'),\n    technical_support_help: getUniqueAnswer(item, 'technical_support_help'),\n    still_need_help: getTextAnswer(item, 'still_need_help'),\n    support_satisfaction: getUniqueAnswer(item, 'support_satisfaction')\n  }\n\n  const suggestions = getTextAnswer(item, 'suggestions')\n\n  answers = {\n    dados_acolhida,\n    contrato_atendimento,\n    sobre_violencia,\n    acompanhamento_psicologico,\n    encaminhamento,\n    acompanhamento_juridico,\n    situacoes_criticas,\n    volunteer_experience,\n    suporte_mapa,\n    suggestions,\n    matchId,\n    volunteerFirstName,\n    msrFirstName\n  }\n}\n\nreturn answers;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -48
+      ],
+      "id": "c0aceacb-22d9-44a6-96cf-dbb66d2a155b",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-03-18T01:10:38.895Z",
+      "createdAt": "2026-03-18T01:10:38.895Z",
+      "role": "workflow:owner",
+      "workflowId": "MwqtjrooETHGDdmp",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "updatedAt": "2026-03-18T11:34:37.000Z",
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766005013760
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-03-18",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-18T21:26:52.557Z",
+  "versionCounter": 9,
+  "versionId": "f67419fa-f535-4d7a-8723-166e335d2b17"
+}
