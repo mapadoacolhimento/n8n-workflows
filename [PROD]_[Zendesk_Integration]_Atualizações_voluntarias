@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-02-27T02:22:11.327Z",
-    "createdAt": "2026-02-27T02:22:11.327Z",
-    "versionId": "8bec1a7f-0166-47ba-b8c0-6b9ffacc2cc4",
+    "updatedAt": "2026-04-01T12:06:55.703Z",
+    "createdAt": "2026-04-01T12:06:55.703Z",
+    "versionId": "b5a6e64e-6a22-4524-9a3b-9bb1cc06db82",
     "workflowId": "e6Zjg1Mil9gzsS1f",
     "nodes": [
       {
@@ -18,48 +18,6 @@
           -320,
           720
         ]
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "=SELECT \n\tid AS volunteer_id, \n\tcondition AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    {{$json[\"is_available\"]}} AS is_available \nFROM public.volunteers\nWHERE zendesk_user_id = {{$json[\"zendesk_user_id\"]}}::BIGINT\nLIMIT 1",
-          "additionalFields": {}
-        },
-        "id": "91c708d8-7bfa-47c6-9f6b-576aeeb9f2ec",
-        "name": "Fetch volunteer_id and status",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 1,
-        "position": [
-          -100,
-          720
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "=UPDATE public.volunteers\nSET condition = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = {{$json[\"is_available\"]}}::boolean, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
-          "additionalFields": {}
-        },
-        "id": "3fce4837-dd3e-49c9-93ae-2dd5ff9efeb0",
-        "name": "Update volunteer status",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 1,
-        "position": [
-          420,
-          700
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
       },
       {
         "parameters": {
@@ -101,7 +59,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 1,
         "position": [
-          120,
+          128,
           720
         ]
       },
@@ -112,8 +70,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          420,
-          900
+          432,
+          912
         ]
       },
       {
@@ -127,8 +85,8 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          -580,
-          620
+          -576,
+          624
         ]
       },
       {
@@ -143,7 +101,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 1,
         "position": [
-          -600,
+          -608,
           1280
         ],
         "webhookId": "9d744de2-fa09-49fe-909e-a3a86e3154a1",
@@ -156,27 +114,6 @@
       },
       {
         "parameters": {
-          "operation": "executeQuery",
-          "query": "=SELECT \n\tmatch_id, \n    '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nLIMIT 1",
-          "additionalFields": {}
-        },
-        "id": "ab4be411-5ba3-4b73-a129-ca1e1b4347f2",
-        "name": "Fetch match_id",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 1,
-        "position": [
-          -160,
-          1280
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
-      },
-      {
-        "parameters": {
           "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"atendimento_triagem_1\": \"triagem_1\",\n      \"atendimento_triagem_2\": \"triagem_2\",\n      \"atendimento_acompanhamento_1\": \"acompanhamento_1\",\n      \"atendimento_acompanhamento_2\": \"acompanhamento_2\"\n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const survey_type = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"survey_type\": survey_type\n  }\n  output.push(newItem)\n}\n\nreturn output;"
         },
         "id": "f066a751-5e90-4861-b545-3896d9d365cd",
@@ -184,14 +121,14 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 1,
         "position": [
-          -380,
+          -384,
           1280
         ]
       },
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "=INSERT INTO match.match_surveys (match_id, survey_type, created_at, updated_at)\nVALUES ({{$node[\"Fetch match_id\"].json[\"match_id\"]}}, '{{$node[\"Fetch match_id\"].json[\"survey_type\"]}}', NOW(), NOW());",
+          "query": "INSERT INTO match.match_surveys (match_id, survey_type, created_at, updated_at)\nVALUES ({{$node[\"Fetch match_id\"].json[\"match_id\"]}}, '{{$node[\"Fetch match_id\"].json[\"survey_type\"]}}', NOW(), NOW());",
           "additionalFields": {}
         },
         "id": "f6aa8970-07ef-4dfb-9b53-534572102d35",
@@ -199,31 +136,9 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 1,
         "position": [
-          520,
-          1260
+          528,
+          1264
         ],
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "=SELECT\n   match_survey_id,\n   {{$json[\"match_id\"]}} AS match_id,\n   '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.match_surveys\nWHERE match_id = {{$json[\"match_id\"]}}\nAND survey_type = '{{$json[\"survey_type\"]}}'",
-          "additionalFields": {}
-        },
-        "id": "d63cfab6-4454-4805-967d-29298c7d79e1",
-        "name": "Fetch past survey",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 1,
-        "position": [
-          60,
-          1280
-        ],
-        "alwaysOutputData": true,
         "credentials": {
           "postgres": {
             "id": "c5mNsjWNXx3mw1Fh",
@@ -247,7 +162,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 1,
         "position": [
-          300,
+          304,
           1280
         ]
       },
@@ -258,7 +173,7 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          520,
+          528,
           1520
         ]
       },
@@ -273,9 +188,93 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          -600,
-          1160
+          -608,
+          1168
         ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n   match_survey_id,\n   {{$json[\"match_id\"]}} AS match_id,\n   '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.match_surveys\nWHERE match_id = {{$json[\"match_id\"]}}\nAND survey_type = '{{$json[\"survey_type\"]}}'",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          96,
+          1280
+        ],
+        "id": "64503bda-b96a-43b6-8326-7962e051c32c",
+        "name": "Fetch past survey",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n\tmatch_id, \n    '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nLIMIT 1",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          -160,
+          1280
+        ],
+        "id": "4a45651e-ab6d-4f2b-b3ce-1a814ade7168",
+        "name": "Fetch match_id",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n\tid AS volunteer_id, \n\tcondition AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    {{$json[\"is_available\"]}} AS is_available \nFROM public.volunteers\nWHERE zendesk_user_id = {{$json[\"zendesk_user_id\"]}}::BIGINT\nLIMIT 1",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          -80,
+          720
+        ],
+        "id": "5b0f7a43-62de-4877-942d-daa520a2713c",
+        "name": "Fetch volunteer_id and status1",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE public.volunteers\nSET condition = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = {{$json[\"is_available\"]}}::boolean, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          384,
+          704
+        ],
+        "id": "4dd26655-8233-4497-801f-058a76dcca2f",
+        "name": "Update volunteer status1",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
       }
     ],
     "connections": {
@@ -283,18 +282,7 @@
         "main": [
           [
             {
-              "node": "Fetch volunteer_id and status",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Fetch volunteer_id and status": {
-        "main": [
-          [
-            {
-              "node": "Is it a new status?1",
+              "node": "Fetch volunteer_id and status1",
               "type": "main",
               "index": 0
             }
@@ -316,7 +304,7 @@
         "main": [
           [
             {
-              "node": "Update volunteer status",
+              "node": "Update volunteer status1",
               "type": "main",
               "index": 0
             }
@@ -341,33 +329,11 @@
           ]
         ]
       },
-      "Fetch match_id": {
-        "main": [
-          [
-            {
-              "node": "Fetch past survey",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Extracts zendesk_ticket_id and survey_type": {
         "main": [
           [
             {
               "node": "Fetch match_id",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Fetch past survey": {
-        "main": [
-          [
-            {
-              "node": "Is it a new survey?",
               "type": "main",
               "index": 0
             }
@@ -391,30 +357,52 @@
             }
           ]
         ]
+      },
+      "Fetch past survey": {
+        "main": [
+          [
+            {
+              "node": "Is it a new survey?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch match_id": {
+        "main": [
+          [
+            {
+              "node": "Fetch past survey",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch volunteer_id and status1": {
+        "main": [
+          [
+            {
+              "node": "Is it a new status?1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
-    "authors": "system migration",
+    "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "8bec1a7f-0166-47ba-b8c0-6b9ffacc2cc4",
+  "activeVersionId": "b5a6e64e-6a22-4524-9a3b-9bb1cc06db82",
   "connections": {
     "Extracts zendesk_user_id and is_available": {
       "main": [
         [
           {
-            "node": "Fetch volunteer_id and status",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch volunteer_id and status": {
-      "main": [
-        [
-          {
-            "node": "Is it a new status?1",
+            "node": "Fetch volunteer_id and status1",
             "type": "main",
             "index": 0
           }
@@ -436,7 +424,7 @@
       "main": [
         [
           {
-            "node": "Update volunteer status",
+            "node": "Update volunteer status1",
             "type": "main",
             "index": 0
           }
@@ -461,33 +449,11 @@
         ]
       ]
     },
-    "Fetch match_id": {
-      "main": [
-        [
-          {
-            "node": "Fetch past survey",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Extracts zendesk_ticket_id and survey_type": {
       "main": [
         [
           {
             "node": "Fetch match_id",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch past survey": {
-      "main": [
-        [
-          {
-            "node": "Is it a new survey?",
             "type": "main",
             "index": 0
           }
@@ -506,6 +472,39 @@
         [
           {
             "node": "NoOp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch past survey": {
+      "main": [
+        [
+          {
+            "node": "Is it a new survey?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch match_id": {
+      "main": [
+        [
+          {
+            "node": "Fetch past survey",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch volunteer_id and status1": {
+      "main": [
+        [
+          {
+            "node": "Is it a new status?1",
             "type": "main",
             "index": 0
           }
@@ -534,48 +533,6 @@
         -320,
         720
       ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "=SELECT \n\tid AS volunteer_id, \n\tcondition AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    {{$json[\"is_available\"]}} AS is_available \nFROM public.volunteers\nWHERE zendesk_user_id = {{$json[\"zendesk_user_id\"]}}::BIGINT\nLIMIT 1",
-        "additionalFields": {}
-      },
-      "id": "91c708d8-7bfa-47c6-9f6b-576aeeb9f2ec",
-      "name": "Fetch volunteer_id and status",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        -100,
-        720
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "=UPDATE public.volunteers\nSET condition = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = {{$json[\"is_available\"]}}::boolean, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
-        "additionalFields": {}
-      },
-      "id": "3fce4837-dd3e-49c9-93ae-2dd5ff9efeb0",
-      "name": "Update volunteer status",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        420,
-        700
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -617,7 +574,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        120,
+        128,
         720
       ]
     },
@@ -628,8 +585,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        420,
-        900
+        432,
+        912
       ]
     },
     {
@@ -643,8 +600,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -580,
-        620
+        -576,
+        624
       ]
     },
     {
@@ -659,7 +616,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        -600,
+        -608,
         1280
       ],
       "webhookId": "9d744de2-fa09-49fe-909e-a3a86e3154a1",
@@ -672,27 +629,6 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "=SELECT \n\tmatch_id, \n    '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nLIMIT 1",
-        "additionalFields": {}
-      },
-      "id": "ab4be411-5ba3-4b73-a129-ca1e1b4347f2",
-      "name": "Fetch match_id",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        -160,
-        1280
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
         "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"atendimento_triagem_1\": \"triagem_1\",\n      \"atendimento_triagem_2\": \"triagem_2\",\n      \"atendimento_acompanhamento_1\": \"acompanhamento_1\",\n      \"atendimento_acompanhamento_2\": \"acompanhamento_2\"\n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const survey_type = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"survey_type\": survey_type\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "f066a751-5e90-4861-b545-3896d9d365cd",
@@ -700,14 +636,14 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 1,
       "position": [
-        -380,
+        -384,
         1280
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=INSERT INTO match.match_surveys (match_id, survey_type, created_at, updated_at)\nVALUES ({{$node[\"Fetch match_id\"].json[\"match_id\"]}}, '{{$node[\"Fetch match_id\"].json[\"survey_type\"]}}', NOW(), NOW());",
+        "query": "INSERT INTO match.match_surveys (match_id, survey_type, created_at, updated_at)\nVALUES ({{$node[\"Fetch match_id\"].json[\"match_id\"]}}, '{{$node[\"Fetch match_id\"].json[\"survey_type\"]}}', NOW(), NOW());",
         "additionalFields": {}
       },
       "id": "f6aa8970-07ef-4dfb-9b53-534572102d35",
@@ -715,31 +651,9 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
       "position": [
-        520,
-        1260
+        528,
+        1264
       ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "=SELECT\n   match_survey_id,\n   {{$json[\"match_id\"]}} AS match_id,\n   '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.match_surveys\nWHERE match_id = {{$json[\"match_id\"]}}\nAND survey_type = '{{$json[\"survey_type\"]}}'",
-        "additionalFields": {}
-      },
-      "id": "d63cfab6-4454-4805-967d-29298c7d79e1",
-      "name": "Fetch past survey",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [
-        60,
-        1280
-      ],
-      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
@@ -763,7 +677,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        300,
+        304,
         1280
       ]
     },
@@ -774,7 +688,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        520,
+        528,
         1520
       ]
     },
@@ -789,12 +703,191 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -600,
-        1160
+        -608,
+        1168
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n   match_survey_id,\n   {{$json[\"match_id\"]}} AS match_id,\n   '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.match_surveys\nWHERE match_id = {{$json[\"match_id\"]}}\nAND survey_type = '{{$json[\"survey_type\"]}}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        96,
+        1280
+      ],
+      "id": "64503bda-b96a-43b6-8326-7962e051c32c",
+      "name": "Fetch past survey",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n\tmatch_id, \n    '{{$json[\"survey_type\"]}}' AS survey_type\nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nLIMIT 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -160,
+        1280
+      ],
+      "id": "4a45651e-ab6d-4f2b-b3ce-1a814ade7168",
+      "name": "Fetch match_id",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n\tid AS volunteer_id, \n\tcondition AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    {{$json[\"is_available\"]}} AS is_available \nFROM public.volunteers\nWHERE zendesk_user_id = {{$json[\"zendesk_user_id\"]}}::BIGINT\nLIMIT 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -80,
+        720
+      ],
+      "id": "5b0f7a43-62de-4877-942d-daa520a2713c",
+      "name": "Fetch volunteer_id and status1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteers\nSET condition = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = {{$json[\"is_available\"]}}::boolean, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        384,
+        704
+      ],
+      "id": "4dd26655-8233-4497-801f-058a76dcca2f",
+      "name": "Update volunteer status1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "68",
+            "accept-encoding": "gzip, br",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "216.198.2.146",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9e535b30aabb1571-PDX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-69cc61d90000000061dc87debeea5d74-61dc87debeea5d74-00",
+            "tracestate": "dd=s:-1;p:61dc87debeea5d74",
+            "x-forwarded-for": "216.198.2.146, 104.23.160.194",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-78ddd45589-dkw6m",
+            "x-is-trusted": "yes",
+            "x-real-ip": "216.198.2.146",
+            "x-request-id": "366f981e-d5c7-4703-a3e9-ff757c3bca25",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HJ9MA4SX9JMYG398VWZ3XN3X",
+            "x-zendesk-webhook-invocation-id": "01KN35WEBA4TPJA8W2T1FBMXWM",
+            "x-zendesk-webhook-signature": "IhRGCZF76E2DrFH/BUZo5iixRo/U4zK9kAMqScHinvI=",
+            "x-zendesk-webhook-signature-timestamp": "2026-04-01T00:07:53Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "109271",
+            "status_acolhimento": "atendimento_triagem_1"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/create-match-survey",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "89",
+            "accept-encoding": "gzip, br",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "216.198.2.146",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9e56d7a78fe96289-PDX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-69ccf0a40000000020985b2bc611f923-20985b2bc611f923-00",
+            "tracestate": "dd=s:-1;p:20985b2bc611f923",
+            "x-forwarded-for": "216.198.2.146, 172.68.174.217",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-78ddd45589-bwht7",
+            "x-is-trusted": "yes",
+            "x-real-ip": "216.198.2.146",
+            "x-request-id": "02c676f4-3270-4f2d-8e1d-6408f24836b9",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HJ9R36XD63QMW844R3XR2V61",
+            "x-zendesk-webhook-invocation-id": "01KN48R0WN344VZMCSC3JZDW6R",
+            "x-zendesk-webhook-signature": "yuqKWQ9IbxM12haTwNgWNHyDrovhV96HXXgn3Y+R7wc=",
+            "x-zendesk-webhook-signature-timestamp": "2026-04-01T10:17:08Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "volunteer_user_id": "32677774556692",
+            "volunteer_status": "indisponivel_sem_vagas"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-volunteer-status",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -823,7 +916,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-03-26T10:45:05.000Z",
+              "updatedAt": "2026-04-01T09:31:45.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -843,7 +936,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-03-26",
+              "lastActiveAt": "2026-04-01",
               "isPending": false
             }
           }
@@ -867,7 +960,7 @@
     }
   ],
   "triggerCount": 2,
-  "updatedAt": "2024-06-18T13:59:39.000Z",
-  "versionCounter": 5,
-  "versionId": "8bec1a7f-0166-47ba-b8c0-6b9ffacc2cc4"
+  "updatedAt": "2026-04-01T12:06:55.702Z",
+  "versionCounter": 11,
+  "versionId": "b5a6e64e-6a22-4524-9a3b-9bb1cc06db82"
 }
