@@ -3,17 +3,6 @@
   "activeVersion": null,
   "activeVersionId": null,
   "connections": {
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Item Lists",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Switch": {
       "main": [
         [
@@ -40,17 +29,6 @@
         [
           {
             "node": "Formata - Interrupção Encaminhamento",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Item Lists": {
-      "main": [
-        [
-          {
-            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -208,6 +186,57 @@
           }
         ]
       ]
+    },
+    "Item Lists": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Item Lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Busca Zendesk User ID4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Zendesk User ID4": {
+      "main": [
+        [
+          {
+            "node": "Send Loops comms PSI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-02-05T20:14:29.082Z",
@@ -219,33 +248,6 @@
   },
   "name": "[MauticxZendesk] Formularios de Conclusão e Interrupção",
   "nodes": [
-    {
-      "parameters": {},
-      "id": "0c049128-36fb-4de0-8dbb-af7e9903304e",
-      "name": "Start",
-      "type": "n8n-nodes-base.start",
-      "typeVersion": 1,
-      "position": [
-        -320,
-        592
-      ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "=mda-form-conclusao",
-        "options": {}
-      },
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1,
-      "position": [
-        -384,
-        800
-      ],
-      "webhookId": "a3fe4491-fda9-4537-ac2e-6d3ba4d9a86c",
-      "id": "aa78d743-4636-49a9-b0d0-597cd3ed0b3e"
-    },
     {
       "parameters": {
         "value1": "={{$node[\"Item Lists\"].json[\"submission\"][\"form\"][\"id\"]}}",
@@ -281,20 +283,6 @@
         800
       ],
       "id": "1ebf085b-51c0-4fa7-a432-3cd89b30c2c6"
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "[\"body\"][\"mautic.form_on_submit\"]",
-        "options": {}
-      },
-      "name": "Item Lists",
-      "type": "n8n-nodes-base.itemLists",
-      "typeVersion": 1,
-      "position": [
-        -160,
-        800
-      ],
-      "id": "8570c639-f88b-4f02-82e3-c7567978e104"
     },
     {
       "parameters": {
@@ -711,426 +699,157 @@
           "name": "[PROD] Mapa"
         }
       }
-    }
-  ],
-  "pinData": {
-    "Webhook": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "GuzzleHttp/7",
-            "content-length": "10813",
-            "accept-encoding": "gzip, br",
-            "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "54.89.113.183",
-            "cf-ew-via": "15",
-            "cf-ipcountry": "US",
-            "cf-ray": "98093c9020d3206f-IAD",
-            "cf-visitor": "{\"scheme\":\"https\"}",
-            "cf-worker": "n8n.cloud",
-            "content-type": "application/json",
-            "webhook-signature": "UjnC6Bs0Cr9dZ3YzN7jNjzeptXzslh/6n8sYeaB+X9s=",
-            "x-forwarded-for": "54.89.113.183, 172.71.223.86",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-prod-users-gwc-3-6db8488cf7-vdndp",
-            "x-is-trusted": "yes",
-            "x-origin-base-url": "https://mautic.nossas.org",
-            "x-real-ip": "54.89.113.183"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "[\"body\"][\"mautic.form_on_submit\"]",
+        "options": {}
+      },
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        800
+      ],
+      "id": "8570c639-f88b-4f02-82e3-c7567978e104"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "=mda-form-conclusao",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        800
+      ],
+      "webhookId": "a3fe4491-fda9-4537-ac2e-6d3ba4d9a86c",
+      "id": "aa78d743-4636-49a9-b0d0-597cd3ed0b3e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
           },
-          "params": {},
-          "query": {},
-          "body": {
-            "mautic.form_on_submit": [
-              {
-                "submission": {
-                  "id": 10005,
-                  "ipAddress": {
-                    "ipAddress": "191.195.8.183",
-                    "id": 70402,
-                    "ipDetails": {
-                      "city": "",
-                      "region": "",
-                      "zipcode": "",
-                      "country": "",
-                      "latitude": "",
-                      "longitude": "",
-                      "isp": "",
-                      "organization": "",
-                      "timezone": "",
-                      "extra": ""
-                    }
-                  },
-                  "form": {
-                    "id": 30,
-                    "name": "Instrumental de Conclusão dos Atendimentos Psicológicos",
-                    "alias": "instrument",
-                    "category": null
-                  },
-                  "lead": {
-                    "id": 172639,
-                    "points": 0,
-                    "color": null,
-                    "fields": {
-                      "core": {
-                        "organization_id": {
-                          "id": "61",
-                          "label": "Zendesk Organization ID",
-                          "alias": "organization_id",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "360282119532",
-                          "normalizedValue": "360282119532"
-                        },
-                        "firstname": {
-                          "id": "2",
-                          "label": "First Name",
-                          "alias": "firstname",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "Dev Psi",
-                          "normalizedValue": "Dev Psi"
-                        },
-                        "data_de_inscricao_no_bond1": {
-                          "id": "60",
-                          "label": "Data de Inscrição no BONDE",
-                          "alias": "data_de_inscricao_no_bond1",
-                          "type": "date",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "2024-04-01",
-                          "normalizedValue": "2024-04-01"
-                        },
-                        "lastname": {
-                          "id": "3",
-                          "label": "Last Name",
-                          "alias": "lastname",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "state1": {
-                          "id": "58",
-                          "label": "Estado",
-                          "alias": "state1",
-                          "type": "select",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:1:{s:4:\"list\";a:28:{i:0;a:2:{s:5:\"label\";s:2:\"AC\";s:5:\"value\";s:2:\"ac\";}i:1;a:2:{s:5:\"label\";s:2:\"AL\";s:5:\"value\";s:2:\"al\";}i:2;a:2:{s:5:\"label\";s:2:\"AM\";s:5:\"value\";s:2:\"am\";}i:3;a:2:{s:5:\"label\";s:2:\"AP\";s:5:\"value\";s:2:\"ap\";}i:4;a:2:{s:5:\"label\";s:2:\"BA\";s:5:\"value\";s:2:\"ba\";}i:5;a:2:{s:5:\"label\";s:2:\"CE\";s:5:\"value\";s:2:\"ce\";}i:6;a:2:{s:5:\"label\";s:2:\"DF\";s:5:\"value\";s:2:\"df\";}i:7;a:2:{s:5:\"label\";s:2:\"ES\";s:5:\"value\";s:2:\"es\";}i:8;a:2:{s:5:\"label\";s:2:\"GO\";s:5:\"value\";s:2:\"go\";}i:9;a:2:{s:5:\"label\";s:2:\"MA\";s:5:\"value\";s:2:\"ma\";}i:10;a:2:{s:5:\"label\";s:2:\"MG\";s:5:\"value\";s:2:\"mg\";}i:11;a:2:{s:5:\"label\";s:2:\"MS\";s:5:\"value\";s:2:\"ms\";}i:12;a:2:{s:5:\"label\";s:2:\"MT\";s:5:\"value\";s:2:\"mt\";}i:13;a:2:{s:5:\"label\";s:2:\"PA\";s:5:\"value\";s:2:\"pa\";}i:14;a:2:{s:5:\"label\";s:2:\"PB\";s:5:\"value\";s:2:\"pb\";}i:15;a:2:{s:5:\"label\";s:2:\"PE\";s:5:\"value\";s:2:\"pe\";}i:16;a:2:{s:5:\"label\";s:2:\"PI\";s:5:\"value\";s:2:\"pi\";}i:17;a:2:{s:5:\"label\";s:2:\"PR\";s:5:\"value\";s:2:\"pr\";}i:18;a:2:{s:5:\"label\";s:2:\"RJ\";s:5:\"value\";s:2:\"rj\";}i:19;a:2:{s:5:\"label\";s:2:\"RN\";s:5:\"value\";s:2:\"rn\";}i:20;a:2:{s:5:\"label\";s:2:\"RO\";s:5:\"value\";s:2:\"ro\";}i:21;a:2:{s:5:\"label\";s:2:\"RR\";s:5:\"value\";s:2:\"rr\";}i:22;a:2:{s:5:\"label\";s:2:\"RS\";s:5:\"value\";s:2:\"rs\";}i:23;a:2:{s:5:\"label\";s:2:\"SC\";s:5:\"value\";s:2:\"sc\";}i:24;a:2:{s:5:\"label\";s:2:\"SE\";s:5:\"value\";s:2:\"se\";}i:25;a:2:{s:5:\"label\";s:2:\"SP\";s:5:\"value\";s:2:\"sp\";}i:26;a:2:{s:5:\"label\";s:2:\"TO\";s:5:\"value\";s:2:\"to\";}i:27;a:2:{s:5:\"label\";s:3:\"INT\";s:5:\"value\";s:3:\"int\";}}}",
-                          "default_value": null,
-                          "value": "sp",
-                          "normalizedValue": "SP"
-                        },
-                        "cor": {
-                          "id": "59",
-                          "label": "Cor",
-                          "alias": "cor",
-                          "type": "select",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:1:{s:4:\"list\";a:5:{i:0;a:2:{s:5:\"label\";s:5:\"Preta\";s:5:\"value\";s:5:\"preta\";}i:1;a:2:{s:5:\"label\";s:5:\"Parda\";s:5:\"value\";s:5:\"parda\";}i:2;a:2:{s:5:\"label\";s:9:\"Indígena\";s:5:\"value\";s:8:\"indigena\";}i:3;a:2:{s:5:\"label\";s:7:\"Amarela\";s:5:\"value\";s:7:\"amarela\";}i:4;a:2:{s:5:\"label\";s:6:\"Branca\";s:5:\"value\";s:6:\"branca\";}}}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "address": {
-                          "id": "57",
-                          "label": "Endereço",
-                          "alias": "address",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "Cerqueira César, Brazil",
-                          "normalizedValue": "Cerqueira César, Brazil"
-                        },
-                        "user_id": {
-                          "id": "55",
-                          "label": "Zendesk User ID",
-                          "alias": "user_id",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "417544904932",
-                          "normalizedValue": "417544904932"
-                        },
-                        "email": {
-                          "id": "6",
-                          "label": "Email",
-                          "alias": "email",
-                          "type": "email",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "dev.psi.mapa@gmail.com",
-                          "normalizedValue": "dev.psi.mapa@gmail.com"
-                        },
-                        "tipo_de_acolhimento": {
-                          "id": "50",
-                          "label": "Tipo de Acolhimento",
-                          "alias": "tipo_de_acolhimento",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "mobile": {
-                          "id": "7",
-                          "label": "Mobile",
-                          "alias": "mobile",
-                          "type": "tel",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "phone": {
-                          "id": "8",
-                          "label": "Phone",
-                          "alias": "phone",
-                          "type": "tel",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "(11) 9 1109-1520",
-                          "normalizedValue": "(11) 9 1109-1520"
-                        },
-                        "website": {
-                          "id": "22",
-                          "label": "Website",
-                          "alias": "website",
-                          "type": "url",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "whatsapp": {
-                          "id": "49",
-                          "label": "Whatsapp",
-                          "alias": "whatsapp",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "(11) 9 1109-1520",
-                          "normalizedValue": "(11) 9 1109-1520"
-                        },
-                        "f_condition": {
-                          "id": "48",
-                          "label": "Status da Mulher",
-                          "alias": "f_condition",
-                          "type": "select",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:1:{s:4:\"list\";a:16:{i:0;a:2:{s:5:\"label\";s:11:\"Anti-ética\";s:5:\"value\";s:10:\"anti-etica\";}i:1;a:2:{s:5:\"label\";s:8:\"Aprovada\";s:5:\"value\";s:8:\"aprovada\";}i:2;a:2:{s:5:\"label\";s:30:\"Reprovada - Registro inválido\";s:5:\"value\";s:28:\"reprovada_registro_inválido\";}i:3;a:2:{s:5:\"label\";s:30:\"Reprovada - Diretrizes do Mapa\";s:5:\"value\";s:28:\"reprovada_diretrizes_do_mapa\";}i:4;a:2:{s:5:\"label\";s:26:\"Reprovada - Estudo de Caso\";s:5:\"value\";s:24:\"reprovada_estudo_de_caso\";}i:5;a:2:{s:5:\"label\";s:13:\"Descadastrada\";s:5:\"value\";s:13:\"descadastrada\";}i:6;a:2:{s:5:\"label\";s:12:\"Desabilitada\";s:5:\"value\";s:12:\"desabilitada\";}i:7;a:2:{s:5:\"label\";s:25:\"Dados incompletos - Email\";s:5:\"value\";s:23:\"dados_incompletos_email\";}i:8;a:2:{s:5:\"label\";s:28:\"Dados incompletos - Telefone\";s:5:\"value\";s:26:\"dados_incompletos_telefone\";}i:9;a:2:{s:5:\"label\";s:29:\"Dados incompletos - Endereço\";s:5:\"value\";s:27:\"dados_incompletos_endereço\";}i:10;a:2:{s:5:\"label\";s:28:\"Indisponível - Sem Resposta\";s:5:\"value\";s:27:\"indisponível_-sem_resposta\";}i:11;a:2:{s:5:\"label\";s:22:\"Indisponível - Agenda\";s:5:\"value\";s:20:\"indisponível_agenda\";}i:12;a:2:{s:5:\"label\";s:27:\"Indisponível - Maternidade\";s:5:\"value\";s:25:\"indisponível_maternidade\";}i:13;a:2:{s:5:\"label\";s:23:\"Indisponível - Férias\";s:5:\"value\";s:21:\"indisponível_férias\";}i:14;a:2:{s:5:\"label\";s:11:\"Disponível\";s:5:\"value\";s:10:\"disponivel\";}i:15;a:2:{s:5:\"label\";s:12:\"MSR-Inscrita\";s:5:\"value\";s:8:\"inscrita\";}}}",
-                          "default_value": "desabilitada",
-                          "value": "disponivel",
-                          "normalizedValue": "Disponível"
-                        },
-                        "city": {
-                          "id": "13",
-                          "label": "City",
-                          "alias": "city",
-                          "type": "text",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "São Paulo",
-                          "normalizedValue": "São Paulo"
-                        },
-                        "country": {
-                          "id": "16",
-                          "label": "Country",
-                          "alias": "country",
-                          "type": "country",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "last_active": {
-                          "id": "19",
-                          "label": "Date Last Active",
-                          "alias": "last_active",
-                          "type": "datetime",
-                          "group": "core",
-                          "object": "lead",
-                          "is_fixed": "1",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": "2025-09-10 12:23:05",
-                          "normalizedValue": "2025-09-10 12:23:05"
-                        }
-                      },
-                      "social": {
-                        "facebook": {
-                          "id": "23",
-                          "label": "Facebook",
-                          "alias": "facebook",
-                          "type": "text",
-                          "group": "social",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "foursquare": {
-                          "id": "24",
-                          "label": "Foursquare",
-                          "alias": "foursquare",
-                          "type": "text",
-                          "group": "social",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "instagram": {
-                          "id": "25",
-                          "label": "Instagram",
-                          "alias": "instagram",
-                          "type": "text",
-                          "group": "social",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "linkedin": {
-                          "id": "26",
-                          "label": "LinkedIn",
-                          "alias": "linkedin",
-                          "type": "text",
-                          "group": "social",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "skype": {
-                          "id": "27",
-                          "label": "Skype",
-                          "alias": "skype",
-                          "type": "text",
-                          "group": "social",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        },
-                        "twitter": {
-                          "id": "28",
-                          "label": "Twitter",
-                          "alias": "twitter",
-                          "type": "text",
-                          "group": "social",
-                          "object": "lead",
-                          "is_fixed": "0",
-                          "properties": "a:0:{}",
-                          "default_value": null,
-                          "value": null,
-                          "normalizedValue": null
-                        }
-                      },
-                      "personal": [],
-                      "professional": []
-                    }
-                  },
-                  "trackingId": null,
-                  "dateSubmitted": "2025-09-17T14:19:04+00:00",
-                  "referer": "https://mautic.nossas.org/conclusao-psicologico",
-                  "page": null,
-                  "results": {
-                    "1_nome_completo": "Dev Psi Teste",
-                    "2_email_de_cadastro": "dev.psi.mapa@gmail.com",
-                    "3_nome_da_acolhida": "Msr Teste",
-                    "4_data_de_encerramento_do": "2025-09-05",
-                    "5_voce_e_a_acolhida_segui": "Sim",
-                    "6_atraves_do_atendimento": "Conseguiu construir sua autonomia, Conseguiu construir sua autonomia financeira",
-                    "7_quais_impactos_a_acolhi": "Pesadelos, Falta de concentração",
-                    "8_quais_impactos_a_acolhi": "A acolhida não está sofrendo nenhum dos impactos citados acima",
-                    "9_quais_impactos_em_decor": "Dependência afetiva e financeira, Uso abusivo de substância psicoativa",
-                    "10_descreva_sucintamente": "o desfecho do processo pssicoterapêutico",
-                    "11_se_desejar_descreva_su": "descreva sua experiência como psicóloga voluntária &#13;&#10;do Mapa do Acolhimento",
-                    "12_quais_aprendizagens_es": "aprendizagens este atendimento te forneceu",
-                    "13_e_os_desafios": "os desafios",
-                    "14_voce_solicitou_ajuda_d": "Sim",
-                    "141_sentiuse_orientada": "Sim",
-                    "142_sentiuse_acolhida_pel": "Sim",
-                    "15_voce_solicitou_ajuda_d": "Sim",
-                    "151_sentiuse_orientada": "Não",
-                    "152_sentiuse_acolhida_pel": "Não",
-                    "16_se_desejar_deixe_suges": "deixe sugestões de melhorias:"
-                  }
-                },
-                "timestamp": "2025-09-17T14:19:05+00:00"
+          "conditions": [
+            {
+              "id": "5a963ba6-d72f-4688-b041-0a0323007111",
+              "leftValue": "={{ $json.body.volunteer_email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
               }
-            ]
-          },
-          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/mda-form-conclusao",
-          "executionMode": "production"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        1744
+      ],
+      "id": "4f67c60b-2fb8-46ca-862c-e11f1ef7bfe8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.matches \nSET match_status = 'completed'\nWHERE match_id = '{{ $json.body.match_id }}'\nAND support_type = 'psychological' ",
+        "options": {}
+      },
+      "id": "5993e0b7-8e81-4125-ab1d-efb9aa96eb74",
+      "name": "Busca Zendesk User ID4",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        192,
+        1632
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
         }
       }
-    ]
-  },
+    },
+    {
+      "parameters": {
+        "errorMessage": "A voluntária com Zendesk User ID '{{$node[\"Webhook\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados. não existe no nosso banco de dados."
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        64,
+        2096
+      ],
+      "id": "5ed38a22-1ae9-4dcb-940c-735fa6cfd246",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnhli7s207dc0i117nplhkra\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        432,
+        1632
+      ],
+      "id": "7124446c-186a-4da5-8019-69c2c2fa96d2",
+      "name": "Send Loops comms PSI",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnhl19fg05bo0i1wf4b52tf9\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        432,
+        1840
+      ],
+      "id": "4ac85392-fa96-45dd-a18b-4aa4a79d786e",
+      "name": "Send Loops comms ADV",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
@@ -1159,7 +878,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-02T05:25:17.000Z",
+              "updatedAt": "2026-04-03T15:44:43.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -1179,7 +898,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-02",
+              "lastActiveAt": "2026-04-03",
               "isPending": false
             }
           }
@@ -1197,7 +916,7 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-01-12T18:28:27.000Z",
-  "versionCounter": 1,
-  "versionId": "a5297e7f-b0e9-40bf-8d05-79814f5856c5"
+  "updatedAt": "2026-04-03T17:14:18.455Z",
+  "versionCounter": 4,
+  "versionId": "6f68f656-2b5d-4ab5-846c-79bc3553a0f3"
 }
