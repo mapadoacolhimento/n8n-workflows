@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-04-01T12:58:52.952Z",
-    "createdAt": "2026-04-01T12:58:52.952Z",
-    "versionId": "6fb98db3-3cfa-49c1-9102-758357f862c2",
+    "updatedAt": "2026-04-06T15:06:52.201Z",
+    "createdAt": "2026-04-06T15:06:52.201Z",
+    "versionId": "82cdf75d-2344-475b-8ffb-fa6226018fe4",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -238,7 +238,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          2592,
+          3152,
           512
         ],
         "credentials": {
@@ -260,7 +260,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 1,
         "position": [
-          2128,
+          2688,
           512
         ],
         "webhookId": "2e8d877f-e88c-4856-a866-639812e65d01",
@@ -280,7 +280,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 1,
         "position": [
-          2368,
+          2928,
           512
         ]
       },
@@ -301,7 +301,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 1,
         "position": [
-          2800,
+          3360,
           512
         ]
       },
@@ -312,7 +312,7 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          3072,
+          3632,
           752
         ]
       },
@@ -327,7 +327,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          3888,
+          4448,
           -48
         ],
         "credentials": {
@@ -348,7 +348,7 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          2144,
+          2704,
           304
         ]
       },
@@ -363,7 +363,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          3312,
+          3872,
           480
         ],
         "credentials": {
@@ -413,7 +413,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          3888,
+          4448,
           272
         ]
       },
@@ -428,7 +428,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          3072,
+          3632,
           480
         ],
         "credentials": {
@@ -468,7 +468,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          3504,
+          4064,
           480
         ]
       },
@@ -483,7 +483,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          4272,
+          4832,
           48
         ],
         "credentials": {
@@ -514,7 +514,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          4272,
+          4832,
           240
         ],
         "credentials": {
@@ -564,7 +564,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          3904,
+          4464,
           608
         ]
       },
@@ -579,7 +579,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          4272,
+          4832,
           592
         ],
         "credentials": {
@@ -610,7 +610,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          4272,
+          4832,
           832
         ],
         "credentials": {
@@ -1041,6 +1041,15 @@
                   "operation": "notEmpty",
                   "singleValue": true
                 }
+              },
+              {
+                "id": "1dd2bdf6-5d02-4f8b-bd34-f31e32968fc7",
+                "leftValue": "={{$json[\"new_status\"]}}",
+                "rightValue": "undefined",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
               }
             ],
             "combinator": "and"
@@ -1104,6 +1113,357 @@
         ],
         "id": "252edb40-8135-4935-a2eb-bc9ce2406006",
         "name": "Execute a SQL query",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "5a963ba6-d72f-4688-b041-0a0323007111",
+                "leftValue": "={{ $json.body.email }}",
+                "rightValue": "psychological",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2928,
+          1328
+        ],
+        "id": "cf14b3ec-08ca-4c48-b5e5-be5d28aa91cd",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmnhli7s207dc0i117nplhkra\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          4208,
+          1120
+        ],
+        "id": "21a775d8-1436-4b69-935b-bc90253b3f54",
+        "name": "Send Loops comms PSI",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmnhl19fg05bo0i1wf4b52tf9\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          4208,
+          1488
+        ],
+        "id": "e61cea32-a7c0-44a4-b943-0c34885f63bb",
+        "name": "Send Loops comms ADV",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.body.match_status }}",
+                      "rightValue": "completed",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "d22612b4-2726-44ad-8949-1fa0fec4223c"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
+                      "leftValue": "={{ $json.body.match_status }}",
+                      "rightValue": "interrupted_after_support",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "32f0c853-0dff-4ffb-ad3b-f2da51ef7f6a",
+                      "leftValue": "={{ $json.body.match_status }}",
+                      "rightValue": "interrupted_before_support",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          3488,
+          1296
+        ],
+        "id": "c7d52646-8853-4a73-ab30-980a47080df8",
+        "name": "match_status",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.body.support_type }}",
+                      "rightValue": "psychological",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "d22612b4-2726-44ad-8949-1fa0fec4223c"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
+                      "leftValue": "={{ $json.body.support_type }}",
+                      "rightValue": "legal",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          3808,
+          1280
+        ],
+        "id": "c3a1d6c2-c8ed-439a-956a-dd867fabab06",
+        "name": "support_type",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmnn7sxcq01ho0iw9598xsk7d\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3808,
+          1520
+        ],
+        "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
+        "name": "send loops interrupção atendimento",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmnn81ad716bc0iwaokvz2bgm\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3808,
+          1728
+        ],
+        "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
+        "name": "send loops interrupção encaminhamento",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE match.matches\nSET match_status = '{{ $json.body.match_status }}'\nWHERE match_id = {{ $json.body.match_id }}''",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          3232,
+          1312
+        ],
+        "id": "9d5d6f1f-bc36-4533-ae42-4eaca203e615",
+        "name": "update match_status",
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "errorMessage": "A voluntária com Zendesk User ID '{{$node[\"Webhook\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados. não existe no nosso banco de dados."
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          3120,
+          1568
+        ],
+        "id": "855cecca-e8b8-4b95-90c4-58518a9a5ac4",
+        "name": "Stop and Error1"
+      },
+      {
+        "parameters": {
+          "content": "## Novo fluxo Interrupção e Conlusão - Banco esta em STG"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2672,
+          944
+        ],
+        "id": "9a5019a7-9d1f-46e2-9685-5d2e2272c3d4",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    sr.first_name AS msr_first_name\nFROM public.matches m\nJOIN public.volunteers v ON v.volunteer_id = m.volunteer_id\nJOIN public.support_requests sr ON sr.support_request_id = m.support_request_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
+          "options": {}
+        },
+        "id": "6975e7d3-ade3-4aaa-a081-f664636032e9",
+        "name": "Fetch match_id and status v2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          2704,
+          1328
+        ],
         "credentials": {
           "postgres": {
             "id": "c5mNsjWNXx3mw1Fh",
@@ -1446,13 +1806,96 @@
             }
           ]
         ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "update match_status",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "match_status": {
+        "main": [
+          [
+            {
+              "node": "support_type",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "send loops interrupção atendimento",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "send loops interrupção encaminhamento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "support_type": {
+        "main": [
+          [
+            {
+              "node": "Send Loops comms PSI",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Loops comms ADV",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "update match_status": {
+        "main": [
+          [
+            {
+              "node": "match_status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch match_id and status v2": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "6fb98db3-3cfa-49c1-9102-758357f862c2",
+  "activeVersionId": "82cdf75d-2344-475b-8ffb-fa6226018fe4",
   "connections": {
     "Webhook": {
       "main": [
@@ -1787,6 +2230,89 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "update match_status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "match_status": {
+      "main": [
+        [
+          {
+            "node": "support_type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "send loops interrupção atendimento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "send loops interrupção encaminhamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "support_type": {
+      "main": [
+        [
+          {
+            "node": "Send Loops comms PSI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Loops comms ADV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update match_status": {
+      "main": [
+        [
+          {
+            "node": "match_status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch match_id and status v2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-04-10T15:17:23.968Z",
@@ -2030,7 +2556,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        2592,
+        3152,
         512
       ],
       "credentials": {
@@ -2052,7 +2578,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        2128,
+        2688,
         512
       ],
       "webhookId": "2e8d877f-e88c-4856-a866-639812e65d01",
@@ -2072,7 +2598,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 1,
       "position": [
-        2368,
+        2928,
         512
       ]
     },
@@ -2093,7 +2619,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        2800,
+        3360,
         512
       ]
     },
@@ -2104,7 +2630,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3072,
+        3632,
         752
       ]
     },
@@ -2119,7 +2645,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3888,
+        4448,
         -48
       ],
       "credentials": {
@@ -2140,7 +2666,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2144,
+        2704,
         304
       ]
     },
@@ -2155,7 +2681,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3312,
+        3872,
         480
       ],
       "credentials": {
@@ -2205,7 +2731,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3888,
+        4448,
         272
       ]
     },
@@ -2220,7 +2746,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3072,
+        3632,
         480
       ],
       "credentials": {
@@ -2260,7 +2786,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3504,
+        4064,
         480
       ]
     },
@@ -2275,7 +2801,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4272,
+        4832,
         48
       ],
       "credentials": {
@@ -2306,7 +2832,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        4272,
+        4832,
         240
       ],
       "credentials": {
@@ -2356,7 +2882,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3904,
+        4464,
         608
       ]
     },
@@ -2371,7 +2897,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4272,
+        4832,
         592
       ],
       "credentials": {
@@ -2402,7 +2928,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        4272,
+        4832,
         832
       ],
       "credentials": {
@@ -2833,6 +3359,15 @@
                 "operation": "notEmpty",
                 "singleValue": true
               }
+            },
+            {
+              "id": "1dd2bdf6-5d02-4f8b-bd34-f31e32968fc7",
+              "leftValue": "={{$json[\"new_status\"]}}",
+              "rightValue": "undefined",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
             }
           ],
           "combinator": "and"
@@ -2902,6 +3437,357 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5a963ba6-d72f-4688-b041-0a0323007111",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "psychological",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2928,
+        1328
+      ],
+      "id": "cf14b3ec-08ca-4c48-b5e5-be5d28aa91cd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnhli7s207dc0i117nplhkra\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4208,
+        1120
+      ],
+      "id": "21a775d8-1436-4b69-935b-bc90253b3f54",
+      "name": "Send Loops comms PSI",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnhl19fg05bo0i1wf4b52tf9\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4208,
+        1488
+      ],
+      "id": "e61cea32-a7c0-44a4-b943-0c34885f63bb",
+      "name": "Send Loops comms ADV",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.match_status }}",
+                    "rightValue": "completed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d22612b4-2726-44ad-8949-1fa0fec4223c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
+                    "leftValue": "={{ $json.body.match_status }}",
+                    "rightValue": "interrupted_after_support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "32f0c853-0dff-4ffb-ad3b-f2da51ef7f6a",
+                    "leftValue": "={{ $json.body.match_status }}",
+                    "rightValue": "interrupted_before_support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        3488,
+        1296
+      ],
+      "id": "c7d52646-8853-4a73-ab30-980a47080df8",
+      "name": "match_status",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.support_type }}",
+                    "rightValue": "psychological",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d22612b4-2726-44ad-8949-1fa0fec4223c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
+                    "leftValue": "={{ $json.body.support_type }}",
+                    "rightValue": "legal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        3808,
+        1280
+      ],
+      "id": "c3a1d6c2-c8ed-439a-956a-dd867fabab06",
+      "name": "support_type",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnn7sxcq01ho0iw9598xsk7d\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3808,
+        1520
+      ],
+      "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
+      "name": "send loops interrupção atendimento",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnn81ad716bc0iwaokvz2bgm\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3808,
+        1728
+      ],
+      "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
+      "name": "send loops interrupção encaminhamento",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.matches\nSET match_status = '{{ $json.body.match_status }}'\nWHERE match_id = {{ $json.body.match_id }}''",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3232,
+        1312
+      ],
+      "id": "9d5d6f1f-bc36-4533-ae42-4eaca203e615",
+      "name": "update match_status",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "A voluntária com Zendesk User ID '{{$node[\"Webhook\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados. não existe no nosso banco de dados."
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        1568
+      ],
+      "id": "855cecca-e8b8-4b95-90c4-58518a9a5ac4",
+      "name": "Stop and Error1"
+    },
+    {
+      "parameters": {
+        "content": "## Novo fluxo Interrupção e Conlusão - Banco esta em STG"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2672,
+        944
+      ],
+      "id": "9a5019a7-9d1f-46e2-9685-5d2e2272c3d4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    sr.first_name AS msr_first_name\nFROM public.matches m\nJOIN public.volunteers v ON v.volunteer_id = m.volunteer_id\nJOIN public.support_requests sr ON sr.support_request_id = m.support_request_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
+        "options": {}
+      },
+      "id": "6975e7d3-ade3-4aaa-a081-f664636032e9",
+      "name": "Fetch match_id and status v2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2704,
+        1328
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {
@@ -2962,39 +3848,39 @@
           "headers": {
             "host": "mapadoacolhimento.app.n8n.cloud",
             "user-agent": "Zendesk Webhook",
-            "content-length": "282",
+            "content-length": "144",
             "accept-encoding": "gzip, br",
             "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
             "cdn-loop": "cloudflare; loops=1; subreqs=1",
             "cf-connecting-ip": "216.198.2.195",
             "cf-ew-via": "15",
             "cf-ipcountry": "US",
-            "cf-ray": "9e57c111ca280055-PDX",
+            "cf-ray": "9e7d828adb94c895-PDX",
             "cf-visitor": "{\"scheme\":\"https\"}",
             "cf-worker": "n8n.cloud",
             "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-69cd15fd00000000ba2deac799d9cbd7-ba2deac799d9cbd7-00",
-            "tracestate": "dd=s:-1;p:ba2deac799d9cbd7",
-            "x-forwarded-for": "216.198.2.195, 172.68.174.217",
+            "traceparent": "00-69d320770000000034c2c3ff27e8333f-34c2c3ff27e8333f-00",
+            "tracestate": "dd=s:-1;p:34c2c3ff27e8333f",
+            "x-forwarded-for": "216.198.2.195, 172.68.174.216",
             "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
             "x-forwarded-server": "traefik-prod-users-gwc-3-78ddd45589-7c5wz",
             "x-is-trusted": "yes",
             "x-real-ip": "216.198.2.195",
-            "x-request-id": "e76d2f5a-fb23-4450-ad2f-c493c6a7b0ca",
+            "x-request-id": "efa40776-c332-41e1-8904-45b4457e1473",
             "x-zendesk-account-id": "9040899",
             "x-zendesk-webhook-id": "01HHZD4S3Y9687M5Y8QYNCRCJN",
-            "x-zendesk-webhook-invocation-id": "01KN4HVSHH6M17EXAYANMTPBEY",
-            "x-zendesk-webhook-signature": "w9w6e02YQvo+7WDbGAOm7nUyKYppvOWwBPC34c6I2VU=",
-            "x-zendesk-webhook-signature-timestamp": "2026-04-01T12:56:29Z"
+            "x-zendesk-webhook-invocation-id": "01KNGBDMEFH4MJ9H9FJGDWHYNP",
+            "x-zendesk-webhook-signature": "A8Wfhz1sYqg4NN4rlnQCta9Wle4U2m7yOgwGwxGvlD4=",
+            "x-zendesk-webhook-signature-timestamp": "2026-04-06T02:54:47Z"
           },
           "params": {},
           "query": {},
           "body": {
-            "id": "60187",
-            "tags": "amarela ana atendimento-interrompido-semresposta encaminhamento__realizado feedback-negativo-semresposta gabi inscrita mapa mg nova-voluntaria-sem-prioridade nova_voluntaria psicológico_e_jurídico",
-            "status_acolhimento": "encaminhamento__realizado"
+            "id": "107372",
+            "tags": "atualizar-data-encaminhamento encaminhamento_interrompido",
+            "status_acolhimento": "encaminhamento_interrompido"
           },
           "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-support-request",
           "executionMode": "production"
@@ -3033,7 +3919,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-05T23:13:28.000Z",
+              "updatedAt": "2026-04-06T11:03:44.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -3053,7 +3939,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-05",
+              "lastActiveAt": "2026-04-06",
               "isPending": false
             }
           }
@@ -3076,7 +3962,7 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2026-04-01T12:58:52.951Z",
-  "versionCounter": 14,
-  "versionId": "6fb98db3-3cfa-49c1-9102-758357f862c2"
+  "updatedAt": "2026-04-06T15:06:52.195Z",
+  "versionCounter": 20,
+  "versionId": "82cdf75d-2344-475b-8ffb-fa6226018fe4"
 }
