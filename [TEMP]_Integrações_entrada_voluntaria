@@ -5,7 +5,13 @@
   "connections": {
     "When clicking ‘Execute workflow’": {
       "main": [
-        []
+        [
+          {
+            "node": "busca voluntárias INICIOU 24/03 a 30",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Busca voluntária pelo email": {
@@ -242,17 +248,6 @@
         []
       ]
     },
-    "Busca voluntária pelo moodle ID": {
-      "main": [
-        [
-          {
-            "node": "Se retornou a voluntária1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "If": {
       "main": [
         []
@@ -330,7 +325,7 @@
       "main": [
         [
           {
-            "node": "Busca voluntária pelo moodle ID",
+            "node": "Loop Over Items4",
             "type": "main",
             "index": 0
           }
@@ -632,6 +627,132 @@
       "main": [
         []
       ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Busca historico de voluntária pelo moodle ID",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca voluntária pelo moodle ID3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Deleta todas as entradas repetidas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca historico de voluntária pelo moodle ID": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca voluntária pelo moodle ID3": {
+      "main": [
+        [
+          {
+            "node": "se a voluntaria precisa atualizar o status para capacitacao",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "se a voluntaria precisa atualizar o status para capacitacao": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "se a voluntaria precisa atualiza o status para o novo (já disponivel)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "se a voluntaria precisa atualiza o status para o novo (já disponivel)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza data de incio da capacitacao",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Deleta todas as entradas repetidas": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2026-03-30T19:23:25.930Z",
@@ -668,8 +789,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1360,
-        544
+        -2896,
+        80
       ],
       "id": "2aafac10-9eb2-44b2-b59f-ffcf2ff8c61c",
       "name": "When clicking ‘Execute workflow’"
@@ -716,7 +837,7 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
             },
             {
               "name": "zendesk_user_id",
@@ -1050,7 +1171,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{$node[\"Busca voluntária pelo moodle ID\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4d3xhp00j0y38uusnypgc0\",\n \"dataVariables\": {\n    \"name\": \"{{$node[\"Busca voluntária pelo moodle ID\"].json[\"first_name\"]}}\",\n    \"email\": \"{{$node[\"Busca voluntária pelo moodle ID\"].json[\"email\"]}}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4d3xhp00j0y38uusnypgc0\",\n \"dataVariables\": {\n    \"name\": \"{{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"first_name\"]}}\",\n    \"email\": \"{{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"email\"]}}\"\n  }\n}",
         "options": {}
       },
       "id": "06fec819-24e8-4d7f-81bb-c2c09599bdb0",
@@ -1076,7 +1197,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{$node[\"Busca voluntária pelo moodle ID\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4ozsfp00ei114rjfkwwav1\",\n \"dataVariables\": {\n    \"name\": \"{{$node[\"Busca voluntária pelo moodle ID\"].json[\"first_name\"]}}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4ozsfp00ei114rjfkwwav1\",\n \"dataVariables\": {\n    \"name\": \"{{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"first_name\"]}}\"\n  }\n}",
         "options": {}
       },
       "id": "98efe572-47c0-43a3-976f-92a809b8fff7",
@@ -1140,7 +1261,7 @@
           "conditions": [
             {
               "id": "223d2e9d-3926-4499-b422-4cdaf53ff415",
-              "leftValue": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"condition\"]}}",
+              "leftValue": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"condition\"]}}",
               "rightValue": "cadastrada",
               "operator": {
                 "type": "string",
@@ -1179,11 +1300,11 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
             },
             {
               "name": "moodle_user_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"moodle_id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"moodle_id\"]}}"
             }
           ]
         },
@@ -1359,46 +1480,6 @@
       ],
       "id": "7897e38d-62b1-410c-b921-8e8a077d3e12",
       "name": "Busca histórico de início da capacitação",
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "select",
-        "schema": {
-          "__rl": true,
-          "mode": "list",
-          "value": "public"
-        },
-        "table": {
-          "__rl": true,
-          "value": "volunteers",
-          "mode": "list",
-          "cachedResultName": "volunteers"
-        },
-        "limit": 1,
-        "where": {
-          "values": [
-            {
-              "column": "moodle_id",
-              "value": "={{$json[\"userid\"]}}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        -560,
-        112
-      ],
-      "id": "8e271836-6ab6-4fec-b05d-7cdb64069a17",
-      "name": "Busca voluntária pelo moodle ID",
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
@@ -1589,7 +1670,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2\n  AND \n    to_timestamp(timestarted) BETWEEN '2026-03-24' AND '2026-03-30 23:59:59'\n    AND\n    timecompleted is null\n  \n\n\n",
+        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2\n  AND \n   to_timestamp(timestarted) BETWEEN '2026-03-24' AND '2026-03-30 23:59:59'\n    AND\n  \n    timecompleted is null\n  \n\n\n",
         "options": {}
       },
       "id": "4c5e5bea-0a30-46f5-9174-650aacd46762",
@@ -1597,8 +1678,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        -832,
-        112
+        -2608,
+        80
       ],
       "credentials": {
         "postgres": {
@@ -1618,8 +1699,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        -848,
-        320
+        -656,
+        -64
       ],
       "credentials": {
         "postgres": {
@@ -1738,7 +1819,7 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
             },
             {
               "name": "zendesk_user_id",
@@ -1908,7 +1989,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{$node[\"Busca voluntária pelo moodle ID2\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4ozsfp00ei114rjfkwwav1\",\n \"dataVariables\": {\n    \"name\": \"{{$node[\"Busca voluntária pelo moodle ID\"].json[\"first_name\"]}}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{$node[\"Busca voluntária pelo moodle ID2\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4ozsfp00ei114rjfkwwav1\",\n \"dataVariables\": {\n    \"name\": \"{{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"first_name\"]}}\"\n  }\n}",
         "options": {}
       },
       "id": "e42bdbb5-ac5d-4b0f-acd5-a9adc138dd53",
@@ -1977,11 +2058,11 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
             },
             {
               "name": "moodle_user_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"moodle_id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"moodle_id\"]}}"
             }
           ]
         },
@@ -2127,7 +2208,7 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
             }
           ]
         },
@@ -2201,7 +2282,7 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
             }
           ]
         },
@@ -2226,6 +2307,415 @@
         2864
       ],
       "id": "e1fe5763-b8c3-4c83-bd36-88061458e5bf"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2336,
+        80
+      ],
+      "id": "8da69a4f-a47d-431f-bc59-d6c1036c37a6",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1776,
+        96
+      ],
+      "id": "e430eacd-f803-4d43-8689-f8bfa464c2b4",
+      "name": "Loop Over Items5"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": " SELECT \n   v.id, v.email, \n   v.condition, \n   v.moodle_id, \n   v.zendesk_user_id,\n   '{{ $json.data_ini }}'as data_ini,\n   (SELECT status FROM public.volunteer_status_history vsh where vsh.volunteer_id = v.id AND vsh.created_at <'2026-03-24' order by vsh.created_at desc limit 1) ultimo_status_antes_24,\n   \n    (SELECT status FROM public.volunteer_status_history vsh where vsh.volunteer_id = v.id AND vsh.created_at >= '2026-03-31' order by vsh.created_at desc limit 1) ultimo_status_depois_30, \n   (SELECT vsh.id FROM public.volunteer_status_history vsh where vsh.volunteer_id = v.id AND vsh.created_at >= '2026-03-31' order by vsh.created_at desc limit 1) id_ultimo_status_depois_30\n   FROM public.volunteers v \n   where \n   v.moodle_id = {{ $json.userid }}\n   ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2064,
+        320
+      ],
+      "id": "1a51b20f-145b-449d-9fee-78909bd17aeb",
+      "name": "Busca voluntária pelo moodle ID3",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": " SELECT \n   v.id, v.email, \n   v.condition, \n   vsh.created_at, \n   vsh.status,\n   vsh.id as vsh_id\n   FROM public.volunteers v \n   INNER JOIN public.volunteer_status_history vsh ON (vsh.volunteer_id = v.id) \n   where \n   v.moodle_id = {{ $json.userid }}\n   AND vsh.created_at >= '2026-03-24'  AND vsh.created_at < '2026-03-31'\n   AND vsh.status in( 'capacitacao', 'aprovada') \n   ORDER bY vsh.created_at",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2064,
+        96
+      ],
+      "id": "8e271836-6ab6-4fec-b05d-7cdb64069a17",
+      "name": "Busca historico de voluntária pelo moodle ID",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": "volunteer_status_history",
+        "columns": "volunteer_id,status,created_at",
+        "additionalFields": {}
+      },
+      "id": "b50bf0a4-258d-499d-8cb8-beca5f3977f2",
+      "name": "Insere o novo status na tabela volunteer_status_history2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -80
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": "volunteer_status_history",
+        "columns": "volunteer_id,status,created_at",
+        "additionalFields": {}
+      },
+      "id": "aa2fb9ad-5770-4664-a2cf-3b0189e9744e",
+      "name": "Insere o novo status na tabela volunteer_status_history3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -80
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json[\"id\"] }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "capacitacao"
+              }
+            ]
+          }
+        }
+      },
+      "id": "b61e44c3-c04f-4b06-958f-9c9eb0f61d5c",
+      "name": "Atualiza status da voluntária no Zendesk3",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        464
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "32f1c1d3-18a9-467b-bbb9-f9d517ef8c5e",
+              "leftValue": "={{ $json.ultimo_status_antes_24 }}",
+              "rightValue": "cadastrada",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "c5d041c1-0536-48d4-a170-70895df241b1",
+              "leftValue": "={{ $json.ultimo_status_depois_30 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "35c567b0-4f5d-40f6-b691-b420aa275a8f",
+              "leftValue": "={{ $json.condition }}",
+              "rightValue": "capacitacao",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1888,
+        544
+      ],
+      "id": "d366056b-c310-4940-8940-2c5f16b09ffd",
+      "name": "se a voluntaria precisa atualizar o status para capacitacao"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e5f32eec-b993-4623-a5d8-b72433b6dd30",
+              "leftValue": "={{ $json.ultimo_status_antes_24 }}",
+              "rightValue": "capacitacao",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "4fbc853a-d0fa-4188-8d10-8ba0029047d9",
+              "leftValue": "={{ $json.ultimo_status_antes_24 }}",
+              "rightValue": "cadastrada",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "27e6edde-d42e-42bb-88da-d9783cc5a443",
+              "leftValue": "={{ $json.ultimo_status_depois_30 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1600,
+        544
+      ],
+      "id": "520b5b69-a01d-489c-885a-d8027bfcf156",
+      "name": "se a voluntaria precisa atualiza o status para o novo (já disponivel)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        592
+      ],
+      "id": "5ec028bf-a66b-462a-8775-5f2b5ff949f2",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "49ff613c-38a2-472c-bafe-854e60f47805",
+              "leftValue": "={{ $json.ultimo_status_depois_30 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "09b1c850-276f-4f5e-87ce-9854be57baca",
+              "leftValue": "={{ $json.ultimo_status_depois_30 }}",
+              "rightValue": "capacitacao",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1856,
+        336
+      ],
+      "id": "e5456eb2-691b-4556-be96-ff763ad0062b",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteer_status_history\nSET created_at= '{{ $json.data_ini }}'\nWHERE volunteer_id = {{ $json.id }} AND status = 'capacitacao' and id = {{ $json.id_ultimo_status_depois_30 }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1584,
+        304
+      ],
+      "id": "12aca588-cfc2-40d8-b7ad-50b8c7a2595b",
+      "name": "Atualiza data de incio da capacitacao",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM public.volunteer_status_history\nWHERE id= {{ $json.vsh_id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1488,
+        96
+      ],
+      "id": "11de79b1-1d75-433b-9881-14a7b3ffd13d",
+      "name": "Deleta todas as entradas repetidas",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "027a44de-280a-46af-98cb-184029afcac2",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1296,
+        320
+      ],
+      "id": "3d5d1478-9946-408c-b652-c53e83302a8d",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "eeb7f2c7-450b-4d85-bc56-9d0aadb15888",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1392,
+        640
+      ],
+      "id": "3a4fb342-e79c-4da7-a6e4-4bd0cd9f1e05",
+      "name": "If3"
     }
   ],
   "pinData": {},
@@ -2257,7 +2747,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-05T23:13:28.000Z",
+              "updatedAt": "2026-04-06T11:03:44.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -2277,7 +2767,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-05",
+              "lastActiveAt": "2026-04-06",
               "isPending": false
             }
           }
@@ -2288,7 +2778,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-04-01T10:45:35.638Z",
-  "versionCounter": 25,
-  "versionId": "c01b053e-c8f0-4f2d-a41a-1e140bf32ee4"
+  "updatedAt": "2026-04-06T18:29:35.654Z",
+  "versionCounter": 28,
+  "versionId": "66fa4b24-9b54-4286-a027-29fbf3196a47"
 }
