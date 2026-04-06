@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-04-02T17:48:23.904Z",
-    "createdAt": "2026-04-02T17:48:23.904Z",
-    "versionId": "e4688e67-82c8-4257-9961-af1ab62192ef",
+    "updatedAt": "2026-04-06T19:18:29.882Z",
+    "createdAt": "2026-04-06T19:18:29.882Z",
+    "versionId": "a9dde0eb-cb42-4d54-92be-1660c04780f3",
     "workflowId": "MwqtjrooETHGDdmp",
     "nodes": [
       {
@@ -5638,6 +5638,130 @@
             "name": "Zendesk account"
           }
         }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0AMJ4KK9JN",
+            "mode": "list",
+            "cachedResultName": "alerta_instrumentais"
+          },
+          "text": "=A voluntária {{ $('Execute a SQL query2').item.json.volunteer_name }} relatou que não está mais atendendo a MSR {{ $('Execute a SQL query2').item.json.msr_first_name }}. \nTicket do match: https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $('Execute a SQL query2').item.json.volunteer_zendesk_ticket_id }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          3776,
+          560
+        ],
+        "id": "87b0b968-da6d-4673-8705-241e42dc4c0c",
+        "name": "Send a message8",
+        "webhookId": "0e1f36e0-f2f7-4d5f-82da-d2e7365fee57",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "01G85hUbLT4VlY92",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "8fa3f575-73ca-4c98-b7dd-c5e0aa40016b",
+                "leftValue": "={{ $('Respostas2').item.json.contrato_atendimento.still_in_support }}",
+                "rightValue": "Sim",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3504,
+          576
+        ],
+        "id": "f9f7de78-5492-41fa-b2b3-22001de829ad",
+        "name": "Precisa de ajuda da equipe?4"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0AMJ4KK9JN",
+            "mode": "list",
+            "cachedResultName": "alerta_instrumentais"
+          },
+          "text": "=A voluntária {{ $('Execute a SQL query3').item.json.volunteer_name }} relatou que não está mais atendendo a MSR {{ $('Execute a SQL query3').item.json.msr_first_name }}. \n<a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $('Execute a SQL query3').item.json.volunteer_zendesk_ticket_id }}'>Ticket do match<a/>",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          3552,
+          1984
+        ],
+        "id": "90b6384a-08e0-4705-8cfa-f90fea603bd7",
+        "name": "Send a message9",
+        "webhookId": "0e1f36e0-f2f7-4d5f-82da-d2e7365fee57",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "01G85hUbLT4VlY92",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "8fa3f575-73ca-4c98-b7dd-c5e0aa40016b",
+                "leftValue": "={{ $('Respostas3').item.json.contrato_atendimento.still_in_support }}",
+                "rightValue": "Sim",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3280,
+          2000
+        ],
+        "id": "a66ee589-58df-4fe7-b93e-360db8208f29",
+        "name": "Precisa de ajuda da equipe?5"
       }
     ],
     "connections": {
@@ -5912,6 +6036,11 @@
               "node": "Precisa de ajuda da equipe?2",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Precisa de ajuda da equipe?4",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -6018,6 +6147,11 @@
             },
             {
               "node": "Atualiza ticket do pedido de acolhimento (MSR)4",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Precisa de ajuda da equipe?5",
               "type": "main",
               "index": 0
             }
@@ -6377,13 +6511,35 @@
             }
           ]
         ]
+      },
+      "Precisa de ajuda da equipe?4": {
+        "main": [
+          [
+            {
+              "node": "Send a message8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Precisa de ajuda da equipe?5": {
+        "main": [
+          [
+            {
+              "node": "Send a message9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "e4688e67-82c8-4257-9961-af1ab62192ef",
+  "activeVersionId": "a9dde0eb-cb42-4d54-92be-1660c04780f3",
   "connections": {
     "Webhook": {
       "main": [
@@ -6656,6 +6812,11 @@
             "node": "Precisa de ajuda da equipe?2",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Precisa de ajuda da equipe?4",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -6762,6 +6923,11 @@
           },
           {
             "node": "Atualiza ticket do pedido de acolhimento (MSR)4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Precisa de ajuda da equipe?5",
             "type": "main",
             "index": 0
           }
@@ -7116,6 +7282,28 @@
         [
           {
             "node": "Busca registro de envio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Precisa de ajuda da equipe?4": {
+      "main": [
+        [
+          {
+            "node": "Send a message8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Precisa de ajuda da equipe?5": {
+      "main": [
+        [
+          {
+            "node": "Send a message9",
             "type": "main",
             "index": 0
           }
@@ -12764,6 +12952,130 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AMJ4KK9JN",
+          "mode": "list",
+          "cachedResultName": "alerta_instrumentais"
+        },
+        "text": "=A voluntária {{ $('Execute a SQL query2').item.json.volunteer_name }} relatou que não está mais atendendo a MSR {{ $('Execute a SQL query2').item.json.msr_first_name }}. \nTicket do match: https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $('Execute a SQL query2').item.json.volunteer_zendesk_ticket_id }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        3776,
+        560
+      ],
+      "id": "87b0b968-da6d-4673-8705-241e42dc4c0c",
+      "name": "Send a message8",
+      "webhookId": "0e1f36e0-f2f7-4d5f-82da-d2e7365fee57",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8fa3f575-73ca-4c98-b7dd-c5e0aa40016b",
+              "leftValue": "={{ $('Respostas2').item.json.contrato_atendimento.still_in_support }}",
+              "rightValue": "Sim",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3504,
+        576
+      ],
+      "id": "f9f7de78-5492-41fa-b2b3-22001de829ad",
+      "name": "Precisa de ajuda da equipe?4"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AMJ4KK9JN",
+          "mode": "list",
+          "cachedResultName": "alerta_instrumentais"
+        },
+        "text": "=A voluntária {{ $('Execute a SQL query3').item.json.volunteer_name }} relatou que não está mais atendendo a MSR {{ $('Execute a SQL query3').item.json.msr_first_name }}. \n<a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $('Execute a SQL query3').item.json.volunteer_zendesk_ticket_id }}'>Ticket do match<a/>",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        3552,
+        1984
+      ],
+      "id": "90b6384a-08e0-4705-8cfa-f90fea603bd7",
+      "name": "Send a message9",
+      "webhookId": "0e1f36e0-f2f7-4d5f-82da-d2e7365fee57",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8fa3f575-73ca-4c98-b7dd-c5e0aa40016b",
+              "leftValue": "={{ $('Respostas3').item.json.contrato_atendimento.still_in_support }}",
+              "rightValue": "Sim",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3280,
+        2000
+      ],
+      "id": "a66ee589-58df-4fe7-b93e-360db8208f29",
+      "name": "Precisa de ajuda da equipe?5"
     }
   ],
   "pinData": {
@@ -17315,7 +17627,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-05T23:13:28.000Z",
+              "updatedAt": "2026-04-06T11:03:44.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -17335,7 +17647,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-05",
+              "lastActiveAt": "2026-04-06",
               "isPending": false
             }
           }
@@ -17346,7 +17658,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 7,
-  "updatedAt": "2026-04-02T17:48:23.901Z",
-  "versionCounter": 99,
-  "versionId": "e4688e67-82c8-4257-9961-af1ab62192ef"
+  "updatedAt": "2026-04-06T19:18:29.879Z",
+  "versionCounter": 107,
+  "versionId": "a9dde0eb-cb42-4d54-92be-1660c04780f3"
 }
