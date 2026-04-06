@@ -208,35 +208,6 @@
           }
         ]
       ]
-    },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Busca Zendesk User ID4",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Stop and Error",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca Zendesk User ID4": {
-      "main": [
-        [
-          {
-            "node": "Send Loops comms PSI",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "createdAt": "2024-02-05T20:14:29.082Z",
@@ -543,7 +514,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        640,
+        656,
         464
       ],
       "credentials": {
@@ -729,124 +700,6 @@
       ],
       "webhookId": "a3fe4491-fda9-4537-ac2e-6d3ba4d9a86c",
       "id": "aa78d743-4636-49a9-b0d0-597cd3ed0b3e"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "5a963ba6-d72f-4688-b041-0a0323007111",
-              "leftValue": "={{ $json.body.volunteer_email }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "exists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        -128,
-        1744
-      ],
-      "id": "4f67c60b-2fb8-46ca-862c-e11f1ef7bfe8",
-      "name": "If"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE match.matches \nSET match_status = 'completed'\nWHERE match_id = '{{ $json.body.match_id }}'\nAND support_type = 'psychological' ",
-        "options": {}
-      },
-      "id": "5993e0b7-8e81-4125-ab1d-efb9aa96eb74",
-      "name": "Busca Zendesk User ID4",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.4,
-      "position": [
-        192,
-        1632
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "errorMessage": "A voluntária com Zendesk User ID '{{$node[\"Webhook\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados. não existe no nosso banco de dados."
-      },
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        64,
-        2096
-      ],
-      "id": "5ed38a22-1ae9-4dcb-940c-735fa6cfd246",
-      "name": "Stop and Error"
-    },
-    {
-      "parameters": {
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmnhli7s207dc0i117nplhkra\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        432,
-        1632
-      ],
-      "id": "7124446c-186a-4da5-8019-69c2c2fa96d2",
-      "name": "Send Loops comms PSI",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmnhl19fg05bo0i1wf4b52tf9\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        432,
-        1840
-      ],
-      "id": "4ac85392-fa96-45dd-a18b-4aa4a79d786e",
-      "name": "Send Loops comms ADV",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      }
     }
   ],
   "pinData": {},
@@ -878,7 +731,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-05T23:13:28.000Z",
+              "updatedAt": "2026-04-06T11:03:44.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -898,7 +751,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-05",
+              "lastActiveAt": "2026-04-06",
               "isPending": false
             }
           }
@@ -916,7 +769,7 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-04-03T17:14:18.455Z",
-  "versionCounter": 4,
-  "versionId": "6f68f656-2b5d-4ab5-846c-79bc3553a0f3"
+  "updatedAt": "2026-04-06T14:28:06.465Z",
+  "versionCounter": 5,
+  "versionId": "fa3e6a2a-02ee-4f05-91c8-6dd35faf8d12"
 }
