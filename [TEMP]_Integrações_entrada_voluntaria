@@ -93,13 +93,7 @@
     },
     "Seta os campos para atualizar voluntária no BD": {
       "main": [
-        [
-          {
-            "node": "Busca histórico de início da capacitação1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Seleciona o ticket mais antigo": {
@@ -314,7 +308,7 @@
       "main": [
         [
           {
-            "node": "Se retornou a voluntária2",
+            "node": "Loop Over Items9",
             "type": "main",
             "index": 0
           }
@@ -357,7 +351,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items8",
+            "node": "Busca voluntária pelo moodle ID2",
             "type": "main",
             "index": 0
           }
@@ -373,12 +367,12 @@
             "index": 0
           },
           {
-            "node": "O status da voluntária é capacitacao1",
+            "node": "Seta os campos para atualizar  o histórico de capacitação da voluntária2",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Seta os campos para atualizar  o histórico de capacitação da voluntária2",
+            "node": "Busca voluntária pelo email2",
             "type": "main",
             "index": 0
           }
@@ -389,7 +383,7 @@
       "main": [
         [
           {
-            "node": "Seta os campos para atualizar voluntária no BD",
+            "node": "Seta os campos para atualizar voluntária no BD2",
             "type": "main",
             "index": 0
           }
@@ -399,24 +393,12 @@
     },
     "Loop Over Items2": {
       "main": [
-        [
-          {
-            "node": "Seta os campos para atualizar voluntária no BD2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Insere o novo status na tabela volunteer_status_history": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Busca voluntária pelo email2": {
@@ -499,7 +481,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items3",
+            "node": "Loop Over Items9",
             "type": "main",
             "index": 0
           }
@@ -508,13 +490,7 @@
     },
     "O status da voluntária é capacitacao1": {
       "main": [
-        [
-          {
-            "node": "Busca voluntária pelo email2",
-            "type": "main",
-            "index": 0
-          }
-        ],
+        [],
         []
       ]
     },
@@ -543,35 +519,17 @@
     "Loop Over Items3": {
       "main": [
         [],
-        [
-          {
-            "node": "Envia email aprovada1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Busca histórico de início da capacitação1": {
       "main": [
-        [
-          {
-            "node": "A voluntária ainda não iniciou a capacitação?1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "A voluntária ainda não iniciou a capacitação?1": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Seta os campos para atualizar voluntária no BD1": {
@@ -608,13 +566,24 @@
             "node": "Insere o novo status na tabela volunteer_status_history",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Insere o novo evento na tabela volunteer_training_history3",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
     },
     "Insere o novo evento na tabela volunteer_training_history2": {
       "main": [
-        []
+        [
+          {
+            "node": "Envia email aprovada1",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Replace Me": {
@@ -824,6 +793,34 @@
           }
         ]
       ]
+    },
+    "Seleciona o ticket mais antigo1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o ticket para \"aprovada\"2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items9": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Se retornou a voluntária2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        []
+      ]
     }
   },
   "createdAt": "2026-03-30T19:23:25.930Z",
@@ -860,8 +857,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -3072,
-        1520
+        -1152,
+        1536
       ],
       "id": "2aafac10-9eb2-44b2-b59f-ffcf2ff8c61c",
       "name": "When clicking ‘Execute workflow’"
@@ -1078,8 +1075,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
       "position": [
-        448,
-        1408
+        464,
+        1664
       ]
     },
     {
@@ -1694,8 +1691,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        -224,
-        1568
+        -160,
+        1616
       ]
     },
     {
@@ -1718,6 +1715,10 @@
             {
               "column": "moodle_id",
               "value": "={{$json[\"userid\"]}}"
+            },
+            {
+              "column": "condition",
+              "value": "cadastrada"
             }
           ]
         },
@@ -1741,7 +1742,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2\n  AND \n   to_timestamp(timestarted) BETWEEN '2026-03-24' AND '2026-03-30 23:59:59'\n    AND\n  \n    timecompleted is null\n  \nand userid <> 5002\n\n",
+        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2\n  \n  \nand userid = 6961\n\n",
         "options": {}
       },
       "id": "4c5e5bea-0a30-46f5-9174-650aacd46762",
@@ -1750,7 +1751,7 @@
       "typeVersion": 2.3,
       "position": [
         -2944,
-        672
+        688
       ],
       "credentials": {
         "postgres": {
@@ -1783,7 +1784,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2\n  AND \n    to_timestamp(timestarted) BETWEEN '2026-03-24' AND '2026-03-30 23:59:59'\n    AND \n    to_timestamp(timecompleted) BETWEEN '2026-03-24' AND '2026-03-30 23:59:59' \n\n\n",
+        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2\n  AND \n  \n    to_timestamp(timestarted)  BETWEEN '2026-03-31' AND '2026-03-31 23:59:59' and\n    to_timestamp(timecompleted) > '2026-03-31'\n\n",
         "options": {}
       },
       "id": "a347cfb7-8227-47fc-8827-aac2f558afc5",
@@ -1791,8 +1792,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        -2784,
-        1552
+        -864,
+        1568
       ],
       "credentials": {
         "postgres": {
@@ -1842,8 +1843,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1232,
-        1392
+        992,
+        1648
       ],
       "id": "67120bda-0802-4328-88c0-dff12014d0f3",
       "name": "Loop Over Items2"
@@ -1884,13 +1885,13 @@
             },
             {
               "name": "created_at",
-              "value": "={{ $('busca voluntárias FINALIZOU').item.json.data_fim }}"
+              "value": "={{ $('busca voluntárias capacitaçao INICIOU E FINALIZOU').item.json.data_fim }}"
             }
           ],
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{ $('Busca voluntária pelo moodle ID2').item.json.id }}"
             },
             {
               "name": "zendesk_user_id",
@@ -2006,8 +2007,8 @@
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        2544,
-        2144
+        2368,
+        2176
       ]
     },
     {
@@ -2060,7 +2061,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n \"email\": \"{{$node[\"Busca voluntária pelo moodle ID2\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4ozsfp00ei114rjfkwwav1\",\n \"dataVariables\": {\n    \"name\": \"{{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"first_name\"]}}\"\n  }\n}",
+        "jsonBody": "={\n \"email\": \"{{$node[\"Busca voluntária pelo moodle ID2\"].json[\"email\"]}}\",\n \"transactionalId\": \"clt4ozsfp00ei114rjfkwwav1\",\n \"dataVariables\": {\n    \"name\": \"{{ $('Busca voluntária pelo moodle ID2').item.json.first_name }}\"\n  }\n}",
         "options": {}
       },
       "id": "e42bdbb5-ac5d-4b0f-acd5-a9adc138dd53",
@@ -2068,8 +2069,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1536,
-        2336
+        1184,
+        2288
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -2108,8 +2109,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        688,
-        1872
+        800,
+        2080
       ]
     },
     {
@@ -2129,11 +2130,11 @@
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{ $json.id }}"
             },
             {
               "name": "moodle_user_id",
-              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"moodle_id\"]}}"
+              "value": "={{ $json.moodle_id }}"
             }
           ]
         },
@@ -2201,8 +2202,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1200,
-        2320
+        1040,
+        2448
       ],
       "id": "59f63f02-b29a-4f7a-b277-a76523c10aaf",
       "name": "Loop Over Items3"
@@ -2237,8 +2238,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        944,
-        1408
+        864,
+        1648
       ]
     },
     {
@@ -2251,7 +2252,7 @@
       "typeVersion": 2.6,
       "position": [
         704,
-        1408
+        1552
       ],
       "id": "ac2aba07-d31a-42c6-b3b9-f45b2a6f17f4",
       "name": "Busca histórico de início da capacitação1",
@@ -2348,12 +2349,20 @@
             {
               "name": "created_at",
               "value": "={{ $('busca voluntárias capacitaçao INICIOU E FINALIZOU').item.json.data_ini }}"
+            },
+            {
+              "name": "event",
+              "value": "started_training"
             }
           ],
           "number": [
             {
               "name": "volunteer_id",
-              "value": "={{$node[\"Busca historico de voluntária pelo moodle ID\"].json[\"id\"]}}"
+              "value": "={{ $('Busca voluntária pelo moodle ID2').item.json.id }}"
+            },
+            {
+              "name": "moodle_user_id",
+              "value": "={{ $('Busca voluntária pelo moodle ID2').item.json.moodle_id }}"
             }
           ]
         },
@@ -2850,6 +2859,113 @@
           "name": "[PROD] Moodle"
         }
       }
+    },
+    {
+      "parameters": {
+        "table": "volunteer_training_history",
+        "columns": "volunteer_id,moodle_user_id,event,created_at",
+        "additionalFields": {}
+      },
+      "id": "ed485fc1-479e-46ae-83aa-0f90e78db5cb",
+      "name": "Insere o novo evento na tabela volunteer_training_history3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        1568
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360021665652,
+                "value": "aprovada"
+              }
+            ]
+          },
+          "status": "open"
+        }
+      },
+      "id": "7800d840-1e39-4e2f-a5ed-26284d39a95a",
+      "name": "Atualiza o ticket para \"aprovada\"1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        1312
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360021665652,
+                "value": "aprovada"
+              }
+            ]
+          },
+          "status": "open"
+        }
+      },
+      "id": "f9ed5a29-2905-4c5a-aee2-9a65122e6755",
+      "name": "Atualiza o ticket para \"aprovada\"2",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        2192
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        1584
+      ],
+      "id": "e18c52d9-c29b-48cd-9eeb-bdf32270751e",
+      "name": "Loop Over Items9"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        1792
+      ],
+      "id": "4be9f476-24d8-4216-923c-14f9a3f43869"
     }
   ],
   "pinData": {},
@@ -2881,7 +2997,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-08T12:41:40.000Z",
+              "updatedAt": "2026-04-09T12:19:01.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -2901,7 +3017,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-08",
+              "lastActiveAt": "2026-04-09",
               "isPending": false
             }
           }
@@ -2912,7 +3028,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-04-07T18:43:27.514Z",
-  "versionCounter": 36,
-  "versionId": "3520d523-745c-465c-9189-76fc6b81d4aa"
+  "updatedAt": "2026-04-09T17:13:21.118Z",
+  "versionCounter": 38,
+  "versionId": "cd3cdef7-25d6-4445-97e4-1f403a00501d"
 }
