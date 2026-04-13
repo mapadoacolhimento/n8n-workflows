@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-04-06T15:06:52.201Z",
-    "createdAt": "2026-04-06T15:06:52.201Z",
-    "versionId": "82cdf75d-2344-475b-8ffb-fa6226018fe4",
+    "updatedAt": "2026-04-13T20:01:26.744Z",
+    "createdAt": "2026-04-13T20:01:26.744Z",
+    "versionId": "1799ea1e-0508-466a-8068-fe494e981f70",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -1367,7 +1367,7 @@
         "typeVersion": 4.3,
         "position": [
           3808,
-          1520
+          1680
         ],
         "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
         "name": "send loops interrupção atendimento",
@@ -1392,7 +1392,7 @@
         "typeVersion": 4.3,
         "position": [
           3808,
-          1728
+          1888
         ],
         "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
         "name": "send loops interrupção encaminhamento",
@@ -1470,6 +1470,117 @@
             "name": "[PROD] Mapa"
           }
         }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.volunteer_id }},\n    'volunteer_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "options": {}
+        },
+        "id": "f2c5a963-5798-4da8-942f-218753123ac1",
+        "name": "insere voluntária na instrumental_record PSI",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          4432,
+          1120
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('update match_status').item.json.match_id }},\n    {{ $('update match_status').item.json.volunteer_id }},\n    'volunteer_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "options": {}
+        },
+        "id": "365a3b83-05ff-47a2-8388-c59feeb87e0a",
+        "name": "insere voluntária na instrumental_record ADV",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          4432,
+          1488
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('update match_status').item.json.match_id }},\n    {{ $('update match_status').item.json.volunteer_id }},\n    'support_interruption',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "options": {}
+        },
+        "id": "2b79e4de-7f2d-446b-bc90-8b312895e5ef",
+        "name": "insere voluntária na instrumental_record ADV1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          4112,
+          1792
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o Instrumental de Conclusão de Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "b607de2e-bc28-4aca-8463-551e5ceedd9e",
+        "name": "Adiciona comentário interno",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          4736,
+          1312
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o Instrumental de Interrupção do Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "d452fbac-30eb-4830-a572-73a60552d949",
+        "name": "Adiciona comentário interno1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          4352,
+          1792
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
       }
     ],
     "connections": {
@@ -1889,13 +2000,90 @@
             }
           ]
         ]
+      },
+      "Send Loops comms PSI": {
+        "main": [
+          [
+            {
+              "node": "insere voluntária na instrumental_record PSI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Loops comms ADV": {
+        "main": [
+          [
+            {
+              "node": "insere voluntária na instrumental_record ADV",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "send loops interrupção atendimento": {
+        "main": [
+          [
+            {
+              "node": "insere voluntária na instrumental_record ADV1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "send loops interrupção encaminhamento": {
+        "main": [
+          [
+            {
+              "node": "insere voluntária na instrumental_record ADV1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insere voluntária na instrumental_record PSI": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insere voluntária na instrumental_record ADV": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insere voluntária na instrumental_record ADV1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "82cdf75d-2344-475b-8ffb-fa6226018fe4",
+  "activeVersionId": "1799ea1e-0508-466a-8068-fe494e981f70",
   "connections": {
     "Webhook": {
       "main": [
@@ -2308,6 +2496,83 @@
         [
           {
             "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Loops comms PSI": {
+      "main": [
+        [
+          {
+            "node": "insere voluntária na instrumental_record PSI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Loops comms ADV": {
+      "main": [
+        [
+          {
+            "node": "insere voluntária na instrumental_record ADV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send loops interrupção atendimento": {
+      "main": [
+        [
+          {
+            "node": "insere voluntária na instrumental_record ADV1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send loops interrupção encaminhamento": {
+      "main": [
+        [
+          {
+            "node": "insere voluntária na instrumental_record ADV1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere voluntária na instrumental_record PSI": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere voluntária na instrumental_record ADV": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere voluntária na instrumental_record ADV1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno1",
             "type": "main",
             "index": 0
           }
@@ -3685,7 +3950,7 @@
       "typeVersion": 4.3,
       "position": [
         3808,
-        1520
+        1680
       ],
       "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
       "name": "send loops interrupção atendimento",
@@ -3710,7 +3975,7 @@
       "typeVersion": 4.3,
       "position": [
         3808,
-        1728
+        1888
       ],
       "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
       "name": "send loops interrupção encaminhamento",
@@ -3788,6 +4053,117 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.volunteer_id }},\n    'volunteer_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "f2c5a963-5798-4da8-942f-218753123ac1",
+      "name": "insere voluntária na instrumental_record PSI",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        4432,
+        1120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('update match_status').item.json.match_id }},\n    {{ $('update match_status').item.json.volunteer_id }},\n    'volunteer_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "365a3b83-05ff-47a2-8388-c59feeb87e0a",
+      "name": "insere voluntária na instrumental_record ADV",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        4432,
+        1488
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('update match_status').item.json.match_id }},\n    {{ $('update match_status').item.json.volunteer_id }},\n    'support_interruption',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "2b79e4de-7f2d-446b-bc90-8b312895e5ef",
+      "name": "insere voluntária na instrumental_record ADV1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        4112,
+        1792
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Instrumental de Conclusão de Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "b607de2e-bc28-4aca-8463-551e5ceedd9e",
+      "name": "Adiciona comentário interno",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4736,
+        1312
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Instrumental de Interrupção do Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "d452fbac-30eb-4830-a572-73a60552d949",
+      "name": "Adiciona comentário interno1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4352,
+        1792
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {
@@ -3919,7 +4295,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-12T19:00:30.000Z",
+              "updatedAt": "2026-04-13T12:18:12.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -3939,7 +4315,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-12",
+              "lastActiveAt": "2026-04-13",
               "isPending": false
             }
           }
@@ -3962,7 +4338,7 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2026-04-06T15:06:52.195Z",
-  "versionCounter": 20,
-  "versionId": "82cdf75d-2344-475b-8ffb-fa6226018fe4"
+  "updatedAt": "2026-04-13T20:01:26.742Z",
+  "versionCounter": 32,
+  "versionId": "1799ea1e-0508-466a-8068-fe494e981f70"
 }
