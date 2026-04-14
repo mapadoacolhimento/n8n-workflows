@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-04-08T14:31:16.912Z",
-    "createdAt": "2026-04-08T14:31:16.912Z",
-    "versionId": "5a6002a7-faec-4045-ad0f-b656badd4bd4",
+    "updatedAt": "2026-04-14T14:49:38.048Z",
+    "createdAt": "2026-04-14T14:49:38.048Z",
+    "versionId": "e5cc84bd-29d1-45bb-9b44-113dd96a8a98",
     "workflowId": "XkijjlNRjgEHItAP",
     "nodes": [
       {
@@ -40,7 +40,7 @@
             "interval": [
               {
                 "field": "cronExpression",
-                "expression": "03 10 09 04 *"
+                "expression": "18 11 14 4 *"
               }
             ]
           }
@@ -138,36 +138,6 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "https://app.loops.so/api/v1/transactional",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n  \"transactionalId\": \"cmnq2qrfi0ogv0iz65hvdxfrf\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
-          "options": {}
-        },
-        "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
-        "name": "Envia email primeiro convite1",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.1,
-        "position": [
-          320,
-          96
-        ],
-        "retryOnFail": true,
-        "notesInFlow": true,
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "XrvtxHAVgwwJ3r6q",
-            "name": "Loops API"
-          }
-        },
-        "onError": "continueRegularOutput",
-        "notes": "Vixi"
-      },
-      {
-        "parameters": {
-          "method": "POST",
           "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpBasicAuth",
@@ -185,7 +155,7 @@
               },
               {
                 "name": "ContentSid",
-                "value": "HX415e95eb76c5975bab70f41e601eadb2"
+                "value": "HX718dd3076ae7bb009527d0905403925d"
               },
               {
                 "name": "ContentVariables",
@@ -412,7 +382,7 @@
             "interval": [
               {
                 "field": "cronExpression",
-                "expression": "00 08 17 03 *"
+                "expression": "18 11 14 4 *"
               }
             ]
           }
@@ -457,7 +427,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}'",
+          "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' AND email NOT IN ('guiomara_rocha@hotmail.com', 'claudiacassiapsi@gmail.com', 'janinyalmeida20@gmail.com', 'amigarj92@hotmail.com', 'claudiacassiapsi@gmail.com', 'gabriela.bueno.rodrigues@hotmail.com', 'adv.luanasalazar@gmail.com', 'annaluckcduarte@gmail.com', 'linscarol6@gmail.com', 'andreaaguilar@adv.oabsp.org.br', 'psiluizafelix@gmail.com', 'renattapsicologia@gmail.com', 'conceicaoq@yahoo.com.br', 'tuanetamioso@gmail.com', 'gkelibernardes@gmail.com', 'jainediaslima.adv@gmail.com', 'psicologiagleyce@gmail.com', 'erikasblm31@gmail.com', 'fabianagpsi@gmail.com', 'jaquepsique1983@gmail.com', 'larissattt0@gmail.com', 'alessandraflora26@yahoo.com.br', 'rubianaviana@gmail.com', 'carol.almeida.contini@gmail.com', 'lima.ds@hotmail.com', 'mariafmfsr040@gmail.com', 'janainasgo@gmail.com', 'adv.bnvalentim@gmail.com', 'psi.beatrizsz@gmail.com', 'danielle.lucenti@hotmail.com', 'jacque.lima.2005@hotmail.com', 'lilianmendesadvogada@gmail.com', 'carolpinho23@gmail.com', 'kassianaadv@gmail.com', 'psipatifreitas@gmail.com', 'adrianarochabrito@gmail.com', 'leilacarvalho.g3w@gmail.com', 'danicvfaria@gmail.com', 'michaelli.santos.adv@gmail.com', 'paulareaprender@gmail.com', 'lexdanielle33@gmail.com', 'patricianunes.juridica@gmail.com', 'ingridncoelhoadv@gmail.com', 'jenniferribeiroadv@gmail.com', 'psicologapriscilaborgesmoraes@gmail.com', 'julia.mori.figueiredo@gmail.com', 'katia.kavb@gmail.com', 'dr.najlaoliveira@gmail.com', 'csonia.santos@hotmail.com', 'juliamenchik1@gmail.com', 'renatadinizadv@gmail.com', 'keesia.simeao@gmail.com', 'josianebispo65@gmail.com', 'rafaeladinelli@gmail.com', 'bllu.brunalucas@gmail.com', 'cinthiarnfernandes@hotmail.com', 'jade.morais@hotmail.com', 'juridico@andreabenicio.com.br', 'patriciamoreira.adv@gmail.com', 'claudia_lazarotto@yahoo.com.br', 'dra.ericabatista@outlook.com', 'arfopsicologia@gmail.com', 'yasmin.alvesnavarro@gmail.com', 'madacardoso49@gmail.com', 'cristinamluz@hotmail.com', 'carolinapavezzi@gmail.com', 'psicologasamiladsantos@gmail.com', 'solange.oliveiras@yahoo.com.br', 'pontes.rossana@gmail.com', 'michele.ferramenta@adv.oabsp.org.br', 'margaretsarquis07@gmail.com', 'delliegati.adv@gmail.com', 'psihannarocha@gmail.com', 'jaqueps17@hotmail.com', 'advmarianearturo@gmail.com', 'amfassbender@hotmail.com', 'jessikanayanef@gmail.com', 'denisenetopsi@gmail.com', 'aepconsultoriajuridica@gmail.com', 'thaiskenna@gmail.com', 'lucila.daudt@hotmail.com', 'rosariaajala36@gmail.com', 'vdelbel11@gmail.com', 'liberato.elis@gmail.com', 'crissfonteslr@gmail.com', 'asalvesjuridico@gmail.com', 'psi.anarr@gmail.com', 'fernandamsilva.advogada@gmail.com', 'sheilacaetano.psi@gmail.com', 'advflaviacristina.souza@gmail.com', 'psicologalidieide@gmail.com', 'cimarapazvieira@gmail.com', 'ingrid.mokwa@hotmail.com', 'bruna.laurindo5@outlook.com', 'renatasg.adv@gmail.com', 'maria.rodrigues2@yahoo.com.br', 'tuellenlima5@gmail.com', 'app.rodrigues01@gmail.com', 'fauamaral@gmail.com', 'jessyca_mastrorosa7@hotmail.com', 'ivanabastos.st@gmail.com', 'michelle.maennicke@gmail.com', 'dannielarocha@gmail.com', 'adv.eucilenechaves@gmail.com', 'shaeany@gmail.com', 'milenamcp1@outlook.com', 'tata91adv@gmail.com', 'alanavasconcelosc@gmail.com', 'hannahbrazao@gmail.com', 'brunastna@gmail.com', 'psicologacarolmeireles@hotmail.com', 'psimilenamattos@gmail.com', 'celiamariaolive@yahoo.com.br', 'raquelhaddadpsi@gmail.com', 'nataliasbarros5@gmail.com', 'anjos.esa@jotmail.com', 'nilza.cpv@adv.oabsp.org.br', 'mcorreaa.adv@gmail.com', 'keilallopes@icloud.com', 'luizapittalima01@gmail.com', 'ripilikae@gmail.com', 'carleneadv2017@gmail.com', 'tacianapsiufc@gmail.com', 'sirlane@adv.oabsp.org.br', 'fabiola.pda@gmail.com', 'jacquesouz@gmail.com', 'adrianagirardelliadv@gmail.com', 'flavia.guilherme@hotmail.com', 'advjaquelinne@gmail.com', 'carolinemgomes@yahoo.com', 'bruna.cargnin1997@gmail.com', 'rafaelypadilha@hotmail.com', 'karlabeatriz54@gmail.com', 'veronicabarros1993@gmail.com', 'psipaulatcastro@gmail.com', 'nathalia.fantini@gmail.com', 'marciaml888@gmail.com', 'psicologajulianebarbieri@gmail.com', 'advmarcelabatista@gmail.com', 'ariana.adv.rj@hotmail.com', 'beatrizalmprado.jgb@gmail.com', 'debora.andradecoelho@gmail.com', 'ivanabastos.st@gmail.com', 'samaratesta@hotmail.com', 'silvarina.regiane@gmail.com', 'michellems.adv@gmail.com', 'magda2712costa@gmail.com', 'psi.daniella.alvares@gmail.com', 'giliannems@gmail.com', 'daianebarreto.adv@gmail.com', 'priscilaalexandree@gmail.com', 'juliane.trajano@hotmail.com', 'thay.gfarias@gmail.com', 'menezescassia5@gmail.com', 'psi.marinascardo@gmail.com', 'mariacelia.s20@hotmail.com', 'thalitatrindade05@gmail.com', 'aline.juridicoexterno@gmail.com', 'tatianecostapsi2012@gmail.com', 'oliveiraliziete@gmail.com', 'kalincka@gmail.com', 'decarvalhofreitasnatalia@gmail.com', 'misllene65@gmail.com', 'antonelarossiguimaraes@gmail.com', 'rejane.martinsadv@gmail.com', 'zeliapsilva@hotmail.com', 'costafreitasana73@gmail.com', 'santana.cristina2005@hotmail.com', 'ivonealvesdealbuquerque@gmail.com', 'advregina@gmail.com', 'shayanehp@gmail.com', 'jana.c.v.beraldo@gmail.com', 'marianna.amorim.psi@gmail.com', 'nataliacaldeiraadv@gmail.com', 'menezescassia5@gmail.com', 'eliarrudagaspar.adv@gmail.com', 'psico.lucianaradin@gmail.com', 'bia.pinhorocha@yahoo.com.br', 'magda2712costa@gmail.com', 'borgatomari29@gmail.com', 'maria.r.aguiar@hotmail.com', 'al.rodrigues.psi@gmail.com', 'janagomes@icloud.com', 'cianealvesmoreira@gmail.com', 'ariana.adv.rj@hotmail.com', 'andressa.risseto@gmail.com', 'vivianefiuza.direito@gmail.com', 'sbrnbenevides@gmail.com', 'advsamyajovito@gmail.com', 'nathaliazerpa.adv@gmail.com', 'simonecostapadv@gmail.com', 'anepaule.mcosta@gmail.com', 'anacarolinagarcia@usp.br', 'sandraoliveira682025@hotmail.com', 'luoflima@gmail.com', 'cstianesanchez@gmail.com', 'nataliacaldeiraadv@gmail.com', 'candidaanascimento@gmail.com', 'larissaa.siqueira@hotmail.com', 'souzalarissa104@gmail.com', 'advfernandabatistapereira@gmail.com', 'angelita.ferracini@gmail.com', 'marianasantos.adv@outlook.com.br', 'mari.marruzo@hotmail.com', 'vcfm_1@msn.com', 'maibecastro.advogada@gmail.com', 'mariaoliveira24@icloud.com', 'marizatejada@gmail.com', 'laradenia08@gmail.com', 'alesforcini@hotmail.com', 'luizapittalima01@gmail.com', 'anna.carol_elias@live.com', 'michelaroqueadv@gmail.com', 'drapalomamarchi@gmail.com', 'cibelesantiago@adv.oabsp.org.br', 'rejanetavares.adv@gmail.com', 'renatateles@adv.oabsp.org.br', 'adv.isabelrosa@gmail.com', 'cibelesantiago@adv.oabsp.org.br', 'eiryloanlourencoadvocacia@gmail.com', 'rafavelani@gmail.com')",
           "options": {}
         },
         "id": "ee3c5701-bb49-4e71-b8fe-9aac9168be4d",
@@ -621,36 +591,6 @@
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"transactionalId\": \"cmmtfygvo00do0i00g1trl72r\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
-          "options": {}
-        },
-        "id": "7ee12bbe-d82c-42a5-9876-66a44b559503",
-        "name": "Envia 3 convite JÁ SE INSCREVERAM1",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.1,
-        "position": [
-          2592,
-          -224
-        ],
-        "retryOnFail": true,
-        "notesInFlow": true,
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "XrvtxHAVgwwJ3r6q",
-            "name": "Loops API"
-          }
-        },
-        "onError": "continueRegularOutput",
-        "notes": "Vixi"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://app.loops.so/api/v1/transactional",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendBody": true,
-          "specifyBody": "json",
           "jsonBody": "={\n  \"transactionalId\": \"cmc51y6k00dqe490iesnsycrh\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
           "options": {}
         },
@@ -706,6 +646,143 @@
         "position": [
           2656,
           544
+        ],
+        "retryOnFail": true,
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "SFhrb3m76win1cJr",
+            "name": "Twilio API"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmnq2qrfi0ogv0iz65hvdxfrf\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "e740ceb6-e7b1-4454-a007-68cc22129011",
+        "name": "Envia email primeiro convite",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          496,
+          -304
+        ],
+        "retryOnFail": true,
+        "notesInFlow": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "notes": "Vixi"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmnxtq3610dpz0iwunkqrpifv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
+        "name": "envia seg email 22/04",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          320,
+          96
+        ],
+        "retryOnFail": true,
+        "notesInFlow": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "notes": "Vixi"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmnxtq3610dpz0iwunkqrpifv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "42dae184-7527-4f0e-9b75-81cc910e92b0",
+        "name": "envia seg email 22/",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          2560,
+          -224
+        ],
+        "retryOnFail": true,
+        "notesInFlow": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "notes": "Vixi"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendBody": true,
+          "contentType": "form-urlencoded",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "To",
+                "value": "=whatsapp:+5521971406468"
+              },
+              {
+                "name": "From",
+                "value": "MGd8a9962347e338326e9237641454191f"
+              },
+              {
+                "name": "ContentSid",
+                "value": "HX718dd3076ae7bb009527d0905403925d"
+              },
+              {
+                "name": "ContentVariables",
+                "value": "={   \"email\": \"pessanha.janaina@gmail.com\" }"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ad20331c-dc89-41e3-9f02-68f27a1a67e8",
+        "name": "Envia mensagem whatsapp primeiro convite",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          176,
+          656
         ],
         "retryOnFail": true,
         "credentials": {
@@ -772,7 +849,7 @@
           [],
           [
             {
-              "node": "Envia email primeiro convite1",
+              "node": "envia seg email 22/04",
               "type": "main",
               "index": 0
             }
@@ -807,17 +884,6 @@
           ]
         ]
       },
-      "Envia email primeiro convite1": {
-        "main": [
-          [
-            {
-              "node": "Wait15",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Envia mensagem whatsapp primeiro convite1": {
         "main": [
           [
@@ -834,11 +900,6 @@
           [
             {
               "node": "loop whatsapp",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "loop email",
               "type": "main",
               "index": 0
             }
@@ -861,7 +922,7 @@
           [],
           [
             {
-              "node": "Envia 3 convite JÁ SE INSCREVERAM1",
+              "node": "envia seg email 22/",
               "type": "main",
               "index": 0
             }
@@ -929,22 +990,33 @@
           ]
         ]
       },
-      "Envia 3 convite JÁ SE INSCREVERAM1": {
+      "Envia mensagem whatsapp último convite": {
         "main": [
           [
             {
-              "node": "Wait16",
+              "node": "Wait",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Envia mensagem whatsapp último convite": {
+      "envia seg email 22/04": {
         "main": [
           [
             {
-              "node": "Wait",
+              "node": "Wait15",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "envia seg email 22/": {
+        "main": [
+          [
+            {
+              "node": "Wait16",
               "type": "main",
               "index": 0
             }
@@ -956,7 +1028,7 @@
     "name": null,
     "description": null
   },
-  "activeVersionId": "5a6002a7-faec-4045-ad0f-b656badd4bd4",
+  "activeVersionId": "e5cc84bd-29d1-45bb-9b44-113dd96a8a98",
   "connections": {
     "Wait14": {
       "main": [
@@ -1012,7 +1084,7 @@
         [],
         [
           {
-            "node": "Envia email primeiro convite1",
+            "node": "envia seg email 22/04",
             "type": "main",
             "index": 0
           }
@@ -1047,17 +1119,6 @@
         ]
       ]
     },
-    "Envia email primeiro convite1": {
-      "main": [
-        [
-          {
-            "node": "Wait15",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Envia mensagem whatsapp primeiro convite1": {
       "main": [
         [
@@ -1074,11 +1135,6 @@
         [
           {
             "node": "loop whatsapp",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "loop email",
             "type": "main",
             "index": 0
           }
@@ -1101,7 +1157,7 @@
         [],
         [
           {
-            "node": "Envia 3 convite JÁ SE INSCREVERAM1",
+            "node": "envia seg email 22/",
             "type": "main",
             "index": 0
           }
@@ -1169,22 +1225,33 @@
         ]
       ]
     },
-    "Envia 3 convite JÁ SE INSCREVERAM1": {
+    "Envia mensagem whatsapp último convite": {
       "main": [
         [
           {
-            "node": "Wait16",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Envia mensagem whatsapp último convite": {
+    "envia seg email 22/04": {
       "main": [
         [
           {
-            "node": "Wait",
+            "node": "Wait15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "envia seg email 22/": {
+      "main": [
+        [
+          {
+            "node": "Wait16",
             "type": "main",
             "index": 0
           }
@@ -1233,7 +1300,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "03 10 09 04 *"
+              "expression": "18 11 14 4 *"
             }
           ]
         }
@@ -1331,36 +1398,6 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmnq2qrfi0ogv0iz65hvdxfrf\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
-        "options": {}
-      },
-      "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
-      "name": "Envia email primeiro convite1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        320,
-        96
-      ],
-      "retryOnFail": true,
-      "notesInFlow": true,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      },
-      "onError": "continueRegularOutput",
-      "notes": "Vixi"
-    },
-    {
-      "parameters": {
-        "method": "POST",
         "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
@@ -1378,7 +1415,7 @@
             },
             {
               "name": "ContentSid",
-              "value": "HX415e95eb76c5975bab70f41e601eadb2"
+              "value": "HX718dd3076ae7bb009527d0905403925d"
             },
             {
               "name": "ContentVariables",
@@ -1605,7 +1642,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "00 08 17 03 *"
+              "expression": "18 11 14 4 *"
             }
           ]
         }
@@ -1650,7 +1687,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}'",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}' AND email NOT IN ('guiomara_rocha@hotmail.com', 'claudiacassiapsi@gmail.com', 'janinyalmeida20@gmail.com', 'amigarj92@hotmail.com', 'claudiacassiapsi@gmail.com', 'gabriela.bueno.rodrigues@hotmail.com', 'adv.luanasalazar@gmail.com', 'annaluckcduarte@gmail.com', 'linscarol6@gmail.com', 'andreaaguilar@adv.oabsp.org.br', 'psiluizafelix@gmail.com', 'renattapsicologia@gmail.com', 'conceicaoq@yahoo.com.br', 'tuanetamioso@gmail.com', 'gkelibernardes@gmail.com', 'jainediaslima.adv@gmail.com', 'psicologiagleyce@gmail.com', 'erikasblm31@gmail.com', 'fabianagpsi@gmail.com', 'jaquepsique1983@gmail.com', 'larissattt0@gmail.com', 'alessandraflora26@yahoo.com.br', 'rubianaviana@gmail.com', 'carol.almeida.contini@gmail.com', 'lima.ds@hotmail.com', 'mariafmfsr040@gmail.com', 'janainasgo@gmail.com', 'adv.bnvalentim@gmail.com', 'psi.beatrizsz@gmail.com', 'danielle.lucenti@hotmail.com', 'jacque.lima.2005@hotmail.com', 'lilianmendesadvogada@gmail.com', 'carolpinho23@gmail.com', 'kassianaadv@gmail.com', 'psipatifreitas@gmail.com', 'adrianarochabrito@gmail.com', 'leilacarvalho.g3w@gmail.com', 'danicvfaria@gmail.com', 'michaelli.santos.adv@gmail.com', 'paulareaprender@gmail.com', 'lexdanielle33@gmail.com', 'patricianunes.juridica@gmail.com', 'ingridncoelhoadv@gmail.com', 'jenniferribeiroadv@gmail.com', 'psicologapriscilaborgesmoraes@gmail.com', 'julia.mori.figueiredo@gmail.com', 'katia.kavb@gmail.com', 'dr.najlaoliveira@gmail.com', 'csonia.santos@hotmail.com', 'juliamenchik1@gmail.com', 'renatadinizadv@gmail.com', 'keesia.simeao@gmail.com', 'josianebispo65@gmail.com', 'rafaeladinelli@gmail.com', 'bllu.brunalucas@gmail.com', 'cinthiarnfernandes@hotmail.com', 'jade.morais@hotmail.com', 'juridico@andreabenicio.com.br', 'patriciamoreira.adv@gmail.com', 'claudia_lazarotto@yahoo.com.br', 'dra.ericabatista@outlook.com', 'arfopsicologia@gmail.com', 'yasmin.alvesnavarro@gmail.com', 'madacardoso49@gmail.com', 'cristinamluz@hotmail.com', 'carolinapavezzi@gmail.com', 'psicologasamiladsantos@gmail.com', 'solange.oliveiras@yahoo.com.br', 'pontes.rossana@gmail.com', 'michele.ferramenta@adv.oabsp.org.br', 'margaretsarquis07@gmail.com', 'delliegati.adv@gmail.com', 'psihannarocha@gmail.com', 'jaqueps17@hotmail.com', 'advmarianearturo@gmail.com', 'amfassbender@hotmail.com', 'jessikanayanef@gmail.com', 'denisenetopsi@gmail.com', 'aepconsultoriajuridica@gmail.com', 'thaiskenna@gmail.com', 'lucila.daudt@hotmail.com', 'rosariaajala36@gmail.com', 'vdelbel11@gmail.com', 'liberato.elis@gmail.com', 'crissfonteslr@gmail.com', 'asalvesjuridico@gmail.com', 'psi.anarr@gmail.com', 'fernandamsilva.advogada@gmail.com', 'sheilacaetano.psi@gmail.com', 'advflaviacristina.souza@gmail.com', 'psicologalidieide@gmail.com', 'cimarapazvieira@gmail.com', 'ingrid.mokwa@hotmail.com', 'bruna.laurindo5@outlook.com', 'renatasg.adv@gmail.com', 'maria.rodrigues2@yahoo.com.br', 'tuellenlima5@gmail.com', 'app.rodrigues01@gmail.com', 'fauamaral@gmail.com', 'jessyca_mastrorosa7@hotmail.com', 'ivanabastos.st@gmail.com', 'michelle.maennicke@gmail.com', 'dannielarocha@gmail.com', 'adv.eucilenechaves@gmail.com', 'shaeany@gmail.com', 'milenamcp1@outlook.com', 'tata91adv@gmail.com', 'alanavasconcelosc@gmail.com', 'hannahbrazao@gmail.com', 'brunastna@gmail.com', 'psicologacarolmeireles@hotmail.com', 'psimilenamattos@gmail.com', 'celiamariaolive@yahoo.com.br', 'raquelhaddadpsi@gmail.com', 'nataliasbarros5@gmail.com', 'anjos.esa@jotmail.com', 'nilza.cpv@adv.oabsp.org.br', 'mcorreaa.adv@gmail.com', 'keilallopes@icloud.com', 'luizapittalima01@gmail.com', 'ripilikae@gmail.com', 'carleneadv2017@gmail.com', 'tacianapsiufc@gmail.com', 'sirlane@adv.oabsp.org.br', 'fabiola.pda@gmail.com', 'jacquesouz@gmail.com', 'adrianagirardelliadv@gmail.com', 'flavia.guilherme@hotmail.com', 'advjaquelinne@gmail.com', 'carolinemgomes@yahoo.com', 'bruna.cargnin1997@gmail.com', 'rafaelypadilha@hotmail.com', 'karlabeatriz54@gmail.com', 'veronicabarros1993@gmail.com', 'psipaulatcastro@gmail.com', 'nathalia.fantini@gmail.com', 'marciaml888@gmail.com', 'psicologajulianebarbieri@gmail.com', 'advmarcelabatista@gmail.com', 'ariana.adv.rj@hotmail.com', 'beatrizalmprado.jgb@gmail.com', 'debora.andradecoelho@gmail.com', 'ivanabastos.st@gmail.com', 'samaratesta@hotmail.com', 'silvarina.regiane@gmail.com', 'michellems.adv@gmail.com', 'magda2712costa@gmail.com', 'psi.daniella.alvares@gmail.com', 'giliannems@gmail.com', 'daianebarreto.adv@gmail.com', 'priscilaalexandree@gmail.com', 'juliane.trajano@hotmail.com', 'thay.gfarias@gmail.com', 'menezescassia5@gmail.com', 'psi.marinascardo@gmail.com', 'mariacelia.s20@hotmail.com', 'thalitatrindade05@gmail.com', 'aline.juridicoexterno@gmail.com', 'tatianecostapsi2012@gmail.com', 'oliveiraliziete@gmail.com', 'kalincka@gmail.com', 'decarvalhofreitasnatalia@gmail.com', 'misllene65@gmail.com', 'antonelarossiguimaraes@gmail.com', 'rejane.martinsadv@gmail.com', 'zeliapsilva@hotmail.com', 'costafreitasana73@gmail.com', 'santana.cristina2005@hotmail.com', 'ivonealvesdealbuquerque@gmail.com', 'advregina@gmail.com', 'shayanehp@gmail.com', 'jana.c.v.beraldo@gmail.com', 'marianna.amorim.psi@gmail.com', 'nataliacaldeiraadv@gmail.com', 'menezescassia5@gmail.com', 'eliarrudagaspar.adv@gmail.com', 'psico.lucianaradin@gmail.com', 'bia.pinhorocha@yahoo.com.br', 'magda2712costa@gmail.com', 'borgatomari29@gmail.com', 'maria.r.aguiar@hotmail.com', 'al.rodrigues.psi@gmail.com', 'janagomes@icloud.com', 'cianealvesmoreira@gmail.com', 'ariana.adv.rj@hotmail.com', 'andressa.risseto@gmail.com', 'vivianefiuza.direito@gmail.com', 'sbrnbenevides@gmail.com', 'advsamyajovito@gmail.com', 'nathaliazerpa.adv@gmail.com', 'simonecostapadv@gmail.com', 'anepaule.mcosta@gmail.com', 'anacarolinagarcia@usp.br', 'sandraoliveira682025@hotmail.com', 'luoflima@gmail.com', 'cstianesanchez@gmail.com', 'nataliacaldeiraadv@gmail.com', 'candidaanascimento@gmail.com', 'larissaa.siqueira@hotmail.com', 'souzalarissa104@gmail.com', 'advfernandabatistapereira@gmail.com', 'angelita.ferracini@gmail.com', 'marianasantos.adv@outlook.com.br', 'mari.marruzo@hotmail.com', 'vcfm_1@msn.com', 'maibecastro.advogada@gmail.com', 'mariaoliveira24@icloud.com', 'marizatejada@gmail.com', 'laradenia08@gmail.com', 'alesforcini@hotmail.com', 'luizapittalima01@gmail.com', 'anna.carol_elias@live.com', 'michelaroqueadv@gmail.com', 'drapalomamarchi@gmail.com', 'cibelesantiago@adv.oabsp.org.br', 'rejanetavares.adv@gmail.com', 'renatateles@adv.oabsp.org.br', 'adv.isabelrosa@gmail.com', 'cibelesantiago@adv.oabsp.org.br', 'eiryloanlourencoadvocacia@gmail.com', 'rafavelani@gmail.com')",
         "options": {}
       },
       "id": "ee3c5701-bb49-4e71-b8fe-9aac9168be4d",
@@ -1814,36 +1851,6 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmmtfygvo00do0i00g1trl72r\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\"\n  }\n}",
-        "options": {}
-      },
-      "id": "7ee12bbe-d82c-42a5-9876-66a44b559503",
-      "name": "Envia 3 convite JÁ SE INSCREVERAM1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        2592,
-        -224
-      ],
-      "retryOnFail": true,
-      "notesInFlow": true,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      },
-      "onError": "continueRegularOutput",
-      "notes": "Vixi"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
         "jsonBody": "={\n  \"transactionalId\": \"cmc51y6k00dqe490iesnsycrh\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
         "options": {}
       },
@@ -1908,6 +1915,143 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnq2qrfi0ogv0iz65hvdxfrf\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "e740ceb6-e7b1-4454-a007-68cc22129011",
+      "name": "Envia email primeiro convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        496,
+        -304
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnxtq3610dpz0iwunkqrpifv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
+      "name": "envia seg email 22/04",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        320,
+        96
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmnxtq3610dpz0iwunkqrpifv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "42dae184-7527-4f0e-9b75-81cc910e92b0",
+      "name": "envia seg email 22/",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2560,
+        -224
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+5521971406468"
+            },
+            {
+              "name": "From",
+              "value": "MGd8a9962347e338326e9237641454191f"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX718dd3076ae7bb009527d0905403925d"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"email\": \"pessanha.janaina@gmail.com\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad20331c-dc89-41e3-9f02-68f27a1a67e8",
+      "name": "Envia mensagem whatsapp primeiro convite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        656
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -1940,7 +2084,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-13T12:18:12.000Z",
+              "updatedAt": "2026-04-14T10:54:59.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -1960,7 +2104,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-13",
+              "lastActiveAt": "2026-04-14",
               "isPending": false
             }
           }
@@ -1984,7 +2128,7 @@
   },
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2026-04-08T14:31:16.911Z",
-  "versionCounter": 50,
-  "versionId": "5a6002a7-faec-4045-ad0f-b656badd4bd4"
+  "updatedAt": "2026-04-14T14:49:38.047Z",
+  "versionCounter": 64,
+  "versionId": "e5cc84bd-29d1-45bb-9b44-113dd96a8a98"
 }
