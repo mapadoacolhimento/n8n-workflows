@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-03-30T13:24:14.616Z",
-    "createdAt": "2026-03-30T13:24:14.616Z",
-    "versionId": "0441e6e0-92eb-4993-b1df-c0ee7eec6b43",
+    "updatedAt": "2026-04-14T21:01:39.207Z",
+    "createdAt": "2026-04-14T21:01:39.207Z",
+    "versionId": "2124d95f-6639-4555-b49b-a02bf451bc89",
     "workflowId": "JMNgqq6mdcwipLTj",
     "nodes": [
       {
@@ -18,8 +18,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          1300,
-          380
+          1312,
+          384
         ]
       },
       {
@@ -31,8 +31,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
         "position": [
-          1700,
-          380
+          1712,
+          384
         ],
         "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
       },
@@ -52,8 +52,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          1900,
-          380
+          1904,
+          384
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -75,7 +75,7 @@
         "typeVersion": 2.5,
         "position": [
           960,
-          460
+          464
         ],
         "credentials": {
           "postgres": {
@@ -95,8 +95,8 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
         "position": [
-          600,
-          980
+          608,
+          992
         ],
         "webhookId": "058fea7e-79f1-4a9f-b77e-af96c1174376"
       },
@@ -109,8 +109,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
         "position": [
-          1400,
-          980
+          1408,
+          992
         ],
         "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
       },
@@ -131,7 +131,7 @@
         "typeVersion": 4.1,
         "position": [
           1600,
-          980
+          992
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -157,8 +157,8 @@
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2,
         "position": [
-          600,
-          460
+          608,
+          464
         ]
       },
       {
@@ -190,8 +190,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          820,
-          980
+          832,
+          992
         ]
       },
       {
@@ -219,8 +219,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          1080,
-          1100
+          1088,
+          1104
         ]
       },
       {
@@ -248,7 +248,7 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          1080,
+          1088,
           880
         ]
       },
@@ -263,8 +263,8 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          420,
-          300
+          432,
+          304
         ]
       },
       {
@@ -277,9 +277,99 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          440,
-          860
+          448,
+          864
         ]
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          512,
+          640
+        ],
+        "id": "96c719db-2f46-4ed9-8296-ba01204fd964",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT distinct \n  m.email, \n  m.first_name firstName, \n  mt.status\n  FROM match.matches mt\n  INNER JOIN pii_sec.msr_pii m on m.msr_id = mt.msr_id\nWHERE \n  mt.status = 'in_contact'",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          720,
+          640
+        ],
+        "id": "5ebd705d-51e0-4fee-8532-94efdb8cf8b8",
+        "name": "Execute a SQL query",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "batchSize": 8,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          928,
+          640
+        ],
+        "id": "442a2685-b3ff-47f7-acbc-a4558c45e1ba",
+        "name": "Loop Over Items1"
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1216,
+          656
+        ],
+        "id": "dbfe22b9-6568-40fd-804d-55cf0b6e436d",
+        "name": "Wait2",
+        "webhookId": "fd29439d-1779-42f0-ab41-0b5a186247a1"
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "https://app.loops.so/api/v1/contacts/update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={ \n  \"email\": \"{{ $json.email  }}\",\n  \"firstName\": \"{{ $json.firstname }}\",\n  \"userGroup\": \"msr\",\n  \"StatusAcolhimento\": \"atendimento_iniciado\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1472,
+          656
+        ],
+        "id": "1abd9b88-8722-4a28-aeec-c64c6cd38130",
+        "name": "HTTP Request",
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "cw6WdIc7c9HRGleo",
+            "name": "Zendesk auth"
+          },
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
       }
     ],
     "connections": {
@@ -400,13 +490,69 @@
             }
           ]
         ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Execute a SQL query",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execute a SQL query": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait2": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "0441e6e0-92eb-4993-b1df-c0ee7eec6b43",
+  "activeVersionId": "2124d95f-6639-4555-b49b-a02bf451bc89",
   "connections": {
     "Loop Over Items": {
       "main": [
@@ -525,6 +671,62 @@
           }
         ]
       ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-12-10T18:08:54.094Z",
@@ -548,8 +750,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1300,
-        380
+        1312,
+        384
       ]
     },
     {
@@ -561,8 +763,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1700,
-        380
+        1712,
+        384
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -582,8 +784,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1900,
-        380
+        1904,
+        384
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -605,7 +807,7 @@
       "typeVersion": 2.5,
       "position": [
         960,
-        460
+        464
       ],
       "credentials": {
         "postgres": {
@@ -625,8 +827,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        600,
-        980
+        608,
+        992
       ],
       "webhookId": "058fea7e-79f1-4a9f-b77e-af96c1174376"
     },
@@ -639,8 +841,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1400,
-        980
+        1408,
+        992
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -661,7 +863,7 @@
       "typeVersion": 4.1,
       "position": [
         1600,
-        980
+        992
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -687,8 +889,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        600,
-        460
+        608,
+        464
       ]
     },
     {
@@ -720,8 +922,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        820,
-        980
+        832,
+        992
       ]
     },
     {
@@ -749,8 +951,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1080,
-        1100
+        1088,
+        1104
       ]
     },
     {
@@ -778,7 +980,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1080,
+        1088,
         880
       ]
     },
@@ -793,8 +995,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        420,
-        300
+        432,
+        304
       ]
     },
     {
@@ -807,9 +1009,99 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        440,
-        860
+        448,
+        864
       ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        512,
+        640
+      ],
+      "id": "96c719db-2f46-4ed9-8296-ba01204fd964",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct \n  m.email, \n  m.first_name firstName, \n  mt.status\n  FROM match.matches mt\n  INNER JOIN pii_sec.msr_pii m on m.msr_id = mt.msr_id\nWHERE \n  mt.status = 'in_contact'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        720,
+        640
+      ],
+      "id": "5ebd705d-51e0-4fee-8532-94efdb8cf8b8",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 8,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        928,
+        640
+      ],
+      "id": "442a2685-b3ff-47f7-acbc-a4558c45e1ba",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        656
+      ],
+      "id": "dbfe22b9-6568-40fd-804d-55cf0b6e436d",
+      "name": "Wait2",
+      "webhookId": "fd29439d-1779-42f0-ab41-0b5a186247a1"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n  \"email\": \"{{ $json.email  }}\",\n  \"firstName\": \"{{ $json.firstname }}\",\n  \"userGroup\": \"msr\",\n  \"StatusAcolhimento\": \"atendimento_iniciado\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1472,
+        656
+      ],
+      "id": "1abd9b88-8722-4a28-aeec-c64c6cd38130",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        },
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
     }
   ],
   "pinData": {
@@ -887,7 +1179,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-13T12:18:12.000Z",
+              "updatedAt": "2026-04-14T10:54:59.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -907,7 +1199,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-13",
+              "lastActiveAt": "2026-04-14",
               "isPending": false
             }
           }
@@ -924,7 +1216,7 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2026-03-30T13:24:14.615Z",
-  "versionCounter": 7,
-  "versionId": "0441e6e0-92eb-4993-b1df-c0ee7eec6b43"
+  "updatedAt": "2026-04-14T21:01:39.206Z",
+  "versionCounter": 11,
+  "versionId": "2124d95f-6639-4555-b49b-a02bf451bc89"
 }
