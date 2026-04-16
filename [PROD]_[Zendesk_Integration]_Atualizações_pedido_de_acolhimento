@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-04-13T20:01:26.744Z",
-    "createdAt": "2026-04-13T20:01:26.744Z",
-    "versionId": "1799ea1e-0508-466a-8068-fe494e981f70",
+    "updatedAt": "2026-04-16T13:33:42.326Z",
+    "createdAt": "2026-04-16T13:33:42.326Z",
+    "versionId": "fe8c185c-f47e-4b31-8b53-02d9f64285a2",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -1367,7 +1367,7 @@
         "typeVersion": 4.3,
         "position": [
           3808,
-          1680
+          1776
         ],
         "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
         "name": "send loops interrupção atendimento",
@@ -1392,7 +1392,7 @@
         "typeVersion": 4.3,
         "position": [
           3808,
-          1888
+          1984
         ],
         "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
         "name": "send loops interrupção encaminhamento",
@@ -1525,7 +1525,7 @@
         "typeVersion": 2.5,
         "position": [
           4112,
-          1792
+          1904
         ],
         "credentials": {
           "postgres": {
@@ -1539,7 +1539,7 @@
           "operation": "update",
           "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
           "updateFields": {
-            "internalNote": "=A voluntária recebeu o Instrumental de Conclusão de Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+            "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/NpXbrO?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Conclusão de Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
           }
         },
         "id": "b607de2e-bc28-4aca-8463-551e5ceedd9e",
@@ -1547,8 +1547,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          4736,
-          1312
+          4192,
+          1632
         ],
         "credentials": {
           "zendeskApi": {
@@ -1563,7 +1563,7 @@
           "operation": "update",
           "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
           "updateFields": {
-            "internalNote": "=A voluntária recebeu o Instrumental de Interrupção do Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+            "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/dWdKjy?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Interrupção do Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
           }
         },
         "id": "d452fbac-30eb-4830-a572-73a60552d949",
@@ -1571,8 +1571,32 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          4352,
-          1792
+          3760,
+          2192
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/7RKVjR?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}\n\n"
+          }
+        },
+        "id": "9fa4bd8a-16e6-4a2e-a609-b619402b19a2",
+        "name": "Adiciona comentário interno2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          4192,
+          1280
         ],
         "credentials": {
           "zendeskApi": {
@@ -1950,11 +1974,21 @@
               "node": "send loops interrupção atendimento",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Adiciona comentário interno1",
+              "type": "main",
+              "index": 0
             }
           ],
           [
             {
               "node": "send loops interrupção encaminhamento",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Adiciona comentário interno1",
               "type": "main",
               "index": 0
             }
@@ -1968,11 +2002,21 @@
               "node": "Send Loops comms PSI",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Adiciona comentário interno2",
+              "type": "main",
+              "index": 0
             }
           ],
           [
             {
               "node": "Send Loops comms ADV",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Adiciona comentário interno",
               "type": "main",
               "index": 0
             }
@@ -2047,35 +2091,17 @@
       },
       "insere voluntária na instrumental_record PSI": {
         "main": [
-          [
-            {
-              "node": "Adiciona comentário interno",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       },
       "insere voluntária na instrumental_record ADV": {
         "main": [
-          [
-            {
-              "node": "Adiciona comentário interno",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       },
       "insere voluntária na instrumental_record ADV1": {
         "main": [
-          [
-            {
-              "node": "Adiciona comentário interno1",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       }
     },
@@ -2083,7 +2109,7 @@
     "name": null,
     "description": null
   },
-  "activeVersionId": "1799ea1e-0508-466a-8068-fe494e981f70",
+  "activeVersionId": "fe8c185c-f47e-4b31-8b53-02d9f64285a2",
   "connections": {
     "Webhook": {
       "main": [
@@ -2451,11 +2477,21 @@
             "node": "send loops interrupção atendimento",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Adiciona comentário interno1",
+            "type": "main",
+            "index": 0
           }
         ],
         [
           {
             "node": "send loops interrupção encaminhamento",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Adiciona comentário interno1",
             "type": "main",
             "index": 0
           }
@@ -2469,11 +2505,21 @@
             "node": "Send Loops comms PSI",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Adiciona comentário interno2",
+            "type": "main",
+            "index": 0
           }
         ],
         [
           {
             "node": "Send Loops comms ADV",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Adiciona comentário interno",
             "type": "main",
             "index": 0
           }
@@ -2548,35 +2594,17 @@
     },
     "insere voluntária na instrumental_record PSI": {
       "main": [
-        [
-          {
-            "node": "Adiciona comentário interno",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "insere voluntária na instrumental_record ADV": {
       "main": [
-        [
-          {
-            "node": "Adiciona comentário interno",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "insere voluntária na instrumental_record ADV1": {
       "main": [
-        [
-          {
-            "node": "Adiciona comentário interno1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     }
   },
@@ -3950,7 +3978,7 @@
       "typeVersion": 4.3,
       "position": [
         3808,
-        1680
+        1776
       ],
       "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
       "name": "send loops interrupção atendimento",
@@ -3975,7 +4003,7 @@
       "typeVersion": 4.3,
       "position": [
         3808,
-        1888
+        1984
       ],
       "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
       "name": "send loops interrupção encaminhamento",
@@ -4108,7 +4136,7 @@
       "typeVersion": 2.5,
       "position": [
         4112,
-        1792
+        1904
       ],
       "credentials": {
         "postgres": {
@@ -4122,7 +4150,7 @@
         "operation": "update",
         "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "=A voluntária recebeu o Instrumental de Conclusão de Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/NpXbrO?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Conclusão de Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
         }
       },
       "id": "b607de2e-bc28-4aca-8463-551e5ceedd9e",
@@ -4130,8 +4158,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        4736,
-        1312
+        4192,
+        1632
       ],
       "credentials": {
         "zendeskApi": {
@@ -4146,7 +4174,7 @@
         "operation": "update",
         "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "=A voluntária recebeu o Instrumental de Interrupção do Atendimento no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/dWdKjy?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Interrupção do Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
         }
       },
       "id": "d452fbac-30eb-4830-a572-73a60552d949",
@@ -4154,8 +4182,32 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        4352,
-        1792
+        3760,
+        2192
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/7RKVjR?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}\n\n"
+        }
+      },
+      "id": "9fa4bd8a-16e6-4a2e-a609-b619402b19a2",
+      "name": "Adiciona comentário interno2",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4192,
+        1280
       ],
       "credentials": {
         "zendeskApi": {
@@ -4295,7 +4347,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-15T12:13:04.000Z",
+              "updatedAt": "2026-04-16T07:47:18.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -4315,7 +4367,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-15",
+              "lastActiveAt": "2026-04-16",
               "isPending": false
             }
           }
@@ -4338,7 +4390,7 @@
     }
   ],
   "triggerCount": 3,
-  "updatedAt": "2026-04-13T20:01:26.742Z",
-  "versionCounter": 32,
-  "versionId": "1799ea1e-0508-466a-8068-fe494e981f70"
+  "updatedAt": "2026-04-16T13:33:42.324Z",
+  "versionCounter": 40,
+  "versionId": "fe8c185c-f47e-4b31-8b53-02d9f64285a2"
 }
