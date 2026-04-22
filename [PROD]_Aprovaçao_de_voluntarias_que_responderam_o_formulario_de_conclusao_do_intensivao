@@ -1,7 +1,3405 @@
 {
-  "active": false,
-  "activeVersion": null,
-  "activeVersionId": null,
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-04-22T17:36:10.826Z",
+    "createdAt": "2026-04-22T17:36:10.826Z",
+    "versionId": "ca1a42f9-ea15-4729-bde8-0931d5349716",
+    "workflowId": "qu1tciDTMwBcWjNm",
+    "nodes": [
+      {
+        "parameters": {
+          "keepOnlySet": true,
+          "values": {
+            "string": [
+              {
+                "name": "status",
+                "value": "aprovada"
+              },
+              {
+                "name": "created_at",
+                "value": "={{$now}}"
+              }
+            ],
+            "number": [
+              {
+                "name": "volunteer_id",
+                "value": "={{$node[\"Busca a voluntária no BD\"].json[\"id\"]}}"
+              },
+              {
+                "name": "zendesk_user_id",
+                "value": "={{ $json[\"id\"] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "de0d5ea1-164f-4d8d-b53a-500c8c6d0aec",
+        "name": "Seta os campos para atualizar a voluntária no BD",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 1,
+        "position": [
+          1232,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Busca voluntária pelo ID\"].json[\"id\"]}}/tickets/requested",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "options": {}
+        },
+        "id": "c89ec01f-7f54-43c9-84a1-b15da6c69a94",
+        "name": "Busca os tickets da voluntária no Zendesk",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          1488,
+          208
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "cw6WdIc7c9HRGleo",
+            "name": "Zendesk auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "tickets",
+          "include": "allOtherFields",
+          "options": {}
+        },
+        "id": "70099815-e2ec-4f8b-90e0-12c0fae5426d",
+        "name": "Separa os tickets do objeto retornado",
+        "type": "n8n-nodes-base.itemLists",
+        "typeVersion": 1,
+        "position": [
+          1840,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "update",
+          "id": "={{ $json[\"id\"] }}",
+          "updateFields": {
+            "userFieldsUi": {
+              "userFieldValues": [
+                {
+                  "field": "condition",
+                  "value": "aprovada"
+                }
+              ]
+            }
+          }
+        },
+        "id": "b8f26a5f-a504-4b11-8f82-bf50547e81d3",
+        "name": "Atualiza status da voluntária no Zendesk1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1264,
+          208
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "limit"
+        },
+        "id": "c028272b-36fc-4c6e-bd0c-be7cc1a7c2a9",
+        "name": "Seleciona o ticket mais antigo",
+        "type": "n8n-nodes-base.itemLists",
+        "typeVersion": 1,
+        "position": [
+          2288,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json[\"tickets\"][\"id\"] }}",
+          "updateFields": {
+            "customFieldsUi": {
+              "customFieldsValues": [
+                {
+                  "id": 360021665652,
+                  "value": "aprovada"
+                }
+              ]
+            },
+            "internalNote": "=Voluntária aprovada pois participou do intensivão e preencheu o formulário de confirmação de presença: {{ $('Webhook').item.json.body.data.formName }}",
+            "status": "open"
+          }
+        },
+        "id": "3c7dd3b6-b9a2-46fa-8632-41543a449604",
+        "name": "Atualiza o ticket para \"aprovada\"",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          2528,
+          192
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"volunteer_id\"] }};",
+          "options": {}
+        },
+        "id": "f91b7261-7fa4-46f3-b041-525e42cad654",
+        "name": "Atualiza voluntária no BD1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          1600,
+          32
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $json.tickets.custom_fields[6].value }}",
+                "value2": "cadastrada"
+              },
+              {
+                "value1": "={{ $json.tickets.custom_fields[6].value }}",
+                "value2": "capacitacao"
+              }
+            ]
+          },
+          "combineOperation": "any"
+        },
+        "id": "7247aba1-037c-4761-a8e1-4057d60b11de",
+        "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          2064,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "table": "volunteer_status_history",
+          "columns": "volunteer_id,status,created_at",
+          "additionalFields": {}
+        },
+        "id": "118b2725-0d4d-430e-a490-ba382e60d035",
+        "name": "Insere  o registro na volunteer_status_history",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 1,
+        "position": [
+          1504,
+          -160
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
+                "leftValue": "={{ $json.count }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "89a8120f-1629-4e49-81c7-296d45d084be",
+        "name": "If",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1648,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Email vazio"
+        },
+        "id": "78267fdf-5dad-4a39-8e1f-1f66750f6019",
+        "name": "Stop and Error",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          -400,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "ff6a8a39-7830-44de-89ab-0842b875e445",
+                "leftValue": "={{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}",
+                "rightValue": "[undefined]",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "004a4c0b-b45c-4066-8d52-a1be709945e5",
+        "name": "Se achou o email",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -656,
+          80
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "Voluntária não encontrada no BD"
+        },
+        "id": "625c7978-5cca-440c-a994-43161dee74f8",
+        "name": "Stop and Error1",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          592,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Voluntária não encontrada no Zendesk"
+        },
+        "id": "9b5dab9b-38c3-4e66-983e-162f83ac39c9",
+        "name": "Stop and Error2",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          1040,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT id, email, zendesk_user_id from volunteers where email = TRIM(LOWER('{{ $json.email }}'))",
+          "options": {}
+        },
+        "id": "7a992249-d5a4-4722-aee5-a801d93fa98c",
+        "name": "Busca a voluntária no BD",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          112,
+          48
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "get",
+          "id": "={{ $json.zendesk_user_id }}"
+        },
+        "id": "c2f40888-ffba-4f19-81a3-a7d8786341fb",
+        "name": "Busca voluntária pelo ID",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          640,
+          32
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "83d0a3cc-bbe9-4542-9ace-9a4a7d775782",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "607c2840-fd27-4f1b-8cf4-eb80ff002549",
+        "name": "Se retornou a voluntária pelo email",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          368,
+          48
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "db3e675d-358b-4af0-939b-20fcb3ff74f5",
+                "leftValue": "={{ $json.id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "02e6d9e1-003b-44b0-8c67-ca3fc092ca8e",
+        "name": "Encontrou a voluntária no Zendesk",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          864,
+          32
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "intensive-course",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "3da261ae-00de-4861-81a7-34f22a310c41",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -944,
+          80
+        ],
+        "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Aprovação dos intensivões de maio e junho\n",
+          "height": 320,
+          "width": 320
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1088,
+          -48
+        ],
+        "typeVersion": 1,
+        "id": "50bfc6b5-59e4-40d7-9a90-4360c6d4f69c",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "new-intensive-course",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "49819481-916a-4220-82e2-1c68b65ec6fe",
+        "name": "Webhook1",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -1088,
+          864
+        ],
+        "webhookId": "ad842c3a-da7e-4ada-bc49-f500c12cbaec",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "BhcubpnINJanuVaZ",
+            "name": "Tally API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "ff6a8a39-7830-44de-89ab-0842b875e445",
+                "leftValue": "={{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}",
+                "rightValue": "[undefined]",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "d1c718aa-b3d2-4155-85bf-e3ada8b30424",
+        "name": "Se achou o email1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -704,
+          864
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Email vazio"
+        },
+        "id": "e777e76f-afed-4bdc-870b-ca5e1d461b19",
+        "name": "Stop and Error3",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          -512,
+          1680
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9d0138b5-7915-4f6b-87c4-e1e6f512b61a",
+                "name": "email",
+                "value": "={{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -160,
+          64
+        ],
+        "id": "b8eac1ed-5efa-4a7b-9563-72d9704e6741",
+        "name": "Edit Fields2"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.form_id }}",
+                      "rightValue": "xXNY4J",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "e91a48e1-1022-4582-a88d-74d3f6af00a0"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Intensivão abril 26"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "df30c695-69c2-4d60-bba3-0d203e153e6c",
+                      "leftValue": "={{ $json.form_id }}",
+                      "rightValue": "3xqEeG",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Intensivão Setembro"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "7fc7ff14-749d-476c-9da9-897f353b3809",
+                      "leftValue": "={{ $json.form_id }}",
+                      "rightValue": "3j1dPQ",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Intensivão outubro"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "8fa62819-b270-4e02-9376-064f7ca8e44c",
+                      "leftValue": "={{ $json.form_id }}",
+                      "rightValue": "mOpk7p",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "intensivão novembro"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "a78f314b-0404-4c57-b5ba-6ede09a5790e",
+                      "leftValue": "={{ $json.form_id }}",
+                      "rightValue": "rjoXPl",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "intesivão março 26"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          32,
+          1072
+        ],
+        "id": "33943fbf-a536-4a3e-bdc8-f1f2f71f9a78",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "https://drive.google.com/file/d/1W-DUnEn8H87uuglOHTyo8FNZdImBv2Ip/view?usp=sharing",
+            "mode": "url"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          288,
+          880
+        ],
+        "id": "1b91f046-7ddf-44c9-b2ab-df03a21d1080",
+        "name": "Google Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "31vgqoSRas2e7TQe",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "dataPropertyName": "=data",
+          "text": "={{ $json.name }}",
+          "fontSize": 60,
+          "fontColor": "#622565",
+          "positionX": 136,
+          "positionY": 780,
+          "lineLength": 42,
+          "options": {
+            "fileName": "certificado",
+            "format": "png"
+          }
+        },
+        "id": "680cfda0-6c84-48d4-a1ba-b04ea08ef919",
+        "name": "Edit Image",
+        "type": "n8n-nodes-base.editImage",
+        "typeVersion": 1,
+        "position": [
+          512,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "binaryPropertyName": "=data",
+          "options": {}
+        },
+        "id": "3c1efb68-71fa-4cea-8bb5-97592787f76d",
+        "name": "Extract From File",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          720,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combinationMode": "multiplex",
+          "options": {}
+        },
+        "id": "59f53cd9-0747-4846-b790-40bbb50d863f",
+        "name": "Merge1",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 2.1,
+        "position": [
+          1040,
+          640
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmoa7679501gm0i0mfylycob2\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "c48df2f1-000c-414f-b61d-d2f6c8d40095",
+        "name": "Envia certificado para as voluntárias",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1360,
+          640
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "user",
+          "user": {
+            "__rl": true,
+            "value": "U06CP90UD1U",
+            "mode": "list",
+            "cachedResultName": "adriele473"
+          },
+          "text": "={{ $('Loop Over Items1').item.json.Email}} não enviado",
+          "otherOptions": {}
+        },
+        "id": "b4e1abec-b4d7-4956-b5f0-9f8ccde2f508",
+        "name": "Slack1",
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.1,
+        "position": [
+          1840,
+          864
+        ],
+        "webhookId": "ac0890ca-09d3-497a-812d-c98d8f7a4592",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "01G85hUbLT4VlY92",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "keepOnlySet": true,
+          "values": {
+            "string": [
+              {
+                "name": "status",
+                "value": "aprovada"
+              },
+              {
+                "name": "created_at",
+                "value": "={{$now}}"
+              }
+            ],
+            "number": [
+              {
+                "name": "volunteer_id",
+                "value": "={{$node[\"Busca a voluntária no BD1\"].json[\"id\"]}}"
+              },
+              {
+                "name": "zendesk_user_id",
+                "value": "={{ $json[\"id\"] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ff265a8a-fc46-4f23-aae8-bf48379e7941",
+        "name": "Seta os campos para atualizar a voluntária no BD1",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 1,
+        "position": [
+          1024,
+          3072
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Busca voluntária pelo ID1\"].json[\"id\"]}}/tickets/requested",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "options": {}
+        },
+        "id": "35c49b15-22bc-47c9-8de1-374e6a6e0e03",
+        "name": "Busca os tickets da voluntária no Zendesk1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          1312,
+          3328
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "cw6WdIc7c9HRGleo",
+            "name": "Zendesk auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "tickets",
+          "include": "allOtherFields",
+          "options": {}
+        },
+        "id": "69393fd4-86c9-410e-a57d-7ed0da0c2d3d",
+        "name": "Separa os tickets do objeto retornado1",
+        "type": "n8n-nodes-base.itemLists",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          3312
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "update",
+          "id": "={{ $json[\"id\"] }}",
+          "updateFields": {
+            "userFieldsUi": {
+              "userFieldValues": [
+                {
+                  "field": "condition",
+                  "value": "aprovada"
+                }
+              ]
+            }
+          }
+        },
+        "id": "41349c80-88df-4deb-aca9-51ac3ce6cfb1",
+        "name": "Atualiza status da voluntária no Zendesk",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1088,
+          3328
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "limit"
+        },
+        "id": "f9dad3af-0573-4413-9e83-4340a01663e3",
+        "name": "Seleciona o ticket mais antigo1",
+        "type": "n8n-nodes-base.itemLists",
+        "typeVersion": 1,
+        "position": [
+          2144,
+          3296
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json[\"tickets\"][\"id\"] }}",
+          "updateFields": {
+            "customFieldsUi": {
+              "customFieldsValues": [
+                {
+                  "id": 360021665652,
+                  "value": "aprovada"
+                }
+              ]
+            },
+            "internalNote": "=Voluntária aprovada pois participou do intensivão e preencheu o formulário de confirmação de presença: {{ $('Seta os campos para envio').item.json.form_name }}",
+            "status": "open"
+          }
+        },
+        "id": "6ec5ac35-e820-45fd-88a3-412b189178b6",
+        "name": "Atualiza o ticket para \"aprovada\"1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          2384,
+          3296
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"volunteer_id\"] }};",
+          "options": {}
+        },
+        "id": "8646825b-49ca-4c44-8b47-fbde01cc6a77",
+        "name": "Atualiza voluntária no BD",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          1424,
+          3152
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $json.tickets.custom_fields[6].value }}",
+                "value2": "cadastrada"
+              },
+              {
+                "value1": "={{ $json.tickets.custom_fields[6].value }}",
+                "value2": "capacitacao"
+              }
+            ]
+          },
+          "combineOperation": "any"
+        },
+        "id": "2da0f48e-0f46-41d7-8bee-d230fe57b77a",
+        "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          1920,
+          3312
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
+                "leftValue": "={{ $json.count }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "6b82092b-09e9-44b3-b377-c99c20858600",
+        "name": "If1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1472,
+          3328
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "Voluntária não encontrada no BD"
+        },
+        "id": "5c01378d-e1a4-491e-8e1b-db132f39c750",
+        "name": "Stop and Error4",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          400,
+          3520
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Voluntária não encontrada no Zendesk"
+        },
+        "id": "8f811be6-89d5-41ff-9f65-1443df1ae120",
+        "name": "Stop and Error5",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          848,
+          3600
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT id, email, zendesk_user_id from volunteers where email = TRIM(LOWER('{{ $json.email }}'))",
+          "options": {}
+        },
+        "id": "4cf9b367-55c1-4fd5-9545-e7932736a03f",
+        "name": "Busca a voluntária no BD1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -80,
+          3168
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "get",
+          "id": "={{ $json.zendesk_user_id }}"
+        },
+        "id": "4f0c96b4-e844-4195-8b4d-74dbd1605632",
+        "name": "Busca voluntária pelo ID1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          464,
+          3152
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "83d0a3cc-bbe9-4542-9ace-9a4a7d775782",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "8cd71a09-86a4-4fae-86b9-a073fa51013d",
+        "name": "Se retornou a voluntária pelo email1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          192,
+          3168
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "db3e675d-358b-4af0-939b-20fcb3ff74f5",
+                "leftValue": "={{ $json.id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "fe23975f-764c-435b-968e-ac06dbfa0df9",
+        "name": "Encontrou a voluntária no Zendesk1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          688,
+          3152
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Voluntaria sem tickets {{ $('Seta os campos para envio').item.json.email }}"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          1744,
+          3680
+        ],
+        "id": "8918c931-b426-450e-9b1b-d61460076fd3",
+        "name": "Stop and Error6"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9d0138b5-7915-4f6b-87c4-e1e6f512b61a",
+                "name": "email",
+                "value": "={{ $json.body.data.fields.filter(item => item.label == 'email_provided')[0].value.trim().toLowerCase() }}",
+                "type": "string"
+              },
+              {
+                "id": "8a72fdf2-314b-4133-ba71-2e8f196616c7",
+                "name": "name",
+                "value": "={{ $json.body.data.fields.filter(item => item.label == 'Nome completo:')[0].value.trim() }}",
+                "type": "string"
+              },
+              {
+                "id": "ebda4fa9-e574-448b-86e9-35176ae029ba",
+                "name": "form_id",
+                "value": "={{ $json.body.data.formId }}",
+                "type": "string"
+              },
+              {
+                "id": "fc4f80ea-67c4-48e6-a3e1-e627d6b5e2a7",
+                "name": "form_name",
+                "value": "={{ $json.body.data.formName }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -400,
+          848
+        ],
+        "id": "146f3468-5e9b-4fda-90d8-63483921e4bd",
+        "name": "Seta os campos para envio"
+      },
+      {
+        "parameters": {
+          "table": "volunteer_status_history",
+          "columns": "volunteer_id,status,created_at",
+          "additionalFields": {}
+        },
+        "id": "c92b17e8-ad6e-4081-bdbb-0e23957f21fa",
+        "name": "Insere  o registro na volunteer_status_history1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 1,
+        "position": [
+          1440,
+          2896
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "https://drive.google.com/file/d/1KzQK84cEN6mREttkTQs6KG5OGR_nMBIU/view?usp=sharing",
+            "mode": "url"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          304,
+          1120
+        ],
+        "id": "a5510095-1d5e-484b-8d9f-9689ca084107",
+        "name": "Google Drive1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "31vgqoSRas2e7TQe",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction capitalize(str) {\n  return str.replace(/\\b\\w/g, (char) => char.toUpperCase());\n}\nfor (const item of $input.all()) {\n  item.json.name = capitalize(item.json.name.toLowerCase());\n  \n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -176,
+          704
+        ],
+        "id": "92ac2c8d-5cec-4e09-967c-ac1088586dba",
+        "name": "Formata o nome e paga link do certificado"
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "dataPropertyName": "=data",
+          "text": "={{ $json.name }}",
+          "fontSize": 60,
+          "fontColor": "#622565",
+          "positionX": 136,
+          "positionY": 610,
+          "lineLength": 42,
+          "options": {
+            "fileName": "certificado",
+            "format": "png"
+          }
+        },
+        "id": "ae8410ec-1c8c-4c1e-beb1-6db71b3e4f36",
+        "name": "Edit Image1",
+        "type": "n8n-nodes-base.editImage",
+        "typeVersion": 1,
+        "position": [
+          544,
+          1120
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmevsz7ki1nn21s0idc2mh4i9\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "d7bef605-871a-4c28-a86b-53568419ea5f",
+        "name": "Envia certificado para as voluntárias1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1360,
+          1088
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combinationMode": "multiplex",
+          "options": {}
+        },
+        "id": "99e4507c-a23c-4a0a-9285-86860b709aec",
+        "name": "Merge",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 2.1,
+        "position": [
+          1008,
+          1088
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "https://drive.google.com/file/d/1KV3SgwKMtCFhm1jDoLgGIOwv8BNadEsl/view?usp=sharing",
+            "mode": "url"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          288,
+          1360
+        ],
+        "id": "34ddfb39-71a1-4858-9502-092f70c1e888",
+        "name": "Google Drive2",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "31vgqoSRas2e7TQe",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "dataPropertyName": "=data",
+          "text": "={{ $json.name }}",
+          "fontSize": 60,
+          "fontColor": "#622565",
+          "positionX": 136,
+          "positionY": 610,
+          "lineLength": 42,
+          "options": {
+            "fileName": "certificado",
+            "format": "png"
+          }
+        },
+        "id": "e8645f04-d2b1-48b2-bf88-594787030510",
+        "name": "Edit Image2",
+        "type": "n8n-nodes-base.editImage",
+        "typeVersion": 1,
+        "position": [
+          560,
+          1360
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "binaryPropertyName": "=data",
+          "options": {}
+        },
+        "id": "485e3847-2b3f-4f28-beaf-29a197a40904",
+        "name": "Extract From File1",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          720,
+          1104
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "binaryPropertyName": "=data",
+          "options": {}
+        },
+        "id": "e26c0497-146f-4bb0-8389-ed24d1e78562",
+        "name": "Extract From File2",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          800,
+          1360
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combinationMode": "multiplex",
+          "options": {}
+        },
+        "id": "9dbce07b-48be-4534-86b5-ae21a706848c",
+        "name": "Merge2",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 2.1,
+        "position": [
+          1120,
+          1328
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmh3sguac0umh3m0is5299o1v\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "ed99d963-5681-4153-b594-8d47fb530cf7",
+        "name": "Envia certificado para as voluntárias2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1344,
+          1328
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "https://drive.google.com/file/d/1zeVziQZo-5AD6B5-wxabWpxX35UnmB5W/view?usp=sharing",
+            "mode": "url"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          224,
+          1600
+        ],
+        "id": "92a8efb1-302b-4d1e-89ca-4c813f34e766",
+        "name": "Google Drive3",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "31vgqoSRas2e7TQe",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "dataPropertyName": "=data",
+          "text": "={{ $json.name }}",
+          "fontSize": 60,
+          "fontColor": "#622565",
+          "positionX": 136,
+          "positionY": 610,
+          "lineLength": 42,
+          "options": {
+            "fileName": "certificado",
+            "format": "png"
+          }
+        },
+        "id": "ef6cfb77-e17d-404f-a79a-2d7c823a8f53",
+        "name": "Edit Image3",
+        "type": "n8n-nodes-base.editImage",
+        "typeVersion": 1,
+        "position": [
+          496,
+          1600
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "binaryPropertyName": "=data",
+          "options": {}
+        },
+        "id": "353beb62-edbb-4e1c-8a16-08cd497bbe17",
+        "name": "Extract From File3",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          736,
+          1600
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combinationMode": "multiplex",
+          "options": {}
+        },
+        "id": "d7fb90ff-7695-4049-82d1-6377606da274",
+        "name": "Merge3",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 2.1,
+        "position": [
+          1056,
+          1568
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmh3sguac0umh3m0is5299o1v\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "b3760946-f266-48e7-bd68-f90f8d948a84",
+        "name": "Envia certificado para as voluntárias3",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1280,
+          1568
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1104,
+          3968
+        ],
+        "id": "c7699fd4-7c6b-46f8-8dce-05a4828cadcc",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "https://drive.google.com/file/d/13WyUAAeNnq7pEwUW0jQIAE614r0o7q6F/view?usp=sharing",
+            "mode": "url"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          -912,
+          3968
+        ],
+        "id": "b9eca6cb-a643-4620-b16b-5d336528aaf3",
+        "name": "Download file",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "31vgqoSRas2e7TQe",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "xls",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1.1,
+        "position": [
+          -688,
+          3968
+        ],
+        "id": "3e6c6508-ca0e-49cc-926b-7328ee5df5f2",
+        "name": "Extract from File"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -464,
+          3968
+        ],
+        "id": "a0b8485e-f166-4318-82ae-28224e0eecb2",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9d0138b5-7915-4f6b-87c4-e1e6f512b61a",
+                "name": "email",
+                "value": "={{ $json.email_provided }}",
+                "type": "string"
+              },
+              {
+                "id": "8a72fdf2-314b-4133-ba71-2e8f196616c7",
+                "name": "name",
+                "value": "={{ $json['Nome completo:'] }}",
+                "type": "string"
+              },
+              {
+                "id": "fc4f80ea-67c4-48e6-a3e1-e627d6b5e2a7",
+                "name": "form_name",
+                "value": "=Confirmação de Presença Intensivão - Março/2026",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -224,
+          3984
+        ],
+        "id": "d9152936-dbff-4914-8026-9471b8913fa6",
+        "name": "Seta os campos para envio1"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction capitalize(str) {\n  return str.replace(/\\b\\w/g, (char) => char.toUpperCase());\n}\nfor (const item of $input.all()) {\n  item.json.name = capitalize(item.json.name.toLowerCase());\n  \n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -16,
+          3984
+        ],
+        "id": "6cbb361f-a7f4-4b06-aabc-5ed02ea2a8a4",
+        "name": "Formata o nome e paga link do certificado1"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "https://drive.google.com/file/d/1fkA8zk8HuUS1vgWerfXuSHtUOViSPN48/view?usp=sharing",
+            "mode": "url"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          224,
+          3968
+        ],
+        "id": "f8a93fe0-01b5-4c3a-b6d5-8900652a0765",
+        "name": "Google Drive4",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "31vgqoSRas2e7TQe",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "dataPropertyName": "=data",
+          "text": "={{ $json.name }}",
+          "fontSize": 60,
+          "fontColor": "#622565",
+          "positionX": 693,
+          "positionY": 690,
+          "lineLength": 42,
+          "options": {
+            "fileName": "certificado",
+            "format": "png"
+          }
+        },
+        "id": "0b8cdcc9-7ea2-443d-b505-b0654782cae0",
+        "name": "Edit Image4",
+        "type": "n8n-nodes-base.editImage",
+        "typeVersion": 1,
+        "position": [
+          480,
+          3952
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "binaryPropertyName": "=data",
+          "options": {}
+        },
+        "id": "5d3776f1-bb02-446e-baf5-ebde74f27d5c",
+        "name": "Extract From File4",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          672,
+          3984
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combinationMode": "multiplex",
+          "options": {}
+        },
+        "id": "625a41fd-9cfd-4496-94ad-975ebcd8b107",
+        "name": "Merge4",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 2.1,
+        "position": [
+          1008,
+          3920
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmmw1e0m12nfh0iwly4354lgl\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "67cc7c17-5da0-4d56-9757-159e90f25f62",
+        "name": "Envia certificado para as voluntárias4",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1328,
+          3936
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "user",
+          "user": {
+            "__rl": true,
+            "value": "U06CP90UD1U",
+            "mode": "list",
+            "cachedResultName": "adriele473"
+          },
+          "text": "={{ $('Loop Over Items').item.json.email_provide}} não enviado",
+          "otherOptions": {}
+        },
+        "id": "e92ff529-1a1f-488e-afca-1edd7202d314",
+        "name": "Slack",
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.1,
+        "position": [
+          1792,
+          3968
+        ],
+        "webhookId": "ac0890ca-09d3-497a-812d-c98d8f7a4592",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "01G85hUbLT4VlY92",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "keepOnlySet": true,
+          "values": {
+            "string": [
+              {
+                "name": "status",
+                "value": "aprovada"
+              },
+              {
+                "name": "created_at",
+                "value": "={{$now}}"
+              }
+            ],
+            "number": [
+              {
+                "name": "volunteer_id",
+                "value": "={{$node[\"Busca a voluntária no BD2\"].json[\"id\"]}}"
+              },
+              {
+                "name": "zendesk_user_id",
+                "value": "={{ $json[\"id\"] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e5cbf0f4-c998-47c9-ace3-7158032512fc",
+        "name": "Seta os campos para atualizar a voluntária no BD2",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 1,
+        "position": [
+          1280,
+          5088
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Busca voluntária pelo ID2\"].json[\"id\"]}}/tickets/requested",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "options": {}
+        },
+        "id": "edf5a86f-b5cc-4d75-b65e-64a5d18589f7",
+        "name": "Busca os tickets da voluntária no Zendesk2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          1488,
+          4608
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "cw6WdIc7c9HRGleo",
+            "name": "Zendesk auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "tickets",
+          "include": "allOtherFields",
+          "options": {}
+        },
+        "id": "e92fe33f-4b99-4b8d-a195-bd97b17a8832",
+        "name": "Separa os tickets do objeto retornado2",
+        "type": "n8n-nodes-base.itemLists",
+        "typeVersion": 1,
+        "position": [
+          1856,
+          4592
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "update",
+          "id": "={{ $json[\"id\"] }}",
+          "updateFields": {
+            "userFieldsUi": {
+              "userFieldValues": [
+                {
+                  "field": "condition",
+                  "value": "aprovada"
+                }
+              ]
+            }
+          }
+        },
+        "id": "f7b0c6fb-5c9b-4bc5-a2fd-e5101b00e893",
+        "name": "Atualiza status da voluntária no Zendesk2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1264,
+          4608
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "limit"
+        },
+        "id": "9dadda58-3283-451f-b553-1f3da1fbdddc",
+        "name": "Seleciona o ticket mais antigo2",
+        "type": "n8n-nodes-base.itemLists",
+        "typeVersion": 1,
+        "position": [
+          2320,
+          4576
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json[\"tickets\"][\"id\"] }}",
+          "updateFields": {
+            "customFieldsUi": {
+              "customFieldsValues": [
+                {
+                  "id": 360021665652,
+                  "value": "aprovada"
+                }
+              ]
+            },
+            "internalNote": "=Voluntária aprovada pois participou do intensivão e preencheu o formulário de confirmação de presença: {{ $('Seta os campos para envio1').item.json.form_name }}",
+            "status": "open"
+          }
+        },
+        "id": "dab99049-380d-434b-8844-c6eaec52dc51",
+        "name": "Atualiza o ticket para \"aprovada\"2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          2560,
+          4576
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE volunteers\nSET condition = '{{ $json.status }}', updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"volunteer_id\"] }};",
+          "options": {}
+        },
+        "id": "bec08537-089e-4ee5-9085-9dc3098d2641",
+        "name": "Atualiza voluntária no BD2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          1680,
+          5168
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $json.tickets.custom_fields[6].value }}",
+                "value2": "cadastrada"
+              },
+              {
+                "value1": "={{ $json.tickets.custom_fields[6].value }}",
+                "value2": "capacitacao"
+              }
+            ]
+          },
+          "combineOperation": "any"
+        },
+        "id": "0ed2db04-ca73-409c-a2b1-c88974d3bab1",
+        "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          2096,
+          4592
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
+                "leftValue": "={{ $json.count }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "c986e286-4505-45d7-8ba2-5aaabd16bf21",
+        "name": "If2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1648,
+          4608
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "Voluntária não encontrada no BD"
+        },
+        "id": "ac2270b1-5047-4b9e-80cc-73c6fbdaa9cf",
+        "name": "Stop and Error7",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          576,
+          4800
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Voluntária não encontrada no Zendesk"
+        },
+        "id": "ca362319-0588-410d-a492-56ea199a5129",
+        "name": "Stop and Error8",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          1024,
+          4880
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT id, email, zendesk_user_id from volunteers where email = TRIM(LOWER('{{ $json.email }}')) and condition <> 'aprovada'",
+          "options": {}
+        },
+        "id": "4d1320ee-9a7f-4033-ba91-5acd3773b903",
+        "name": "Busca a voluntária no BD2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          96,
+          4448
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "get",
+          "id": "={{ $json.zendesk_user_id }}"
+        },
+        "id": "49d406b1-b1f6-4a4f-8eba-c58cbfec77fd",
+        "name": "Busca voluntária pelo ID2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          640,
+          4432
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "83d0a3cc-bbe9-4542-9ace-9a4a7d775782",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "56afedcb-5f72-45f9-b0d8-5a9438771923",
+        "name": "Se retornou a voluntária pelo email2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          368,
+          4448
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "db3e675d-358b-4af0-939b-20fcb3ff74f5",
+                "leftValue": "={{ $json.id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "3a7b484a-2ba4-487f-b83b-25cc4e6a1c68",
+        "name": "Encontrou a voluntária no Zendesk2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          864,
+          4432
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Voluntaria sem tickets {{ $('Seta os campos para envio').item.json.email }}"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          1920,
+          4960
+        ],
+        "id": "63b861dd-3e55-490d-96d3-5b5b5a1849b3",
+        "name": "Stop and Error9"
+      },
+      {
+        "parameters": {
+          "table": "volunteer_status_history",
+          "columns": "volunteer_id,status,created_at",
+          "additionalFields": {}
+        },
+        "id": "a5adc54d-bd18-49b9-8808-f0575c9cd5e9",
+        "name": "Insere  o registro na volunteer_status_history2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 1,
+        "position": [
+          1632,
+          4912
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "https://drive.google.com/file/d/1fkA8zk8HuUS1vgWerfXuSHtUOViSPN48/view?usp=sharing",
+            "mode": "url"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          240,
+          1904
+        ],
+        "id": "29fd5c3f-713a-4850-84f3-c6e4ba9bab1b",
+        "name": "Google Drive5",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "31vgqoSRas2e7TQe",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "dataPropertyName": "=data",
+          "text": "={{ $json.name }}",
+          "fontSize": 60,
+          "fontColor": "#622565",
+          "positionX": 693,
+          "positionY": 690,
+          "lineLength": 42,
+          "options": {
+            "fileName": "certificado",
+            "format": "png"
+          }
+        },
+        "id": "b4a1b0ee-f93e-4838-846a-d4c9f9a91eea",
+        "name": "Edit Image5",
+        "type": "n8n-nodes-base.editImage",
+        "typeVersion": 1,
+        "position": [
+          448,
+          1936
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "binaryPropertyName": "=data",
+          "options": {}
+        },
+        "id": "e6bcf234-6030-406a-97e8-0c27d7ee9f6c",
+        "name": "Extract From File5",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          848,
+          1968
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combinationMode": "multiplex",
+          "options": {}
+        },
+        "id": "1064ce4c-0862-4a7e-af5c-1cca53c18b0f",
+        "name": "Merge5",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 2.1,
+        "position": [
+          1168,
+          1920
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmmuoman200e00i0ter193omp\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "129c5693-4d6a-423a-bbb8-c8f0885af9a7",
+        "name": "Envia certificado para as voluntárias5",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1568,
+          1856
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueErrorOutput"
+      }
+    ],
+    "connections": {
+      "Seta os campos para atualizar a voluntária no BD": {
+        "main": [
+          [
+            {
+              "node": "Insere  o registro na volunteer_status_history",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Atualiza voluntária no BD1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca os tickets da voluntária no Zendesk": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separa os tickets do objeto retornado": {
+        "main": [
+          [
+            {
+              "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza status da voluntária no Zendesk1": {
+        "main": [
+          [
+            {
+              "node": "Busca os tickets da voluntária no Zendesk",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Seleciona o ticket mais antigo": {
+        "main": [
+          [
+            {
+              "node": "Atualiza o ticket para \"aprovada\"",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"": {
+        "main": [
+          [
+            {
+              "node": "Seleciona o ticket mais antigo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Separa os tickets do objeto retornado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se achou o email": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca a voluntária no BD": {
+        "main": [
+          [
+            {
+              "node": "Se retornou a voluntária pelo email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca voluntária pelo ID": {
+        "main": [
+          [
+            {
+              "node": "Encontrou a voluntária no Zendesk",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se retornou a voluntária pelo email": {
+        "main": [
+          [
+            {
+              "node": "Busca voluntária pelo ID",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Encontrou a voluntária no Zendesk": {
+        "main": [
+          [
+            {
+              "node": "Seta os campos para atualizar a voluntária no BD",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Atualiza status da voluntária no Zendesk1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Se achou o email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          [
+            {
+              "node": "Se achou o email1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se achou o email1": {
+        "main": [
+          [
+            {
+              "node": "Seta os campos para envio",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields2": {
+        "main": [
+          [
+            {
+              "node": "Busca a voluntária no BD",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Google Drive",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Drive1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Drive2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Drive3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Drive5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive": {
+        "main": [
+          [
+            {
+              "node": "Edit Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Image": {
+        "main": [
+          [
+            {
+              "node": "Extract From File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract From File": {
+        "main": [
+          [
+            {
+              "node": "Merge1",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge1": {
+        "main": [
+          [
+            {
+              "node": "Envia certificado para as voluntárias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia certificado para as voluntárias": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Slack1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Seta os campos para atualizar a voluntária no BD1": {
+        "main": [
+          [
+            {
+              "node": "Atualiza voluntária no BD",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Insere  o registro na volunteer_status_history1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca os tickets da voluntária no Zendesk1": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separa os tickets do objeto retornado1": {
+        "main": [
+          [
+            {
+              "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza status da voluntária no Zendesk": {
+        "main": [
+          [
+            {
+              "node": "Busca os tickets da voluntária no Zendesk1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Seleciona o ticket mais antigo1": {
+        "main": [
+          [
+            {
+              "node": "Atualiza o ticket para \"aprovada\"1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"1": {
+        "main": [
+          [
+            {
+              "node": "Seleciona o ticket mais antigo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Separa os tickets do objeto retornado1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca a voluntária no BD1": {
+        "main": [
+          [
+            {
+              "node": "Se retornou a voluntária pelo email1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca voluntária pelo ID1": {
+        "main": [
+          [
+            {
+              "node": "Encontrou a voluntária no Zendesk1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se retornou a voluntária pelo email1": {
+        "main": [
+          [
+            {
+              "node": "Busca voluntária pelo ID1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Encontrou a voluntária no Zendesk1": {
+        "main": [
+          [
+            {
+              "node": "Seta os campos para atualizar a voluntária no BD1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Atualiza status da voluntária no Zendesk",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Seta os campos para envio": {
+        "main": [
+          [
+            {
+              "node": "Formata o nome e paga link do certificado",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca a voluntária no BD1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formata o nome e paga link do certificado": {
+        "main": [
+          [
+            {
+              "node": "Merge1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge3",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive1": {
+        "main": [
+          [
+            {
+              "node": "Edit Image1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Image1": {
+        "main": [
+          [
+            {
+              "node": "Extract From File1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia certificado para as voluntárias1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Slack1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Envia certificado para as voluntárias1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive2": {
+        "main": [
+          [
+            {
+              "node": "Edit Image2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract From File1": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Edit Image2": {
+        "main": [
+          [
+            {
+              "node": "Extract From File2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract From File2": {
+        "main": [
+          [
+            {
+              "node": "Merge2",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge2": {
+        "main": [
+          [
+            {
+              "node": "Envia certificado para as voluntárias2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia certificado para as voluntárias2": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Slack1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive3": {
+        "main": [
+          [
+            {
+              "node": "Edit Image3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Image3": {
+        "main": [
+          [
+            {
+              "node": "Extract From File3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract From File3": {
+        "main": [
+          [
+            {
+              "node": "Merge3",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge3": {
+        "main": [
+          [
+            {
+              "node": "Envia certificado para as voluntárias3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia certificado para as voluntárias3": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Slack1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download file": {
+        "main": [
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Seta os campos para envio1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Seta os campos para envio1": {
+        "main": [
+          [
+            {
+              "node": "Formata o nome e paga link do certificado1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formata o nome e paga link do certificado1": {
+        "main": [
+          [
+            {
+              "node": "Merge4",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Google Drive4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Image4": {
+        "main": [
+          [
+            {
+              "node": "Extract From File4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive4": {
+        "main": [
+          [
+            {
+              "node": "Edit Image4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract From File4": {
+        "main": [
+          [
+            {
+              "node": "Merge4",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge4": {
+        "main": [
+          [
+            {
+              "node": "Envia certificado para as voluntárias4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia certificado para as voluntárias4": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Slack": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Seta os campos para atualizar a voluntária no BD2": {
+        "main": [
+          [
+            {
+              "node": "Atualiza voluntária no BD2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Insere  o registro na volunteer_status_history2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca os tickets da voluntária no Zendesk2": {
+        "main": [
+          [
+            {
+              "node": "If2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separa os tickets do objeto retornado2": {
+        "main": [
+          [
+            {
+              "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza status da voluntária no Zendesk2": {
+        "main": [
+          [
+            {
+              "node": "Busca os tickets da voluntária no Zendesk2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Seleciona o ticket mais antigo2": {
+        "main": [
+          [
+            {
+              "node": "Atualiza o ticket para \"aprovada\"2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"2": {
+        "main": [
+          [
+            {
+              "node": "Seleciona o ticket mais antigo2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If2": {
+        "main": [
+          [
+            {
+              "node": "Separa os tickets do objeto retornado2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Busca a voluntária no BD2": {
+        "main": [
+          [
+            {
+              "node": "Se retornou a voluntária pelo email2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca voluntária pelo ID2": {
+        "main": [
+          [
+            {
+              "node": "Encontrou a voluntária no Zendesk2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se retornou a voluntária pelo email2": {
+        "main": [
+          [
+            {
+              "node": "Busca voluntária pelo ID2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Encontrou a voluntária no Zendesk2": {
+        "main": [
+          [
+            {
+              "node": "Seta os campos para atualizar a voluntária no BD2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Atualiza status da voluntária no Zendesk2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Atualiza voluntária no BD2": {
+        "main": [
+          []
+        ]
+      },
+      "Google Drive5": {
+        "main": [
+          [
+            {
+              "node": "Edit Image5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Image5": {
+        "main": [
+          [
+            {
+              "node": "Extract From File5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract From File5": {
+        "main": [
+          [
+            {
+              "node": "Merge5",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge5": {
+        "main": [
+          [
+            {
+              "node": "Envia certificado para as voluntárias5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia certificado para as voluntárias5": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Slack1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Desenvolvimento Mapa",
+    "name": null,
+    "description": null
+  },
+  "activeVersionId": "ca1a42f9-ea15-4729-bde8-0931d5349716",
   "connections": {
     "Seta os campos para atualizar a voluntária no BD": {
       "main": [
@@ -1614,7 +5012,7 @@
                 "conditions": [
                   {
                     "leftValue": "={{ $json.form_id }}",
-                    "rightValue": "31QJxl",
+                    "rightValue": "xXNY4J",
                     "operator": {
                       "type": "string",
                       "operation": "equals"
@@ -1625,7 +5023,7 @@
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "Intensivão Julho"
+              "outputKey": "Intensivão abril 26"
             },
             {
               "conditions": {
@@ -1745,7 +5143,7 @@
         "operation": "download",
         "fileId": {
           "__rl": true,
-          "value": "https://drive.google.com/file/d/1qt8OQjXznf70jYlSkHTJpXJHmTBvNz6h/view?usp=sharing",
+          "value": "https://drive.google.com/file/d/1W-DUnEn8H87uuglOHTyo8FNZdImBv2Ip/view?usp=sharing",
           "mode": "url"
         },
         "options": {}
@@ -1773,7 +5171,7 @@
         "fontSize": 60,
         "fontColor": "#622565",
         "positionX": 136,
-        "positionY": 610,
+        "positionY": 780,
         "lineLength": 42,
         "options": {
           "fileName": "certificado",
@@ -1827,7 +5225,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmcj73ehz07gn1o0i1dr1xi7d\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email}}\",\n  \"transactionalId\": \"cmoa7679501gm0i0mfylycob2\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.name.split(' ',1)}}\"\n  },\n  \"attachments\": [\n    {\n      \"filename\": \"certificado.png\",\n      \"contentType\": \"image/png\",\n      \"data\": \"{{ $json.data }}\"\n    }\n  ]\n}",
         "options": {}
       },
       "id": "c48df2f1-000c-414f-b61d-d2f6c8d40095",
@@ -3528,7 +6926,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-21T23:13:55.000Z",
+              "updatedAt": "2026-04-22T16:29:35.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -3548,7 +6946,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-21",
+              "lastActiveAt": "2026-04-22",
               "isPending": false
             }
           }
@@ -3559,7 +6957,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2026-03-18T14:27:23.861Z",
-  "versionCounter": 11,
-  "versionId": "bd25c520-28a4-4340-8e9d-50793875b738"
+  "updatedAt": "2026-04-22T17:36:10.824Z",
+  "versionCounter": 22,
+  "versionId": "ca1a42f9-ea15-4729-bde8-0931d5349716"
 }
