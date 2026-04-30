@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-03-30T19:09:41.439Z",
-    "createdAt": "2026-03-30T19:09:41.439Z",
-    "versionId": "ca8be7a5-8613-45ad-bda9-87da22cf7d8c",
+    "updatedAt": "2026-04-30T18:34:54.270Z",
+    "createdAt": "2026-04-30T18:34:54.270Z",
+    "versionId": "ad8c37b2-13c9-42fb-acd7-c923b71542c3",
     "workflowId": "0hojIhmzSHjJnPDe",
     "nodes": [
       {
@@ -1020,223 +1020,6 @@
             "name": "[PROD] Mapa"
           }
         }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "string": [
-              {
-                "value1": "={{$node[\"Busca voluntária pelo moodle ID1\"].json}}",
-                "operation": "isNotEmpty"
-              }
-            ]
-          }
-        },
-        "id": "b9987287-8230-4911-ac2d-f61e70c7f858",
-        "name": "Se retornou a voluntária1",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 1,
-        "position": [
-          -624,
-          3520
-        ]
-      },
-      {
-        "parameters": {
-          "httpMethod": "POST",
-          "path": "moodle-zendesk",
-          "options": {}
-        },
-        "id": "94a50ebe-2a2b-467e-9bed-b40accf08aa2",
-        "name": "Webhook1",
-        "type": "n8n-nodes-base.webhook",
-        "typeVersion": 1,
-        "position": [
-          -1776,
-          3552
-        ],
-        "webhookId": "3e06675f-aa55-42cd-bfa1-be979b64b575"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "4abb890c-a699-4234-80dc-e373228b8f09",
-                "leftValue": "={{ $json.body.courseid }}",
-                "rightValue": "2",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals",
-                  "name": "filter.operator.equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.2,
-        "position": [
-          -1552,
-          3568
-        ],
-        "id": "b5163165-6a8a-483a-a3e8-83af5973ddb5",
-        "name": "Se é o curso de voluntárias1"
-      },
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          -1184,
-          3696
-        ],
-        "id": "257cace1-4fbf-4283-962e-0f7c4d66c25e",
-        "name": "No Operation, do nothing1"
-      },
-      {
-        "parameters": {
-          "operation": "select",
-          "schema": {
-            "__rl": true,
-            "mode": "list",
-            "value": "public"
-          },
-          "table": {
-            "__rl": true,
-            "value": "volunteers",
-            "mode": "list",
-            "cachedResultName": "volunteers"
-          },
-          "limit": 1,
-          "where": {
-            "values": [
-              {
-                "column": "moodle_id",
-                "value": "={{ $json.body.userid }}"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.6,
-        "position": [
-          -1184,
-          3520
-        ],
-        "id": "b1f25c0d-d0d6-4061-99ba-09cf6cdbac2b",
-        "name": "Busca voluntária pelo moodle ID1",
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "SELECT *\nFROM mdl_course_completions\nWHERE to_timestamp(timestarted) BETWEEN '2026-03-24' AND '2026-03-30 23:59:59'\n\n\n",
-          "options": {}
-        },
-        "id": "be66eab7-0644-4d39-b3a5-07086d371f18",
-        "name": "Busca email no Moodle1",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.3,
-        "position": [
-          -912,
-          3520
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "KHoy20BFgrBIpHYR",
-            "name": "[PROD] Moodle"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "errorMessage": "=Não achou a voluntária\nmoodle_id:  {{$node[\"Webhook\"].json[\"body\"][\"userid\"]}}"
-        },
-        "id": "aa698531-29c8-46e5-8795-920e82a03277",
-        "name": "Stop And Error5",
-        "type": "n8n-nodes-base.stopAndError",
-        "typeVersion": 1,
-        "position": [
-          -176,
-          3936
-        ]
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "SELECT email from mdl_user where id = {{$node[\"Webhook\"].json[\"body\"][\n\"userid\"]}}",
-          "options": {}
-        },
-        "id": "b59b4298-353d-4fca-9df8-468f91050ba4",
-        "name": "Busca email no Moodle2",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.3,
-        "position": [
-          -752,
-          3744
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "KHoy20BFgrBIpHYR",
-            "name": "[PROD] Moodle"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict"
-            },
-            "conditions": [
-              {
-                "id": "8dd0a966-c838-4b5e-b396-a811775c6478",
-                "leftValue": "={{ $json[\"email\"] }}",
-                "rightValue": "@mapa.org.br",
-                "operator": {
-                  "type": "string",
-                  "operation": "contains"
-                }
-              },
-              {
-                "id": "d13b3d68-d53e-411a-baf7-3247df55734d",
-                "leftValue": "={{ $json[\"email\"] }}",
-                "rightValue": "@igeni.org.br",
-                "operator": {
-                  "type": "string",
-                  "operation": "contains"
-                }
-              }
-            ],
-            "combinator": "or"
-          },
-          "options": {}
-        },
-        "id": "e368d4c9-7b05-4529-b009-7b4710eca67a",
-        "name": "Se o email for do Mapa1",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2,
-        "position": [
-          -496,
-          3824
-        ]
       }
     ],
     "connections": {
@@ -1616,86 +1399,13 @@
             }
           ]
         ]
-      },
-      "Webhook1": {
-        "main": [
-          []
-        ]
-      },
-      "Se é o curso de voluntárias1": {
-        "main": [
-          [
-            {
-              "node": "Busca voluntária pelo moodle ID1",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "No Operation, do nothing1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Busca voluntária pelo moodle ID1": {
-        "main": [
-          [
-            {
-              "node": "Busca email no Moodle1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Busca email no Moodle1": {
-        "main": [
-          [
-            {
-              "node": "Se retornou a voluntária1",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Busca email no Moodle2",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Busca email no Moodle2": {
-        "main": [
-          [
-            {
-              "node": "Se o email for do Mapa1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Se o email for do Mapa1": {
-        "main": [
-          [],
-          [
-            {
-              "node": "Stop And Error5",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "ca8be7a5-8613-45ad-bda9-87da22cf7d8c",
+  "activeVersionId": "ad8c37b2-13c9-42fb-acd7-c923b71542c3",
   "connections": {
     "Se retornou a voluntária": {
       "main": [
@@ -2068,79 +1778,6 @@
         [
           {
             "node": "A voluntária ainda não iniciou a capacitação?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook1": {
-      "main": [
-        []
-      ]
-    },
-    "Se é o curso de voluntárias1": {
-      "main": [
-        [
-          {
-            "node": "Busca voluntária pelo moodle ID1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca voluntária pelo moodle ID1": {
-      "main": [
-        [
-          {
-            "node": "Busca email no Moodle1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca email no Moodle1": {
-      "main": [
-        [
-          {
-            "node": "Se retornou a voluntária1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Busca email no Moodle2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Busca email no Moodle2": {
-      "main": [
-        [
-          {
-            "node": "Se o email for do Mapa1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Se o email for do Mapa1": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Stop And Error5",
             "type": "main",
             "index": 0
           }
@@ -3171,223 +2808,6 @@
           "name": "[PROD] Mapa"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{$node[\"Busca voluntária pelo moodle ID1\"].json}}",
-              "operation": "isNotEmpty"
-            }
-          ]
-        }
-      },
-      "id": "b9987287-8230-4911-ac2d-f61e70c7f858",
-      "name": "Se retornou a voluntária1",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [
-        -624,
-        3520
-      ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "moodle-zendesk",
-        "options": {}
-      },
-      "id": "94a50ebe-2a2b-467e-9bed-b40accf08aa2",
-      "name": "Webhook1",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1,
-      "position": [
-        -1776,
-        3552
-      ],
-      "webhookId": "3e06675f-aa55-42cd-bfa1-be979b64b575"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "4abb890c-a699-4234-80dc-e373228b8f09",
-              "leftValue": "={{ $json.body.courseid }}",
-              "rightValue": "2",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        -1552,
-        3568
-      ],
-      "id": "b5163165-6a8a-483a-a3e8-83af5973ddb5",
-      "name": "Se é o curso de voluntárias1"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        -1184,
-        3696
-      ],
-      "id": "257cace1-4fbf-4283-962e-0f7c4d66c25e",
-      "name": "No Operation, do nothing1"
-    },
-    {
-      "parameters": {
-        "operation": "select",
-        "schema": {
-          "__rl": true,
-          "mode": "list",
-          "value": "public"
-        },
-        "table": {
-          "__rl": true,
-          "value": "volunteers",
-          "mode": "list",
-          "cachedResultName": "volunteers"
-        },
-        "limit": 1,
-        "where": {
-          "values": [
-            {
-              "column": "moodle_id",
-              "value": "={{ $json.body.userid }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        -1184,
-        3520
-      ],
-      "id": "b1f25c0d-d0d6-4061-99ba-09cf6cdbac2b",
-      "name": "Busca voluntária pelo moodle ID1",
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT *\nFROM mdl_course_completions\nWHERE to_timestamp(timestarted) BETWEEN '2026-03-24' AND '2026-03-30 23:59:59'\n\n\n",
-        "options": {}
-      },
-      "id": "be66eab7-0644-4d39-b3a5-07086d371f18",
-      "name": "Busca email no Moodle1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        -912,
-        3520
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "KHoy20BFgrBIpHYR",
-          "name": "[PROD] Moodle"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "errorMessage": "=Não achou a voluntária\nmoodle_id:  {{$node[\"Webhook\"].json[\"body\"][\"userid\"]}}"
-      },
-      "id": "aa698531-29c8-46e5-8795-920e82a03277",
-      "name": "Stop And Error5",
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        -176,
-        3936
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT email from mdl_user where id = {{$node[\"Webhook\"].json[\"body\"][\n\"userid\"]}}",
-        "options": {}
-      },
-      "id": "b59b4298-353d-4fca-9df8-468f91050ba4",
-      "name": "Busca email no Moodle2",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        -752,
-        3744
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "KHoy20BFgrBIpHYR",
-          "name": "[PROD] Moodle"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "8dd0a966-c838-4b5e-b396-a811775c6478",
-              "leftValue": "={{ $json[\"email\"] }}",
-              "rightValue": "@mapa.org.br",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
-            },
-            {
-              "id": "d13b3d68-d53e-411a-baf7-3247df55734d",
-              "leftValue": "={{ $json[\"email\"] }}",
-              "rightValue": "@igeni.org.br",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
-      },
-      "id": "e368d4c9-7b05-4529-b009-7b4710eca67a",
-      "name": "Se o email for do Mapa1",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        -496,
-        3824
-      ]
     }
   ],
   "pinData": {
@@ -3479,7 +2899,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-04-29T18:15:03.000Z",
+              "updatedAt": "2026-04-30T18:08:23.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -3499,7 +2919,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-04-29",
+              "lastActiveAt": "2026-04-30",
               "isPending": false
             }
           }
@@ -3516,8 +2936,8 @@
       "name": "volunteer"
     }
   ],
-  "triggerCount": 2,
-  "updatedAt": "2026-03-30T19:09:41.438Z",
-  "versionCounter": 27,
-  "versionId": "ca8be7a5-8613-45ad-bda9-87da22cf7d8c"
+  "triggerCount": 1,
+  "updatedAt": "2026-04-30T18:34:54.268Z",
+  "versionCounter": 31,
+  "versionId": "ad8c37b2-13c9-42fb-acd7-c923b71542c3"
 }
