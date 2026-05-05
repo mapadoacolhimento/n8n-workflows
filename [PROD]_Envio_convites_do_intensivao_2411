@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-04-22T14:04:27.400Z",
-    "createdAt": "2026-04-22T14:04:27.400Z",
-    "versionId": "2cbd48e1-44ac-4043-a8c4-31267f2b69fe",
+    "updatedAt": "2026-05-05T19:52:46.468Z",
+    "createdAt": "2026-05-05T19:52:46.468Z",
+    "versionId": "d6adc1d7-5908-4720-b6ad-0a859b9e7254",
     "workflowId": "XkijjlNRjgEHItAP",
     "nodes": [
       {
@@ -40,7 +40,7 @@
             "interval": [
               {
                 "field": "cronExpression",
-                "expression": "18 11 14 4 *"
+                "expression": "10 10 7 5 *"
               }
             ]
           }
@@ -53,17 +53,6 @@
         ],
         "id": "d16f10cd-8a7b-403e-b82f-e132049e0efa",
         "name": "Schedule Trigger"
-      },
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.manualTrigger",
-        "typeVersion": 1,
-        "position": [
-          -448,
-          -160
-        ],
-        "id": "22f3bf82-61a7-4952-8397-7dc2e52c0e24",
-        "name": "When clicking ‘Execute workflow’"
       },
       {
         "parameters": {
@@ -155,7 +144,7 @@
               },
               {
                 "name": "ContentSid",
-                "value": "HX718dd3076ae7bb009527d0905403925d"
+                "value": "HX393e471caa329bc33b767789d4c9a44b"
               },
               {
                 "name": "ContentVariables",
@@ -621,36 +610,6 @@
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"transactionalId\": \"cmnxtq3610dpz0iwunkqrpifv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
-          "options": {}
-        },
-        "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
-        "name": "envia seg email 22/04",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.1,
-        "position": [
-          320,
-          96
-        ],
-        "retryOnFail": true,
-        "notesInFlow": true,
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "XrvtxHAVgwwJ3r6q",
-            "name": "Loops API"
-          }
-        },
-        "onError": "continueRegularOutput",
-        "notes": "Vixi"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://app.loops.so/api/v1/transactional",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendBody": true,
-          "specifyBody": "json",
           "jsonBody": "={\n  \"transactionalId\": \"cmoa2mi9k18h20i1uki0gfx55\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
           "options": {}
         },
@@ -762,6 +721,56 @@
           }
         },
         "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmot14toj00eb0ivfcwk2j71q\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
+        "name": "primeiro convite 07/05",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          320,
+          96
+        ],
+        "retryOnFail": true,
+        "notesInFlow": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "notes": "Vixi"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "00 9 7 5 *"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -416,
+          -160
+        ],
+        "id": "d7ba3f7d-3b66-45e7-afe3-5dbbcf0716c9",
+        "name": "Schedule Trigger3"
       }
     ],
     "connections": {
@@ -814,7 +823,7 @@
           [],
           [
             {
-              "node": "envia seg email 22/04",
+              "node": "primeiro convite 07/05",
               "type": "main",
               "index": 0
             }
@@ -827,17 +836,6 @@
           [
             {
               "node": "Envia mensagem whatsapp primeiro convite1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "When clicking ‘Execute workflow’": {
-        "main": [
-          [
-            {
-              "node": "Busca voluntárias que não finalizaram a capacitação",
               "type": "main",
               "index": 0
             }
@@ -871,6 +869,11 @@
           [
             {
               "node": "loop whatsapp",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "loop email",
               "type": "main",
               "index": 0
             }
@@ -972,7 +975,18 @@
           ]
         ]
       },
-      "envia seg email 22/04": {
+      "envia seg email 22/": {
+        "main": [
+          [
+            {
+              "node": "Wait16",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "primeiro convite 07/05": {
         "main": [
           [
             {
@@ -983,11 +997,11 @@
           ]
         ]
       },
-      "envia seg email 22/": {
+      "Schedule Trigger3": {
         "main": [
           [
             {
-              "node": "Wait16",
+              "node": "Busca voluntárias que não finalizaram a capacitação",
               "type": "main",
               "index": 0
             }
@@ -999,7 +1013,7 @@
     "name": null,
     "description": null
   },
-  "activeVersionId": "2cbd48e1-44ac-4043-a8c4-31267f2b69fe",
+  "activeVersionId": "d6adc1d7-5908-4720-b6ad-0a859b9e7254",
   "connections": {
     "Wait14": {
       "main": [
@@ -1050,7 +1064,7 @@
         [],
         [
           {
-            "node": "envia seg email 22/04",
+            "node": "primeiro convite 07/05",
             "type": "main",
             "index": 0
           }
@@ -1063,17 +1077,6 @@
         [
           {
             "node": "Envia mensagem whatsapp primeiro convite1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Busca voluntárias que não finalizaram a capacitação",
             "type": "main",
             "index": 0
           }
@@ -1107,6 +1110,11 @@
         [
           {
             "node": "loop whatsapp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "loop email",
             "type": "main",
             "index": 0
           }
@@ -1208,7 +1216,18 @@
         ]
       ]
     },
-    "envia seg email 22/04": {
+    "envia seg email 22/": {
+      "main": [
+        [
+          {
+            "node": "Wait16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "primeiro convite 07/05": {
       "main": [
         [
           {
@@ -1219,11 +1238,11 @@
         ]
       ]
     },
-    "envia seg email 22/": {
+    "Schedule Trigger3": {
       "main": [
         [
           {
-            "node": "Wait16",
+            "node": "Busca voluntárias que não finalizaram a capacitação",
             "type": "main",
             "index": 0
           }
@@ -1272,7 +1291,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "18 11 14 4 *"
+              "expression": "10 10 7 5 *"
             }
           ]
         }
@@ -1285,17 +1304,6 @@
       ],
       "id": "d16f10cd-8a7b-403e-b82f-e132049e0efa",
       "name": "Schedule Trigger"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -448,
-        -160
-      ],
-      "id": "22f3bf82-61a7-4952-8397-7dc2e52c0e24",
-      "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
@@ -1387,7 +1395,7 @@
             },
             {
               "name": "ContentSid",
-              "value": "HX718dd3076ae7bb009527d0905403925d"
+              "value": "HX393e471caa329bc33b767789d4c9a44b"
             },
             {
               "name": "ContentVariables",
@@ -1853,36 +1861,6 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"transactionalId\": \"cmnxtq3610dpz0iwunkqrpifv\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
-        "options": {}
-      },
-      "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
-      "name": "envia seg email 22/04",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        320,
-        96
-      ],
-      "retryOnFail": true,
-      "notesInFlow": true,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "XrvtxHAVgwwJ3r6q",
-          "name": "Loops API"
-        }
-      },
-      "onError": "continueRegularOutput",
-      "notes": "Vixi"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://app.loops.so/api/v1/transactional",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
         "jsonBody": "={\n  \"transactionalId\": \"cmoa2mi9k18h20i1uki0gfx55\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
         "options": {}
       },
@@ -1994,6 +1972,56 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmot14toj00eb0ivfcwk2j71q\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "92733fa1-2e80-4e54-bbd6-84ea142e6466",
+      "name": "primeiro convite 07/05",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        320,
+        96
+      ],
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Vixi"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "00 9 7 5 *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        -160
+      ],
+      "id": "d7ba3f7d-3b66-45e7-afe3-5dbbcf0716c9",
+      "name": "Schedule Trigger3"
     }
   ],
   "pinData": {},
@@ -2026,7 +2054,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-04T13:47:00.000Z",
+              "updatedAt": "2026-05-05T12:31:17.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -2046,7 +2074,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-04",
+              "lastActiveAt": "2026-05-05",
               "isPending": false
             }
           }
@@ -2066,11 +2094,14 @@
     },
     "node:Schedule Trigger2": {
       "recurrenceRules": []
+    },
+    "node:Schedule Trigger3": {
+      "recurrenceRules": []
     }
   },
   "tags": [],
-  "triggerCount": 3,
-  "updatedAt": "2026-04-22T14:04:27.397Z",
-  "versionCounter": 74,
-  "versionId": "2cbd48e1-44ac-4043-a8c4-31267f2b69fe"
+  "triggerCount": 4,
+  "updatedAt": "2026-05-05T19:52:46.467Z",
+  "versionCounter": 83,
+  "versionId": "d6adc1d7-5908-4720-b6ad-0a859b9e7254"
 }
