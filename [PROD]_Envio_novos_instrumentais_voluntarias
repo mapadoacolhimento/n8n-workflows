@@ -1,0 +1,4794 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-05-11T18:59:11.113Z",
+    "createdAt": "2026-05-11T18:59:11.113Z",
+    "versionId": "88913fde-df29-43be-b38d-3cf6348da178",
+    "workflowId": "eTQCbbWza7CWSNWB",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "f4f89f70-f744-4ade-bf7f-53d1705aeb60",
+        "name": "No Operation, do nothing1",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -2432,
+          -320
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "a5f8d9ad-9b47-4e62-af4c-ea61664940f5",
+        "name": "Loop Over Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2688,
+          -144
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "60ce9874-bc76-4d4b-9b3e-31fc651db06c",
+        "name": "Wait",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2432,
+          -128
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '45 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "4c4fc450-e62a-48a3-9592-842afc581f86",
+        "name": "busca volunts PSI com status in_contact ha 45 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -2976,
+          -144
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmj3hy6n05hb0iwghjyrv3zy\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "7cfe0eac-1714-4594-a770-eac30284a0cc",
+        "name": "Envia Instrumental I d45",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2224,
+          -128
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Fluxo Instrumental Psicológico I ",
+          "height": 80
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -3216,
+          -320
+        ],
+        "id": "f2d39e52-e193-4fb2-94a1-310f55a77af4",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "37803cd2-7a36-4b21-a92b-1a11087fe71a",
+        "name": "não responderam instrumental I - 15 dias ",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -2960,
+          304
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "0aa131cf-efe4-47fc-af7f-dade036e73f8",
+        "name": "não responderam instrumental I - 30 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -2960,
+          832
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "67bbf64e-ce92-47bd-ad26-7479950262cc",
+        "name": "No Operation, do nothing",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -2416,
+          128
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "1cbba9f0-39bf-4823-805d-ae6911888dbd",
+        "name": "Loop Over Items1",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2688,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "3e0fdcad-fe9f-4a9f-9e4b-deb8ac6ce9ba",
+        "name": "Wait1",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2416,
+          320
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmj9f2br0smq0iwlal2snwcu\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "da6533c8-50ab-451b-9988-9d13fc6cb1d7",
+        "name": "Envia Lembrete 15 dias com Instrumental Acomp I",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2208,
+          320
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "fa02eeb4-de37-4a37-a36b-012db2a286a6",
+        "name": "No Operation, do nothing2",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -2416,
+          656
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "77005f93-7471-4bcb-aba7-4744816e21cd",
+        "name": "Loop Over Items2",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2688,
+          832
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "0be489b3-0cbd-4210-ac8d-ac4af75d0be9",
+        "name": "Wait2",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2416,
+          848
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmj9w4zh17zk0jxxj19485u0\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "729f000b-61b0-4290-96c1-023e12c10859",
+        "name": "Envia Lembrete 30 dias com Instrumental Acomp I",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2208,
+          848
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.match_id }},\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.volunteer_id }},\n    'psychological_support_follow_up_i',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "options": {}
+        },
+        "id": "8e9f0c5c-934e-4eba-9be9-da99c9df8fb3",
+        "name": "insere voluntária na instrumental_record",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -2016,
+          -128
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/npj9dq?msr_first_name={{ $('Loop Over Items').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items').item.json.match_id}}&email={{ $('Loop Over Items').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "d2a2ec95-99ac-4814-abe0-fc129a8269ed",
+        "name": "Adiciona comentário interno",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -1824,
+          -128
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental I - 15 dias ').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/npj9dq?msr_first_name={{ $('Loop Over Items1').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items1').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items1').item.json.match_id}}&email={{ $('Loop Over Items1').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "f2d99e08-c71d-467d-a8cf-ad685004986a",
+        "name": "Adiciona comentário interno1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2016,
+          320
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 11,
+                "triggerAtMinute": 3
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -4544,
+          1136
+        ],
+        "id": "4922c5b0-1d7e-4e06-bb0f-0b71fa36f945",
+        "name": "Schedule Trigger1"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental I - 30 dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/npj9dq?msr_first_name={{ $('Loop Over Items2').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items2').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items2').item.json.match_id}}&email={{ $('Loop Over Items2').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "8406eb16-f79c-47c5-b2dd-7513245c93b0",
+        "name": "Adiciona comentário interno2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2016,
+          848
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {},
+        "id": "a260a6ca-9358-4825-9563-41b306ee88a5",
+        "name": "No Operation, do nothing3",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -2480,
+          1280
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "6e94ad00-edb6-4216-93d2-ae311f02cd77",
+        "name": "Loop Over Items3",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2736,
+          1456
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "3b777714-7d6f-4bdf-88cc-417e49b75439",
+        "name": "Wait3",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2480,
+          1472
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "content": "Fluxo Instrumental Psicológico II ",
+          "height": 80
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -3264,
+          1280
+        ],
+        "id": "943e9250-86da-4b63-a7b8-56782490b530",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {},
+        "id": "c611c563-15d0-4adb-886a-c93cf2eee5a6",
+        "name": "No Operation, do nothing4",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -2464,
+          1728
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "98f10b1e-edb2-4e0c-b0ad-a86e707631dd",
+        "name": "Loop Over Items4",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2736,
+          1904
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "bf515236-ac74-4148-b882-583c64db847a",
+        "name": "Wait4",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2464,
+          1920
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjbl5zh00gr0i28lt1ghb56\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "46de77fb-9907-4985-9e92-a4a0583ce796",
+        "name": "Envia Lembrete 15 dias com Instrumental Acomp I1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2256,
+          1920
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "e6a83bc4-4f48-4d5a-b5ab-2e9847b88b77",
+        "name": "No Operation, do nothing5",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -2464,
+          2256
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "46c65e46-bb47-4acd-8196-39444bfad003",
+        "name": "Loop Over Items5",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2736,
+          2432
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "63ddebb7-a40f-472d-99bd-71eedbd6b588",
+        "name": "Wait5",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2464,
+          2448
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjc0qug01c20i28mfi6ifof\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "5f8b2a68-1432-4057-aaad-e77bc4358bd3",
+        "name": "Envia Lembrete 30 dias com Instrumental Acomp I1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2256,
+          2448
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental II - 15 dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/A7Pr2e?msr_first_name={{ $('Loop Over Items4').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items4').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items4').item.json.match_id}}&email={{ $('Loop Over Items4').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "e7d4a89f-17c4-4528-84c4-673cb1724dd9",
+        "name": "Adiciona comentário interno4",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2064,
+          1920
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental II - 30 dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/A7Pr2e?msr_first_name={{ $('Loop Over Items5').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items5').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items5').item.json.match_id}}&email={{ $('Loop Over Items5').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "f7997105-9b89-4338-82c4-89de0b0027f4",
+        "name": "Adiciona comentário interno5",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2064,
+          2448
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "ac956786-295a-4462-a925-222a9669bbab",
+        "name": "busca volunts PSI com status in_contact ha 90 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -3024,
+          1456
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjbf7bs000i0i48v47ji43c\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "32653287-b10c-44b5-9a9b-e738b512f386",
+        "name": "Envia Instrumental II",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2272,
+          1472
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/A7Pr2e?msr_first_name={{ $('Loop Over Items3').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items3').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items3').item.json.match_id}}&email={{ $('Loop Over Items3').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "bb7a2e55-33dc-440a-8d03-31ef59234f26",
+        "name": "Adiciona comentário interno3",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -1872,
+          1472
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "ddca924a-a2c4-49e9-ad0b-ce2424e9d77a",
+        "name": "não responderam instrumental II - 15 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -3008,
+          1904
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "b04d9009-c348-4d18-ae4e-d0c5a8aa9acf",
+        "name": "não responderam instrumental II - 30 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -3008,
+          2432
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 11,
+                "triggerAtMinute": 33
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -1216,
+          896
+        ],
+        "id": "43fd30da-9fdd-4d5b-8ce3-80f162d5683a",
+        "name": "Schedule Trigger6"
+      },
+      {
+        "parameters": {},
+        "id": "f9463ea1-5131-4a0f-977b-1602893d2c6b",
+        "name": "No Operation, do nothing6",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1104,
+          -256
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "0930511c-7027-42ea-9a69-25fa4bba6ae5",
+        "name": "Loop Over Items6",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          848,
+          -80
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "345a0fac-a96a-4968-b1b0-4fd5bbda3769",
+        "name": "Wait6",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1104,
+          -64
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjb9e5l00zk0ix4wv2cjj3d\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "eb8d7536-a6a6-4ec4-8c9c-23d33deef9be",
+        "name": "Envia Instrumental I d",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1312,
+          -64
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Fluxo Instrumental Jurídico I ",
+          "height": 80
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          320,
+          -256
+        ],
+        "id": "a72572e0-b8e5-4a32-a9b9-d98aa7bdac1f",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "8982480a-77da-446c-afae-ff88b541b28d",
+        "name": "não responderam instrumental I - 15 dias 1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          576,
+          368
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "326a4779-2c15-4a07-875c-fabc88a6ab81",
+        "name": "não responderam instrumental I - 30 dias1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          576,
+          896
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "b52fe77e-5c1a-4c0c-8476-67d4189c7544",
+        "name": "No Operation, do nothing7",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "544720ae-ede0-4625-a857-7f323b8798c1",
+        "name": "Loop Over Items7",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          848,
+          368
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "00b2f5ea-26f9-46d6-b1d6-39c3630396e5",
+        "name": "Wait7",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1120,
+          384
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjbcwux007c0iv7jyutt7a0\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "236a3778-7265-4ef2-9110-c320f67f7787",
+        "name": "Envia Lembrete 15 dias com Instrumental Acomp I2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1328,
+          384
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "6c649982-4004-4289-a827-101f52a52c51",
+        "name": "No Operation, do nothing8",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          720
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "c0b3696b-b6ad-48c1-bb0c-e31d5f439bf5",
+        "name": "Loop Over Items8",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          848,
+          896
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "dddb93cd-0508-4933-bf5a-5945682f9044",
+        "name": "Wait8",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1120,
+          912
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjbece700ay0ixrsusz340a\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "26edfb5f-5f56-4fd3-80bf-63b87a96a711",
+        "name": "Envia Lembrete 30 dias com Instrumental Acomp I2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1328,
+          912
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.match_id }},\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.volunteer_id }},\n    'psychological_support_follow_up_i',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "options": {}
+        },
+        "id": "2961e47b-19d5-4c61-997a-d3bf86b1ac2a",
+        "name": "insere voluntária na instrumental_record1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1520,
+          -64
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca volunts ADV com status in_contact ha 45 dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o Instrumental de <a href='https://tally.so/r/wv7KOg?msr_first_name={{ $('Loop Over Items6').item.json[msr_first_name]}}&volunteer_first_name={{ $('Loop Over Items6').item.json[volunteer_first_name]}}&match_id={{ $('Loop Over Items6').item.json[match_id]}}&email={{ $('Loop Over Items6').item.json[email]}}'>Acompanhamento Jurídico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "4b18feb3-6c46-49b9-a25b-6a3959f5421a",
+        "name": "Adiciona comentário interno6",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1712,
+          -64
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental I - 15 dias 1').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/wv7KOg?msr_first_name={{ $('Loop Over Items7').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items7').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items7').item.json.match_id}}&email={{ $('Loop Over Items7').item.json.email}}'>Instrumental de Acompanhamento Jurídico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "19eb9622-b3e5-449f-9a75-765f9f4c20b6",
+        "name": "Adiciona comentário interno7",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1520,
+          384
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental I - 30 dias1').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/wv7KOg?msr_first_name={{ $('Loop Over Items8').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items8').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items8').item.json.match_id}}&email={{ $('Loop Over Items8').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "f2bc066f-7e56-4a51-8e34-2e5755e0a85b",
+        "name": "Adiciona comentário interno8",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1520,
+          912
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '45 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "90db6cca-03ed-4c08-a25c-9359ce4852ec",
+        "name": "busca volunts ADV com status in_contact ha 45 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          560,
+          -80
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "5799a502-10ce-499f-bcfd-dc097bbb8ec5",
+        "name": "No Operation, do nothing9",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1072,
+          1360
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "87e6c459-7c71-4d34-9373-fbbe5b635315",
+        "name": "Loop Over Items9",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          1536
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "4d46a6f4-8d43-4f3c-9af5-898fdf9ae4e2",
+        "name": "Wait9",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1072,
+          1552
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "content": "Fluxo Instrumental Jurídico II ",
+          "height": 80
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          288,
+          1360
+        ],
+        "id": "e82661fa-6be8-4adc-90e8-a7f8e6e714fc",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {},
+        "id": "fc107c67-0e0c-4dad-a36c-3e156576cba3",
+        "name": "No Operation, do nothing10",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1088,
+          1808
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "99315fd0-79c4-4b86-aa3f-899fa176210e",
+        "name": "Loop Over Items10",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          1984
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "7edacd12-aeeb-451f-8a50-b2eb28e0e8c5",
+        "name": "Wait10",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1088,
+          2000
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjc5wx901mt0i38gxei79tj\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "5ab3f555-13a2-4f62-abed-72cf2205973d",
+        "name": "Envia Lembrete 15 dias com Instrumental Acomp I3",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1296,
+          2000
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "343d3979-ecb7-4ab7-a4e3-92791a5da404",
+        "name": "No Operation, do nothing11",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1088,
+          2336
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "fb23e882-5e69-4b3e-99b9-9d8878685a73",
+        "name": "Loop Over Items11",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          2512
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "2ff7ae94-b584-42bd-be9d-55321d1f22e7",
+        "name": "Wait11",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1088,
+          2528
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjc81jm01rb0i111gu85jx1\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "d47c36c7-eae3-4b79-875d-3d0c041b0149",
+        "name": "Envia Lembrete 30 dias com Instrumental Acomp I3",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1296,
+          2528
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental II - 15 dias1').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/44X40k?msr_first_name={{ $('Loop Over Items10').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items10').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items10').item.json.match_id}}&email={{ $('Loop Over Items10').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "fe082623-1f86-4226-a79c-258b4d7801c9",
+        "name": "Adiciona comentário interno9",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1488,
+          2000
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('não responderam instrumental II - 30 dias1').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/44X40k?msr_first_name={{ $('Loop Over Items11').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items11').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items11').item.json.match_id}}&email={{ $('Loop Over Items11').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "a5ed1852-1c2c-4da9-89e8-6e07c11ff007",
+        "name": "Adiciona comentário interno10",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1488,
+          2528
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmmjc415101hn0i15h1xefjmm\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "a3be03d8-09dc-4788-b2d5-60fb8dcd5bac",
+        "name": "Envia Instrumental II1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1280,
+          1552
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/44X40k?msr_first_name={{ $('Loop Over Items9').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items9').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items9').item.json.match_id}}&email={{ $('Loop Over Items9').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "6f9a0c5e-d71c-496c-8cf7-9fc7c0b3ab48",
+        "name": "Adiciona comentário interno11",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          1552
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "6be1b03e-07c3-424b-b4c1-fdb4ed8f6556",
+        "name": "não responderam instrumental II - 15 dias1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          544,
+          1984
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "2989251b-8917-4217-b1fc-ac5b9ecb476b",
+        "name": "não responderam instrumental II - 30 dias1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          544,
+          2512
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.match_id }},\n    {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.volunteer_id }},\n    'psychological_support_follow_up_ii',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "options": {}
+        },
+        "id": "907a8255-4d4c-482a-b9e6-347e3a2e6407",
+        "name": "insere instrumental_type na instrumental_record",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -2064,
+          1472
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "7b0f9e9d-002a-4d70-b587-32317e2efe63",
+        "name": "busca volunts ADV com status in_contact ha 90 dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          528,
+          1536
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.match_id }},\n    {{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.volunteer_id }},\n    'legal_support_follow_up_ii',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "options": {}
+        },
+        "id": "933fd132-aad8-41b1-b4f6-673107d7e0dd",
+        "name": "insere instrumental_type na instrumental_record1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1488,
+          1552
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Envia Instrumental I d45",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Instrumental I d45": {
+        "main": [
+          [
+            {
+              "node": "insere voluntária na instrumental_record",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 15 dias com Instrumental Acomp I",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 15 dias com Instrumental Acomp I": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait2": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 30 dias com Instrumental Acomp I",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 30 dias com Instrumental Acomp I": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insere voluntária na instrumental_record": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca volunts PSI com status in_contact ha 45 dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental I - 15 dias ": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "não responderam instrumental I - 15 dias ",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca volunts PSI com status in_contact ha 45 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "não responderam instrumental I - 30 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca volunts PSI com status in_contact ha 90 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "não responderam instrumental II - 15 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "não responderam instrumental II - 30 dias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental I - 30 dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items3": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait3": {
+        "main": [
+          [
+            {
+              "node": "Envia Instrumental II",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items4": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing4",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait4": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 15 dias com Instrumental Acomp I1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 15 dias com Instrumental Acomp I1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items5": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing5",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait5": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 30 dias com Instrumental Acomp I1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 30 dias com Instrumental Acomp I1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno4": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno5": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca volunts PSI com status in_contact ha 90 dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Instrumental II": {
+        "main": [
+          [
+            {
+              "node": "insere instrumental_type na instrumental_record",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno3": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental II - 15 dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental II - 30 dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger6": {
+        "main": [
+          [
+            {
+              "node": "busca volunts ADV com status in_contact ha 45 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "não responderam instrumental I - 15 dias 1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "não responderam instrumental I - 30 dias1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca volunts ADV com status in_contact ha 90 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "não responderam instrumental II - 15 dias1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "não responderam instrumental II - 30 dias1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items6": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing6",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait6": {
+        "main": [
+          [
+            {
+              "node": "Envia Instrumental I d",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Instrumental I d": {
+        "main": [
+          [
+            {
+              "node": "insere voluntária na instrumental_record1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental I - 15 dias 1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental I - 30 dias1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items7": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing7",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait7": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 15 dias com Instrumental Acomp I2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 15 dias com Instrumental Acomp I2": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items8": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing8",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait8": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 30 dias com Instrumental Acomp I2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 30 dias com Instrumental Acomp I2": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insere voluntária na instrumental_record1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno6": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno7": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno8": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca volunts ADV com status in_contact ha 45 dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items9": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing9",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait9": {
+        "main": [
+          [
+            {
+              "node": "Envia Instrumental II1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items10": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing10",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait10": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 15 dias com Instrumental Acomp I3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 15 dias com Instrumental Acomp I3": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items11": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing11",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait11",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait11": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 30 dias com Instrumental Acomp I3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 30 dias com Instrumental Acomp I3": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno9": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno10": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items11",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Instrumental II1": {
+        "main": [
+          [
+            {
+              "node": "insere instrumental_type na instrumental_record1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno11": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental II - 15 dias1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "não responderam instrumental II - 30 dias1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items11",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insere instrumental_type na instrumental_record": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca volunts ADV com status in_contact ha 90 dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insere instrumental_type na instrumental_record1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno11",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Desenvolvimento Mapa",
+    "name": null,
+    "description": null
+  },
+  "activeVersionId": "88913fde-df29-43be-b38d-3cf6348da178",
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envia Instrumental I d45",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental I d45": {
+      "main": [
+        [
+          {
+            "node": "insere voluntária na instrumental_record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 15 dias com Instrumental Acomp I",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 15 dias com Instrumental Acomp I": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 30 dias com Instrumental Acomp I",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 30 dias com Instrumental Acomp I": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere voluntária na instrumental_record": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca volunts PSI com status in_contact ha 45 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental I - 15 dias ": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "não responderam instrumental I - 15 dias ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca volunts PSI com status in_contact ha 45 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "não responderam instrumental I - 30 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca volunts PSI com status in_contact ha 90 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "não responderam instrumental II - 15 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "não responderam instrumental II - 30 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental I - 30 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Envia Instrumental II",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 15 dias com Instrumental Acomp I1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 15 dias com Instrumental Acomp I1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 30 dias com Instrumental Acomp I1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 30 dias com Instrumental Acomp I1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca volunts PSI com status in_contact ha 90 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental II": {
+      "main": [
+        [
+          {
+            "node": "insere instrumental_type na instrumental_record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental II - 15 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental II - 30 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger6": {
+      "main": [
+        [
+          {
+            "node": "busca volunts ADV com status in_contact ha 45 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "não responderam instrumental I - 15 dias 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "não responderam instrumental I - 30 dias1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca volunts ADV com status in_contact ha 90 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "não responderam instrumental II - 15 dias1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "não responderam instrumental II - 30 dias1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items6": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Envia Instrumental I d",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental I d": {
+      "main": [
+        [
+          {
+            "node": "insere voluntária na instrumental_record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental I - 15 dias 1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental I - 30 dias1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items7": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 15 dias com Instrumental Acomp I2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 15 dias com Instrumental Acomp I2": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items8": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait8": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 30 dias com Instrumental Acomp I2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 30 dias com Instrumental Acomp I2": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere voluntária na instrumental_record1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca volunts ADV com status in_contact ha 45 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items9": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait9": {
+      "main": [
+        [
+          {
+            "node": "Envia Instrumental II1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items10": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait10": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 15 dias com Instrumental Acomp I3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 15 dias com Instrumental Acomp I3": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items11": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait11": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 30 dias com Instrumental Acomp I3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 30 dias com Instrumental Acomp I3": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno9": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno10": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Instrumental II1": {
+      "main": [
+        [
+          {
+            "node": "insere instrumental_type na instrumental_record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno11": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental II - 15 dias1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "não responderam instrumental II - 30 dias1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere instrumental_type na instrumental_record": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca volunts ADV com status in_contact ha 90 dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere instrumental_type na instrumental_record1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-03-09T18:53:47.099Z",
+  "description": null,
+  "id": "eTQCbbWza7CWSNWB",
+  "isArchived": false,
+  "meta": null,
+  "name": "[PROD] Envio novos instrumentais voluntárias",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f4f89f70-f744-4ade-bf7f-53d1705aeb60",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2432,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a5f8d9ad-9b47-4e62-af4c-ea61664940f5",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2688,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "60ce9874-bc76-4d4b-9b3e-31fc651db06c",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2432,
+        -128
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '45 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "4c4fc450-e62a-48a3-9592-842afc581f86",
+      "name": "busca volunts PSI com status in_contact ha 45 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2976,
+        -144
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmj3hy6n05hb0iwghjyrv3zy\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "7cfe0eac-1714-4594-a770-eac30284a0cc",
+      "name": "Envia Instrumental I d45",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2224,
+        -128
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Fluxo Instrumental Psicológico I ",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3216,
+        -320
+      ],
+      "id": "f2d39e52-e193-4fb2-94a1-310f55a77af4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "37803cd2-7a36-4b21-a92b-1a11087fe71a",
+      "name": "não responderam instrumental I - 15 dias ",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2960,
+        304
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "0aa131cf-efe4-47fc-af7f-dade036e73f8",
+      "name": "não responderam instrumental I - 30 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2960,
+        832
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "67bbf64e-ce92-47bd-ad26-7479950262cc",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2416,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1cbba9f0-39bf-4823-805d-ae6911888dbd",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2688,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "3e0fdcad-fe9f-4a9f-9e4b-deb8ac6ce9ba",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2416,
+        320
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmj9f2br0smq0iwlal2snwcu\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "da6533c8-50ab-451b-9988-9d13fc6cb1d7",
+      "name": "Envia Lembrete 15 dias com Instrumental Acomp I",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2208,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "fa02eeb4-de37-4a37-a36b-012db2a286a6",
+      "name": "No Operation, do nothing2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2416,
+        656
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "77005f93-7471-4bcb-aba7-4744816e21cd",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2688,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "0be489b3-0cbd-4210-ac8d-ac4af75d0be9",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2416,
+        848
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmj9w4zh17zk0jxxj19485u0\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "729f000b-61b0-4290-96c1-023e12c10859",
+      "name": "Envia Lembrete 30 dias com Instrumental Acomp I",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2208,
+        848
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.match_id }},\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.volunteer_id }},\n    'psychological_support_follow_up_i',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "8e9f0c5c-934e-4eba-9be9-da99c9df8fb3",
+      "name": "insere voluntária na instrumental_record",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2016,
+        -128
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/npj9dq?msr_first_name={{ $('Loop Over Items').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items').item.json.match_id}}&email={{ $('Loop Over Items').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "d2a2ec95-99ac-4814-abe0-fc129a8269ed",
+      "name": "Adiciona comentário interno",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -1824,
+        -128
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental I - 15 dias ').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/npj9dq?msr_first_name={{ $('Loop Over Items1').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items1').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items1').item.json.match_id}}&email={{ $('Loop Over Items1').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "f2d99e08-c71d-467d-a8cf-ad685004986a",
+      "name": "Adiciona comentário interno1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        320
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 11,
+              "triggerAtMinute": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -4544,
+        1136
+      ],
+      "id": "4922c5b0-1d7e-4e06-bb0f-0b71fa36f945",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental I - 30 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/npj9dq?msr_first_name={{ $('Loop Over Items2').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items2').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items2').item.json.match_id}}&email={{ $('Loop Over Items2').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "8406eb16-f79c-47c5-b2dd-7513245c93b0",
+      "name": "Adiciona comentário interno2",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        848
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "id": "a260a6ca-9358-4825-9563-41b306ee88a5",
+      "name": "No Operation, do nothing3",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2480,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6e94ad00-edb6-4216-93d2-ae311f02cd77",
+      "name": "Loop Over Items3",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2736,
+        1456
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "3b777714-7d6f-4bdf-88cc-417e49b75439",
+      "name": "Wait3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2480,
+        1472
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "content": "Fluxo Instrumental Psicológico II ",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3264,
+        1280
+      ],
+      "id": "943e9250-86da-4b63-a7b8-56782490b530",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "id": "c611c563-15d0-4adb-886a-c93cf2eee5a6",
+      "name": "No Operation, do nothing4",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2464,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "98f10b1e-edb2-4e0c-b0ad-a86e707631dd",
+      "name": "Loop Over Items4",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2736,
+        1904
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "bf515236-ac74-4148-b882-583c64db847a",
+      "name": "Wait4",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2464,
+        1920
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjbl5zh00gr0i28lt1ghb56\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "46de77fb-9907-4985-9e92-a4a0583ce796",
+      "name": "Envia Lembrete 15 dias com Instrumental Acomp I1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2256,
+        1920
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "e6a83bc4-4f48-4d5a-b5ab-2e9847b88b77",
+      "name": "No Operation, do nothing5",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2464,
+        2256
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "46c65e46-bb47-4acd-8196-39444bfad003",
+      "name": "Loop Over Items5",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2736,
+        2432
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "63ddebb7-a40f-472d-99bd-71eedbd6b588",
+      "name": "Wait5",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2464,
+        2448
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjc0qug01c20i28mfi6ifof\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5f8b2a68-1432-4057-aaad-e77bc4358bd3",
+      "name": "Envia Lembrete 30 dias com Instrumental Acomp I1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2256,
+        2448
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental II - 15 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/A7Pr2e?msr_first_name={{ $('Loop Over Items4').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items4').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items4').item.json.match_id}}&email={{ $('Loop Over Items4').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "e7d4a89f-17c4-4528-84c4-673cb1724dd9",
+      "name": "Adiciona comentário interno4",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2064,
+        1920
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental II - 30 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/A7Pr2e?msr_first_name={{ $('Loop Over Items5').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items5').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items5').item.json.match_id}}&email={{ $('Loop Over Items5').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "f7997105-9b89-4338-82c4-89de0b0027f4",
+      "name": "Adiciona comentário interno5",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2064,
+        2448
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "ac956786-295a-4462-a925-222a9669bbab",
+      "name": "busca volunts PSI com status in_contact ha 90 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3024,
+        1456
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjbf7bs000i0i48v47ji43c\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "32653287-b10c-44b5-9a9b-e738b512f386",
+      "name": "Envia Instrumental II",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2272,
+        1472
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/A7Pr2e?msr_first_name={{ $('Loop Over Items3').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items3').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items3').item.json.match_id}}&email={{ $('Loop Over Items3').item.json.volunteer_email}}'>Instrumental de Acompanhamento Psicológico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "bb7a2e55-33dc-440a-8d03-31ef59234f26",
+      "name": "Adiciona comentário interno3",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -1872,
+        1472
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "ddca924a-a2c4-49e9-ad0b-ce2424e9d77a",
+      "name": "não responderam instrumental II - 15 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3008,
+        1904
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'psychological_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "b04d9009-c348-4d18-ae4e-d0c5a8aa9acf",
+      "name": "não responderam instrumental II - 30 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3008,
+        2432
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 11,
+              "triggerAtMinute": 33
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1216,
+        896
+      ],
+      "id": "43fd30da-9fdd-4d5b-8ce3-80f162d5683a",
+      "name": "Schedule Trigger6"
+    },
+    {
+      "parameters": {},
+      "id": "f9463ea1-5131-4a0f-977b-1602893d2c6b",
+      "name": "No Operation, do nothing6",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0930511c-7027-42ea-9a69-25fa4bba6ae5",
+      "name": "Loop Over Items6",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        848,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "345a0fac-a96a-4968-b1b0-4fd5bbda3769",
+      "name": "Wait6",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        -64
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjb9e5l00zk0ix4wv2cjj3d\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "eb8d7536-a6a6-4ec4-8c9c-23d33deef9be",
+      "name": "Envia Instrumental I d",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1312,
+        -64
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Fluxo Instrumental Jurídico I ",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -256
+      ],
+      "id": "a72572e0-b8e5-4a32-a9b9-d98aa7bdac1f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "8982480a-77da-446c-afae-ff88b541b28d",
+      "name": "não responderam instrumental I - 15 dias 1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        576,
+        368
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_i'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "326a4779-2c15-4a07-875c-fabc88a6ab81",
+      "name": "não responderam instrumental I - 30 dias1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        576,
+        896
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "b52fe77e-5c1a-4c0c-8476-67d4189c7544",
+      "name": "No Operation, do nothing7",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "544720ae-ede0-4625-a857-7f323b8798c1",
+      "name": "Loop Over Items7",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        848,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "00b2f5ea-26f9-46d6-b1d6-39c3630396e5",
+      "name": "Wait7",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        384
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjbcwux007c0iv7jyutt7a0\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "236a3778-7265-4ef2-9110-c320f67f7787",
+      "name": "Envia Lembrete 15 dias com Instrumental Acomp I2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1328,
+        384
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "6c649982-4004-4289-a827-101f52a52c51",
+      "name": "No Operation, do nothing8",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c0b3696b-b6ad-48c1-bb0c-e31d5f439bf5",
+      "name": "Loop Over Items8",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        848,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "dddb93cd-0508-4933-bf5a-5945682f9044",
+      "name": "Wait8",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        912
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjbece700ay0ixrsusz340a\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "26edfb5f-5f56-4fd3-80bf-63b87a96a711",
+      "name": "Envia Lembrete 30 dias com Instrumental Acomp I2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1328,
+        912
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.match_id }},\n    {{ $('busca volunts PSI com status in_contact ha 45 dias').item.json.volunteer_id }},\n    'psychological_support_follow_up_i',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "2961e47b-19d5-4c61-997a-d3bf86b1ac2a",
+      "name": "insere voluntária na instrumental_record1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1520,
+        -64
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca volunts ADV com status in_contact ha 45 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Instrumental de <a href='https://tally.so/r/wv7KOg?msr_first_name={{ $('Loop Over Items6').item.json[msr_first_name]}}&volunteer_first_name={{ $('Loop Over Items6').item.json[volunteer_first_name]}}&match_id={{ $('Loop Over Items6').item.json[match_id]}}&email={{ $('Loop Over Items6').item.json[email]}}'>Acompanhamento Jurídico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "4b18feb3-6c46-49b9-a25b-6a3959f5421a",
+      "name": "Adiciona comentário interno6",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        -64
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental I - 15 dias 1').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/wv7KOg?msr_first_name={{ $('Loop Over Items7').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items7').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items7').item.json.match_id}}&email={{ $('Loop Over Items7').item.json.email}}'>Instrumental de Acompanhamento Jurídico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "19eb9622-b3e5-449f-9a75-765f9f4c20b6",
+      "name": "Adiciona comentário interno7",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        384
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental I - 30 dias1').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/wv7KOg?msr_first_name={{ $('Loop Over Items8').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items8').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items8').item.json.match_id}}&email={{ $('Loop Over Items8').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico I</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "f2bc066f-7e56-4a51-8e34-2e5755e0a85b",
+      "name": "Adiciona comentário interno8",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        912
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '45 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "90db6cca-03ed-4c08-a25c-9359ce4852ec",
+      "name": "busca volunts ADV com status in_contact ha 45 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        560,
+        -80
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "5799a502-10ce-499f-bcfd-dc097bbb8ec5",
+      "name": "No Operation, do nothing9",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "87e6c459-7c71-4d34-9373-fbbe5b635315",
+      "name": "Loop Over Items9",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        1536
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "4d46a6f4-8d43-4f3c-9af5-898fdf9ae4e2",
+      "name": "Wait9",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        1552
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "content": "Fluxo Instrumental Jurídico II ",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        288,
+        1360
+      ],
+      "id": "e82661fa-6be8-4adc-90e8-a7f8e6e714fc",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {},
+      "id": "fc107c67-0e0c-4dad-a36c-3e156576cba3",
+      "name": "No Operation, do nothing10",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        1808
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "99315fd0-79c4-4b86-aa3f-899fa176210e",
+      "name": "Loop Over Items10",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        1984
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "7edacd12-aeeb-451f-8a50-b2eb28e0e8c5",
+      "name": "Wait10",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1088,
+        2000
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjc5wx901mt0i38gxei79tj\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5ab3f555-13a2-4f62-abed-72cf2205973d",
+      "name": "Envia Lembrete 15 dias com Instrumental Acomp I3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1296,
+        2000
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "343d3979-ecb7-4ab7-a4e3-92791a5da404",
+      "name": "No Operation, do nothing11",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        2336
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fb23e882-5e69-4b3e-99b9-9d8878685a73",
+      "name": "Loop Over Items11",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        2512
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "2ff7ae94-b584-42bd-be9d-55321d1f22e7",
+      "name": "Wait11",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1088,
+        2528
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjc81jm01rb0i111gu85jx1\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "d47c36c7-eae3-4b79-875d-3d0c041b0149",
+      "name": "Envia Lembrete 30 dias com Instrumental Acomp I3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1296,
+        2528
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental II - 15 dias1').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o Lembrete para preencher o <a href='https://tally.so/r/44X40k?msr_first_name={{ $('Loop Over Items10').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items10').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items10').item.json.match_id}}&email={{ $('Loop Over Items10').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "fe082623-1f86-4226-a79c-258b4d7801c9",
+      "name": "Adiciona comentário interno9",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        2000
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('não responderam instrumental II - 30 dias1').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o 2° Lembrete para preencher o <a href='https://tally.so/r/44X40k?msr_first_name={{ $('Loop Over Items11').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items11').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items11').item.json.match_id}}&email={{ $('Loop Over Items11').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "a5ed1852-1c2c-4da9-89e8-6e07c11ff007",
+      "name": "Adiciona comentário interno10",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        2528
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmmjc415101hn0i15h1xefjmm\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "a3be03d8-09dc-4788-b2d5-60fb8dcd5bac",
+      "name": "Envia Instrumental II1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1280,
+        1552
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/44X40k?msr_first_name={{ $('Loop Over Items9').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items9').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items9').item.json.match_id}}&email={{ $('Loop Over Items9').item.json.volunteer_email}}'>Instrumental de Acompanhamento Jurídico II</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "6f9a0c5e-d71c-496c-8cf7-9fc7c0b3ab48",
+      "name": "Adiciona comentário interno11",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        1552
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "6be1b03e-07c3-424b-b4c1-fdb4ed8f6556",
+      "name": "não responderam instrumental II - 15 dias1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        544,
+        1984
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v                          ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p                            ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh               ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir     ON vir.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND vir.instrumental_type = 'legal_support_follow_up_ii'\n    AND vir.sent_at::DATE = CURRENT_DATE - INTERVAL '30 DAY'\n    AND vir.answered_at IS NULL\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "2989251b-8917-4217-b1fc-ac5b9ecb476b",
+      "name": "não responderam instrumental II - 30 dias1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        544,
+        2512
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.match_id }},\n    {{ $('busca volunts PSI com status in_contact ha 90 dias').item.json.volunteer_id }},\n    'psychological_support_follow_up_ii',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "907a8255-4d4c-482a-b9e6-347e3a2e6407",
+      "name": "insere instrumental_type na instrumental_record",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2064,
+        1472
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'in_contact'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '90 DAY'\n    AND m.status = 'in_contact'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "7b0f9e9d-002a-4d70-b587-32317e2efe63",
+      "name": "busca volunts ADV com status in_contact ha 90 dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        528,
+        1536
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.match_id }},\n    {{ $('busca volunts ADV com status in_contact ha 90 dias').item.json.volunteer_id }},\n    'legal_support_follow_up_ii',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "options": {}
+      },
+      "id": "933fd132-aad8-41b1-b4f6-673107d7e0dd",
+      "name": "insere instrumental_type na instrumental_record1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1488,
+        1552
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "HYstwqyTrzYsvJ2P"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-03-09T18:53:47.101Z",
+      "createdAt": "2026-03-09T18:53:47.101Z",
+      "role": "workflow:owner",
+      "workflowId": "eTQCbbWza7CWSNWB",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "updatedAt": "2026-05-11T12:52:34.000Z",
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766005013760
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-05-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
+    },
+    "node:Schedule Trigger6": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2026-05-11T18:59:36.372Z",
+  "versionCounter": 48,
+  "versionId": "88913fde-df29-43be-b38d-3cf6348da178"
+}
