@@ -1,89 +1,267 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
-    "When clicking \"Test workflow\"": {
+    "Ordena do mais antigo para o mais recente em cada ano1": {
       "main": [
         [
           {
-            "node": "Busca support_requests de 2024 e 2023",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Faz autenticação",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ordena do mais antigo para o mais recente em cada ano": {
-      "main": [
-        [
-          {
-            "node": "Limite de 10 support_requests",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Limite de 10 support_requests": {
-      "main": [
-        [
-          {
-            "node": "Une os dados com a autenticação",
+            "node": "Une os dados com a autenticação2",
             "type": "main",
             "index": 1
           }
         ]
       ]
     },
-    "Faz autenticação": {
+    "Envia erro por Slack2": {
       "main": [
         [
           {
-            "node": "Une os dados com a autenticação",
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Busca support_requests de 2024 e 2023": {
+    "Une os dados com a autenticação2": {
       "main": [
         [
           {
-            "node": "Ordena do mais antigo para o mais recente em cada ano",
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Chama o endpoint de match": {
+    "Loop Over Items1": {
       "main": [
         [
           {
-            "node": "No Operation, do nothing",
+            "node": "No Operation, do nothing1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Envia erro por Slack",
+            "node": "Wait1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Une os dados com a autenticação": {
+    "Schedule Trigger1": {
       "main": [
         [
           {
-            "node": "Chama o endpoint de match",
+            "node": "Pausas Match Diário",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chama o endpoint /find-volunteer1": {
+      "main": [
+        [
+          {
+            "node": "Une os dados do support_request e da voluntária1",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Envia erro por Slack2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca support_requests que estão na fila1": {
+      "main": [
+        [
+          {
+            "node": "Ordena do mais antigo para o mais recente em cada ano1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Faz autenticação na lambda-pedido-acolhimento1": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Faz autenticação na lambda-confirmacao-disponibilidade1": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Une os dados com a autenticação3": {
+      "main": [
+        [
+          {
+            "node": "Chama o endpoint /create-confirmation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chama o endpoint /create-confirmation1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envia erro por Slack3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Une os dados do support_request e da voluntária1": {
+      "main": [
+        [
+          {
+            "node": "Prepara os dados1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepara os dados1": {
+      "main": [
+        [
+          {
+            "node": "Encontrou voluntária?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia erro por Slack3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou voluntária?1": {
+      "main": [
+        [
+          {
+            "node": "Une os dados com a autenticação3",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Busca zendesk_ticket_id1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca zendesk_ticket_id1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno no ticket1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno no ticket1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Chama o endpoint /find-volunteer1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Une os dados do support_request e da voluntária1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Faz autenticação na lambda-confirmacao-disponibilidade1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pausas Match Diário": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
             "type": "main",
             "index": 0
           }
@@ -91,24 +269,15 @@
       ]
     }
   },
-  "createdAt": "2024-05-20T14:58:03.301Z",
-  "id": "78n66rJzsrwG7rqr",
+  "createdAt": "2026-05-11T14:00:33.716Z",
+  "description": null,
+  "id": "ed6a37stm5XDiofE",
+  "isArchived": false,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "name": "[STG] Match Diário",
   "nodes": [
-    {
-      "parameters": {},
-      "id": "870b0ff0-18ec-4b6f-a273-12acd54947a1",
-      "name": "When clicking \"Test workflow\"",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        720,
-        340
-      ]
-    },
     {
       "parameters": {
         "sortFieldsUi": {
@@ -124,53 +293,149 @@
         },
         "options": {}
       },
-      "id": "5f7b71a0-e3c1-45b1-9947-bd4bc91ffcfa",
-      "name": "Ordena do mais antigo para o mais recente em cada ano",
+      "id": "4c213bd2-9bdf-4cc3-9ea8-598d99989ce9",
+      "name": "Ordena do mais antigo para o mais recente em cada ano1",
       "type": "n8n-nodes-base.sort",
       "typeVersion": 1,
       "position": [
-        1220,
-        340
+        432,
+        80
       ]
     },
     {
       "parameters": {
-        "url": "={{ $vars.STG_MATCH_LAMBDA_URL }}/sign",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C06H7GA52A1",
+          "mode": "list",
+          "cachedResultName": "monitoramento-erros"
+        },
+        "text": "=ERROR: Não foi possível encontrar uma voluntária para esse `support_request` '{{ $json.support_request_id  }}', por conta desse erro: {{ $json.error.message }} \n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
+        "otherOptions": {}
+      },
+      "id": "e71c5d17-a6ff-4f7e-8f01-1dd81921bf5d",
+      "name": "Envia erro por Slack2",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        1984,
+        336
+      ],
+      "webhookId": "6dc0701b-26a1-4ca9-a913-8f50a6b4632d",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
         "options": {}
       },
-      "id": "de222349-83e5-4c79-a799-a86117f91cdc",
-      "name": "Faz autenticação",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "id": "183d0aa7-fb9b-4dbf-b04c-e95bc9399d28",
+      "name": "Une os dados com a autenticação2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
       "position": [
-        1240,
-        140
+        864,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fcd81862-dd11-433e-806f-810d32d2c3da",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1232,
+        48
       ]
     },
     {
       "parameters": {},
-      "id": "cf479c2f-d673-466e-95ed-a3e04941855f",
-      "name": "Limite de 10 support_requests",
-      "type": "n8n-nodes-base.limit",
+      "id": "5b32c61d-fb16-49a2-9994-abff8d35c868",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1460,
-        340
+        1488,
+        -224
       ]
     },
     {
       "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 13 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "a53ec20f-6ae6-4ed7-9b6d-a745ab49a9cb",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -688,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.PROD_MATCH_LAMBDA_URL }}/find-volunteer",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n  \"supportRequestId\": {{ $json.support_request_id }}\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "id": "8475916b-9081-4b7e-abcc-2b02dd729061",
+      "name": "Chama o endpoint /find-volunteer1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        208
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIMsEMUNmopmC6DL",
+          "name": "Lambda Auth Token"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n  *,\n  DATE_PART('year', created_at) AS ano\nFROM match.support_requests\nWHERE status = 'waiting_for_match'\nAND DATE_PART('year', created_at) IN (2023, 2024)\nAND support_request_id = 224554;",
+        "query": "SELECT \n  support_request_id,\n  created_at,\n  DATE_PART('year', created_at) AS ano\nFROM match.support_requests\nWHERE status = 'waiting_for_match'",
         "options": {}
       },
-      "id": "e9e8fa31-6b98-4349-b30a-ed44ddf46231",
-      "name": "Busca support_requests de 2024 e 2023",
+      "id": "69423db7-45fe-49b0-920c-932e58f17568",
+      "name": "Busca support_requests que estão na fila1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        980,
-        340
+        192,
+        80
       ],
       "credentials": {
         "postgres": {
@@ -181,52 +446,56 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "select": "channel",
-        "channelId": {
-          "__rl": true,
-          "value": "C06H7GA52A1",
-          "mode": "list",
-          "cachedResultName": "alertas-n8n"
-        },
-        "text": "=ERROR: Não foi possível criar um match para esse `support_request` '{{ $json.support_request_id  }}', por conta desse erro: {{ $json.error.message }} \n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
-        "otherOptions": {}
+        "url": "={{ $vars.PROD_MATCH_LAMBDA_URL }}/sign",
+        "options": {}
       },
-      "id": "f26bb1b8-ea5e-41c3-8901-1d35a1370265",
-      "name": "Envia erro por Slack",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.1,
+      "id": "fd1468de-eaf1-431c-97a3-afa8800ab428",
+      "name": "Faz autenticação na lambda-pedido-acolhimento1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
-        2620,
-        420
-      ],
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "01G85hUbLT4VlY92",
-          "name": "Slack account"
-        }
-      }
+        448,
+        -128
+      ]
     },
     {
-      "parameters": {},
-      "id": "7b5e13ec-34c6-4668-ad99-189e21638d50",
-      "name": "No Operation, do nothing",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
+      "parameters": {
+        "url": "={{ $vars.PROD_CONFIRMACAO_LAMBDA_URL }}/sign",
+        "options": {}
+      },
+      "id": "6ca2f49a-4c73-42e7-b2a4-22a245c1749a",
+      "name": "Faz autenticação na lambda-confirmacao-disponibilidade1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
-        2600,
-        200
+        2000,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "551c6a81-1595-4f63-8b95-685267113c2d",
+      "name": "Une os dados com a autenticação3",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2960,
+        48
       ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $vars.STG_MATCH_LAMBDA_URL }}/handle-match",
+        "url": "={{ $vars.PROD_CONFIRMACAO_LAMBDA_URL }}/create-confirmation",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \n  \"supportRequest\": {\n        \"supportRequestId\": {{ $json.support_request_id }},\n        \"msrId\": {{ $json.msr_id }},\n        \"zendeskTicketId\": {{ $json.zendesk_ticket_id }},\n        \"supportType\": \"{{ $json.support_type }}\",\n        \"status\": \"{{ $json.status }}\",\n        \"supportExpertise\": \"{{ $json.support_expertise }}\",\n        \"priority\": null,\n        \"hasDisability\": null,\n        \"requiresLibras\": null,\n        \"acceptsOnlineSupport\": {{ $json.accepts_online_support || null}},\n        \"lat\": {{ $json.lat }},\n        \"lng\": {{ $json.lng }},\n        \"city\": \"{{ $json.city }}\",\n        \"state\": \"{{ $json.state }}\"\n  },\n  \"matchType\": \"daily\",\n  \"shouldRandomize\": false\n}",
+        "jsonBody": "={ \n  \"supportRequestId\": {{ $json.support_request_id }},\n \"volunteerId\": {{ $json.volunteer_id }},\n \"matchType\": \"daily\",\n \"matchStage\": \"{{ $json.match_stage }}\"\n}",
         "options": {
           "batching": {
             "batch": {
@@ -235,13 +504,13 @@
           }
         }
       },
-      "id": "e64a21ea-f81c-4d3a-8f70-d389c304dfb8",
-      "name": "Chama o endpoint de match",
+      "id": "0a92d499-d0f7-45ec-9af8-1d56847ef91a",
+      "name": "Chama o endpoint /create-confirmation1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2260,
-        340
+        3472,
+        480
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -257,23 +526,343 @@
         "combinationMode": "multiplex",
         "options": {}
       },
-      "id": "d51de73b-a28c-48d4-9d93-fb5a01ebd408",
-      "name": "Une os dados com a autenticação",
+      "id": "84025629-b865-436a-a74e-6ede100c2ab5",
+      "name": "Une os dados do support_request e da voluntária1",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        1920,
-        340
+        2288,
+        96
       ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst output = []\nfor (const item of $input.all()) {\n  const supportRequestId = item.json.support_request_id;\n  const data = JSON.parse(item.json.data);\n  let volunteerId;\n  let matchStage\n  if (data.message != \"No volunteers available\") {\n    volunteerId = data.message.volunteer.volunteer_id;\n    matchStage = data.message.matchStage;\n  }\n  \n\n  output.push({\n    support_request_id: supportRequestId,\n    volunteer_id: volunteerId,\n    match_stage: matchStage\n  })\n}\n\nreturn output;"
+      },
+      "id": "3f07d9ad-4e7b-4043-9a8e-97d3777c6587",
+      "name": "Prepara os dados1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C06H7GA52A1",
+          "mode": "list",
+          "cachedResultName": "monitoramento-erros"
+        },
+        "text": "=ERROR: Não foi possível criar uma confirmação de match para esse `support_request` '{{ $json.support_request_id  }}', por conta desse erro: {{ $json.error.message }} \n\n- Workflow: {{ $workflow.name }} ID: {{ $workflow.id }}",
+        "otherOptions": {}
+      },
+      "id": "1539ccfd-6a10-4a16-91a8-a9ab9906402c",
+      "name": "Envia erro por Slack3",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        3680,
+        560
+      ],
+      "webhookId": "a7affc19-d61a-4403-b4df-52780beeb921",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "899bf339-c26f-4d4f-af3a-67560a71496e",
+              "leftValue": "={{ $json.volunteer_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "49d13551-88a0-46f8-846b-08709d0e8b00",
+      "name": "Encontrou voluntária?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  zendesk_ticket_id\nFROM match.support_requests\nWHERE support_request_id = {{ $json.support_request_id }}",
+        "options": {}
+      },
+      "id": "fd476260-2300-4f97-8a3c-33952fc2387a",
+      "name": "Busca zendesk_ticket_id1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2864,
+        288
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "<strong>Match Diário:</strong> </br></br>Não encontramos uma voluntária disponível. O pedido de acolhimento permanece na fila."
+        }
+      },
+      "id": "5a017763-6dfa-4594-8796-bda3a75757ad",
+      "name": "Adiciona comentário interno no ticket1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        3104,
+        400
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        64
+      ],
+      "id": "5ff721fb-7d83-4c18-9fd8-5699debcbb4e",
+      "name": "Wait1",
+      "webhookId": "d8d692b8-1af7-425f-8317-6e0833d5379d"
+    },
+    {
+      "parameters": {
+        "content": "## Fluxo Teste\n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -272
+      ],
+      "id": "f4a383ec-4188-4247-b596-0a73b77fce3b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "c_6fd9f21b9c46fa9371a7daea0e981ae4fab88b4c193274b848e79d7e46365b94@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Match Diário - Feriados e Pausas"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $now.startOf('day').toISO() }}",
+        "timeMax": "={{ $now.endOf('day').toISO() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        48
+      ],
+      "id": "86bafe0a-43a9-4962-bdaf-e9449e82961a",
+      "name": "Pausas Match Diário",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vPLbjhkfnzUxcuGq",
+          "name": "Jana Google Calendar Teste"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5abe4ad4-bcc3-4405-a81a-54a9821a0a80",
+              "leftValue": "={{ $json.summary }}",
+              "rightValue": "=^(IMERSÃO|FERIADO|Imersão|Feriado)",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -240,
+        48
+      ],
+      "id": "bfca77cb-6734-4701-9c49-57a2ba484fbd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "@Janaína",
+          "mode": "username"
+        },
+        "text": "=Identifiquei o evento: \"{{ $json.summary }}\". O fluxo de automação não será executado hoje.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        -48
+      ],
+      "id": "45f78b66-abf8-4ba6-b113-a21debd2828a",
+      "name": "Send a message",
+      "webhookId": "0a18722f-822d-41c7-af4c-6cf85707f626",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "@Janaína",
+          "mode": "username"
+        },
+        "text": "=Não foram encontrados eventos de bloqueio no calendário. O fluxo rodaria normalmente agora.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        160
+      ],
+      "id": "0a2f490e-36e8-4687-b501-3421d05d93de",
+      "name": "Send a message1",
+      "webhookId": "0a18722f-822d-41c7-af4c-6cf85707f626",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "01G85hUbLT4VlY92",
+          "name": "Slack account"
+        }
+      }
     }
   ],
   "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "updatedAt": "2026-05-11T14:00:33.719Z",
+      "createdAt": "2026-05-11T14:00:33.719Z",
+      "role": "workflow:owner",
+      "workflowId": "ed6a37stm5XDiofE",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "updatedAt": "2026-05-11T12:52:34.000Z",
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766005013760
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-05-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-05-22T20:22:29.000Z",
-  "versionId": "527daaf6-ec00-47ab-886d-5de3f22cd89e"
+  "updatedAt": "2026-05-11T16:55:01.102Z",
+  "versionCounter": 4,
+  "versionId": "ab464664-d4e3-4333-acb2-65c67c930546"
 }
