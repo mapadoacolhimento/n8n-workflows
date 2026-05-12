@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-05-11T17:32:05.505Z",
-    "createdAt": "2026-05-11T17:32:05.505Z",
-    "versionId": "fd0c9058-7210-44b1-a6c6-18795a2d7cd2",
+    "updatedAt": "2026-05-12T18:49:25.166Z",
+    "createdAt": "2026-05-12T18:49:25.166Z",
+    "versionId": "e8a243fb-d592-43f1-b726-48bce6afee75",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -230,7 +230,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT \n\tmatch_id, \n\tstatus AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    volunteer_id \nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT \nOR msr_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nORDER BY created_at DESC\nLIMIT 1",
+          "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.email AS msr_email, \n    m.volunteer_zendesk_ticket_id, \n    m.msr_zendesk_ticket_id \nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
           "options": {}
         },
         "id": "cc3fd289-66bb-4b6d-9786-fe99d14e513a",
@@ -312,8 +312,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          3632,
-          752
+          3616,
+          832
         ]
       },
       {
@@ -363,8 +363,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          3872,
-          480
+          3856,
+          400
         ],
         "credentials": {
           "postgres": {
@@ -429,7 +429,7 @@
         "typeVersion": 2.3,
         "position": [
           3632,
-          480
+          400
         ],
         "credentials": {
           "postgres": {
@@ -469,7 +469,7 @@
         "typeVersion": 2,
         "position": [
           4064,
-          480
+          400
         ]
       },
       {
@@ -1122,6 +1122,7 @@
       },
       {
         "parameters": {
+          "method": "POST",
           "url": "https://app.loops.so/api/v1/transactional",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
@@ -1133,8 +1134,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          5776,
-          1376
+          5808,
+          1200
         ],
         "id": "21a775d8-1436-4b69-935b-bc90253b3f54",
         "name": "Send Loops comms PSI",
@@ -1147,6 +1148,7 @@
       },
       {
         "parameters": {
+          "method": "POST",
           "url": "https://app.loops.so/api/v1/transactional",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
@@ -1158,8 +1160,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          6080,
-          2080
+          6096,
+          1952
         ],
         "id": "e61cea32-a7c0-44a4-b943-0c34885f63bb",
         "name": "Send Loops comms ADV",
@@ -1184,7 +1186,7 @@
                   },
                   "conditions": [
                     {
-                      "leftValue": "={{ $json.body.new_status }}",
+                      "leftValue": "={{ $json.new_status }}",
                       "rightValue": "completed",
                       "operator": {
                         "type": "string",
@@ -1209,7 +1211,7 @@
                   "conditions": [
                     {
                       "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
-                      "leftValue": "={{ $json.body.new_status }}",
+                      "leftValue": "={{ $json.new_status }}",
                       "rightValue": "interrupted_after_support",
                       "operator": {
                         "type": "string",
@@ -1234,7 +1236,7 @@
                   "conditions": [
                     {
                       "id": "32f0c853-0dff-4ffb-ad3b-f2da51ef7f6a",
-                      "leftValue": "={{ $json.body.new_status }}",
+                      "leftValue": "={{ $json.new_status }}",
                       "rightValue": "interrupted_before_support",
                       "operator": {
                         "type": "string",
@@ -1255,12 +1257,12 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          4992,
-          1552
+          4384,
+          1072
         ],
         "id": "c7d52646-8853-4a73-ab30-980a47080df8",
         "name": "match_status",
-        "alwaysOutputData": true
+        "alwaysOutputData": false
       },
       {
         "parameters": {
@@ -1276,7 +1278,7 @@
                   },
                   "conditions": [
                     {
-                      "leftValue": "={{ $json.body.support_type }}",
+                      "leftValue": "={{ $json.support_type }}",
                       "rightValue": "psychological",
                       "operator": {
                         "type": "string",
@@ -1301,7 +1303,7 @@
                   "conditions": [
                     {
                       "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
-                      "leftValue": "={{ $json.body.support_type }}",
+                      "leftValue": "={{ $json.support_type }}",
                       "rightValue": "legal",
                       "operator": {
                         "type": "string",
@@ -1327,10 +1329,11 @@
         ],
         "id": "c3a1d6c2-c8ed-439a-956a-dd867fabab06",
         "name": "support_type",
-        "alwaysOutputData": true
+        "alwaysOutputData": false
       },
       {
         "parameters": {
+          "method": "POST",
           "url": "https://app.loops.so/api/v1/transactional",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
@@ -1356,6 +1359,7 @@
       },
       {
         "parameters": {
+          "method": "POST",
           "url": "https://app.loops.so/api/v1/transactional",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
@@ -1381,19 +1385,6 @@
       },
       {
         "parameters": {
-          "errorMessage": "A voluntária com Zendesk User ID '{{$node[\"Webhook\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados. não existe no nosso banco de dados."
-        },
-        "type": "n8n-nodes-base.stopAndError",
-        "typeVersion": 1,
-        "position": [
-          4976,
-          1824
-        ],
-        "id": "855cecca-e8b8-4b95-90c4-58518a9a5ac4",
-        "name": "Stop and Error1"
-      },
-      {
-        "parameters": {
           "operation": "executeQuery",
           "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.emal AS msr_email\nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
           "options": {}
@@ -1403,8 +1394,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          4656,
-          1568
+          3472,
+          1344
         ],
         "credentials": {
           "postgres": {
@@ -1424,8 +1415,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.5,
         "position": [
-          5968,
-          1392
+          6016,
+          1200
         ],
         "credentials": {
           "postgres": {
@@ -1437,7 +1428,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.volunteer_id }},\n    'volunteer_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.volunteer_id }},\n    'volunteer_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
           "options": {}
         },
         "id": "365a3b83-05ff-47a2-8388-c59feeb87e0a",
@@ -1445,8 +1436,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.5,
         "position": [
-          6304,
-          2080
+          6352,
+          1952
         ],
         "credentials": {
           "postgres": {
@@ -1458,7 +1449,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.volunteer_id }},\n    'support_interruption',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.volunteer_id }},\n    'support_interruption',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
           "options": {}
         },
         "id": "2b79e4de-7f2d-446b-bc90-8b312895e5ef",
@@ -1479,7 +1470,7 @@
       {
         "parameters": {
           "operation": "update",
-          "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+          "id": "={{ $('Fetch match_id and status').item.json.volunteer_zendesk_ticket_id }}",
           "updateFields": {
             "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/dWdKjy?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Interrupção do Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
           }
@@ -1705,6 +1696,7 @@
       },
       {
         "parameters": {
+          "method": "POST",
           "url": "https://app.loops.so/api/v1/transactional",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
@@ -1731,7 +1723,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.msr_id }},\n    'msr_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.msr_id }},\n    'msr_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
           "options": {}
         },
         "id": "80d2cd34-515b-4308-91b7-ad1812bdf88c",
@@ -1752,7 +1744,7 @@
       {
         "parameters": {
           "operation": "update",
-          "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+          "id": "={{ $('Fetch match_id and status').item.json.volunteer_zendesk_ticket_id }}",
           "updateFields": {
             "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/7RKVjR?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a>\n\n"
           }
@@ -1762,8 +1754,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          5776,
-          1520
+          6144,
+          1360
         ],
         "credentials": {
           "zendeskApi": {
@@ -1776,7 +1768,7 @@
       {
         "parameters": {
           "operation": "update",
-          "id": "={{ $('Fetch match_id and status v2').item.json.msrr_zendesk_ticket_id }}",
+          "id": "={{ $('Fetch match_id and status').item.json.msr_zendesk_ticket_id }}",
           "updateFields": {
             "internalNote": "=A msr recebeu o <a href='https://tally.so/r/LZPKYG?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a>\n\n"
           }
@@ -1786,8 +1778,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          5872,
-          1712
+          6464,
+          1456
         ],
         "credentials": {
           "zendeskApi": {
@@ -1799,6 +1791,7 @@
       },
       {
         "parameters": {
+          "method": "POST",
           "url": "https://app.loops.so/api/v1/transactional",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
@@ -1810,8 +1803,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          6064,
-          1920
+          6080,
+          1776
         ],
         "id": "3b0c37b8-5d6f-4894-9972-9883620a4de6",
         "name": "Envia instrumental de conclusão para MSR1",
@@ -1825,7 +1818,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.msr_id }},\n    'msr_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+          "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.msr_id }},\n    'msr_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
           "options": {}
         },
         "id": "2b4cfd8a-4301-40aa-9457-99cf5d2c186c",
@@ -1834,7 +1827,7 @@
         "typeVersion": 2.5,
         "position": [
           6320,
-          1904
+          1776
         ],
         "credentials": {
           "postgres": {
@@ -1846,7 +1839,7 @@
       {
         "parameters": {
           "operation": "update",
-          "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+          "id": "={{ $('Fetch match_id and status').item.json.volunteer_zendesk_ticket_id }}",
           "updateFields": {
             "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/NpXbrO?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Conclusão de Atendimento</a> "
           }
@@ -1856,8 +1849,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          6064,
-          2224
+          6112,
+          2144
         ],
         "credentials": {
           "zendeskApi": {
@@ -1870,7 +1863,7 @@
       {
         "parameters": {
           "operation": "update",
-          "id": "={{ $('Fetch match_id and status v2').item.json.msrr_zendesk_ticket_id }}",
+          "id": "={{ $('Fetch match_id and status').item.json.msr_zendesk_ticket_id }}",
           "updateFields": {
             "internalNote": "=A msr recebeu o <a href='https://tally.so/r/44K7jb?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a>\n\n"
           }
@@ -1880,8 +1873,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          6256,
-          2384
+          6112,
+          2336
         ],
         "credentials": {
           "zendeskApi": {
@@ -1910,8 +1903,8 @@
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          6528,
-          1984
+          6560,
+          1824
         ],
         "typeVersion": 1,
         "id": "c448c69b-d2cc-4cc8-878b-9f0a1ab60940",
@@ -1923,12 +1916,33 @@
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          5008,
-          2192
+          5568,
+          2512
         ],
         "typeVersion": 1,
         "id": "eae0d3b3-c863-4cd8-b3fb-431ad0c67266",
         "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n\tmatch_id, \n\tstatus AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    volunteer_id \nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT \nOR msr_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nORDER BY created_at DESC\nLIMIT 1",
+          "options": {}
+        },
+        "id": "8af29728-6f6f-41d0-bf6d-02dcd540141b",
+        "name": "Fetch match_id and status1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          3232,
+          1344
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
       }
     ],
     "connections": {
@@ -2042,6 +2056,11 @@
           [
             {
               "node": "Update match status",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "match_status",
               "type": "main",
               "index": 0
             }
@@ -2351,13 +2370,7 @@
       },
       "Fetch match_id and status v2": {
         "main": [
-          [
-            {
-              "node": "match_status",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       },
       "Send Loops comms PSI": {
@@ -2509,7 +2522,7 @@
     "name": null,
     "description": null
   },
-  "activeVersionId": "fd0c9058-7210-44b1-a6c6-18795a2d7cd2",
+  "activeVersionId": "e8a243fb-d592-43f1-b726-48bce6afee75",
   "connections": {
     "Webhook": {
       "main": [
@@ -2621,6 +2634,11 @@
         [
           {
             "node": "Update match status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "match_status",
             "type": "main",
             "index": 0
           }
@@ -2930,13 +2948,7 @@
     },
     "Fetch match_id and status v2": {
       "main": [
-        [
-          {
-            "node": "match_status",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Send Loops comms PSI": {
@@ -3317,7 +3329,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n\tmatch_id, \n\tstatus AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    volunteer_id \nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT \nOR msr_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nORDER BY created_at DESC\nLIMIT 1",
+        "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.email AS msr_email, \n    m.volunteer_zendesk_ticket_id, \n    m.msr_zendesk_ticket_id \nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
         "options": {}
       },
       "id": "cc3fd289-66bb-4b6d-9786-fe99d14e513a",
@@ -3399,8 +3411,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3632,
-        752
+        3616,
+        832
       ]
     },
     {
@@ -3450,8 +3462,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3872,
-        480
+        3856,
+        400
       ],
       "credentials": {
         "postgres": {
@@ -3516,7 +3528,7 @@
       "typeVersion": 2.3,
       "position": [
         3632,
-        480
+        400
       ],
       "credentials": {
         "postgres": {
@@ -3556,7 +3568,7 @@
       "typeVersion": 2,
       "position": [
         4064,
-        480
+        400
       ]
     },
     {
@@ -4209,6 +4221,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
@@ -4220,8 +4233,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        5776,
-        1376
+        5808,
+        1200
       ],
       "id": "21a775d8-1436-4b69-935b-bc90253b3f54",
       "name": "Send Loops comms PSI",
@@ -4234,6 +4247,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
@@ -4245,8 +4259,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        6080,
-        2080
+        6096,
+        1952
       ],
       "id": "e61cea32-a7c0-44a4-b943-0c34885f63bb",
       "name": "Send Loops comms ADV",
@@ -4271,7 +4285,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.body.new_status }}",
+                    "leftValue": "={{ $json.new_status }}",
                     "rightValue": "completed",
                     "operator": {
                       "type": "string",
@@ -4296,7 +4310,7 @@
                 "conditions": [
                   {
                     "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
-                    "leftValue": "={{ $json.body.new_status }}",
+                    "leftValue": "={{ $json.new_status }}",
                     "rightValue": "interrupted_after_support",
                     "operator": {
                       "type": "string",
@@ -4321,7 +4335,7 @@
                 "conditions": [
                   {
                     "id": "32f0c853-0dff-4ffb-ad3b-f2da51ef7f6a",
-                    "leftValue": "={{ $json.body.new_status }}",
+                    "leftValue": "={{ $json.new_status }}",
                     "rightValue": "interrupted_before_support",
                     "operator": {
                       "type": "string",
@@ -4342,12 +4356,12 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        4992,
-        1552
+        4384,
+        1072
       ],
       "id": "c7d52646-8853-4a73-ab30-980a47080df8",
       "name": "match_status",
-      "alwaysOutputData": true
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -4363,7 +4377,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.body.support_type }}",
+                    "leftValue": "={{ $json.support_type }}",
                     "rightValue": "psychological",
                     "operator": {
                       "type": "string",
@@ -4388,7 +4402,7 @@
                 "conditions": [
                   {
                     "id": "3be44612-c5ed-49c3-89e6-51433fd53560",
-                    "leftValue": "={{ $json.body.support_type }}",
+                    "leftValue": "={{ $json.support_type }}",
                     "rightValue": "legal",
                     "operator": {
                       "type": "string",
@@ -4414,10 +4428,11 @@
       ],
       "id": "c3a1d6c2-c8ed-439a-956a-dd867fabab06",
       "name": "support_type",
-      "alwaysOutputData": true
+      "alwaysOutputData": false
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
@@ -4443,6 +4458,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
@@ -4468,19 +4484,6 @@
     },
     {
       "parameters": {
-        "errorMessage": "A voluntária com Zendesk User ID '{{$node[\"Webhook\"].json['body']['volunteer_zendesk_user_id']}}' não existe no nosso banco de dados. não existe no nosso banco de dados."
-      },
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        4976,
-        1824
-      ],
-      "id": "855cecca-e8b8-4b95-90c4-58518a9a5ac4",
-      "name": "Stop and Error1"
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
         "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.emal AS msr_email\nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
         "options": {}
@@ -4490,8 +4493,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4656,
-        1568
+        3472,
+        1344
       ],
       "credentials": {
         "postgres": {
@@ -4511,8 +4514,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        5968,
-        1392
+        6016,
+        1200
       ],
       "credentials": {
         "postgres": {
@@ -4524,7 +4527,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.volunteer_id }},\n    'volunteer_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.volunteer_id }},\n    'volunteer_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
         "options": {}
       },
       "id": "365a3b83-05ff-47a2-8388-c59feeb87e0a",
@@ -4532,8 +4535,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        6304,
-        2080
+        6352,
+        1952
       ],
       "credentials": {
         "postgres": {
@@ -4545,7 +4548,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.volunteer_id }},\n    'support_interruption',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.volunteer_id }},\n    'support_interruption',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
         "options": {}
       },
       "id": "2b79e4de-7f2d-446b-bc90-8b312895e5ef",
@@ -4566,7 +4569,7 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+        "id": "={{ $('Fetch match_id and status').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/dWdKjy?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Interrupção do Atendimento</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
         }
@@ -4792,6 +4795,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
@@ -4818,7 +4822,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.msr_id }},\n    'msr_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.msr_id }},\n    'msr_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
         "options": {}
       },
       "id": "80d2cd34-515b-4308-91b7-ad1812bdf88c",
@@ -4839,7 +4843,7 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+        "id": "={{ $('Fetch match_id and status').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/7RKVjR?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a>\n\n"
         }
@@ -4849,8 +4853,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        5776,
-        1520
+        6144,
+        1360
       ],
       "credentials": {
         "zendeskApi": {
@@ -4863,7 +4867,7 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $('Fetch match_id and status v2').item.json.msrr_zendesk_ticket_id }}",
+        "id": "={{ $('Fetch match_id and status').item.json.msr_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=A msr recebeu o <a href='https://tally.so/r/LZPKYG?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a>\n\n"
         }
@@ -4873,8 +4877,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        5872,
-        1712
+        6464,
+        1456
       ],
       "credentials": {
         "zendeskApi": {
@@ -4886,6 +4890,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "https://app.loops.so/api/v1/transactional",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
@@ -4897,8 +4902,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        6064,
-        1920
+        6080,
+        1776
       ],
       "id": "3b0c37b8-5d6f-4894-9972-9883620a4de6",
       "name": "Envia instrumental de conclusão para MSR1",
@@ -4912,7 +4917,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status v2').item.json.match_id }},\n    {{ $('Fetch match_id and status v2').item.json.msr_id }},\n    'msr_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
+        "query": "INSERT INTO survey.msr_instrumental_record(\n    match_id,\n    msr_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.msr_id }},\n    'msr_legal_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
         "options": {}
       },
       "id": "2b4cfd8a-4301-40aa-9457-99cf5d2c186c",
@@ -4921,7 +4926,7 @@
       "typeVersion": 2.5,
       "position": [
         6320,
-        1904
+        1776
       ],
       "credentials": {
         "postgres": {
@@ -4933,7 +4938,7 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $('Fetch match_id and status v2').item.json.volunteer_zendesk_ticket_id }}",
+        "id": "={{ $('Fetch match_id and status').item.json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=A voluntária recebeu o <a href='https://tally.so/r/NpXbrO?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'>Instrumental de Conclusão de Atendimento</a> "
         }
@@ -4943,8 +4948,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        6064,
-        2224
+        6112,
+        2144
       ],
       "credentials": {
         "zendeskApi": {
@@ -4957,7 +4962,7 @@
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $('Fetch match_id and status v2').item.json.msrr_zendesk_ticket_id }}",
+        "id": "={{ $('Fetch match_id and status').item.json.msr_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=A msr recebeu o <a href='https://tally.so/r/44K7jb?email={{ $json.volunteer_email }}&volunteer_first_name={{ $json.volunteer_first_name }}&match_id={{ $json.match_id }}&msr_first_name={{ $json.msr_first_name}}'> Instrumental de Conclusão de Atendimento</a>\n\n"
         }
@@ -4967,8 +4972,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        6256,
-        2384
+        6112,
+        2336
       ],
       "credentials": {
         "zendeskApi": {
@@ -4997,8 +5002,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        6528,
-        1984
+        6560,
+        1824
       ],
       "typeVersion": 1,
       "id": "c448c69b-d2cc-4cc8-878b-9f0a1ab60940",
@@ -5010,49 +5015,36 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        5008,
-        2192
+        5568,
+        2512
       ],
       "typeVersion": 1,
       "id": "eae0d3b3-c863-4cd8-b3fb-431ad0c67266",
       "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n\tmatch_id, \n\tstatus AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    volunteer_id \nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT \nOR msr_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nORDER BY created_at DESC\nLIMIT 1",
+        "options": {}
+      },
+      "id": "8af29728-6f6f-41d0-bf6d-02dcd540141b",
+      "name": "Fetch match_id and status1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        3232,
+        1344
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {
-    "Webhook1": [
-      {
-        "json": {
-          "headers": {
-            "host": "mapadoacolhimento.app.n8n.cloud",
-            "user-agent": "Zendesk Webhook",
-            "content-length": "67",
-            "accept-encoding": "gzip",
-            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
-            "content-type": "application/json; charset=utf-8",
-            "traceparent": "00-00000000000000006aa7b6597c8bf7e0-6aa7b6597c8bf7e0-00",
-            "tracestate": "dd=s:-1",
-            "x-forwarded-for": "216.198.2.195",
-            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
-            "x-forwarded-port": "443",
-            "x-forwarded-proto": "https",
-            "x-forwarded-server": "traefik-5666bddbdb-zqn94",
-            "x-real-ip": "216.198.2.195",
-            "x-request-id": "0570b58a-be8e-4d7a-8a95-0aeaaa6bbd70",
-            "x-zendesk-account-id": "9040899",
-            "x-zendesk-webhook-id": "01HJ1X20PK0J3MMT5X9TZQTA5D",
-            "x-zendesk-webhook-invocation-id": "01HVHJQXR6RV4JYKSV0GH0T41N",
-            "x-zendesk-webhook-signature": "p+nFVrXewC3fbBVkpn/0i+FKKnJAYgOPXAqx5h86M0Y=",
-            "x-zendesk-webhook-signature-timestamp": "2024-04-15T19:11:33Z"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "id": "81548",
-            "status_acolhimento": "atendimento__iniciado"
-          }
-        }
-      }
-    ],
     "Schedule Trigger": [
       {
         "json": {
@@ -5117,6 +5109,53 @@
           "item": 0
         }
       }
+    ],
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "mapadoacolhimento.app.n8n.cloud",
+            "user-agent": "Zendesk Webhook",
+            "content-length": "70",
+            "accept-encoding": "gzip, br",
+            "authorization": "Basic ZGV2QG1hcGEub3JnLmJyL3Rva2VuOkxWMHJoR2hxYzd1UTB2OGwzbTFtUFhwdmVZVFNMWG93UU4xbEJLZFk=",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "216.198.2.146",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9fab91413925f3b4-PDX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json; charset=utf-8",
+            "traceparent": "00-6a0374bd0000000017e5298374366e41-17e5298374366e41-00",
+            "tracestate": "dd=s:-1;p:17e5298374366e41",
+            "x-forwarded-for": "216.198.2.146, 104.23.160.170",
+            "x-forwarded-host": "mapadoacolhimento.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-3-6fd6f8949d-fcvxn",
+            "x-is-trusted": "yes",
+            "x-real-ip": "216.198.2.146",
+            "x-request-id": "541d2f45-7f63-4fe9-ae1d-506c49a60d24",
+            "x-zendesk-account-id": "9040899",
+            "x-zendesk-webhook-id": "01HJ1X20PK0J3MMT5X9TZQTA5D",
+            "x-zendesk-webhook-invocation-id": "01KRER011Y91M60SVCV29TS18Z",
+            "x-zendesk-webhook-signature": "yXIaGtVjvRUh1BtOeMLebYav+ww1AbnRuRAqswDQU0M=",
+            "x-zendesk-webhook-signature-timestamp": "2026-05-12T18:43:09Z"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "111643",
+            "status_acolhimento": "atendimento__concluído"
+          },
+          "webhookUrl": "https://mapadoacolhimento.app.n8n.cloud/webhook/update-match",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
     ]
   },
   "settings": {
@@ -5147,7 +5186,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-11T12:52:34.000Z",
+              "updatedAt": "2026-05-12T12:48:34.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -5167,7 +5206,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-11",
+              "lastActiveAt": "2026-05-12",
               "isPending": false
             }
           }
@@ -5190,7 +5229,7 @@
     }
   ],
   "triggerCount": 4,
-  "updatedAt": "2026-05-11T17:32:05.503Z",
-  "versionCounter": 95,
-  "versionId": "fd0c9058-7210-44b1-a6c6-18795a2d7cd2"
+  "updatedAt": "2026-05-12T18:49:25.164Z",
+  "versionCounter": 115,
+  "versionId": "e8a243fb-d592-43f1-b726-48bce6afee75"
 }
