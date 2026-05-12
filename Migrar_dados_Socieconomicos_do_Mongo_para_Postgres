@@ -2,14 +2,161 @@
   "active": false,
   "activeVersion": null,
   "activeVersionId": null,
-  "connections": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Find documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find documents": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "createdAt": "2026-05-11T19:22:24.699Z",
   "description": null,
   "id": "iF4RJUeSdXs2V7xB",
   "isArchived": false,
-  "meta": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "name": "Migrar dados Socieconomicos do Mongo para Postgres",
-  "nodes": [],
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -64
+      ],
+      "id": "a4a1c1e4-01ba-45f4-8258-71239959b75c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM msr.msrs\nWHERE status != 'unregistred';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -288,
+        -64
+      ],
+      "id": "66ee6911-c477-4b25-96f4-4766728f7b43",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -32,
+        -64
+      ],
+      "id": "c06a8335-3751-467d-a182-b79f072cc003",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "collection": "MsrRegisterData",
+        "options": {},
+        "query": "{\n  \"email\": \"{{ $json.email }}\"\n}"
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "14df2cd3-675e-4903-9a93-b57305867dc0",
+      "name": "Find documents",
+      "credentials": {
+        "mongoDb": {
+          "id": "9IJGiNaHCwLNS7Lz",
+          "name": "[STG] MongoDB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    pii.msr_id,\n    socio.id AS socio_id\nFROM msr.msr_pii_sec pii\nLEFT JOIN msr.msr_socioeconomic_data socio ON pii.msr_id = socio.msr_id\nWHERE pii.email = '{{ $json.email }}'\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        432,
+        -48
+      ],
+      "id": "1ffb74cf-44a2-4137-9cc4-4b0ebfd848ca",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    id AS violence_id\nFROM msr.msr_violence_history\nWHERE msr_id = '{{ $json.msr_id }}'\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        656,
+        -48
+      ],
+      "id": "6f11e433-b1a6-4919-af94-7aad8dc703d6",
+      "name": "Execute a SQL query2",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    }
+  ],
   "pinData": {},
   "settings": {
     "executionOrder": "v1"
@@ -36,7 +183,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-11T12:52:34.000Z",
+              "updatedAt": "2026-05-12T12:48:34.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -56,7 +203,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-11",
+              "lastActiveAt": "2026-05-12",
               "isPending": false
             }
           }
@@ -67,7 +214,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-05-11T19:22:24.699Z",
-  "versionCounter": 1,
-  "versionId": "43bda0e4-1d30-47f7-ac80-6d6ee92c7795"
+  "updatedAt": "2026-05-12T14:33:48.338Z",
+  "versionCounter": 3,
+  "versionId": "efb78062-e437-4fa0-b342-f03d91468174"
 }
