@@ -19,18 +19,62 @@
         [],
         [
           {
-            "node": "Find documents",
+            "node": "busca email msr",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Find documents": {
+    "busca email msr": {
       "main": [
         [
           {
-            "node": "Execute a SQL query1",
+            "node": "buscar msr_id e violence_history",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar msr_id e violence_history": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -61,7 +105,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT *\nFROM msr.msrs\nWHERE status != 'unregistred';",
+        "query": "SELECT *\nFROM msr.msrs\nWHERE status != 'unregistered';",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -95,29 +139,8 @@
     },
     {
       "parameters": {
-        "collection": "MsrRegisterData",
-        "options": {},
-        "query": "{\n  \"email\": \"{{ $json.email }}\"\n}"
-      },
-      "type": "n8n-nodes-base.mongoDb",
-      "typeVersion": 1.2,
-      "position": [
-        224,
-        -48
-      ],
-      "id": "14df2cd3-675e-4903-9a93-b57305867dc0",
-      "name": "Find documents",
-      "credentials": {
-        "mongoDb": {
-          "id": "9IJGiNaHCwLNS7Lz",
-          "name": "[STG] MongoDB"
-        }
-      }
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    pii.msr_id,\n    socio.id AS socio_id\nFROM msr.msr_pii_sec pii\nLEFT JOIN msr.msr_socioeconomic_data socio ON pii.msr_id = socio.msr_id\nWHERE pii.email = '{{ $json.email }}'\nLIMIT 1;",
+        "query": "SELECT \n    pii.msr_id,\n    pii.email,\n    socio.msr_socioeconomic_id AS socio_id,\n    violence.msr_violence_history_id AS violence_id\nFROM pii_sec.msr_pii pii\nLEFT JOIN msr.msr_socioeconomic_data socio ON pii.msr_id = socio.msr_id\nLEFT JOIN msr.msr_violence_history violence ON pii.msr_id = violence.msr_id\nWHERE pii.email = '{{ $json.email }}'\nLIMIT 1;",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -127,7 +150,8 @@
         -48
       ],
       "id": "1ffb74cf-44a2-4137-9cc4-4b0ebfd848ca",
-      "name": "Execute a SQL query1",
+      "name": "buscar msr_id e violence_history",
+      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
@@ -137,18 +161,293 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT \n    id AS violence_id\nFROM msr.msr_violence_history\nWHERE msr_id = '{{ $json.msr_id }}'\nLIMIT 1;",
+        "collection": "MsrRegisterData",
+        "options": {},
+        "query": "{\n  \"msr_id\": \"{{ $json.msr_id }}\"\n}"
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "14df2cd3-675e-4903-9a93-b57305867dc0",
+      "name": "busca email msr",
+      "alwaysOutputData": true,
+      "credentials": {
+        "mongoDb": {
+          "id": "9IJGiNaHCwLNS7Lz",
+          "name": "[STG] MongoDB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const mongo = item.json;\n  const needsSocioInsert = !mongo.socio_id;\n  const needsViolenceInsert = !mongo.violence_id;\n\n  const result = {\n    msr_id: mongo.msr_id,\n    needs_socio_insert: needsSocioInsert,\n    needs_violence_insert: needsViolenceInsert,\n    socio_payload: {},\n    violence_payload: {}\n  };\n\n  if (needsSocioInsert) {\n    result.socio_payload = {\n      msr_id: mongo.msr_id,\n      has_monthly_income: mongo.monthlyIncome || 'no_access',\n      monthly_income_range: mongo.monthlyIncomeRange !== undefined ? mongo.monthlyIncomeRange : null,\n      employment_status: mongo.employmentStatus || null,\n      has_financial_dependents: mongo.dependants === 'yes', // Mapeado de 'dependants' no Mongo\n      family_provider: mongo.familyProvider || null,\n      property_ownership: mongo.propertyOwnership === 'yes'\n    };\n  }\n\n  if (needsViolenceInsert) {\n    result.violence_payload = {\n      msr_id: mongo.msr_id,\n      violence_occurred_in_brazil: mongo.violenceOccurredInBrazil === 'yes',\n      \n      violence_type: mongo.violenceType || [],\n      violence_location: mongo.violenceLocation || [],\n      violence_perpetrator: mongo.violencePerpetrator || [],\n      legal_actions_taken: mongo.legalActionsTaken || [],\n      protective_factors: mongo.protectiveFactors || [],\n      risk_factors: mongo.riskFactors || [],\n      legal_action_difficulty: mongo.legalActionDifficulty || [],\n      violence_time: mongo.violenceTime || null,\n      perpetrator_gender: mongo.perpetratorGender || null,\n      lives_with_perpetrator: mongo.livesWithPerpetrator || null\n    };\n  }\n\n  return { json: result };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        -48
+      ],
+      "id": "7eb29791-953d-4177-b035-fb8b4bccbf44",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d4fae13e-68c1-4749-8226-2c9f817f888d",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1040,
+        -48
+      ],
+      "id": "a5db14c6-ba79-459e-90fa-9d2eb5dda11c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "msr",
+          "mode": "list",
+          "cachedResultName": "msr"
+        },
+        "table": {
+          "__rl": true,
+          "value": "msr_socioeconomic_data",
+          "mode": "list",
+          "cachedResultName": "msr_socioeconomic_data"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "property_ownership": "={{ $json.socio_payload.property_ownership }}",
+            "has_financial_dependents": "={{ $json.socio_payload.has_financial_dependents }}",
+            "msr_id": "={{ $json.socio_payload.msr_id }}",
+            "has_monthly_income": "={{ $json.socio_payload.has_monthly_income }}",
+            "monthly_income_range": "={{ $json.socio_payload.monthly_income_range }}",
+            "employment_status": "={{ $json.socio_payload.employment_status }}",
+            "family_provider": "={{ $json.socio_payload.family_provider }}",
+            "updated_at": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "msr_socioeconomic_id",
+              "displayName": "msr_socioeconomic_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "msr_id",
+              "displayName": "msr_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "employment_status",
+              "displayName": "employment_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "employed_clt",
+                  "value": "employed_clt"
+                },
+                {
+                  "name": "employed_pj",
+                  "value": "employed_pj"
+                },
+                {
+                  "name": "student",
+                  "value": "student"
+                },
+                {
+                  "name": "student_with_income",
+                  "value": "student_with_income"
+                },
+                {
+                  "name": "retired",
+                  "value": "retired"
+                },
+                {
+                  "name": "unemployed",
+                  "value": "unemployed"
+                }
+              ]
+            },
+            {
+              "id": "property_ownership",
+              "displayName": "property_ownership",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "has_monthly_income",
+              "displayName": "has_monthly_income",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "yes",
+                  "value": "yes"
+                },
+                {
+                  "name": "no",
+                  "value": "no"
+                },
+                {
+                  "name": "no_access",
+                  "value": "no_access"
+                }
+              ]
+            },
+            {
+              "id": "has_financial_dependents",
+              "displayName": "has_financial_dependents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "family_provider",
+              "displayName": "family_provider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "yes",
+                  "value": "yes"
+                },
+                {
+                  "name": "no",
+                  "value": "no"
+                },
+                {
+                  "name": "shared_responsibility",
+                  "value": "shared_responsibility"
+                }
+              ]
+            },
+            {
+              "id": "monthly_income_range",
+              "displayName": "monthly_income_range",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "no_income",
+                  "value": "no_income"
+                },
+                {
+                  "name": "half_minimum_wage",
+                  "value": "half_minimum_wage"
+                },
+                {
+                  "name": "up_to_one_minimum_wage",
+                  "value": "up_to_one_minimum_wage"
+                },
+                {
+                  "name": "up_to_two_minimum_wages",
+                  "value": "up_to_two_minimum_wages"
+                },
+                {
+                  "name": "up_to_three_minimum_wages",
+                  "value": "up_to_three_minimum_wages"
+                },
+                {
+                  "name": "up_to_four_minimum_wages",
+                  "value": "up_to_four_minimum_wages"
+                },
+                {
+                  "name": "five_minimum_wages_or_more",
+                  "value": "five_minimum_wages_or_more"
+                }
+              ]
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        656,
+        848,
         -48
       ],
-      "id": "6f11e433-b1a6-4919-af94-7aad8dc703d6",
-      "name": "Execute a SQL query2",
+      "id": "632604cf-a9f5-4801-9bc3-04b7dd31cfbc",
+      "name": "Insert rows in a table",
+      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "lveNjRL3anzREWd8",
@@ -183,7 +482,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-12T12:48:34.000Z",
+              "updatedAt": "2026-05-13T15:21:20.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -203,7 +502,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-12",
+              "lastActiveAt": "2026-05-13",
               "isPending": false
             }
           }
@@ -214,7 +513,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-05-12T14:33:48.338Z",
-  "versionCounter": 3,
-  "versionId": "efb78062-e437-4fa0-b342-f03d91468174"
+  "updatedAt": "2026-05-13T18:04:28.050Z",
+  "versionCounter": 7,
+  "versionId": "d4ac2830-16bc-49cb-9d93-97eb1da47ecc"
 }
