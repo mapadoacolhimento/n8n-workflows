@@ -1,0 +1,418 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "é atendimento interrompido?": {
+      "main": [
+        [
+          {
+            "node": "send loops interrupção atendimento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "send loops interrupção encaminhamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send loops interrupção encaminhamento": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send loops interrupção atendimento": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "enviar errata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "enviar errata": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "é atendimento interrompido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-05-19T19:08:03.820Z",
+  "description": null,
+  "id": "5Vl1GD41bABgawrp",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[FIX] Envio de errata para as voluntárias que receberam o instrumental incorreto",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        -16
+      ],
+      "id": "a5e3209a-946a-4907-a57d-7bad59709b0f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select DISTINCT\nmp.first_name as msr_first_name, \nv.email as volunteer_emal, \nv.first_name as volunteer_first_name,\nm.match_id, \nm.status, \nms.status as ms_status\nfrom match.matches m \ninner join match.match_status_history  ms on ms.match_id = m.match_id\ninner join public.volunteers v on v.id = m.volunteer_id\ninner join pii_sec.msr_pii mp on mp.msr_id = m.msr_id\nwhere \nms.status in ('interrupted_after_support', 'interrupted_before_support')\nand ms.created_at >= '2026-05-12'\nand ms.created_at < '2026-05-20'\nand v.email in ('monicanfolz@gmail.com',\n'alinemourao.adv@gmail.com',\n'karolkopkeadv@gmail.com',\n'karolkopkeadv@gmail.com',\n'yasminmp32@gmail.com',\n'ds_donato@adv.oabsp.org.br',\n'neilealb@gmail.com',\n'rebeccabrayner@gmail.com',\n'vanessa.manhaes@outlook.com',\n'fabianapithon@gmail.com',\n'biancarodriguess.adv@gmail.com',\n'monicasobreira.adv@hotmail.com',\n'suelys.reis@gmail.com',\n'rebeccabrayner@gmail.com',\n'gleideviana@gmail.com',\n'gleideviana@gmail.com',\n'mcrmoura24@gmail.com',\n'psipatriciamarinun@gmail.com',\n'ailemartins655@gmail.com',\n'stephanie.costa2010@gmail.com',\n'ailemartins655@gmail.com',\n'ailemartins655@gmail.com',\n'inezaraujo.adv@gmail.com',\n'bella-sintique@hotmail.com',\n'mayra.luisi@hotmail.com',\n'mayra.luisi@hotmail.com',\n'marcellefarah28@gmail.com',\n'marcellefarah28@gmail.com',\n'adviaramarlan@gmail.com',\n'andressa.risseto@gmail.com',\n'mvzappa@gmail.com',\n'carolineh2@live.com',\n'renatabertuqui.piovezan@gmail.com',\n'bkbadvocacia@gmail.com',\n'taina.sisant@hotmail.com',\n'jacque.lima.2005@hotmail.com',\n'biancarodriguess.adv@gmail.com',\n'marilia.figueiro3@gmail.com',\n'mirelle_cris@hotmail.com',\n'mirelle_cris@hotmail.com',\n'biancarodriguess.adv@gmail.com',\n'marcyana_@hotmail.com',\n'yaraolisil@gmail.com',\n'adv.adrianareis@gmail.com',\n'adv.adrianareis@gmail.com',\n'adv.adrianareis@gmail.com',\n'gissellerb2014@gmail.com',\n'ailemartins655@gmail.com',\n'ailemartins655@gmail.com',\n'barbaraalinepsi@gmail.com',\n'adv.larissagravina@gmail.com',\n'priscila.gomes.barreira@gmail.com')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -96,
+        -16
+      ],
+      "id": "df3e2aa6-10b0-4e2d-add9-179148fac5da",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        144,
+        464
+      ],
+      "id": "0fba61bf-c352-4fcc-ab0f-0638153b678d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpd3lalk01yl0j1wmtiwnvsc\",\n  \"email\": \"{{ $json.volunteer_emal }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_emal }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        784,
+        480
+      ],
+      "id": "ff07ce56-f700-4636-8fbe-d63bb02deb6a",
+      "name": "send loops interrupção atendimento",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpd3hclv01uo0j0bsxslsb41\",\n  \"email\": \"{{ $json.volunteer_emal }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_emal }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        816,
+        720
+      ],
+      "id": "dc4fc1a0-9a70-4c3f-9552-9275c6c15349",
+      "name": "send loops interrupção encaminhamento",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9cd73e6e-dd17-41e1-aec7-835cdfacbb03",
+              "leftValue": "={{ $json.ms_status }}",
+              "rightValue": "interrupted_after_support",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        496
+      ],
+      "id": "7653763f-68eb-4738-8bc3-c73135229d8a",
+      "name": "é atendimento interrompido?"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        160,
+        16
+      ],
+      "id": "e631e9cf-0fcc-4c58-aaaa-01fc5d67c332",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpd0aezu00m60jxz06ojzd24\",\n  \"email\": \"{{ $json.volunteer_emal }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.volunteer_first_name }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        528,
+        0
+      ],
+      "id": "336f9cb0-1e89-4994-a787-bf9b362055f7",
+      "name": "enviar errata",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        0
+      ],
+      "id": "41af0f30-97f9-417f-8b85-56b5a78c7736",
+      "name": "Wait",
+      "webhookId": "e4c7bbbd-4271-4010-81d0-14157443c35e"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        432
+      ],
+      "id": "a4c5f7e7-944c-4589-a1a2-339b447c5973",
+      "name": "Wait1",
+      "webhookId": "e1d4cd01-8353-474e-acb2-adbf09cde42a"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        496
+      ],
+      "id": "b73b5cc2-5308-4b5a-b442-44afd2130c03",
+      "name": "Wait2",
+      "webhookId": "f85c6244-f6da-4386-b4d0-0e7a440126b4"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-05-19T19:08:03.826Z",
+      "createdAt": "2026-05-19T19:08:03.826Z",
+      "role": "workflow:owner",
+      "workflowId": "5Vl1GD41bABgawrp",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "updatedAt": "2026-05-19T12:04:11.000Z",
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766005013760
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-05-19",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-19T20:53:15.920Z",
+  "versionCounter": 4,
+  "versionId": "5d5768a8-8006-453e-8ea0-03a7c30303a4"
+}
