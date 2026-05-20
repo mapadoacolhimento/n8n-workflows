@@ -3,143 +3,132 @@
   "activeVersion": null,
   "activeVersionId": null,
   "connections": {
-    "Manual Trigger": {
-      "main": [
-        [
-          {
-            "node": "Buscar MSRs antigas no Postgres1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items": {
+    "Loop Over Items1": {
       "main": [
         [],
         [
           {
-            "node": "Buscar MSR no MongoDB",
+            "node": "Buscar MSR no MongoDB1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Buscar MSRs antigas no Postgres1": {
+    "Buscar MSRs antigas no Postgres": {
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "MSR existe no MongoDB?": {
+    "MSR existe no MongoDB?1": {
       "main": [
         [
           {
-            "node": "Verificar registros no Postgres",
+            "node": "Mapear DE-PARA (Mongo → Postgres)1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Loop Over Items",
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Buscar MSR no MongoDB": {
+    "Buscar MSR no MongoDB1": {
       "main": [
         [
           {
-            "node": "MSR existe no MongoDB?",
+            "node": "MSR existe no MongoDB?1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Verificar registros no Postgres": {
+    "Mapear DE-PARA (Mongo → Postgres)1": {
       "main": [
         [
           {
-            "node": "Mapear DE-PARA (Mongo → Postgres)",
+            "node": "Precisa inserir histórico de violência?1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Mapear DE-PARA (Mongo → Postgres)": {
+    "Precisa inserir histórico de violência?1": {
       "main": [
         [
           {
-            "node": "Precisa inserir histórico de violência?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Precisa inserir histórico de violência?": {
-      "main": [
-        [
-          {
-            "node": "Inserir violence_history",
+            "node": "Inserir violence_history1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Precisa inserir dados socioeconômicos?",
+            "node": "Precisa inserir dados socioeconômicos?1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Inserir violence_history": {
+    "Inserir violence_history1": {
       "main": [
         [
           {
-            "node": "Precisa inserir dados socioeconômicos?",
+            "node": "Precisa inserir dados socioeconômicos?1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Precisa inserir dados socioeconômicos?": {
+    "Precisa inserir dados socioeconômicos?1": {
       "main": [
         [
           {
-            "node": "Inserir socioeconomic_data",
+            "node": "Inserir socioeconomic_data1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Loop Over Items",
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Inserir socioeconomic_data": {
+    "Inserir socioeconomic_data1": {
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Buscar MSRs antigas no Postgres",
             "type": "main",
             "index": 0
           }
@@ -157,17 +146,6 @@
   "name": "Migrar dados Socieconomicos do Mongo para Postgres [OTIMIZADO]",
   "nodes": [
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -2768,
-        1664
-      ],
-      "id": "6d8f8c25-636e-4176-aca4-612563e38748",
-      "name": "Manual Trigger"
-    },
-    {
       "parameters": {
         "batchSize": 10,
         "options": {}
@@ -175,30 +153,30 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -2320,
-        1664
+        -1984,
+        2064
       ],
-      "id": "27ad6e8a-c621-4875-b94d-8dea28e1175b",
-      "name": "Loop Over Items"
+      "id": "1e07d230-be35-40ce-ac5c-a12929eb12c0",
+      "name": "Loop Over Items1"
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    m.msr_id,\n    m.status,\n    m.created_at,\n    pii.email AS msr_email\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii pii ON m.msr_id = pii.msr_id\nWHERE m.status != 'unregistered'\n  AND m.created_at < '2024-01-01T00:00:00Z'\nORDER BY m.created_at ASC;",
+        "query": "SELECT \n    m.msr_id,\n    pii.email AS msr_email,\n    socio.msr_socioeconomic_id AS socio_id,\n    violence.msr_violence_history_id AS violence_id\nFROM msr.msrs m\nINNER JOIN pii_sec.msr_pii pii ON m.msr_id = pii.msr_id\nLEFT JOIN msr.msr_socioeconomic_data socio ON m.msr_id = socio.msr_id\nLEFT JOIN msr.msr_violence_history violence ON m.msr_id = violence.msr_id\nWHERE m.status != 'unregistered'\n  AND (socio.msr_socioeconomic_id IS NULL OR violence.msr_violence_history_id IS NULL)\nORDER BY m.created_at ASC;",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -2544,
-        1664
+        -2208,
+        2064
       ],
-      "id": "83266ba1-1e43-4ce5-826b-e7ac66da4840",
-      "name": "Buscar MSRs antigas no Postgres1",
+      "id": "ad5fa8fb-fda0-42fd-938e-8a5f8a0ca0b5",
+      "name": "Buscar MSRs antigas no Postgres",
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -214,7 +192,7 @@
           "conditions": [
             {
               "id": "cond-mongo-exists",
-              "leftValue": "={{ $node[\"Buscar MSR no MongoDB\"].json.email }}",
+              "leftValue": "={{ $json.email }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -230,67 +208,47 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1872,
-        1392
+        -1536,
+        1792
       ],
-      "id": "05d060ba-35bc-4946-80a7-611351768792",
-      "name": "MSR existe no MongoDB?"
+      "id": "ca7eecf4-d52c-4739-8881-1d6df9907bbd",
+      "name": "MSR existe no MongoDB?1"
     },
     {
       "parameters": {
         "collection": "MsrRegisterData",
-        "options": {}
+        "options": {},
+        "query": "={ \"email\": \"{{ $json.msr_email }}\" }"
       },
       "type": "n8n-nodes-base.mongoDb",
       "typeVersion": 1.2,
       "position": [
-        -2096,
-        1392
+        -1760,
+        1792
       ],
-      "id": "b5c7da55-621b-4042-b5c0-1c93b494f8cf",
-      "name": "Buscar MSR no MongoDB",
+      "id": "4521c4fc-c27a-44f2-8bb1-58e65a649667",
+      "name": "Buscar MSR no MongoDB1",
       "alwaysOutputData": true,
       "credentials": {
         "mongoDb": {
-          "id": "9IJGiNaHCwLNS7Lz",
-          "name": "[STG] MongoDB"
+          "id": "7SQAxkxLufwdHG7H",
+          "name": "[PROD] MongoDB"
         }
       }
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT \n    pii.msr_id,\n    pii.email,\n    socio.msr_socioeconomic_id AS socio_id,\n    violence.msr_violence_history_id AS violence_id\nFROM pii_sec.msr_pii pii\nLEFT JOIN msr.msr_socioeconomic_data socio ON pii.msr_id = socio.msr_id\nLEFT JOIN msr.msr_violence_history violence ON pii.msr_id = violence.msr_id\nWHERE pii.email = '{{ $json.email }}'\nLIMIT 1;",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        -1648,
-        1376
-      ],
-      "id": "a77e60ce-7812-46b7-9cf2-2ea76a885218",
-      "name": "Verificar registros no Postgres",
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Este nó recebe o resultado do Postgres (socio_id / violence_id)\n// e busca os dados do MongoDB via contexto do nó anterior.\n// IMPORTANTE: O nó MongoDB deve ser referenciado pelo nome correto abaixo.\n\nconst pgResult = $input.first().json;\nconst mongo = $items(\"Buscar MSR no MongoDB\")[0].json;\n\nconst msr_id = pgResult.msr_id;\nconst needsSocioInsert = !pgResult.socio_id;\nconst needsViolenceInsert = !pgResult.violence_id;\n\n// Helper: normaliza booleano de string\nconst toBool = (val) => {\n  if (val === 'yes' || val === true) return true;\n  if (val === 'no' || val === false) return false;\n  return null;\n};\n\n// Helper: garante array\nconst toArray = (val) => Array.isArray(val) ? val : (val ? [val] : []);\n\nconst socio_payload = needsSocioInsert ? {\n  msr_id,\n  has_monthly_income: mongo.monthlyIncome || null,\n  monthly_income_range: mongo.monthlyIncomeRange || null,\n  employment_status: mongo.employmentStatus || null,\n  has_financial_dependents: toBool(mongo.dependants),\n  family_provider: mongo.familyProvider || null,\n  property_ownership: toBool(mongo.propertyOwnership)\n} : null;\n\nconst violence_payload = needsViolenceInsert ? {\n  msr_id,\n  violence_occurred_in_brazil: true,\n  violence_type: toArray(mongo.violenceType),\n  violence_location: toArray(mongo.violenceLocation),\n  violence_perpetrator: toArray(mongo.violencePerpetrator),\n  legal_actions_taken: toArray(mongo.legalActionsTaken),\n  protective_factors: toArray(mongo.protectiveFactors),\n  risk_factors: toArray(mongo.riskFactors),\n  legal_action_difficulty: toArray(mongo.legalActionDifficulty),\n  violence_time: mongo.violenceTime || null,\n  perpetrator_gender: mongo.perpetratorGender || null,\n  lives_with_perpetrator: mongo.livesWithPerpetrator || null\n} : null;\n\nreturn [{\n  json: {\n    msr_id,\n    needs_socio_insert: needsSocioInsert,\n    needs_violence_insert: needsViolenceInsert,\n    socio_payload,\n    violence_payload\n  }\n}];"
+        "mode": "runOnceForEachItem",
+        "jsCode": "const pgResult = $('Loop Over Items1').item.json;\nconst mongo = $('Buscar MSR no MongoDB1').item.json;\n\nconst msr_id = pgResult.msr_id;\nconst needsSocioInsert = !pgResult.socio_id;\nconst needsViolenceInsert = !pgResult.violence_id;\n\nconst toBool = (val) => {\n  if (val === 'yes' || val === true) return true;\n  if (val === 'no' || val === false) return false;\n  return null;\n};\n\nconst toArray = (val) => Array.isArray(val) ? val : (val ? [val] : []);\n\nconst mapMonthlyIncomeRange = (val) => {\n  const map = new Map([\n    [0,   'no_income'],\n    [0.5, 'half_minimum_wage'],\n    [1,   'up_to_one_minimum_wage'],\n    [2,   'up_to_two_minimum_wages'],\n    [3,   'up_to_three_minimum_wages'],\n    [4,   'up_to_four_minimum_wages'],\n    [5,   'five_minimum_wages_or_more'],\n  ]);\n  return map.get(parseFloat(val)) ?? null;\n};\n\nconst mapFamilyProvider = (val) => {\n  const map = {\n    'yes': 'yes',\n    'no': 'no',\n    'partially': 'shared_responsibility',\n    'shared_responsibility': 'shared_responsibility'\n  };\n  return map[val] ?? null;\n};\n\nconst socio_payload = needsSocioInsert ? {\n  msr_id,\n  has_monthly_income: mongo.monthlyIncome || null,\n  monthly_income_range: mapMonthlyIncomeRange(mongo.monthlyIncomeRange),\n  employment_status: mongo.employmentStatus || null,\n  has_financial_dependents: toBool(mongo.dependants),\n  family_provider: mapFamilyProvider(mongo.familyProvider) || null,\n  property_ownership: toBool(mongo.propertyOwnership)\n} : null;\n\nconst violence_payload = needsViolenceInsert ? {\n  msr_id,\n  violence_occurred_in_brazil: true,\n  violence_type: toArray(mongo.violenceType),\n  violence_location: toArray(mongo.violenceLocation),\n  violence_perpetrator: toArray(mongo.violencePerpetrator),\n  legal_actions_taken: toArray(mongo.legalActionsTaken),\n  protective_factors: toArray(mongo.protectiveFactors),\n  risk_factors: toArray(mongo.riskFactors),\n  legal_action_difficulty: toArray(mongo.legalActionDifficulty),\n  violence_time: mongo.violenceTime || null,\n  perpetrator_gender: mongo.perpetratorGender || null,\n  lives_with_perpetrator: mongo.livesWithPerpetrator || null\n} : null;\n\nreturn {\n  json: {\n    msr_id,\n    needs_socio_insert: needsSocioInsert,\n    needs_violence_insert: needsViolenceInsert,\n    socio_payload: socio_payload ?? {},\n    violence_payload: violence_payload ?? {}\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1424,
-        1376
+        -1216,
+        1776
       ],
-      "id": "6a68eb6e-ba68-4bd5-ba5a-2ef6f4f4ed91",
-      "name": "Mapear DE-PARA (Mongo → Postgres)"
+      "id": "734e5690-34e5-4886-bed5-6143b18d6a3f",
+      "name": "Mapear DE-PARA (Mongo → Postgres)1"
     },
     {
       "parameters": {
@@ -304,7 +262,7 @@
           "conditions": [
             {
               "id": "cond-needs-violence",
-              "leftValue": "={{ $node[\"Mapear DE-PARA (Mongo → Postgres)\"].json.needs_violence_insert }}",
+              "leftValue": "={{ $node[\"Mapear DE-PARA (Mongo → Postgres)1\"].json.needs_violence_insert }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",
@@ -320,14 +278,15 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1200,
-        1296
+        -864,
+        1696
       ],
-      "id": "443e380b-1e4c-46a8-9525-107e6e8ac575",
-      "name": "Precisa inserir histórico de violência?"
+      "id": "fc62c728-ca7a-4804-b4ec-97e19bb28fcc",
+      "name": "Precisa inserir histórico de violência?1"
     },
     {
       "parameters": {
+        "operation": "upsert",
         "schema": {
           "__rl": true,
           "value": "msr",
@@ -343,9 +302,9 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "msr_id": "={{ $json.violence_payload.msr_id }}",
+            "violence_occurred_in_brazil": false,
+            "msr_id": "={{ $json.msr_id }}",
             "updated_at": "={{ $now }}",
-            "violence_occurred_in_brazil": "={{ $json.violence_payload.violence_occurred_in_brazil }}",
             "violence_location": "={{ $json.violence_payload.violence_location }}",
             "legal_action_difficulty": "={{ $json.violence_payload.legal_action_difficulty }}",
             "perpetrator_gender": "={{ $json.violence_payload.perpetrator_gender }}",
@@ -357,7 +316,9 @@
             "risk_factors": "={{ $json.violence_payload.risk_factors }}",
             "lives_with_perpetrator": "={{ $json.violence_payload.lives_with_perpetrator }}"
           },
-          "matchingColumns": [],
+          "matchingColumns": [
+            "msr_id"
+          ],
           "schema": [
             {
               "id": "msr_violence_history_id",
@@ -376,7 +337,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "number",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": true,
+              "removed": false
             },
             {
               "id": "violence_occurred_in_brazil",
@@ -385,8 +347,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "boolean",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "created_at",
@@ -395,7 +356,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "dateTime",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": true
             },
             {
@@ -405,7 +366,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "dateTime",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": false
             },
             {
               "id": "violence_location",
@@ -414,8 +375,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "array",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "legal_action_difficulty",
@@ -424,8 +384,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "array",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "perpetrator_gender",
@@ -434,7 +393,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "options",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "options": [
                 {
                   "name": "woman",
@@ -448,8 +407,7 @@
                   "name": "non_binary",
                   "value": "non_binary"
                 }
-              ],
-              "removed": false
+              ]
             },
             {
               "id": "violence_perpetrator",
@@ -458,8 +416,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "array",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "violence_time",
@@ -468,7 +425,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "options",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "options": [
                 {
                   "name": "last_week",
@@ -498,8 +455,7 @@
                   "name": "more_than_10_years",
                   "value": "more_than_10_years"
                 }
-              ],
-              "removed": false
+              ]
             },
             {
               "id": "violence_type",
@@ -508,8 +464,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "array",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "legal_actions_taken",
@@ -518,8 +473,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "array",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "protective_factors",
@@ -528,8 +482,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "array",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "risk_factors",
@@ -538,8 +491,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "array",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": false
             },
             {
               "id": "lives_with_perpetrator",
@@ -548,7 +500,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "options",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "options": [
                 {
                   "name": "yes",
@@ -562,8 +514,7 @@
                   "name": "never",
                   "value": "never"
                 }
-              ],
-              "removed": false
+              ]
             }
           ],
           "attemptToConvertTypes": false,
@@ -574,15 +525,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -976,
-        1200
+        -640,
+        1600
       ],
-      "id": "30aa17cd-75cb-4163-ad30-2f355db2b462",
-      "name": "Inserir violence_history",
+      "id": "af9711e5-6290-4273-bfbb-26d4643c4c50",
+      "name": "Inserir violence_history1",
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
     },
@@ -598,7 +549,7 @@
           "conditions": [
             {
               "id": "cond-needs-socio",
-              "leftValue": "={{ $node[\"Mapear DE-PARA (Mongo → Postgres)\"].json.needs_socio_insert }}",
+              "leftValue": "={{ $node[\"Mapear DE-PARA (Mongo → Postgres)1\"].json.needs_socio_insert }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",
@@ -614,14 +565,15 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -752,
-        1392
+        -416,
+        1792
       ],
-      "id": "32efafcc-8207-4a5e-9b2d-3026fa55268e",
-      "name": "Precisa inserir dados socioeconômicos?"
+      "id": "f4438dd3-4c96-4d9c-a3ea-447d075745e1",
+      "name": "Precisa inserir dados socioeconômicos?1"
     },
     {
       "parameters": {
+        "operation": "upsert",
         "schema": {
           "__rl": true,
           "value": "msr",
@@ -637,16 +589,18 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "msr_id": "={{ $json.socio_payload.msr_id }}",
-            "has_monthly_income": "={{ $json.socio_payload.has_monthly_income }}",
-            "monthly_income_range": "={{ $json.socio_payload.monthly_income_range }}",
-            "employment_status": "={{ $json.socio_payload.employment_status }}",
-            "has_financial_dependents": "={{ $json.socio_payload.has_financial_dependents }}",
-            "family_provider": "={{ $json.socio_payload.family_provider }}",
-            "property_ownership": "={{ $json.socio_payload.property_ownership }}",
-            "updated_at": "={{ $now }}"
+            "property_ownership": "={{ $('Mapear DE-PARA (Mongo → Postgres)1').item.json.socio_payload.property_ownership }}",
+            "has_financial_dependents": "={{ $('Mapear DE-PARA (Mongo → Postgres)1').item.json.socio_payload.has_financial_dependents }}",
+            "msr_id": "={{ $json.msr_id }}",
+            "updated_at": "={{ $now }} ",
+            "employment_status": "={{ $('Mapear DE-PARA (Mongo → Postgres)1').item.json.socio_payload.employment_status }}",
+            "has_monthly_income": "={{ $('Mapear DE-PARA (Mongo → Postgres)1').item.json.socio_payload.has_monthly_income }}",
+            "family_provider": "={{ $('Mapear DE-PARA (Mongo → Postgres)1').item.json.socio_payload.family_provider }}",
+            "monthly_income_range": "={{ $('Mapear DE-PARA (Mongo → Postgres)1').item.json.socio_payload.monthly_income_range }}"
           },
-          "matchingColumns": [],
+          "matchingColumns": [
+            "msr_id"
+          ],
           "schema": [
             {
               "id": "msr_socioeconomic_id",
@@ -665,7 +619,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "number",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": true,
+              "removed": false
             },
             {
               "id": "created_at",
@@ -674,7 +629,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "dateTime",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": true
             },
             {
@@ -684,7 +639,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "dateTime",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": false
             },
             {
               "id": "employment_status",
@@ -693,7 +648,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "options",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "options": [
                 {
                   "name": "employed_clt",
@@ -728,7 +683,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "boolean",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": false
             },
             {
               "id": "has_monthly_income",
@@ -737,7 +692,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "options",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "options": [
                 {
                   "name": "yes",
@@ -760,7 +715,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "boolean",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": false
             },
             {
               "id": "family_provider",
@@ -769,7 +724,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "options",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "options": [
                 {
                   "name": "yes",
@@ -792,8 +747,20 @@
               "defaultMatch": false,
               "display": true,
               "type": "options",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "options": [
+                {
+                  "name": "up_to_three_minimum_wages",
+                  "value": "up_to_three_minimum_wages"
+                },
+                {
+                  "name": "up_to_four_minimum_wages",
+                  "value": "up_to_four_minimum_wages"
+                },
+                {
+                  "name": "five_minimum_wages_or_more",
+                  "value": "five_minimum_wages_or_more"
+                },
                 {
                   "name": "no_income",
                   "value": "no_income"
@@ -809,18 +776,6 @@
                 {
                   "name": "up_to_two_minimum_wages",
                   "value": "up_to_two_minimum_wages"
-                },
-                {
-                  "name": "up_to_three_minimum_wages",
-                  "value": "up_to_three_minimum_wages"
-                },
-                {
-                  "name": "up_to_four_minimum_wages",
-                  "value": "up_to_four_minimum_wages"
-                },
-                {
-                  "name": "five_minimum_wages_or_more",
-                  "value": "five_minimum_wages_or_more"
                 }
               ]
             }
@@ -833,17 +788,28 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -528,
-        1296
+        -192,
+        1696
       ],
-      "id": "81336b8d-bf13-4e2c-a90f-1ce606906bb5",
-      "name": "Inserir socioeconomic_data",
+      "id": "ffb8f15f-4658-4369-872e-69e6d2ddb752",
+      "name": "Inserir socioeconomic_data1",
       "credentials": {
         "postgres": {
-          "id": "lveNjRL3anzREWd8",
-          "name": "[STG] Mapa"
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2432,
+        2064
+      ],
+      "id": "c4007a64-d332-43e8-8732-c0b5f5f8ec34",
+      "name": "When clicking ‘Execute workflow’"
     }
   ],
   "pinData": {},
@@ -872,7 +838,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-18T11:41:42.000Z",
+              "updatedAt": "2026-05-20T12:53:34.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -892,7 +858,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-18",
+              "lastActiveAt": "2026-05-20",
               "isPending": false
             }
           }
@@ -903,7 +869,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-05-18T20:05:11.139Z",
-  "versionCounter": 16,
-  "versionId": "8f8b2442-b0e5-4dce-ba3c-cb2dedbabeaf"
+  "updatedAt": "2026-05-20T13:19:46.733Z",
+  "versionCounter": 27,
+  "versionId": "e6fa3ad7-4de9-4448-837f-d1c997782c17"
 }
