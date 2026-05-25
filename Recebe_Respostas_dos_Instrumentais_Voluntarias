@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-05-21T16:23:16.723Z",
-    "createdAt": "2026-05-21T16:23:16.723Z",
-    "versionId": "ece2eb69-ca64-4202-bfbb-fe5ca53b305a",
+    "updatedAt": "2026-05-25T19:09:33.874Z",
+    "createdAt": "2026-05-25T19:09:33.874Z",
+    "versionId": "93cabf92-3bee-499c-a0e5-92063e145b63",
     "workflowId": "MwqtjrooETHGDdmp",
     "nodes": [
       {
@@ -1624,7 +1624,8 @@
           "operation": "update",
           "id": "={{ $json.volunteer_zendesk_ticket_id }}",
           "updateFields": {
-            "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $json.volunteer_name }} respondeu o Instrumental de Interrupção. Respostas no <a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}'>ticket do match</a>\n  </div>\n\n\n</div>"
+            "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $json.volunteer_name }} respondeu o Instrumental de Interrupção. Respostas no <a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}'>ticket do match</a>\n  </div>\n\n\n</div>",
+            "publicReply": ""
           }
         },
         "type": "n8n-nodes-base.zendesk",
@@ -6052,6 +6053,448 @@
         ],
         "id": "19bf1a62-194e-4b42-b190-0086fdb0ac19",
         "name": "Tem alguma mensagem?3"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n  //if(!field) return 'not_found'\n  if(!field.value || field.value.length === 0) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  )?.text ;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return []\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\nfunction getTextAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'TEXTAREA' && element.label === fieldLabel\n  );\n  //if(!field) return 'not_found'\n  if(!field.value) return null\n  \n  const answer = field.value;\n\n  return answer\n}\n\nfunction getInputAnswer(item, fieldLabel){\n    const value =  item.json.body.data.fields.find(objeto => objeto.label == fieldLabel).value\n  //if(!field) return 'not_found'\n  if(!value) return null\n  return value\n}\n\nconst changeDateFormatTo = dateStr => {\n    const [year, month, day] = dateStr.split('-');\n    return `${day}/${month}/${year}`;\n};\nlet answers = {}\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, \"match_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const volunteerFirstName = getHiddenFieldValue(item, \"volunteer_first_name\")\n\n  const encaminhamento = {\n    has_different_demand_info: getUniqueAnswer(item, 'has_different_demand_info'),\n    different_demand_description: getTextAnswer(item,'different_demand_description'),\n    interruption_reason: getArrayAnswer(item, 'interruption_reason'),\n    redirect_area_needed: getUniqueAnswer(item, 'redirect_area_needed'),\n    public_services_referral: getArrayAnswer(item,'public_services_referral')\n  }\n\n  const disponibilidade  = {\n    stay_in_project: getUniqueAnswer(item, 'stay_in_project'),\n    exit_or_suspend: getUniqueAnswer(item, 'exit_or_suspend'),\n    suspension_category: getUniqueAnswer(item, 'suspension_category'),\n    suspension_reason: getUniqueAnswer(item, 'suspension_reason'),\n    exit_reason: getTextAnswer(item, 'exit_reason')\n  }\n\n  answers = {\n    encaminhamento,\n    disponibilidade,\n    matchId,\n    volunteerFirstName,\n    msrFirstName\n  }\n}\n\nreturn answers;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4288,
+          3264
+        ],
+        "id": "2eb6040d-b97b-459c-8ae1-76301ac7b1aa",
+        "name": "Respostas7"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nconst redirectAreaNeeded = {\n  \"Cível\":\"civil\",\n  \"Família\": \"family\",\n  \"Trabalhista\":\"labor\",\n  \"Criminal\":\"criminal\",\n\n}\n\nconst exitOrSuspend = {\n  \"Se desligar do projeto\": \"exit\",\n  \"Suspender temporariamente o seu cadastro\":\"suspend\"\n}\n\nconst suspensionCategory = {\n  \"Suspensão - 01 mês\": \"one_month\",\n  \"Suspensão - 03 meses\": \"three_months\",\n  \"Suspensão - 06 meses\": \"six_months\",\n}\n\nconst suspensionReason = {\n  \"Férias\":\"vacation\",\n  \"Trabalho e/ou estudo\":\"work_or_study\",\n  \"Maternidade\":\"maternity\",\n  \"Saúde\":\"health\",\n  \"Outros\":\"other\",\n}\nfor (const item of $input.all()) {\n  \n  item.json.encaminhamento.redirect_area_needed = redirectAreaNeeded[item.json.encaminhamento.redirect_area_needed]??null\n  item.json.disponibilidade.exit_or_suspend = exitOrSuspend[item.json.disponibilidade.exit_or_suspend]\n  item.json.disponibilidade.suspension_category = suspensionCategory[item.json.disponibilidade.suspension_category]??null\n  item.json.disponibilidade.suspension_reason = suspensionReason[item.json.disponibilidade.suspension_reason]??null\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4512,
+          2992
+        ],
+        "id": "0720e8e7-4b7c-4684-82d3-30b7d0414a84",
+        "name": "Code in JavaScript1"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT * \nFROM survey.volunteer_instrumental_record \nWHERE \n   match_id = {{ $json.match_id }} \n  AND instrumental_type = 'support_interruption' \n  AND status = 'sent'",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          5200,
+          2992
+        ],
+        "id": "1b90de37-7409-41ad-943c-9224f9e1ef3e",
+        "name": "Busca registro de envio10",
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "45f63a02-f6e2-4278-bfde-da9e864cfb6d",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          5456,
+          2992
+        ],
+        "id": "9339b426-8048-4dfa-9d2f-3e16631357ce",
+        "name": "Encontrou?10"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE survey.volunteer_instrumental_record\nSET status = 'answered', answered_at = '{{ $now }}', updated_at = '{{ $now }}' WHERE volunteer_instrumental_record_id = {{ $json.volunteer_instrumental_record_id }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          5712,
+          2976
+        ],
+        "id": "581c1599-2005-4d0f-bab1-b6a0005a6383",
+        "name": "Atualiza status10",
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $json.volunteer_name }} respondeu o Instrumental de Interrupção. Respostas no <a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}'>ticket do match</a>\n  </div>\n\n\n</div>",
+            "publicReply": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">    <div style=\"margin-bottom: 16px;\">     A voluntária {{ $('Busca tickets IDs7').item.json.volunteer_name }} respondeu o Instrumental de Acompanhamento Jurídico 2   </div>   <div style=\"margin-bottom: 16px;\">     <strong>CONTRATO DE ATENDIMENTO</strong><br>     • <strong>Segue em atendimento:</strong> {{ $('Respostas7').item.json.contrato_atendimento.still_in_support }}<br>     • <strong>Horas de atendimento:</strong> {{ $('Respostas7').item.json.contrato_atendimento.weekly_hours }}<br>      • <strong>Respeitas os combinados relacionados ao atendimento:</strong> {{ $('Respostas7').item.json.contrato_atendimento.respects_agreements }}<br>     {{ $('Respostas7').item.json.contrato_atendimento.agreement_issues_description === null? \"\": \"• <strong>Motivo:</strong> \" + $('Respostas7').item.json.contrato_atendimento.agreement_issues_description  }}       {{ $('Respostas7').item.json.contrato_atendimento.extra_contact_frequency === null? \"\": \"• Frequência que procura além do horário:</strong> \" + $('Respostas7').item.json.contrato_atendimento.extra_contact_frequency }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>SOBRE A VIOLÊNCIA</strong><br>     • <strong>Tem dimensão da situação de violência que vivencia:</strong> {{ $('Respostas7').item.json.sobre_violencia.violence_awareness }}<br>     • <strong>Novas violências enfrentadas:</strong> {{ $('Respostas7').item.json.sobre_violencia.new_violence_since_last_form }}<br>     • <strong>Impactos comportamentais:</strong> {{ $('Respostas7').item.json.sobre_violencia.behavioral_impacts }}<br>     • <strong>Impacto nas relações:</strong> {{ $('Respostas7').item.json.sobre_violencia.relationship_impacts }}<br>     • <strong>Impactos socioeconômicos:</strong> {{ $('Respostas7').item.json.sobre_violencia.socioeconomic_impacts }}<br>     • <strong>Impactos na segurança:</strong> {{ $('Respostas7').item.json.sobre_violencia.security_impacts }}<br>     • <strong>Avaliação e compreensão sobre a situação de violência:</strong> {{ $('Respostas7').item.json.sobre_violencia.violence_assessment }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>ACOMPANHAMENTO JURÍDICO</strong><br>     • <strong>Principal demanda:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.main_demand_category }} <br>     • <strong>Descrição da demanda:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.main_demand_description }}<br>     • <strong>Momento processual:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.legal_process_stage }} <br>     • <strong>Precisou usar plano de segurança:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.safety_plan_used }}<br>     • <strong>Descrição do plano:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.safety_plan_description }}<br>     • <strong>Percebeu algum impacto da violência na forma como a acolhida tem lidado com o processo jurídico:</strong>{{ $('Respostas7').item.json.acompanhamento_juridico.violence_process_impacts }} <br>     •<strong> Condução do caso:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.case_conduction_details }}<br>     • <strong>Último andamento processual:</strong>{{ $('Respostas7').item.json.acompanhamento_juridico.latest_case_update }} <br>     • <strong>Foi necessário usar algum documento psicológico para provar o quadro de violência durante o andamento do caso:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.psychological_document_used }}<br>     • <strong>Barreiras ou desafios no encaminhamento jurídico:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.legal_challenges_exist }}<br>     {{$('Respostas7').item.json.acompanhamento_juridico.legal_challengess !== null       ? \"• <strong>Principais barreiras:</strong> \" + $('Respostas7').item.json.acompanhamento_juridico.legal_challengess + \"<br>\"       : '' }}    </div>    <div style=\"margin-bottom: 16px;\">     <strong>ENCAMINHAMENTO</strong><br>     • <strong>Houve necessidade de referenciá-la para algum serviço público:</strong> {{ $('Respostas7').item.json.encaminhamento.public_service_referral_reason }}<br>     • <strong>Quais:</strong> {{ $('Respostas7').item.json.encaminhamento.public_services_articulated }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>ACOMPANHAMENTO PSICOLÓGICO</strong><br>     • <strong>Está em contato com a psicóloga voluntária:</strong> {{ $('Respostas7').item.json.acompanhamento_psicologico.psychologist_contact }}<br>     {{ $('Respostas7').item.json.acompanhamento_psicologico.psychologist_collaboration === null       ? ''       : \"• <strong>A articulação tem melhorado o atendimento:</strong> \" + $('Respostas7').item.json.acompanhamento_psicologico.psychologist_collaboration }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>SITUAÇÕES CRÍTICAS</strong><br>     • <strong>Existe riscos relacionados ao suicídio:</strong> {{ $('Respostas7').item.json.situacoes_criticas.suicide_risk_concern }}<br>        </div>    <div style=\"margin-bottom: 16px;\">     <strong>EXPERIÊNCIA COMO VOLUNTÁRIA</strong><br>     • <strong>Sofreu alguma violência processual de gênero durante sua atuação neste caso:</strong> {{ $('Respostas7').item.json.volunteer_experience.gender_procedural_abuse }}<br>     • <strong>Relatou tal situação para a equipe do Mapa do Acolhimento:</strong> {{ $('Respostas7').item.json.volunteer_experience.gender_procedural_abuse_report }}<br>   {{ $('Respostas7').item.json.volunteer_experience.team_response_to_report !== null? \"• <strong>Conduta da equipe:</strong>\" + $('Respostas7').item.json.volunteer_experience.team_response_to_report + \"<br>\" : \"\" }}          • <strong>Relato em relação ao atendimento jurídico realizado:</strong> {{ $('Respostas7').item.json.volunteer_experience.volunteer_feelings }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>SUPORTE DO MAPA</strong><br>     • <strong>Solicitou ajuda da equipe nos últimos 90 dias:</strong> {{ $('Respostas7').item.json.suporte_mapa.requested_technical_support_90D }}<br>     • <strong>Como a equipe ajudou:</strong> {{ $('Respostas7').item.json.suporte_mapa.technical_support_help }}<br>     • <strong>Como a equipe pode auxiliar:</strong> {{ $('Respostas7').item.json.suporte_mapa.still_need_help }}<br>     • <strong>Se sentiu acolhida:</strong> {{ $('Respostas7').item.json.suporte_mapa.support_satisfaction }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>MELHORIAS E SUGESTÕES</strong><br>     • <strong>Sugestões:</strong> {{ $('Respostas7').item.json.suggestions }}   </div>  </div>"
+          }
+        },
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          5024,
+          3232
+        ],
+        "id": "d52441f1-9bfc-4bfd-858d-238044aa40c9",
+        "name": "Atualiza ticket do match (Voluntaria)",
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('Busca tickets IDs7').item.json.msr_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $('Busca tickets IDs7').item.json.volunteer_name }} respondeu o Instrumental de Interrupção\n  </div>\n  <div style=\"margin-bottom: 16px;\">\n    <strong>ENCAMINHAMENTO</strong><br>\n    • <strong>Identificou alguma informação na demanda da acolhida diferente das informações recebidas na triagem que precisa ser compartilhada:</strong> {{ $('Respostas7').item.json.encaminhamento.has_different_demand_info }}<br>\n    • <strong>Descrição:</strong>{{ $('Respostas7').item.json.encaminhamento.different_demand_description }}<br>\n    • <strong>Motivo da interrupção:</strong>{{ $('Respostas7').item.json.encaminhamento.interruption_reason }}<br>\n    {{ $('Respostas7').item.json.encaminhamento.redirect_area_needed !== null? \"• <strong>Qual área a acolhida precisa ser reencaminhada:</strong> \" + $('Respostas7').item.json.encaminhamento.redirect_area_needed + \"<br>\": \"\"}}\n{{ $('Respostas7').item.json.encaminhamento.public_services_referral.lentgh > 0? \"• <strong>Qual equipamento deve ser eencaminhada:</strong> \" + $('Respostas7').item.json.encaminhamento.public_services_referral + \"<br>\": \"\"}}\n  </div>\n\n\n  <div style=\"margin-bottom: 16px;\">\n    <strong>DISPONIBILIDADE</strong><br>\n    • <strong>Continua disponível para próximos atendimentos:</strong>{{ $('Respostas7').item.json.disponibilidade.stay_in_project }}<br>\n    {{ $('Respostas7').item.json.disponibilidade.exit_or_suspend === null\n      ? ''\n      : \"• <strong>Deseja:</strong> \" + $('Respostas7').item.json.disponibilidade.exit_or_suspend + \"<br>\"}}\n    {{ $('Respostas7').item.json.disponibilidade.suspension_category === null\n      ? ''\n      : \"• <strong>Duração da suspensão:</strong> \" + $('Respostas7').item.json.disponibilidade.suspension_category + \"<br>\"}}\n    {{ $('Respostas7').item.json.disponibilidade.suspension_reason === null\n      ? ''\n      : \"• <strong>Catagoria da suspensão:</strong> \" + $('Respostas7').item.json.disponibilidade.suspension_reason + \"<br>\"}}\n  {{ $('Respostas7').item.json.disponibilidade.exit_reason === null? '':\n   \"• <strong>Motivo do desligamento:</strong> \" + $('Respostas7').item.json.disponibilidade.exit_reason + \"<br>\"}}\n  </div>\n\n\n\n\n</div>",
+            "status": "open",
+            "tags": "={{ $json.tags.concat([\"atendimento-interrupção\"]) }}"
+          }
+        },
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          5120,
+          3488
+        ],
+        "id": "205fb6b2-49a1-4f4f-801d-c76e952ae838",
+        "name": "Atualiza ticket do pedido de acolhimento (MSR)7",
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "id": "={{ $json.msr_zendesk_ticket_id }}"
+        },
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          4880,
+          3488
+        ],
+        "id": "1d8c6ae8-fd25-4ec2-8c1c-76c54a92bc4c",
+        "name": "Get tags da MSR ticket7",
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "value": "survey",
+            "mode": "list",
+            "cachedResultName": "survey"
+          },
+          "table": {
+            "__rl": true,
+            "value": "support_interruption",
+            "mode": "list",
+            "cachedResultName": "support_interruption"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "has_different_demand_info": "={{ $json.encaminhamento.has_different_demand_info === 'Sim' }}",
+              "stay_in_project": "={{ $json.disponibilidade.stay_in_project === 'Sim' }}",
+              "match_id": "={{ $json.matchId }}",
+              "different_demand_description": "={{ $json.encaminhamento.different_demand_description }}",
+              "redirect_area_needed": "={{ $json.encaminhamento.redirect_area_needed }}",
+              "public_services_referral": "={{ $json.encaminhamento.public_services_referral }}",
+              "exit_or_suspend": "={{ $json.disponibilidade.exit_or_suspend }}",
+              "suspension_category": "={{ $json.disponibilidade.suspension_category }}",
+              "suspension_reason": "={{ $json.disponibilidade.suspension_reason }}",
+              "exit_reason": "={{ $json.disponibilidade.exit_reason }}",
+              "interruption_reason": "={{ $json.encaminhamento.interruption_reason }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "answer_id",
+                "displayName": "answer_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "match_id",
+                "displayName": "match_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "has_different_demand_info",
+                "displayName": "has_different_demand_info",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "different_demand_description",
+                "displayName": "different_demand_description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "redirect_area_needed",
+                "displayName": "redirect_area_needed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "options",
+                "canBeUsedToMatch": true,
+                "options": [
+                  {
+                    "name": "civil",
+                    "value": "civil"
+                  },
+                  {
+                    "name": "family",
+                    "value": "family"
+                  },
+                  {
+                    "name": "labor",
+                    "value": "labor"
+                  },
+                  {
+                    "name": "criminal",
+                    "value": "criminal"
+                  }
+                ]
+              },
+              {
+                "id": "public_services_referral",
+                "displayName": "public_services_referral",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "array",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "stay_in_project",
+                "displayName": "stay_in_project",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "exit_or_suspend",
+                "displayName": "exit_or_suspend",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "options",
+                "canBeUsedToMatch": true,
+                "options": [
+                  {
+                    "name": "exit",
+                    "value": "exit"
+                  },
+                  {
+                    "name": "suspend",
+                    "value": "suspend"
+                  }
+                ]
+              },
+              {
+                "id": "suspension_category",
+                "displayName": "suspension_category",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "options",
+                "canBeUsedToMatch": true,
+                "options": [
+                  {
+                    "name": "one_month",
+                    "value": "one_month"
+                  },
+                  {
+                    "name": "three_months",
+                    "value": "three_months"
+                  },
+                  {
+                    "name": "six_months",
+                    "value": "six_months"
+                  }
+                ]
+              },
+              {
+                "id": "suspension_reason",
+                "displayName": "suspension_reason",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "options",
+                "canBeUsedToMatch": true,
+                "options": [
+                  {
+                    "name": "vacation",
+                    "value": "vacation"
+                  },
+                  {
+                    "name": "work_or_study",
+                    "value": "work_or_study"
+                  },
+                  {
+                    "name": "maternity",
+                    "value": "maternity"
+                  },
+                  {
+                    "name": "health",
+                    "value": "health"
+                  },
+                  {
+                    "name": "other",
+                    "value": "other"
+                  }
+                ]
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "exit_reason",
+                "displayName": "exit_reason",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "interruption_reason",
+                "displayName": "interruption_reason",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "array",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          4720,
+          2992
+        ],
+        "id": "38a09da2-3bc1-4eb4-99a5-a1502068618e",
+        "name": "Insert rows in a table7",
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT  \n  m.match_id,\n  m.msr_zendesk_ticket_id,\n  m.volunteer_zendesk_ticket_id,\n  v.first_name AS volunteer_name, \n  mp.first_name AS msr_first_name\nFROM match.matches m \n  INNER JOIN public.volunteers v ON m.volunteer_id = v.id\n  INNER JOIN pii_sec.msr_pii mp  ON mp.msr_id = m.msr_id\nWHERE m.match_id = {{ $json.matchId }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          4640,
+          3376
+        ],
+        "id": "de7ac289-a04c-4777-82f1-77b5b6a0fed9",
+        "name": "Busca tickets IDs7",
+        "credentials": {
+          "postgres": {
+            "id": "lveNjRL3anzREWd8",
+            "name": "[STG] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Fluxo teste de envio das respostas dos instrumentais para voluntárias",
+          "width": 320
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          4032,
+          2816
+        ],
+        "id": "09ac13ad-55ba-40f3-a222-3b8146a21a2d",
+        "name": "Sticky Note7"
       }
     ],
     "connections": {
@@ -7174,13 +7617,100 @@
             }
           ]
         ]
+      },
+      "Respostas7": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca tickets IDs7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript1": {
+        "main": [
+          [
+            {
+              "node": "Insert rows in a table7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca registro de envio10": {
+        "main": [
+          [
+            {
+              "node": "Encontrou?10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Encontrou?10": {
+        "main": [
+          [
+            {
+              "node": "Atualiza status10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get tags da MSR ticket7": {
+        "main": [
+          [
+            {
+              "node": "Atualiza ticket do pedido de acolhimento (MSR)7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Insert rows in a table7": {
+        "main": [
+          [
+            {
+              "node": "Busca registro de envio10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca tickets IDs7": {
+        "main": [
+          [
+            {
+              "node": "Atualiza ticket do match (Voluntaria)",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Get tags da MSR ticket7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "ece2eb69-ca64-4202-bfbb-fe5ca53b305a",
+  "activeVersionId": "93cabf92-3bee-499c-a0e5-92063e145b63",
   "connections": {
     "Webhook": {
       "main": [
@@ -8296,6 +8826,93 @@
         [
           {
             "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respostas7": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca tickets IDs7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca registro de envio10": {
+      "main": [
+        [
+          {
+            "node": "Encontrou?10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou?10": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get tags da MSR ticket7": {
+      "main": [
+        [
+          {
+            "node": "Atualiza ticket do pedido de acolhimento (MSR)7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table7": {
+      "main": [
+        [
+          {
+            "node": "Busca registro de envio10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca tickets IDs7": {
+      "main": [
+        [
+          {
+            "node": "Atualiza ticket do match (Voluntaria)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get tags da MSR ticket7",
             "type": "main",
             "index": 0
           }
@@ -9930,7 +10547,8 @@
         "operation": "update",
         "id": "={{ $json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
-          "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $json.volunteer_name }} respondeu o Instrumental de Interrupção. Respostas no <a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}'>ticket do match</a>\n  </div>\n\n\n</div>"
+          "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $json.volunteer_name }} respondeu o Instrumental de Interrupção. Respostas no <a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}'>ticket do match</a>\n  </div>\n\n\n</div>",
+          "publicReply": ""
         }
       },
       "type": "n8n-nodes-base.zendesk",
@@ -14358,6 +14976,448 @@
       ],
       "id": "19bf1a62-194e-4b42-b190-0086fdb0ac19",
       "name": "Tem alguma mensagem?3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nfunction getHiddenFieldValue(item, fieldLabel){\n  return item.json.body.data.fields.find(\n    (element) => element.label === fieldLabel\n  ).value;\n}\n\nfunction getUniqueAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n  //if(!field) return 'not_found'\n  if(!field.value || field.value.length === 0) return null\n  \n  const answer = field.options.find(\n    (element) => element.id == field.value\n  )?.text ;\n\n  return answer\n}\n\nfunction getArrayAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'MULTIPLE_CHOICE' && element.label === fieldLabel\n  );\n\n  const valuesArray = field.value\n\n  if(!valuesArray) return []\n\n  const answersArray = valuesArray.map((value) => {\n    const answer = field.options.find(\n      (element) => element.id == value\n    ).text;\n\n    return answer\n    \n  })\n\n  return answersArray\n}\n\nfunction getTextAnswer(item, fieldLabel){\n  const field = item.json.body.data.fields.find(\n    (element) => element.type === 'TEXTAREA' && element.label === fieldLabel\n  );\n  //if(!field) return 'not_found'\n  if(!field.value) return null\n  \n  const answer = field.value;\n\n  return answer\n}\n\nfunction getInputAnswer(item, fieldLabel){\n    const value =  item.json.body.data.fields.find(objeto => objeto.label == fieldLabel).value\n  //if(!field) return 'not_found'\n  if(!value) return null\n  return value\n}\n\nconst changeDateFormatTo = dateStr => {\n    const [year, month, day] = dateStr.split('-');\n    return `${day}/${month}/${year}`;\n};\nlet answers = {}\nfor (const item of $input.all()) {\n  \n  const matchId = getHiddenFieldValue(item, \"match_id\")\n  const msrFirstName = getHiddenFieldValue(item, \"msr_first_name\")\n  const volunteerFirstName = getHiddenFieldValue(item, \"volunteer_first_name\")\n\n  const encaminhamento = {\n    has_different_demand_info: getUniqueAnswer(item, 'has_different_demand_info'),\n    different_demand_description: getTextAnswer(item,'different_demand_description'),\n    interruption_reason: getArrayAnswer(item, 'interruption_reason'),\n    redirect_area_needed: getUniqueAnswer(item, 'redirect_area_needed'),\n    public_services_referral: getArrayAnswer(item,'public_services_referral')\n  }\n\n  const disponibilidade  = {\n    stay_in_project: getUniqueAnswer(item, 'stay_in_project'),\n    exit_or_suspend: getUniqueAnswer(item, 'exit_or_suspend'),\n    suspension_category: getUniqueAnswer(item, 'suspension_category'),\n    suspension_reason: getUniqueAnswer(item, 'suspension_reason'),\n    exit_reason: getTextAnswer(item, 'exit_reason')\n  }\n\n  answers = {\n    encaminhamento,\n    disponibilidade,\n    matchId,\n    volunteerFirstName,\n    msrFirstName\n  }\n}\n\nreturn answers;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4288,
+        3264
+      ],
+      "id": "2eb6040d-b97b-459c-8ae1-76301ac7b1aa",
+      "name": "Respostas7"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nconst redirectAreaNeeded = {\n  \"Cível\":\"civil\",\n  \"Família\": \"family\",\n  \"Trabalhista\":\"labor\",\n  \"Criminal\":\"criminal\",\n\n}\n\nconst exitOrSuspend = {\n  \"Se desligar do projeto\": \"exit\",\n  \"Suspender temporariamente o seu cadastro\":\"suspend\"\n}\n\nconst suspensionCategory = {\n  \"Suspensão - 01 mês\": \"one_month\",\n  \"Suspensão - 03 meses\": \"three_months\",\n  \"Suspensão - 06 meses\": \"six_months\",\n}\n\nconst suspensionReason = {\n  \"Férias\":\"vacation\",\n  \"Trabalho e/ou estudo\":\"work_or_study\",\n  \"Maternidade\":\"maternity\",\n  \"Saúde\":\"health\",\n  \"Outros\":\"other\",\n}\nfor (const item of $input.all()) {\n  \n  item.json.encaminhamento.redirect_area_needed = redirectAreaNeeded[item.json.encaminhamento.redirect_area_needed]??null\n  item.json.disponibilidade.exit_or_suspend = exitOrSuspend[item.json.disponibilidade.exit_or_suspend]\n  item.json.disponibilidade.suspension_category = suspensionCategory[item.json.disponibilidade.suspension_category]??null\n  item.json.disponibilidade.suspension_reason = suspensionReason[item.json.disponibilidade.suspension_reason]??null\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4512,
+        2992
+      ],
+      "id": "0720e8e7-4b7c-4684-82d3-30b7d0414a84",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * \nFROM survey.volunteer_instrumental_record \nWHERE \n   match_id = {{ $json.match_id }} \n  AND instrumental_type = 'support_interruption' \n  AND status = 'sent'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        5200,
+        2992
+      ],
+      "id": "1b90de37-7409-41ad-943c-9224f9e1ef3e",
+      "name": "Busca registro de envio10",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "45f63a02-f6e2-4278-bfde-da9e864cfb6d",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        5456,
+        2992
+      ],
+      "id": "9339b426-8048-4dfa-9d2f-3e16631357ce",
+      "name": "Encontrou?10"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE survey.volunteer_instrumental_record\nSET status = 'answered', answered_at = '{{ $now }}', updated_at = '{{ $now }}' WHERE volunteer_instrumental_record_id = {{ $json.volunteer_instrumental_record_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        5712,
+        2976
+      ],
+      "id": "581c1599-2005-4d0f-bab1-b6a0005a6383",
+      "name": "Atualiza status10",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $json.volunteer_name }} respondeu o Instrumental de Interrupção. Respostas no <a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}'>ticket do match</a>\n  </div>\n\n\n</div>",
+          "publicReply": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">    <div style=\"margin-bottom: 16px;\">     A voluntária {{ $('Busca tickets IDs7').item.json.volunteer_name }} respondeu o Instrumental de Acompanhamento Jurídico 2   </div>   <div style=\"margin-bottom: 16px;\">     <strong>CONTRATO DE ATENDIMENTO</strong><br>     • <strong>Segue em atendimento:</strong> {{ $('Respostas7').item.json.contrato_atendimento.still_in_support }}<br>     • <strong>Horas de atendimento:</strong> {{ $('Respostas7').item.json.contrato_atendimento.weekly_hours }}<br>      • <strong>Respeitas os combinados relacionados ao atendimento:</strong> {{ $('Respostas7').item.json.contrato_atendimento.respects_agreements }}<br>     {{ $('Respostas7').item.json.contrato_atendimento.agreement_issues_description === null? \"\": \"• <strong>Motivo:</strong> \" + $('Respostas7').item.json.contrato_atendimento.agreement_issues_description  }}       {{ $('Respostas7').item.json.contrato_atendimento.extra_contact_frequency === null? \"\": \"• Frequência que procura além do horário:</strong> \" + $('Respostas7').item.json.contrato_atendimento.extra_contact_frequency }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>SOBRE A VIOLÊNCIA</strong><br>     • <strong>Tem dimensão da situação de violência que vivencia:</strong> {{ $('Respostas7').item.json.sobre_violencia.violence_awareness }}<br>     • <strong>Novas violências enfrentadas:</strong> {{ $('Respostas7').item.json.sobre_violencia.new_violence_since_last_form }}<br>     • <strong>Impactos comportamentais:</strong> {{ $('Respostas7').item.json.sobre_violencia.behavioral_impacts }}<br>     • <strong>Impacto nas relações:</strong> {{ $('Respostas7').item.json.sobre_violencia.relationship_impacts }}<br>     • <strong>Impactos socioeconômicos:</strong> {{ $('Respostas7').item.json.sobre_violencia.socioeconomic_impacts }}<br>     • <strong>Impactos na segurança:</strong> {{ $('Respostas7').item.json.sobre_violencia.security_impacts }}<br>     • <strong>Avaliação e compreensão sobre a situação de violência:</strong> {{ $('Respostas7').item.json.sobre_violencia.violence_assessment }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>ACOMPANHAMENTO JURÍDICO</strong><br>     • <strong>Principal demanda:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.main_demand_category }} <br>     • <strong>Descrição da demanda:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.main_demand_description }}<br>     • <strong>Momento processual:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.legal_process_stage }} <br>     • <strong>Precisou usar plano de segurança:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.safety_plan_used }}<br>     • <strong>Descrição do plano:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.safety_plan_description }}<br>     • <strong>Percebeu algum impacto da violência na forma como a acolhida tem lidado com o processo jurídico:</strong>{{ $('Respostas7').item.json.acompanhamento_juridico.violence_process_impacts }} <br>     •<strong> Condução do caso:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.case_conduction_details }}<br>     • <strong>Último andamento processual:</strong>{{ $('Respostas7').item.json.acompanhamento_juridico.latest_case_update }} <br>     • <strong>Foi necessário usar algum documento psicológico para provar o quadro de violência durante o andamento do caso:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.psychological_document_used }}<br>     • <strong>Barreiras ou desafios no encaminhamento jurídico:</strong> {{ $('Respostas7').item.json.acompanhamento_juridico.legal_challenges_exist }}<br>     {{$('Respostas7').item.json.acompanhamento_juridico.legal_challengess !== null       ? \"• <strong>Principais barreiras:</strong> \" + $('Respostas7').item.json.acompanhamento_juridico.legal_challengess + \"<br>\"       : '' }}    </div>    <div style=\"margin-bottom: 16px;\">     <strong>ENCAMINHAMENTO</strong><br>     • <strong>Houve necessidade de referenciá-la para algum serviço público:</strong> {{ $('Respostas7').item.json.encaminhamento.public_service_referral_reason }}<br>     • <strong>Quais:</strong> {{ $('Respostas7').item.json.encaminhamento.public_services_articulated }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>ACOMPANHAMENTO PSICOLÓGICO</strong><br>     • <strong>Está em contato com a psicóloga voluntária:</strong> {{ $('Respostas7').item.json.acompanhamento_psicologico.psychologist_contact }}<br>     {{ $('Respostas7').item.json.acompanhamento_psicologico.psychologist_collaboration === null       ? ''       : \"• <strong>A articulação tem melhorado o atendimento:</strong> \" + $('Respostas7').item.json.acompanhamento_psicologico.psychologist_collaboration }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>SITUAÇÕES CRÍTICAS</strong><br>     • <strong>Existe riscos relacionados ao suicídio:</strong> {{ $('Respostas7').item.json.situacoes_criticas.suicide_risk_concern }}<br>        </div>    <div style=\"margin-bottom: 16px;\">     <strong>EXPERIÊNCIA COMO VOLUNTÁRIA</strong><br>     • <strong>Sofreu alguma violência processual de gênero durante sua atuação neste caso:</strong> {{ $('Respostas7').item.json.volunteer_experience.gender_procedural_abuse }}<br>     • <strong>Relatou tal situação para a equipe do Mapa do Acolhimento:</strong> {{ $('Respostas7').item.json.volunteer_experience.gender_procedural_abuse_report }}<br>   {{ $('Respostas7').item.json.volunteer_experience.team_response_to_report !== null? \"• <strong>Conduta da equipe:</strong>\" + $('Respostas7').item.json.volunteer_experience.team_response_to_report + \"<br>\" : \"\" }}          • <strong>Relato em relação ao atendimento jurídico realizado:</strong> {{ $('Respostas7').item.json.volunteer_experience.volunteer_feelings }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>SUPORTE DO MAPA</strong><br>     • <strong>Solicitou ajuda da equipe nos últimos 90 dias:</strong> {{ $('Respostas7').item.json.suporte_mapa.requested_technical_support_90D }}<br>     • <strong>Como a equipe ajudou:</strong> {{ $('Respostas7').item.json.suporte_mapa.technical_support_help }}<br>     • <strong>Como a equipe pode auxiliar:</strong> {{ $('Respostas7').item.json.suporte_mapa.still_need_help }}<br>     • <strong>Se sentiu acolhida:</strong> {{ $('Respostas7').item.json.suporte_mapa.support_satisfaction }}   </div>    <div style=\"margin-bottom: 16px;\">     <strong>MELHORIAS E SUGESTÕES</strong><br>     • <strong>Sugestões:</strong> {{ $('Respostas7').item.json.suggestions }}   </div>  </div>"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        5024,
+        3232
+      ],
+      "id": "d52441f1-9bfc-4bfd-858d-238044aa40c9",
+      "name": "Atualiza ticket do match (Voluntaria)",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Busca tickets IDs7').item.json.msr_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $('Busca tickets IDs7').item.json.volunteer_name }} respondeu o Instrumental de Interrupção\n  </div>\n  <div style=\"margin-bottom: 16px;\">\n    <strong>ENCAMINHAMENTO</strong><br>\n    • <strong>Identificou alguma informação na demanda da acolhida diferente das informações recebidas na triagem que precisa ser compartilhada:</strong> {{ $('Respostas7').item.json.encaminhamento.has_different_demand_info }}<br>\n    • <strong>Descrição:</strong>{{ $('Respostas7').item.json.encaminhamento.different_demand_description }}<br>\n    • <strong>Motivo da interrupção:</strong>{{ $('Respostas7').item.json.encaminhamento.interruption_reason }}<br>\n    {{ $('Respostas7').item.json.encaminhamento.redirect_area_needed !== null? \"• <strong>Qual área a acolhida precisa ser reencaminhada:</strong> \" + $('Respostas7').item.json.encaminhamento.redirect_area_needed + \"<br>\": \"\"}}\n{{ $('Respostas7').item.json.encaminhamento.public_services_referral.lentgh > 0? \"• <strong>Qual equipamento deve ser eencaminhada:</strong> \" + $('Respostas7').item.json.encaminhamento.public_services_referral + \"<br>\": \"\"}}\n  </div>\n\n\n  <div style=\"margin-bottom: 16px;\">\n    <strong>DISPONIBILIDADE</strong><br>\n    • <strong>Continua disponível para próximos atendimentos:</strong>{{ $('Respostas7').item.json.disponibilidade.stay_in_project }}<br>\n    {{ $('Respostas7').item.json.disponibilidade.exit_or_suspend === null\n      ? ''\n      : \"• <strong>Deseja:</strong> \" + $('Respostas7').item.json.disponibilidade.exit_or_suspend + \"<br>\"}}\n    {{ $('Respostas7').item.json.disponibilidade.suspension_category === null\n      ? ''\n      : \"• <strong>Duração da suspensão:</strong> \" + $('Respostas7').item.json.disponibilidade.suspension_category + \"<br>\"}}\n    {{ $('Respostas7').item.json.disponibilidade.suspension_reason === null\n      ? ''\n      : \"• <strong>Catagoria da suspensão:</strong> \" + $('Respostas7').item.json.disponibilidade.suspension_reason + \"<br>\"}}\n  {{ $('Respostas7').item.json.disponibilidade.exit_reason === null? '':\n   \"• <strong>Motivo do desligamento:</strong> \" + $('Respostas7').item.json.disponibilidade.exit_reason + \"<br>\"}}\n  </div>\n\n\n\n\n</div>",
+          "status": "open",
+          "tags": "={{ $json.tags.concat([\"atendimento-interrupção\"]) }}"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        5120,
+        3488
+      ],
+      "id": "205fb6b2-49a1-4f4f-801d-c76e952ae838",
+      "name": "Atualiza ticket do pedido de acolhimento (MSR)7",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": "={{ $json.msr_zendesk_ticket_id }}"
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        4880,
+        3488
+      ],
+      "id": "1d8c6ae8-fd25-4ec2-8c1c-76c54a92bc4c",
+      "name": "Get tags da MSR ticket7",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "survey",
+          "mode": "list",
+          "cachedResultName": "survey"
+        },
+        "table": {
+          "__rl": true,
+          "value": "support_interruption",
+          "mode": "list",
+          "cachedResultName": "support_interruption"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "has_different_demand_info": "={{ $json.encaminhamento.has_different_demand_info === 'Sim' }}",
+            "stay_in_project": "={{ $json.disponibilidade.stay_in_project === 'Sim' }}",
+            "match_id": "={{ $json.matchId }}",
+            "different_demand_description": "={{ $json.encaminhamento.different_demand_description }}",
+            "redirect_area_needed": "={{ $json.encaminhamento.redirect_area_needed }}",
+            "public_services_referral": "={{ $json.encaminhamento.public_services_referral }}",
+            "exit_or_suspend": "={{ $json.disponibilidade.exit_or_suspend }}",
+            "suspension_category": "={{ $json.disponibilidade.suspension_category }}",
+            "suspension_reason": "={{ $json.disponibilidade.suspension_reason }}",
+            "exit_reason": "={{ $json.disponibilidade.exit_reason }}",
+            "interruption_reason": "={{ $json.encaminhamento.interruption_reason }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "answer_id",
+              "displayName": "answer_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "match_id",
+              "displayName": "match_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "has_different_demand_info",
+              "displayName": "has_different_demand_info",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "different_demand_description",
+              "displayName": "different_demand_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "redirect_area_needed",
+              "displayName": "redirect_area_needed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "civil",
+                  "value": "civil"
+                },
+                {
+                  "name": "family",
+                  "value": "family"
+                },
+                {
+                  "name": "labor",
+                  "value": "labor"
+                },
+                {
+                  "name": "criminal",
+                  "value": "criminal"
+                }
+              ]
+            },
+            {
+              "id": "public_services_referral",
+              "displayName": "public_services_referral",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "array",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "stay_in_project",
+              "displayName": "stay_in_project",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "exit_or_suspend",
+              "displayName": "exit_or_suspend",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "exit",
+                  "value": "exit"
+                },
+                {
+                  "name": "suspend",
+                  "value": "suspend"
+                }
+              ]
+            },
+            {
+              "id": "suspension_category",
+              "displayName": "suspension_category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "one_month",
+                  "value": "one_month"
+                },
+                {
+                  "name": "three_months",
+                  "value": "three_months"
+                },
+                {
+                  "name": "six_months",
+                  "value": "six_months"
+                }
+              ]
+            },
+            {
+              "id": "suspension_reason",
+              "displayName": "suspension_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "vacation",
+                  "value": "vacation"
+                },
+                {
+                  "name": "work_or_study",
+                  "value": "work_or_study"
+                },
+                {
+                  "name": "maternity",
+                  "value": "maternity"
+                },
+                {
+                  "name": "health",
+                  "value": "health"
+                },
+                {
+                  "name": "other",
+                  "value": "other"
+                }
+              ]
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "exit_reason",
+              "displayName": "exit_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "interruption_reason",
+              "displayName": "interruption_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "array",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4720,
+        2992
+      ],
+      "id": "38a09da2-3bc1-4eb4-99a5-a1502068618e",
+      "name": "Insert rows in a table7",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT  \n  m.match_id,\n  m.msr_zendesk_ticket_id,\n  m.volunteer_zendesk_ticket_id,\n  v.first_name AS volunteer_name, \n  mp.first_name AS msr_first_name\nFROM match.matches m \n  INNER JOIN public.volunteers v ON m.volunteer_id = v.id\n  INNER JOIN pii_sec.msr_pii mp  ON mp.msr_id = m.msr_id\nWHERE m.match_id = {{ $json.matchId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4640,
+        3376
+      ],
+      "id": "de7ac289-a04c-4777-82f1-77b5b6a0fed9",
+      "name": "Busca tickets IDs7",
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Fluxo teste de envio das respostas dos instrumentais para voluntárias",
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4032,
+        2816
+      ],
+      "id": "09ac13ad-55ba-40f3-a222-3b8146a21a2d",
+      "name": "Sticky Note7"
     }
   ],
   "pinData": {
@@ -19806,7 +20866,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-24T23:13:30.000Z",
+              "updatedAt": "2026-05-25T12:45:47.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -19826,7 +20886,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-24",
+              "lastActiveAt": "2026-05-25",
               "isPending": false
             }
           }
@@ -19837,7 +20897,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 7,
-  "updatedAt": "2026-05-21T16:23:16.720Z",
-  "versionCounter": 246,
-  "versionId": "ece2eb69-ca64-4202-bfbb-fe5ca53b305a"
+  "updatedAt": "2026-05-25T19:09:33.868Z",
+  "versionCounter": 250,
+  "versionId": "93cabf92-3bee-499c-a0e5-92063e145b63"
 }
