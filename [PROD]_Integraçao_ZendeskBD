@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-03-04T19:51:25.225Z",
-    "createdAt": "2026-03-04T19:51:25.225Z",
-    "versionId": "4e9529ea-9553-4807-a641-fd7553de993a",
+    "updatedAt": "2026-05-26T14:35:04.205Z",
+    "createdAt": "2026-05-26T14:35:04.205Z",
+    "versionId": "cfd401c5-a473-40a3-8d53-b0858ef1f8a3",
     "workflowId": "xokKMoUPjlqi7Rpe",
     "nodes": [
       {
@@ -165,7 +165,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "=UPDATE volunteers\nSET availability = {{ $json.new_availability }}, updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nUPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
+          "query": "UPDATE volunteers\nSET availability = {{ $json.new_availability }}, updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nUPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
           "options": {}
         },
         "id": "e200a469-17c0-4c0a-9e3b-3ec21cada304",
@@ -973,6 +973,93 @@
         ],
         "id": "b0e49a8b-63d7-4aa5-92ca-9153333568fc",
         "name": "Stop and Error"
+      },
+      {
+        "parameters": {
+          "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_user_id = item.json.body.volunteer_zendesk_user_id;\n  const status = item.json.body.volunteer_status;\n  \n  const is_available = status === 'disponivel' ? 1 : 0;\n    \n  const newItem = {\n    \"zendesk_user_id\": zendesk_user_id,\n    \"status\": status,\n    \"is_available\": is_available\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        },
+        "id": "913429c7-d9cf-4306-90b0-2eca95bcf6de",
+        "name": "Extracts zendesk_user_id and is_available",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          -384,
+          2000
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{$json[\"current_status\"]}}",
+                "operation": "notEqual",
+                "value2": "={{$json[\"new_status\"]}}"
+              }
+            ]
+          }
+        },
+        "id": "58429af0-bf3d-486b-96ac-5e2dc12fa14d",
+        "name": "Is it a new status?1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          64,
+          2000
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "357e2c58-6066-44ee-b1d7-3c2125590d21",
+        "name": "NoOp1",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          368,
+          2192
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n\tid AS volunteer_id, \n\tcondition AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    {{$json[\"is_available\"]}} AS is_available \nFROM public.volunteers\nWHERE zendesk_user_id = {{$json[\"zendesk_user_id\"]}}::BIGINT\nLIMIT 1",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          -144,
+          2000
+        ],
+        "id": "8814187c-ee74-4fcb-9f70-19590f520993",
+        "name": "Fetch volunteer_id and status1",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE public.volunteers\nSET condition = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = {{$json[\"is_available\"]}}::boolean, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          320,
+          1984
+        ],
+        "id": "ec51fbe9-0270-4dc2-bc04-05e57b98cc55",
+        "name": "Update volunteer status1",
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
       }
     ],
     "connections": {
@@ -1254,6 +1341,11 @@
               "node": "Normalize Zendesk input from volunteer",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Extracts zendesk_user_id and is_available",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -1328,13 +1420,53 @@
           ],
           []
         ]
+      },
+      "Extracts zendesk_user_id and is_available": {
+        "main": [
+          [
+            {
+              "node": "Fetch volunteer_id and status1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is it a new status?1": {
+        "main": [
+          [
+            {
+              "node": "Update volunteer status1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "NoOp1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch volunteer_id and status1": {
+        "main": [
+          [
+            {
+              "node": "Is it a new status?1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "4e9529ea-9553-4807-a641-fd7553de993a",
+  "activeVersionId": "cfd401c5-a473-40a3-8d53-b0858ef1f8a3",
   "connections": {
     "Checks if we need to update volunteer": {
       "main": [
@@ -1614,6 +1746,11 @@
             "node": "Normalize Zendesk input from volunteer",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Extracts zendesk_user_id and is_available",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1687,6 +1824,46 @@
           }
         ],
         []
+      ]
+    },
+    "Extracts zendesk_user_id and is_available": {
+      "main": [
+        [
+          {
+            "node": "Fetch volunteer_id and status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is it a new status?1": {
+      "main": [
+        [
+          {
+            "node": "Update volunteer status1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoOp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch volunteer_id and status1": {
+      "main": [
+        [
+          {
+            "node": "Is it a new status?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -1858,7 +2035,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "=UPDATE volunteers\nSET availability = {{ $json.new_availability }}, updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nUPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
+        "query": "UPDATE volunteers\nSET availability = {{ $json.new_availability }}, updated_at = NOW()\nWHERE id = {{ $json.volunteer_id }};\n\nUPDATE public.volunteer_availability\nSET max_matches = {{ $json.new_availability }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};",
         "options": {}
       },
       "id": "e200a469-17c0-4c0a-9e3b-3ec21cada304",
@@ -2666,6 +2843,93 @@
       ],
       "id": "b0e49a8b-63d7-4aa5-92ca-9153333568fc",
       "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const zendesk_user_id = item.json.body.volunteer_zendesk_user_id;\n  const status = item.json.body.volunteer_status;\n  \n  const is_available = status === 'disponivel' ? 1 : 0;\n    \n  const newItem = {\n    \"zendesk_user_id\": zendesk_user_id,\n    \"status\": status,\n    \"is_available\": is_available\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+      },
+      "id": "913429c7-d9cf-4306-90b0-2eca95bcf6de",
+      "name": "Extracts zendesk_user_id and is_available",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"current_status\"]}}",
+              "operation": "notEqual",
+              "value2": "={{$json[\"new_status\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "58429af0-bf3d-486b-96ac-5e2dc12fa14d",
+      "name": "Is it a new status?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        64,
+        2000
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "357e2c58-6066-44ee-b1d7-3c2125590d21",
+      "name": "NoOp1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        368,
+        2192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n\tid AS volunteer_id, \n\tcondition AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    {{$json[\"is_available\"]}} AS is_available \nFROM public.volunteers\nWHERE zendesk_user_id = {{$json[\"zendesk_user_id\"]}}::BIGINT\nLIMIT 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -144,
+        2000
+      ],
+      "id": "8814187c-ee74-4fcb-9f70-19590f520993",
+      "name": "Fetch volunteer_id and status1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteers\nSET condition = '{{$json[\"new_status\"]}}', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, '{{$json[\"new_status\"]}}', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = {{$json[\"is_available\"]}}::boolean, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        320,
+        1984
+      ],
+      "id": "ec51fbe9-0270-4dc2-bc04-05e57b98cc55",
+      "name": "Update volunteer status1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {
@@ -2800,7 +3064,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-24T23:13:30.000Z",
+              "updatedAt": "2026-05-26T12:36:47.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -2820,7 +3084,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-24",
+              "lastActiveAt": "2026-05-26",
               "isPending": false
             }
           }
@@ -2838,7 +3102,7 @@
     }
   ],
   "triggerCount": 2,
-  "updatedAt": "2026-04-01T09:33:46.214Z",
-  "versionCounter": 18,
-  "versionId": "4e9529ea-9553-4807-a641-fd7553de993a"
+  "updatedAt": "2026-05-26T14:35:04.204Z",
+  "versionCounter": 20,
+  "versionId": "cfd401c5-a473-40a3-8d53-b0858ef1f8a3"
 }
