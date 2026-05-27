@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-05-26T20:13:35.102Z",
-    "createdAt": "2026-05-26T20:13:35.102Z",
-    "versionId": "28599ae3-9f23-44d6-b298-0d7db247c749",
+    "updatedAt": "2026-05-27T12:18:24.894Z",
+    "createdAt": "2026-05-27T12:18:24.894Z",
+    "versionId": "512c7ca4-7fd7-4e82-bb3b-cec0d97e91bf",
     "workflowId": "3GNKlbgv2XRGdIgN",
     "nodes": [
       {
@@ -47,7 +47,7 @@
             "interval": [
               {
                 "field": "cronExpression",
-                "expression": "50 12 12 05 *"
+                "expression": "50 9 28 05 *"
               }
             ]
           }
@@ -86,7 +86,7 @@
         "typeVersion": 3,
         "position": [
           -880,
-          448
+          688
         ]
       },
       {
@@ -101,7 +101,7 @@
         "typeVersion": 2.5,
         "position": [
           -1136,
-          448
+          688
         ],
         "credentials": {
           "postgres": {
@@ -120,7 +120,7 @@
         "typeVersion": 3,
         "position": [
           -880,
-          112
+          352
         ]
       },
       {
@@ -135,7 +135,7 @@
         "typeVersion": 2.5,
         "position": [
           -1136,
-          112
+          352
         ],
         "credentials": {
           "postgres": {
@@ -196,7 +196,7 @@
         "typeVersion": 1.1,
         "position": [
           -368,
-          128
+          368
         ],
         "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
       },
@@ -224,7 +224,7 @@
         "typeVersion": 1.1,
         "position": [
           -352,
-          464
+          704
         ],
         "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
       },
@@ -248,7 +248,7 @@
               },
               {
                 "name": "ContentSid",
-                "value": "HXb2db6e7ebe61d2eb607c1254cae36581"
+                "value": "HX2abffc69c112a32b78ffd8a9b07571ac"
               },
               {
                 "name": "ContentVariables",
@@ -292,7 +292,7 @@
         "typeVersion": 4.1,
         "position": [
           -608,
-          464
+          704
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -319,7 +319,7 @@
         "typeVersion": 4.1,
         "position": [
           -624,
-          128
+          368
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -333,14 +333,76 @@
         "parameters": {
           "options": {}
         },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
+        "id": "9b71c12a-7fc9-46a8-bfb3-1e891eb45240",
+        "name": "Loop Over Items1",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
         "position": [
-          -1344,
-          -160
+          -880,
+          80
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}'",
+          "options": {}
+        },
+        "id": "8cebcad4-54ad-4f53-aa6f-07712fdb802c",
+        "name": "Busca segmento de voluntarias em capacitaçao que se nao inscreveram",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -1136,
+          80
         ],
-        "id": "c8149636-691e-46c8-9c29-ed697d2469d1",
-        "name": "Edit Fields"
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 0.5
+        },
+        "id": "987c0d12-5812-4719-8f43-de2e41212553",
+        "name": "Wait2",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -368,
+          96
+        ],
+        "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpmzj5yk00030j0q5b6zogqd\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "ebe56bc6-a958-44b9-8874-d78c14076c38",
+        "name": "Envia email base em capacitação",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -624,
+          96
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueRegularOutput"
       }
     ],
     "connections": {
@@ -372,6 +434,16 @@
           [
             {
               "node": "Busca voluntárias que não finalizaram a capacitação",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca segmento de voluntarias em capacitaçao",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca segmento de voluntarias em capacitaçao que se nao inscreveram",
               "type": "main",
               "index": 0
             }
@@ -500,13 +572,58 @@
             }
           ]
         ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Envia email base em capacitação",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca segmento de voluntarias em capacitaçao que se nao inscreveram": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia email base em capacitação": {
+        "main": [
+          [
+            {
+              "node": "Wait2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "28599ae3-9f23-44d6-b298-0d7db247c749",
+  "activeVersionId": "512c7ca4-7fd7-4e82-bb3b-cec0d97e91bf",
   "connections": {
     "loop whatsapp": {
       "main": [
@@ -536,6 +653,16 @@
         [
           {
             "node": "Busca voluntárias que não finalizaram a capacitação",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca segmento de voluntarias em capacitaçao que se nao inscreveram",
             "type": "main",
             "index": 0
           }
@@ -664,6 +791,51 @@
           }
         ]
       ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email base em capacitação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca segmento de voluntarias em capacitaçao que se nao inscreveram": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email base em capacitação": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-08-21T20:12:09.240Z",
@@ -714,7 +886,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "50 12 12 05 *"
+              "expression": "50 9 28 05 *"
             }
           ]
         }
@@ -753,7 +925,7 @@
       "typeVersion": 3,
       "position": [
         -880,
-        448
+        688
       ]
     },
     {
@@ -768,7 +940,7 @@
       "typeVersion": 2.5,
       "position": [
         -1136,
-        448
+        688
       ],
       "credentials": {
         "postgres": {
@@ -787,7 +959,7 @@
       "typeVersion": 3,
       "position": [
         -880,
-        112
+        352
       ]
     },
     {
@@ -802,7 +974,7 @@
       "typeVersion": 2.5,
       "position": [
         -1136,
-        112
+        352
       ],
       "credentials": {
         "postgres": {
@@ -863,7 +1035,7 @@
       "typeVersion": 1.1,
       "position": [
         -368,
-        128
+        368
       ],
       "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
     },
@@ -891,7 +1063,7 @@
       "typeVersion": 1.1,
       "position": [
         -352,
-        464
+        704
       ],
       "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
     },
@@ -915,7 +1087,7 @@
             },
             {
               "name": "ContentSid",
-              "value": "HXb2db6e7ebe61d2eb607c1254cae36581"
+              "value": "HX2abffc69c112a32b78ffd8a9b07571ac"
             },
             {
               "name": "ContentVariables",
@@ -959,7 +1131,7 @@
       "typeVersion": 4.1,
       "position": [
         -608,
-        464
+        704
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -986,7 +1158,7 @@
       "typeVersion": 4.1,
       "position": [
         -624,
-        128
+        368
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1000,14 +1172,76 @@
       "parameters": {
         "options": {}
       },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "id": "9b71c12a-7fc9-46a8-bfb3-1e891eb45240",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
       "position": [
-        -1344,
-        -160
+        -880,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  volunteer_segment_id,\n  volunteer_id,\n  first_name,\n  email,\n  phone,\n  occupation,\n  volunteer_segment_group\nFROM volunteer_segments \nLEFT JOIN volunteers ON id = volunteer_id\nWHERE \n  segment_name =  'incomplete_training_{{ new Date().toLocaleDateString('pt-BR').replace(/\\//g, '_') }}'",
+        "options": {}
+      },
+      "id": "8cebcad4-54ad-4f53-aa6f-07712fdb802c",
+      "name": "Busca segmento de voluntarias em capacitaçao que se nao inscreveram",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -1136,
+        80
       ],
-      "id": "c8149636-691e-46c8-9c29-ed697d2469d1",
-      "name": "Edit Fields"
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "id": "987c0d12-5812-4719-8f43-de2e41212553",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        96
+      ],
+      "webhookId": "c120bc7a-7333-46b7-bc3b-2f086c7953aa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpmzj5yk00030j0q5b6zogqd\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.first_name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email }}\",\n    \"occupation\": \"{{ $json.occupation }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "ebe56bc6-a958-44b9-8874-d78c14076c38",
+      "name": "Envia email base em capacitação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -624,
+        96
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -1038,7 +1272,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-26T12:36:47.000Z",
+              "updatedAt": "2026-05-27T17:31:04.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -1058,7 +1292,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-26",
+              "lastActiveAt": "2026-05-27",
               "isPending": false
             }
           }
@@ -1085,7 +1319,7 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-05-26T20:13:35.097Z",
-  "versionCounter": 25,
-  "versionId": "28599ae3-9f23-44d6-b298-0d7db247c749"
+  "updatedAt": "2026-05-27T12:18:24.893Z",
+  "versionCounter": 32,
+  "versionId": "512c7ca4-7fd7-4e82-bb3b-cec0d97e91bf"
 }
