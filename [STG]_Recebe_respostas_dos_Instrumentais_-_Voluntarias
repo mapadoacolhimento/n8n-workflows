@@ -89,6 +89,17 @@
           }
         ]
       ]
+    },
+    "Webhook6": {
+      "main": [
+        [
+          {
+            "node": "Respostas7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2026-05-25T20:33:14.905Z",
@@ -207,7 +218,7 @@
         "id": "={{ $json.volunteer_zendesk_ticket_id }}",
         "updateFields": {
           "internalNote": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333;\">\n\n  <div style=\"margin-bottom: 16px;\">\n    A voluntária {{ $json.volunteer_name }} respondeu o Instrumental de Interrupção. Respostas no <a href='https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.msr_zendesk_ticket_id }}'>ticket do match</a>\n  </div>\n\n\n</div>",
-          "publicReply": "=A voluntária {{ $('Busca tickets IDs7').item.json.volunteer_name }} respondeu o Instrumental de Interrupção\n\n**ENCAMINHAMENTO**\n* **Identificou alguma informação na demanda da acolhida diferente das informações recebidas na triagem que precisa ser compartilhada:** {{ $('Respostas7').item.json.encaminhamento.has_different_demand_info }}\n* **Descrição:** {{ $('Respostas7').item.json.encaminhamento.different_demand_description }}\n* **Motivo da interrupção:** {{ $('Respostas7').item.json.encaminhamento.interruption_reason }}\n{{ $('Respostas7').item.json.encaminhamento.redirect_area_needed !== null ? \"* **Qual área a acolhida precisa ser reencaminhada:** \" + $('Respostas7').item.json.encaminhamento.redirect_area_needed : \"\" }}\n{{ $('Respostas7').item.json.encaminhamento.public_services_referral.length > 0 ? \"* **Qual equipamento deve ser eencaminhada:** \" + $('Respostas7').item.json.encaminhamento.public_services_referral : \"\" }}\n\n**DISPONIBILIDADE**\n* **Continua disponível para próximos atendimentos:** {{ $('Respostas7').item.json.disponibilidade.stay_in_project }}\n{{ $('Respostas7').item.json.disponibilidade.exit_or_suspend === null ? '' : \"* **Deseja:** \" + $('Respostas7').item.json.disponibilidade.exit_or_suspend }}\n{{ $('Respostas7').item.json.disponibilidade.suspension_category === null ? '' : \"* **Duração da suspensão:** \" + $('Respostas7').item.json.disponibilidade.suspension_category }}\n{{ $('Respostas7').item.json.disponibilidade.suspension_reason === null ? '' : \"* **Catagoria da segurança:** \" + $('Respostas7').item.json.disponibilidade.suspension_reason }}\n{{ $('Respostas7').item.json.disponibilidade.exit_reason === null ? '' : \"* **Motivo do desligamento:** \" + $('Respostas7').item.json.disponibilidade.exit_reason }}"
+          "publicReply": "=Olá {{ $('Busca tickets IDs7').item.json.volunteer_name }} \n\nEstamos te enviando uma cópia das respostas registradas no Instrumental de Acompanhamento/conclusão, para que você possa manter esse histórico salvo e consultá-lo sempre que necessário.\n\nAgradecemos pelo preenchimento e pelo cuidado dedicado ao acompanhamento dessa acolhida \nUm abraço,\nEquipe Mapa do Acolhimento\n\n**ENCAMINHAMENTO**\n* **Identificou alguma informação na demanda da acolhida diferente das informações recebidas na triagem que precisa ser compartilhada:** {{ $('Respostas7').item.json.encaminhamento.has_different_demand_info }}\n* **Descrição:** {{ $('Respostas7').item.json.encaminhamento.different_demand_description }}\n* **Motivo da interrupção:** {{ $('Respostas7').item.json.encaminhamento.interruption_reason }}\n{{ $('Respostas7').item.json.encaminhamento.redirect_area_needed !== null ? \"* **Qual área a acolhida precisa ser reencaminhada:** \" + $('Respostas7').item.json.encaminhamento.redirect_area_needed : \"\" }}\n{{ $('Respostas7').item.json.encaminhamento.public_services_referral.length > 0 ? \"* **Qual equipamento deve ser eencaminhada:** \" + $('Respostas7').item.json.encaminhamento.public_services_referral : \"\" }}\n\n**DISPONIBILIDADE**\n* **Continua disponível para próximos atendimentos:** {{ $('Respostas7').item.json.disponibilidade.stay_in_project }}\n{{ $('Respostas7').item.json.disponibilidade.exit_or_suspend === null ? '' : \"* **Deseja:** \" + $('Respostas7').item.json.disponibilidade.exit_or_suspend }}\n{{ $('Respostas7').item.json.disponibilidade.suspension_category === null ? '' : \"* **Duração da suspensão:** \" + $('Respostas7').item.json.disponibilidade.suspension_category }}\n{{ $('Respostas7').item.json.disponibilidade.suspension_reason === null ? '' : \"* **Catagoria da segurança:** \" + $('Respostas7').item.json.disponibilidade.suspension_reason }}\n{{ $('Respostas7').item.json.disponibilidade.exit_reason === null ? '' : \"* **Motivo do desligamento:** \" + $('Respostas7').item.json.disponibilidade.exit_reason }}"
         }
       },
       "type": "n8n-nodes-base.zendesk",
@@ -539,6 +550,29 @@
       ],
       "id": "694d0f81-b6d4-4d3f-bc5f-2af7641bcab4",
       "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "interrupcao-novo",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        272
+      ],
+      "id": "8bcee1a3-f11c-4341-b9e0-f3d14b2a1e42",
+      "name": "Webhook6",
+      "webhookId": "d1cb0856-2641-47a3-954f-2bf9ad0ba715",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "BhcubpnINJanuVaZ",
+          "name": "Tally API"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -567,7 +601,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-05-26T12:36:47.000Z",
+              "updatedAt": "2026-05-27T17:31:04.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -587,7 +621,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-05-26",
+              "lastActiveAt": "2026-05-27",
               "isPending": false
             }
           }
@@ -598,7 +632,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-05-26T20:17:15.217Z",
-  "versionCounter": 2,
-  "versionId": "edd3ce04-f67f-42ae-9e29-4872f05b16aa"
+  "updatedAt": "2026-05-27T12:48:20.602Z",
+  "versionCounter": 4,
+  "versionId": "cd3c6319-444b-4431-b2ba-8a2bfd13316d"
 }
