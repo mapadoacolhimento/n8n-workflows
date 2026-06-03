@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-05-14T14:38:55.128Z",
-    "createdAt": "2026-05-14T14:38:55.128Z",
-    "versionId": "5361e0dc-bc5b-4bb8-85b7-82c3ef0f98a3",
+    "updatedAt": "2026-06-03T20:18:36.534Z",
+    "createdAt": "2026-06-03T20:18:36.534Z",
+    "versionId": "d30f7989-c689-40a8-a5ca-3f4c807e56ac",
     "workflowId": "eTQCbbWza7CWSNWB",
     "nodes": [
       {
@@ -93,7 +93,7 @@
       },
       {
         "parameters": {
-          "content": "Fluxo Instrumental Psicológico I ",
+          "content": "Fluxo Instrumental Acompanhamento Psicológico I ",
           "height": 80
         },
         "type": "n8n-nodes-base.stickyNote",
@@ -428,8 +428,9 @@
       },
       {
         "parameters": {
-          "content": "Fluxo Instrumental Psicológico II ",
-          "height": 80
+          "content": "Fluxo Instrumental Acompanhamento Psicológico II ",
+          "height": 80,
+          "width": 272
         },
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
@@ -743,8 +744,8 @@
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.3,
         "position": [
-          -1216,
-          896
+          -1184,
+          1360
         ],
         "id": "43fd30da-9fdd-4d5b-8ce3-80f162d5683a",
         "name": "Schedule Trigger6"
@@ -1493,6 +1494,850 @@
             "name": "[PROD] Mapa"
           }
         }
+      },
+      {
+        "parameters": {
+          "content": "Lembretes Instrumental Conclusão Psicológico",
+          "height": 80,
+          "width": 304
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -3184,
+          2688
+        ],
+        "typeVersion": 1,
+        "id": "247ae19b-1c3a-4338-92fe-267f2aca69ef",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "1d7d2018-1b8c-4e3d-a93f-2e75598177e4",
+        "name": "Loop Over Items12",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2864,
+          2864
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "450c063c-28c9-43e0-930f-4b83fc51b68a",
+        "name": "Wait12",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2608,
+          2880
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "aacec5de-328e-4442-b0d1-279dd91b2434",
+        "name": "busca atendimentos psi concluidos ha 7  dias",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -3152,
+          2864
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpy4iiq22eey0j1l233vkmnd\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "a4e2c644-365b-4c9e-abed-7f965d3375d8",
+        "name": "Envia Lembrete 7 dias",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2336,
+          2880
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos psi concluidos ha 7  dias').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items12').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items12').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items12').item.json.match_id}}&email={{ $('Loop Over Items12').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "de1469c4-9a0a-48f5-b947-671f5797b5ad",
+        "name": "Adiciona comentário interno12",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2000,
+          2880
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "7e161f52-b4a9-4719-9126-dd804dccb687",
+        "name": "Loop Over Items13",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2880,
+          3120
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "020a4363-022d-4171-885d-e03ab7a4f2fc",
+        "name": "Wait13",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2624,
+          3136
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "44bc9b0d-02c4-49e0-8a9d-11b618142412",
+        "name": "busca atendimentos psi concluidos ha 7  dias1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -3168,
+          3120
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos psi concluidos ha 7  dias1').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items13').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items13').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items13').item.json.match_id}}&email={{ $('Loop Over Items13').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "cd50ba0d-4e48-44e1-ad18-2e2d85e2af3e",
+        "name": "Adiciona comentário interno13",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2016,
+          3136
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "content": "Lembretes Instrumental Conclusão Jurídico",
+          "height": 80,
+          "width": 304
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          496,
+          2832
+        ],
+        "typeVersion": 1,
+        "id": "404b3315-7ee1-40b8-8fca-a1ae99b82781",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "bd474640-765f-4a04-b0f9-cd53f698e71e",
+        "name": "Loop Over Items14",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          3008
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "fcfe22b6-9c8a-4533-8fe4-fd0081bfb886",
+        "name": "Wait14",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1072,
+          3024
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpy42d4z2dwz0j02b4hnhdan\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "ae0063d3-4ad6-4793-9419-cd51f61ba8bf",
+        "name": "Envia Lembrete 7 dias2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1344,
+          3024
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos adv concluidos ha 7  dias2').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items14').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items14').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items14').item.json.match_id}}&email={{ $('Loop Over Items14').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "b53b6390-d78f-477f-b29d-10fe55d9002a",
+        "name": "Adiciona comentário interno14",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          3024
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "970668de-3d33-47f0-971c-d5e57f95eefa",
+        "name": "Loop Over Items15",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          800,
+          3264
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "13e7644a-3681-40a2-8b52-63c831a49c31",
+        "name": "Wait15",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1056,
+          3280
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos adv concluidos ha 7  dias3').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items15').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items15').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items15').item.json.match_id}}&email={{ $('Loop Over Items15').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "cc3881ba-56d7-4283-a553-d49bcba97382",
+        "name": "Adiciona comentário interno15",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1664,
+          3280
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "c5906a21-1491-4dd5-99b9-7933749e839a",
+        "name": "busca atendimentos adv concluidos ha 7  dias2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          528,
+          3008
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpy47hu2000t0jxm0c046dzk\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "23ebad6e-79cb-4622-95db-b1c94ca08b73",
+        "name": "Envia Lembrete 10 dias3",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1360,
+          3280
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpy4muz71ukf0j1c4l4bh6ex\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "bcd82816-151f-4264-af9d-d07ee2ac1c0c",
+        "name": "Envia Lembrete 10 dias1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2320,
+          3136
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "4341bc45-60b5-439a-b808-baa2e9102952",
+        "name": "Loop Over Items16",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2928,
+          3584
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "e07e5c2d-c85e-46dd-b05a-9571f1bba56f",
+        "name": "Wait16",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2672,
+          3600
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos psi interrompidos').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items16').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items16').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items16').item.json.match_id}}&email={{ $('Loop Over Items16').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "8b65ba90-d65c-4e38-b956-08a62e696761",
+        "name": "Adiciona comentário interno16",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2064,
+          3600
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "3185ee59-ee37-445f-acee-a37240992a2b",
+        "name": "busca atendimentos psi interrompidos",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -3216,
+          3584
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpyhm84s004u0j1s7hd0aion\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "5b06a6dd-64bb-44e6-ada1-11ddb27b6d12",
+        "name": "Envia Lembrete 7 dias1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2368,
+          3600
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "47d8b5f9-5f05-4ea4-b253-713070283bab",
+        "name": "Loop Over Items17",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2944,
+          3792
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "62786e99-596f-4acf-9778-c4181f57b326",
+        "name": "Wait17",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -2688,
+          3808
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos psi interrompidos1').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items17').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items17').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items17').item.json.match_id}}&email={{ $('Loop Over Items17').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "3bd99852-2aa5-4579-a28e-3e33f386316b",
+        "name": "Adiciona comentário interno17",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          -2080,
+          3808
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "d7098627-c4ae-4218-9bf4-5b931acb9958",
+        "name": "busca atendimentos psi interrompidos1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -3232,
+          3792
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpyhrw73008r0j0081lu2uea\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "ad42091c-840d-4ba4-88a7-8fd360acbe14",
+        "name": "Envia Lembrete 15 dias",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -2384,
+          3808
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "a3ceb001-68d4-4a59-a651-9474b4031af8",
+        "name": "Loop Over Items18",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          3632
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "c5a43cdc-b40b-472d-b3f8-1239ee716e1f",
+        "name": "Wait18",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1072,
+          3648
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos adv interrompidos2').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items18').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items18').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items18').item.json.match_id}}&email={{ $('Loop Over Items18').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "231ec1b3-440a-46e8-9dc9-cf680737252f",
+        "name": "Adiciona comentário interno18",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          3648
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpyhm84s004u0j1s7hd0aion\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "3bd2d075-52f7-4822-a75c-d505ccb8db37",
+        "name": "Envia Lembrete 7 dias3",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1376,
+          3648
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "de4f22f2-80d2-4e18-b860-c1d26810b977",
+        "name": "Loop Over Items19",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          800,
+          3840
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "2057346a-8cfa-45fa-84ae-5507e7465143",
+        "name": "Wait19",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1056,
+          3856
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('busca atendimentos adv interrompidos3').item.json.volunteer_zendesk_ticket_id }}",
+          "updateFields": {
+            "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items19').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items19').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items19').item.json.match_id}}&email={{ $('Loop Over Items19').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+          }
+        },
+        "id": "ee107fab-b89c-42f0-9838-3eba188108f4",
+        "name": "Adiciona comentário interno19",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1664,
+          3856
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"cmpyhrw73008r0j0081lu2uea\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "38c102d9-ef91-4535-9976-8a391315c868",
+        "name": "Envia Lembrete 15 dias1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1360,
+          3856
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "98d5e65b-d905-4863-8cda-313e95a8ac40",
+        "name": "busca atendimentos adv concluidos ha 7  dias3",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          512,
+          3264
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "dc26be9a-4da2-425a-a3f5-73a60de732ed",
+        "name": "busca atendimentos adv interrompidos2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          528,
+          3632
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "options": {}
+        },
+        "id": "bdf664ac-7ba4-40a4-9c7c-dc0ada97bf03",
+        "name": "busca atendimentos adv interrompidos3",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          512,
+          3840
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Lembretes Instrumental Interrupção de atendimento",
+          "height": 80,
+          "width": 304
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          496,
+          3536
+        ],
+        "typeVersion": 1,
+        "id": "d482eb42-2519-4d48-9638-4372eb1d2462",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "content": "Lembretes Instrumental Interrupção de atendimento",
+          "height": 80,
+          "width": 304
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -3232,
+          3488
+        ],
+        "typeVersion": 1,
+        "id": "6bf000cc-3400-4b1d-8116-26195d5c24dd",
+        "name": "Sticky Note7"
       }
     ],
     "connections": {
@@ -1690,6 +2535,26 @@
             },
             {
               "node": "não responderam instrumental II - 30 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos psi concluidos ha 7  dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos psi concluidos ha 7  dias1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos psi interrompidos",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos psi interrompidos1",
               "type": "main",
               "index": 0
             }
@@ -1945,6 +2810,26 @@
             },
             {
               "node": "não responderam instrumental II - 30 dias1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos adv concluidos ha 7  dias2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos adv concluidos ha 7  dias3",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos adv interrompidos2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "busca atendimentos adv interrompidos3",
               "type": "main",
               "index": 0
             }
@@ -2355,13 +3240,461 @@
             }
           ]
         ]
+      },
+      "Loop Over Items12": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait12",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait12": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 7 dias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos psi concluidos ha 7  dias": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items12",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 7 dias": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno12",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno12": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items12",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items13": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait13",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait13": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 10 dias1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos psi concluidos ha 7  dias1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items13",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno13": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items13",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items14": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait14",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait14": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 7 dias2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 7 dias2": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno14",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno14": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items14",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items15": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait15",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait15": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 10 dias3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno15": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items15",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos adv concluidos ha 7  dias2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items14",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 10 dias3": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno15",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 10 dias1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno13",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items16": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait16",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait16": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 7 dias1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno16": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items16",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos psi interrompidos": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items16",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 7 dias1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno16",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items17": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait17",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait17": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 15 dias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno17": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items17",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos psi interrompidos1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items17",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 15 dias": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno17",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items18": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait18",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait18": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 7 dias3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno18": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items18",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 7 dias3": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno18",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items19": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait19",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait19": {
+        "main": [
+          [
+            {
+              "node": "Envia Lembrete 15 dias1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Adiciona comentário interno19": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items19",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Lembrete 15 dias1": {
+        "main": [
+          [
+            {
+              "node": "Adiciona comentário interno19",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos adv concluidos ha 7  dias3": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items15",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos adv interrompidos2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items18",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca atendimentos adv interrompidos3": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items19",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "5361e0dc-bc5b-4bb8-85b7-82c3ef0f98a3",
+  "activeVersionId": "d30f7989-c689-40a8-a5ca-3f4c807e56ac",
   "connections": {
     "Loop Over Items": {
       "main": [
@@ -2557,6 +3890,26 @@
           },
           {
             "node": "não responderam instrumental II - 30 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos psi concluidos ha 7  dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos psi concluidos ha 7  dias1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos psi interrompidos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos psi interrompidos1",
             "type": "main",
             "index": 0
           }
@@ -2812,6 +4165,26 @@
           },
           {
             "node": "não responderam instrumental II - 30 dias1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos adv concluidos ha 7  dias2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos adv concluidos ha 7  dias3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos adv interrompidos2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "busca atendimentos adv interrompidos3",
             "type": "main",
             "index": 0
           }
@@ -3222,6 +4595,454 @@
           }
         ]
       ]
+    },
+    "Loop Over Items12": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait12": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 7 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos psi concluidos ha 7  dias": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 7 dias": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno12": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items13": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait13": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 10 dias1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos psi concluidos ha 7  dias1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno13": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items14": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait14": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 7 dias2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 7 dias2": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno14": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items15": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait15": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 10 dias3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno15": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos adv concluidos ha 7  dias2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 10 dias3": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 10 dias1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items16": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait16": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 7 dias1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno16": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos psi interrompidos": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 7 dias1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items17": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait17": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 15 dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno17": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos psi interrompidos1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 15 dias": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items18": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait18": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 7 dias3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno18": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 7 dias3": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items19": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait19": {
+      "main": [
+        [
+          {
+            "node": "Envia Lembrete 15 dias1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona comentário interno19": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Lembrete 15 dias1": {
+      "main": [
+        [
+          {
+            "node": "Adiciona comentário interno19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos adv concluidos ha 7  dias3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos adv interrompidos2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca atendimentos adv interrompidos3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2026-03-09T18:53:47.099Z",
@@ -3318,7 +5139,7 @@
     },
     {
       "parameters": {
-        "content": "Fluxo Instrumental Psicológico I ",
+        "content": "Fluxo Instrumental Acompanhamento Psicológico I ",
         "height": 80
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -3653,8 +5474,9 @@
     },
     {
       "parameters": {
-        "content": "Fluxo Instrumental Psicológico II ",
-        "height": 80
+        "content": "Fluxo Instrumental Acompanhamento Psicológico II ",
+        "height": 80,
+        "width": 272
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -3968,8 +5790,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        -1216,
-        896
+        -1184,
+        1360
       ],
       "id": "43fd30da-9fdd-4d5b-8ce3-80f162d5683a",
       "name": "Schedule Trigger6"
@@ -4718,6 +6540,850 @@
           "name": "[PROD] Mapa"
         }
       }
+    },
+    {
+      "parameters": {
+        "content": "Lembretes Instrumental Conclusão Psicológico",
+        "height": 80,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3184,
+        2688
+      ],
+      "typeVersion": 1,
+      "id": "247ae19b-1c3a-4338-92fe-267f2aca69ef",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1d7d2018-1b8c-4e3d-a93f-2e75598177e4",
+      "name": "Loop Over Items12",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2864,
+        2864
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "450c063c-28c9-43e0-930f-4b83fc51b68a",
+      "name": "Wait12",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2608,
+        2880
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "aacec5de-328e-4442-b0d1-279dd91b2434",
+      "name": "busca atendimentos psi concluidos ha 7  dias",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3152,
+        2864
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpy4iiq22eey0j1l233vkmnd\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "a4e2c644-365b-4c9e-abed-7f965d3375d8",
+      "name": "Envia Lembrete 7 dias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2336,
+        2880
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos psi concluidos ha 7  dias').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items12').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items12').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items12').item.json.match_id}}&email={{ $('Loop Over Items12').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "de1469c4-9a0a-48f5-b947-671f5797b5ad",
+      "name": "Adiciona comentário interno12",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        2880
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7e161f52-b4a9-4719-9126-dd804dccb687",
+      "name": "Loop Over Items13",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2880,
+        3120
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "020a4363-022d-4171-885d-e03ab7a4f2fc",
+      "name": "Wait13",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2624,
+        3136
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "44bc9b0d-02c4-49e0-8a9d-11b618142412",
+      "name": "busca atendimentos psi concluidos ha 7  dias1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3168,
+        3120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos psi concluidos ha 7  dias1').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items13').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items13').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items13').item.json.match_id}}&email={{ $('Loop Over Items13').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "cd50ba0d-4e48-44e1-ad18-2e2d85e2af3e",
+      "name": "Adiciona comentário interno13",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        3136
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "Lembretes Instrumental Conclusão Jurídico",
+        "height": 80,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        2832
+      ],
+      "typeVersion": 1,
+      "id": "404b3315-7ee1-40b8-8fca-a1ae99b82781",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bd474640-765f-4a04-b0f9-cd53f698e71e",
+      "name": "Loop Over Items14",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        3008
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "fcfe22b6-9c8a-4533-8fe4-fd0081bfb886",
+      "name": "Wait14",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        3024
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpy42d4z2dwz0j02b4hnhdan\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "ae0063d3-4ad6-4793-9419-cd51f61ba8bf",
+      "name": "Envia Lembrete 7 dias2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1344,
+        3024
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos adv concluidos ha 7  dias2').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items14').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items14').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items14').item.json.match_id}}&email={{ $('Loop Over Items14').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "b53b6390-d78f-477f-b29d-10fe55d9002a",
+      "name": "Adiciona comentário interno14",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        3024
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "970668de-3d33-47f0-971c-d5e57f95eefa",
+      "name": "Loop Over Items15",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        800,
+        3264
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "13e7644a-3681-40a2-8b52-63c831a49c31",
+      "name": "Wait15",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        3280
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos adv concluidos ha 7  dias3').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items15').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items15').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items15').item.json.match_id}}&email={{ $('Loop Over Items15').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "cc3881ba-56d7-4283-a553-d49bcba97382",
+      "name": "Adiciona comentário interno15",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        3280
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "c5906a21-1491-4dd5-99b9-7933749e839a",
+      "name": "busca atendimentos adv concluidos ha 7  dias2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        528,
+        3008
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpy47hu2000t0jxm0c046dzk\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "23ebad6e-79cb-4622-95db-b1c94ca08b73",
+      "name": "Envia Lembrete 10 dias3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1360,
+        3280
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpy4muz71ukf0j1c4l4bh6ex\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "bcd82816-151f-4264-af9d-d07ee2ac1c0c",
+      "name": "Envia Lembrete 10 dias1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2320,
+        3136
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4341bc45-60b5-439a-b808-baa2e9102952",
+      "name": "Loop Over Items16",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2928,
+        3584
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "e07e5c2d-c85e-46dd-b05a-9571f1bba56f",
+      "name": "Wait16",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2672,
+        3600
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos psi interrompidos').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items16').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items16').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items16').item.json.match_id}}&email={{ $('Loop Over Items16').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "8b65ba90-d65c-4e38-b956-08a62e696761",
+      "name": "Adiciona comentário interno16",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2064,
+        3600
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "3185ee59-ee37-445f-acee-a37240992a2b",
+      "name": "busca atendimentos psi interrompidos",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3216,
+        3584
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpyhm84s004u0j1s7hd0aion\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5b06a6dd-64bb-44e6-ada1-11ddb27b6d12",
+      "name": "Envia Lembrete 7 dias1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2368,
+        3600
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "47d8b5f9-5f05-4ea4-b253-713070283bab",
+      "name": "Loop Over Items17",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2944,
+        3792
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "62786e99-596f-4acf-9778-c4181f57b326",
+      "name": "Wait17",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2688,
+        3808
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos psi interrompidos1').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items17').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items17').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items17').item.json.match_id}}&email={{ $('Loop Over Items17').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "3bd99852-2aa5-4579-a28e-3e33f386316b",
+      "name": "Adiciona comentário interno17",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        3808
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "d7098627-c4ae-4218-9bf4-5b931acb9958",
+      "name": "busca atendimentos psi interrompidos1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3232,
+        3792
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpyhrw73008r0j0081lu2uea\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "ad42091c-840d-4ba4-88a7-8fd360acbe14",
+      "name": "Envia Lembrete 15 dias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2384,
+        3808
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a3ceb001-68d4-4a59-a651-9474b4031af8",
+      "name": "Loop Over Items18",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        3632
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "c5a43cdc-b40b-472d-b3f8-1239ee716e1f",
+      "name": "Wait18",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        3648
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos adv interrompidos2').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items18').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items18').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items18').item.json.match_id}}&email={{ $('Loop Over Items18').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "231ec1b3-440a-46e8-9dc9-cf680737252f",
+      "name": "Adiciona comentário interno18",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        3648
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpyhm84s004u0j1s7hd0aion\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "3bd2d075-52f7-4822-a75c-d505ccb8db37",
+      "name": "Envia Lembrete 7 dias3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1376,
+        3648
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "de4f22f2-80d2-4e18-b860-c1d26810b977",
+      "name": "Loop Over Items19",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        800,
+        3840
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "2057346a-8cfa-45fa-84ae-5507e7465143",
+      "name": "Wait19",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        3856
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('busca atendimentos adv interrompidos3').item.json.volunteer_zendesk_ticket_id }}",
+        "updateFields": {
+          "internalNote": "=A voluntária recebeu o segundo lembrete do <a href='https://tally.so/r/7RKVjR?msr_first_name={{ $('Loop Over Items19').item.json.msr_first_name}}&volunteer_first_name={{ $('Loop Over Items19').item.json.volunteer_first_name}}&match_id={{ $('Loop Over Items19').item.json.match_id}}&email={{ $('Loop Over Items19').item.json.volunteer_email}}'>Instrumental de Conclusão Psicológico</a> no dia {{ $now.toFormat('dd/MM/yyyy') }}"
+        }
+      },
+      "id": "ee107fab-b89c-42f0-9838-3eba188108f4",
+      "name": "Adiciona comentário interno19",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        3856
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmpyhrw73008r0j0081lu2uea\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_id\": \"{{ $json.msr_id }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name}}\", \n    \"email\": \"{{ $json.volunteer_email }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "38c102d9-ef91-4535-9976-8a391315c868",
+      "name": "Envia Lembrete 15 dias1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1360,
+        3856
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "98d5e65b-d905-4863-8cda-313e95a8ac40",
+      "name": "busca atendimentos adv concluidos ha 7  dias3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        512,
+        3264
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "dc26be9a-4da2-425a-a3f5-73a60de732ed",
+      "name": "busca atendimentos adv interrompidos2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        528,
+        3632
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "options": {}
+      },
+      "id": "bdf664ac-7ba4-40a4-9c7c-dc0ada97bf03",
+      "name": "busca atendimentos adv interrompidos3",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        512,
+        3840
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Lembretes Instrumental Interrupção de atendimento",
+        "height": 80,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        3536
+      ],
+      "typeVersion": 1,
+      "id": "d482eb42-2519-4d48-9638-4372eb1d2462",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "Lembretes Instrumental Interrupção de atendimento",
+        "height": 80,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3232,
+        3488
+      ],
+      "typeVersion": 1,
+      "id": "6bf000cc-3400-4b1d-8116-26195d5c24dd",
+      "name": "Sticky Note7"
     }
   ],
   "pinData": {
@@ -4771,7 +7437,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-06-02T12:18:45.000Z",
+              "updatedAt": "2026-06-03T12:46:30.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -4791,7 +7457,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-06-02",
+              "lastActiveAt": "2026-06-03",
               "isPending": false
             }
           }
@@ -4809,7 +7475,7 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2026-05-14T14:38:55.126Z",
-  "versionCounter": 52,
-  "versionId": "5361e0dc-bc5b-4bb8-85b7-82c3ef0f98a3"
+  "updatedAt": "2026-06-03T20:18:36.532Z",
+  "versionCounter": 78,
+  "versionId": "d30f7989-c689-40a8-a5ca-3f4c807e56ac"
 }
