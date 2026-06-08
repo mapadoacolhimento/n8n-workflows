@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-06-03T20:18:36.534Z",
-    "createdAt": "2026-06-03T20:18:36.534Z",
-    "versionId": "d30f7989-c689-40a8-a5ca-3f4c807e56ac",
+    "updatedAt": "2026-06-08T14:37:04.525Z",
+    "createdAt": "2026-06-08T14:37:04.525Z",
+    "versionId": "ea10e8f7-c614-4348-b4b1-3dcbcef6a382",
     "workflowId": "eTQCbbWza7CWSNWB",
     "nodes": [
       {
@@ -1540,7 +1540,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND vir.instrumental_type = 'volunteer_psychological_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\n    \nORDER BY m.match_id",
           "options": {}
         },
         "id": "aacec5de-328e-4442-b0d1-279dd91b2434",
@@ -1638,7 +1638,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND vir.instrumental_type = 'volunteer_psychological_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\n    \nORDER BY m.match_id",
           "options": {}
         },
         "id": "44bc9b0d-02c4-49e0-8a9d-11b618142412",
@@ -1826,7 +1826,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "query": "\nSELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND vir.instrumental_type = 'volunteer_legal_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
           "options": {}
         },
         "id": "c5906a21-1491-4dd5-99b9-7933749e839a",
@@ -1950,7 +1950,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
           "options": {}
         },
         "id": "3185ee59-ee37-445f-acee-a37240992a2b",
@@ -2048,7 +2048,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
           "options": {}
         },
         "id": "d7098627-c4ae-4218-9bf4-5b931acb9958",
@@ -2249,7 +2249,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "query": "\nSELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND vir.instrumental_type = 'volunteer_legal_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
           "options": {}
         },
         "id": "98d5e65b-d905-4863-8cda-313e95a8ac40",
@@ -2270,7 +2270,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
           "options": {}
         },
         "id": "dc26be9a-4da2-425a-a3f5-73a60de732ed",
@@ -2291,7 +2291,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+          "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
           "options": {}
         },
         "id": "bdf664ac-7ba4-40a4-9c7c-dc0ada97bf03",
@@ -3694,7 +3694,7 @@
     "name": null,
     "description": null
   },
-  "activeVersionId": "d30f7989-c689-40a8-a5ca-3f4c807e56ac",
+  "activeVersionId": "ea10e8f7-c614-4348-b4b1-3dcbcef6a382",
   "connections": {
     "Loop Over Items": {
       "main": [
@@ -6586,7 +6586,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND vir.instrumental_type = 'volunteer_psychological_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\n    \nORDER BY m.match_id",
         "options": {}
       },
       "id": "aacec5de-328e-4442-b0d1-279dd91b2434",
@@ -6684,7 +6684,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND vir.instrumental_type = 'volunteer_psychological_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'psychological'\n    \nORDER BY m.match_id",
         "options": {}
       },
       "id": "44bc9b0d-02c4-49e0-8a9d-11b618142412",
@@ -6872,7 +6872,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "query": "\nSELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND vir.instrumental_type = 'volunteer_legal_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "c5906a21-1491-4dd5-99b9-7933749e839a",
@@ -6996,7 +6996,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "3185ee59-ee37-445f-acee-a37240992a2b",
@@ -7094,7 +7094,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'psychological'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "d7098627-c4ae-4218-9bf4-5b931acb9958",
@@ -7295,7 +7295,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "query": "\nSELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status = 'completed'\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '10 DAY'\n    AND vir.instrumental_type = 'volunteer_legal_support_conclusion'\n    AND vir.answered_at is null\n    AND m.status = 'completed'\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "98d5e65b-d905-4863-8cda-313e95a8ac40",
@@ -7316,7 +7316,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '7 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "dc26be9a-4da2-425a-a3f5-73a60de732ed",
@@ -7337,7 +7337,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  \n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
+        "query": "SELECT DISTINCT\n    m.match_id,\n    m.msr_id,\n    m.volunteer_id,\n    m.volunteer_zendesk_ticket_id,\n    v.email             AS volunteer_email,\n    v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\nFROM match.matches m\nINNER JOIN public.volunteers v             ON v.id = m.volunteer_id\nINNER JOIN pii_sec.msr_pii p               ON p.msr_id = m.msr_id\nINNER JOIN match.match_status_history msh  ON msh.match_id = m.match_id\nINNER JOIN survey.volunteer_instrumental_record vir  ON vir.match_id = m.match_id \nWHERE\n    msh.status in ('interrupted_after_support','interrupted_before_support')\n  AND vir.instrumental_type = 'support_interruption'\n    AND vir.answered_at is null\n    AND msh.created_at::DATE = CURRENT_DATE - INTERVAL '15 DAY'\n    AND m.status in ('interrupted_after_support','interrupted_before_support')\n    AND m.support_type = 'legal'\nORDER BY m.match_id",
         "options": {}
       },
       "id": "bdf664ac-7ba4-40a4-9c7c-dc0ada97bf03",
@@ -7437,7 +7437,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-06-07T23:13:14.000Z",
+              "updatedAt": "2026-06-08T11:30:33.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -7457,7 +7457,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-06-07",
+              "lastActiveAt": "2026-06-08",
               "isPending": false
             }
           }
@@ -7475,7 +7475,7 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2026-06-03T20:18:36.532Z",
-  "versionCounter": 78,
-  "versionId": "d30f7989-c689-40a8-a5ca-3f4c807e56ac"
+  "updatedAt": "2026-06-08T14:37:04.524Z",
+  "versionCounter": 87,
+  "versionId": "ea10e8f7-c614-4348-b4b1-3dcbcef6a382"
 }
