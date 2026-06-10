@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-06-09T18:38:46.491Z",
-    "createdAt": "2026-06-09T18:38:46.491Z",
-    "versionId": "daac2af4-aef4-426f-bac0-51e437062eb5",
+    "updatedAt": "2026-06-10T19:14:04.891Z",
+    "createdAt": "2026-06-10T19:14:04.891Z",
+    "versionId": "acab1b00-0536-4f91-ac63-01931ef339bf",
     "workflowId": "qu1tciDTMwBcWjNm",
     "nodes": [
       {
@@ -1022,12 +1022,8 @@
           "conditions": {
             "string": [
               {
-                "value1": "={{ $json.tickets.custom_fields[6].value }}",
-                "value2": "cadastrada"
-              },
-              {
-                "value1": "={{ $json.tickets.custom_fields[6].value }}",
-                "value2": "capacitacao"
+                "value1": "={{ $json.tickets.custom_fields.map(f => f.value).includes('cadastrada') || $json.tickets.custom_fields.map(f => f.value).includes('capacitacao') ? 'sim' : 'nao' }}",
+                "value2": "sim"
               }
             ]
           },
@@ -1038,7 +1034,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 1,
         "position": [
-          1920,
+          1888,
           3312
         ]
       },
@@ -1608,7 +1604,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          1280,
+          1248,
           1568
         ],
         "credentials": {
@@ -1624,8 +1620,8 @@
         "type": "n8n-nodes-base.manualTrigger",
         "typeVersion": 1,
         "position": [
-          -1104,
-          3968
+          -304,
+          5712
         ],
         "id": "c7699fd4-7c6b-46f8-8dce-05a4828cadcc",
         "name": "When clicking ‘Execute workflow’"
@@ -2370,6 +2366,227 @@
           480,
           3888
         ]
+      },
+      {
+        "parameters": {
+          "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Atualiza status da voluntária no Zendesk3\"].json[\"id\"]}}/tickets/requested",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "options": {}
+        },
+        "id": "1fcd5aec-4c02-48e0-a1f2-37b4cf915559",
+        "name": "Busca os tickets da voluntária no Zendesk3",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          528,
+          5712
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "cw6WdIc7c9HRGleo",
+            "name": "Zendesk auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "tickets",
+          "include": "allOtherFields",
+          "options": {}
+        },
+        "id": "e4e500db-4aaa-4c6d-904f-f0a8343c6aba",
+        "name": "Separa os tickets do objeto retornado3",
+        "type": "n8n-nodes-base.itemLists",
+        "typeVersion": 1,
+        "position": [
+          896,
+          5696
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "update",
+          "id": "={{ $json[\"id\"] }}",
+          "updateFields": {
+            "userFieldsUi": {
+              "userFieldValues": [
+                {
+                  "field": "condition",
+                  "value": "aprovada"
+                }
+              ]
+            }
+          }
+        },
+        "id": "2e1ac3f9-db2e-47dc-a27e-542f67da9f74",
+        "name": "Atualiza status da voluntária no Zendesk3",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          304,
+          5712
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json[\"tickets\"][\"id\"] }}",
+          "updateFields": {
+            "customFieldsUi": {
+              "customFieldsValues": [
+                {
+                  "id": 360021665652,
+                  "value": "aprovada"
+                }
+              ]
+            },
+            "internalNote": "=Voluntária aprovada pois participou do intensivão e preencheu o formulário de confirmação de presença: Intensivão Junho/2026",
+            "status": "open"
+          }
+        },
+        "id": "29d49f12-8405-46c4-b713-6977a28ec9ac",
+        "name": "Atualiza o ticket para \"aprovada\"3",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          1408,
+          5680
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $json.tickets.custom_fields[7].value }}",
+                "value2": "cadastrada"
+              },
+              {
+                "value1": "={{ $json.tickets.custom_fields[7].value }}",
+                "value2": "capacitacao"
+              }
+            ]
+          },
+          "combineOperation": "any"
+        },
+        "id": "cdea4275-9ec2-48c4-b169-0e2fed2ea3bb",
+        "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"3",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          1104,
+          5696
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
+                "leftValue": "={{ $json.count }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "4ac7280e-0b61-4aa3-9b6d-35dac3662c18",
+        "name": "If3",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          688,
+          5712
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "=Voluntaria sem tickets {{ $('Seta os campos para envio').item.json.email }}"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          960,
+          6064
+        ],
+        "id": "fefe176f-08bd-4ffa-919e-ce998e7fd708",
+        "name": "Stop and Error10"
+      },
+      {
+        "parameters": {
+          "jsCode": "// 1. Cole aqui a sua lista de e-mails limpa vinda do Hex\nconst lista_emails = ['marinho_marilene@hotmail.com', 'aa.machado245@gmail.com', 'simonebraga10@hotmail.com', 'mariatalia98@outlook.com', 'elencrisn@hotmail.com', 'vvncoutinho@gmail.com', 'ednajesuscsilva@gmail.com', 'lidianesaliba.psico@gmail.com', 'robertak.adv@gmail.com', 'carla.mpp@icloud.com', 'giliannems@gmail.com', 'magda2712costa@gmail.com', 'nathaliazerpa.adv@gmail.com', 'mss495@gmail.com', 'lazarinolorena@gmail.com', 'lucenaandreah@gmail.com', 'isabel78araujo@gmail.com', 'advkanandra@gmail.com', 'isabellagoncalvesribeiro@outlook.com', 'estergattiborges@gmail.com', 'joana.canano@gmail.com', 'psi.brendasantana@gmail.com', 'camila.luna16@hotmail.com', 'roberta_flavia@yahoo.com.br', 'maimfaria@gmail.com', 'remoraes.psicologia@gmail.com', 'adv.vanusamendes@gmail.com', 'bruna.jesus140@outlook.com', 'vanessa.belchior001@gmail.com', 'psicabriela@gmail.com', 'advthayanematos@gmail.com', 'Solange.oliveiras@yahoo.com.br', 'graziela.vianapm@gmail.com', 'psicanapaulagalante@gmail.com', 'contato.psivanessacampos@gmail.com', 'psicologia.larissarubini@gmail.com', 'catiapereirasantos3@yahoo.com', 'viviannesa@yahoo.com.br', 'jacsouz.psico@gmail.com', 'leilacarvalho.g3w@gmail.com', 'candicecsx@gmail.com', 'kikabarbara@gmail.com', 'elietesobralpsicologa@gmail.com', 'fernanda.bernardoni@gmail.com', 'sarahbnoliveira.adv@gmail.com', 'dianaalmeida1810@gmail.com', 'ila.adv.jus@gmail.com', 'amanda.silva.moura96@gmail.com', 'vrochabarros@outlook.com', 'rosilenesabin.advogada@gmail.com', 'advfernandabatistapereira@gmail.com', 'daniellebrasil.advpr@gmail.com', 'camilaccastro.adv@gmail.com', 'dayaneflimar.psi@gmail.com', 'mansi.tereza@gmail.com', 'tamyrescristhina@gmail.com', 'psicologacarolmeireles@hotmail.com', 'erimoraispsi@gmail.com', 'Solange.oliveiras@yahoo.com.br'\n];\n\n// 2. Transforma cada e-mail em um item estruturado na raiz do JSON para o n8n\nreturn lista_emails.map(email => {\n  return {\n    json: {\n      email_voluntaria: email\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -96,
+          5712
+        ],
+        "id": "6b25e72e-2764-4cd7-9bd0-3f97a21bca7a",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "search",
+          "filters": {
+            "query": "=email:{{ $json.email_voluntaria }}"
+          }
+        },
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          80,
+          5712
+        ],
+        "id": "fdcf1275-84f7-4f1d-9556-113da2e68141",
+        "name": "Search a user",
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Fluxo para quando o oficial parar em Status - cadastrada ou capacitacao por não encontrar o custom_field"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -320,
+          5504
+        ],
+        "id": "aa20a7ff-e5fd-4388-906a-a659bf04016f",
+        "name": "Sticky Note1"
       }
     ],
     "connections": {
@@ -3014,7 +3231,7 @@
         "main": [
           [
             {
-              "node": "Download file",
+              "node": "Code in JavaScript",
               "type": "main",
               "index": 0
             }
@@ -3349,13 +3566,97 @@
             }
           ]
         ]
+      },
+      "Busca os tickets da voluntária no Zendesk3": {
+        "main": [
+          [
+            {
+              "node": "If3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separa os tickets do objeto retornado3": {
+        "main": [
+          [
+            {
+              "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza status da voluntária no Zendesk3": {
+        "main": [
+          [
+            {
+              "node": "Busca os tickets da voluntária no Zendesk3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"3": {
+        "main": [
+          [
+            {
+              "node": "Atualiza o ticket para \"aprovada\"3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If3": {
+        "main": [
+          [
+            {
+              "node": "Separa os tickets do objeto retornado3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Search a user",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search a user": {
+        "main": [
+          [
+            {
+              "node": "Atualiza status da voluntária no Zendesk3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "daac2af4-aef4-426f-bac0-51e437062eb5",
+  "activeVersionId": "acab1b00-0536-4f91-ac63-01931ef339bf",
   "connections": {
     "Seta os campos para atualizar a voluntária no BD": {
       "main": [
@@ -3998,7 +4299,7 @@
       "main": [
         [
           {
-            "node": "Download file",
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -4328,6 +4629,90 @@
         [
           {
             "node": "Extract From File4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca os tickets da voluntária no Zendesk3": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa os tickets do objeto retornado3": {
+      "main": [
+        [
+          {
+            "node": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza status da voluntária no Zendesk3": {
+      "main": [
+        [
+          {
+            "node": "Busca os tickets da voluntária no Zendesk3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"3": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o ticket para \"aprovada\"3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Separa os tickets do objeto retornado3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Search a user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search a user": {
+      "main": [
+        [
+          {
+            "node": "Atualiza status da voluntária no Zendesk3",
             "type": "main",
             "index": 0
           }
@@ -5360,12 +5745,8 @@
         "conditions": {
           "string": [
             {
-              "value1": "={{ $json.tickets.custom_fields[6].value }}",
-              "value2": "cadastrada"
-            },
-            {
-              "value1": "={{ $json.tickets.custom_fields[6].value }}",
-              "value2": "capacitacao"
+              "value1": "={{ $json.tickets.custom_fields.map(f => f.value).includes('cadastrada') || $json.tickets.custom_fields.map(f => f.value).includes('capacitacao') ? 'sim' : 'nao' }}",
+              "value2": "sim"
             }
           ]
         },
@@ -5376,7 +5757,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        1920,
+        1888,
         3312
       ]
     },
@@ -5946,7 +6327,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1280,
+        1248,
         1568
       ],
       "credentials": {
@@ -5962,8 +6343,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1104,
-        3968
+        -304,
+        5712
       ],
       "id": "c7699fd4-7c6b-46f8-8dce-05a4828cadcc",
       "name": "When clicking ‘Execute workflow’"
@@ -6708,6 +7089,227 @@
         480,
         3888
       ]
+    },
+    {
+      "parameters": {
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$node[\"Atualiza status da voluntária no Zendesk3\"].json[\"id\"]}}/tickets/requested",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "1fcd5aec-4c02-48e0-a1f2-37b4cf915559",
+      "name": "Busca os tickets da voluntária no Zendesk3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        528,
+        5712
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tickets",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "e4e500db-4aaa-4c6d-904f-f0a8343c6aba",
+      "name": "Separa os tickets do objeto retornado3",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        896,
+        5696
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json[\"id\"] }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "aprovada"
+              }
+            ]
+          }
+        }
+      },
+      "id": "2e1ac3f9-db2e-47dc-a27e-542f67da9f74",
+      "name": "Atualiza status da voluntária no Zendesk3",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        304,
+        5712
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360021665652,
+                "value": "aprovada"
+              }
+            ]
+          },
+          "internalNote": "=Voluntária aprovada pois participou do intensivão e preencheu o formulário de confirmação de presença: Intensivão Junho/2026",
+          "status": "open"
+        }
+      },
+      "id": "29d49f12-8405-46c4-b713-6977a28ec9ac",
+      "name": "Atualiza o ticket para \"aprovada\"3",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        5680
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tickets.custom_fields[7].value }}",
+              "value2": "cadastrada"
+            },
+            {
+              "value1": "={{ $json.tickets.custom_fields[7].value }}",
+              "value2": "capacitacao"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "cdea4275-9ec2-48c4-b169-0e2fed2ea3bb",
+      "name": "Se o campo \"Status da Inscrição\" for igual a \"capacitacao\"3",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        5696
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "03e9242a-450b-42f6-96d6-8387d87db69d",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4ac7280e-0b61-4aa3-9b6d-35dac3662c18",
+      "name": "If3",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        5712
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Voluntaria sem tickets {{ $('Seta os campos para envio').item.json.email }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        6064
+      ],
+      "id": "fefe176f-08bd-4ffa-919e-ce998e7fd708",
+      "name": "Stop and Error10"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Cole aqui a sua lista de e-mails limpa vinda do Hex\nconst lista_emails = ['marinho_marilene@hotmail.com', 'aa.machado245@gmail.com', 'simonebraga10@hotmail.com', 'mariatalia98@outlook.com', 'elencrisn@hotmail.com', 'vvncoutinho@gmail.com', 'ednajesuscsilva@gmail.com', 'lidianesaliba.psico@gmail.com', 'robertak.adv@gmail.com', 'carla.mpp@icloud.com', 'giliannems@gmail.com', 'magda2712costa@gmail.com', 'nathaliazerpa.adv@gmail.com', 'mss495@gmail.com', 'lazarinolorena@gmail.com', 'lucenaandreah@gmail.com', 'isabel78araujo@gmail.com', 'advkanandra@gmail.com', 'isabellagoncalvesribeiro@outlook.com', 'estergattiborges@gmail.com', 'joana.canano@gmail.com', 'psi.brendasantana@gmail.com', 'camila.luna16@hotmail.com', 'roberta_flavia@yahoo.com.br', 'maimfaria@gmail.com', 'remoraes.psicologia@gmail.com', 'adv.vanusamendes@gmail.com', 'bruna.jesus140@outlook.com', 'vanessa.belchior001@gmail.com', 'psicabriela@gmail.com', 'advthayanematos@gmail.com', 'Solange.oliveiras@yahoo.com.br', 'graziela.vianapm@gmail.com', 'psicanapaulagalante@gmail.com', 'contato.psivanessacampos@gmail.com', 'psicologia.larissarubini@gmail.com', 'catiapereirasantos3@yahoo.com', 'viviannesa@yahoo.com.br', 'jacsouz.psico@gmail.com', 'leilacarvalho.g3w@gmail.com', 'candicecsx@gmail.com', 'kikabarbara@gmail.com', 'elietesobralpsicologa@gmail.com', 'fernanda.bernardoni@gmail.com', 'sarahbnoliveira.adv@gmail.com', 'dianaalmeida1810@gmail.com', 'ila.adv.jus@gmail.com', 'amanda.silva.moura96@gmail.com', 'vrochabarros@outlook.com', 'rosilenesabin.advogada@gmail.com', 'advfernandabatistapereira@gmail.com', 'daniellebrasil.advpr@gmail.com', 'camilaccastro.adv@gmail.com', 'dayaneflimar.psi@gmail.com', 'mansi.tereza@gmail.com', 'tamyrescristhina@gmail.com', 'psicologacarolmeireles@hotmail.com', 'erimoraispsi@gmail.com', 'Solange.oliveiras@yahoo.com.br'\n];\n\n// 2. Transforma cada e-mail em um item estruturado na raiz do JSON para o n8n\nreturn lista_emails.map(email => {\n  return {\n    json: {\n      email_voluntaria: email\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        5712
+      ],
+      "id": "6b25e72e-2764-4cd7-9bd0-3f97a21bca7a",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "search",
+        "filters": {
+          "query": "=email:{{ $json.email_voluntaria }}"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        80,
+        5712
+      ],
+      "id": "fdcf1275-84f7-4f1d-9556-113da2e68141",
+      "name": "Search a user",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Fluxo para quando o oficial parar em Status - cadastrada ou capacitacao por não encontrar o custom_field"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        5504
+      ],
+      "id": "aa20a7ff-e5fd-4388-906a-a659bf04016f",
+      "name": "Sticky Note1"
     }
   ],
   "pinData": {
@@ -6838,7 +7440,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-06-09T12:12:55.000Z",
+              "updatedAt": "2026-06-10T14:41:01.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -6858,7 +7460,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-06-09",
+              "lastActiveAt": "2026-06-10",
               "isPending": false
             }
           }
@@ -6869,7 +7471,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2026-06-09T18:38:46.488Z",
-  "versionCounter": 41,
-  "versionId": "daac2af4-aef4-426f-bac0-51e437062eb5"
+  "updatedAt": "2026-06-10T19:14:04.889Z",
+  "versionCounter": 54,
+  "versionId": "acab1b00-0536-4f91-ac63-01931ef339bf"
 }
