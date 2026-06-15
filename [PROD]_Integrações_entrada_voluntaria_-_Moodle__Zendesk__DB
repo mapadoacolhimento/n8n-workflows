@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-06-03T21:01:41.360Z",
-    "createdAt": "2026-06-03T21:01:41.360Z",
-    "versionId": "e7624634-ceed-431b-a390-fe6e1460102a",
+    "updatedAt": "2026-06-15T16:04:49.842Z",
+    "createdAt": "2026-06-15T16:04:49.842Z",
+    "versionId": "66d44d50-3b5c-4b24-ab1c-c622e9b2ff37",
     "workflowId": "0hojIhmzSHjJnPDe",
     "nodes": [
       {
@@ -66,8 +66,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          544,
-          2144
+          96,
+          2176
         ],
         "alwaysOutputData": true,
         "credentials": {
@@ -774,7 +774,7 @@
             "conditions": [
               {
                 "id": "223d2e9d-3926-4499-b422-4cdaf53ff415",
-                "leftValue": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"condition\"]}}",
+                "leftValue": "={{ $json.user_fields.condition }}",
                 "rightValue": "capacitacao",
                 "operator": {
                   "type": "string",
@@ -792,8 +792,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          336,
-          2160
+          352,
+          2176
         ]
       },
       {
@@ -1093,20 +1093,6 @@
       },
       {
         "parameters": {
-          "amount": 10
-        },
-        "type": "n8n-nodes-base.wait",
-        "typeVersion": 1.1,
-        "position": [
-          -1696,
-          2496
-        ],
-        "id": "7c472ce6-47c5-495d-900d-9462c494586e",
-        "name": "Wait1",
-        "webhookId": "20b74c00-3e4f-4ee6-9969-77378983b298"
-      },
-      {
-        "parameters": {
           "content": "## Wait temporário\n\nEstamos usando o evento de visualização de certificado para aprovar a voluntária como pode acontecer dele ser disparado em um intervalo menor que a finalização do curso coloquei ele aqui por enquanto",
           "height": 144,
           "width": 608
@@ -1144,7 +1130,7 @@
         "main": [
           [
             {
-              "node": "Se retornou a voluntária do Zendesk",
+              "node": "O status da voluntária é capacitacao",
               "type": "main",
               "index": 0
             }
@@ -1268,14 +1254,14 @@
               "node": "O status da voluntária é cadastrada",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Busca voluntária pelo email",
+              "type": "main",
+              "index": 0
             }
           ],
           [
-            {
-              "node": "O status da voluntária é capacitacao",
-              "type": "main",
-              "index": 0
-            },
             {
               "node": "Verifica se ela já finalizou a capacitação",
               "type": "main",
@@ -1403,7 +1389,7 @@
         "main": [
           [
             {
-              "node": "Busca voluntária pelo email",
+              "node": "Se retornou a voluntária do Zendesk",
               "type": "main",
               "index": 0
             }
@@ -1436,7 +1422,7 @@
         "main": [
           [
             {
-              "node": "Wait1",
+              "node": "Se é o curso de voluntárias",
               "type": "main",
               "index": 0
             }
@@ -1522,24 +1508,13 @@
             }
           ]
         ]
-      },
-      "Wait1": {
-        "main": [
-          [
-            {
-              "node": "Se é o curso de voluntárias",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "e7624634-ceed-431b-a390-fe6e1460102a",
+  "activeVersionId": "66d44d50-3b5c-4b24-ab1c-c622e9b2ff37",
   "connections": {
     "Se retornou a voluntária": {
       "main": [
@@ -1563,7 +1538,7 @@
       "main": [
         [
           {
-            "node": "Se retornou a voluntária do Zendesk",
+            "node": "O status da voluntária é capacitacao",
             "type": "main",
             "index": 0
           }
@@ -1687,14 +1662,14 @@
             "node": "O status da voluntária é cadastrada",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Busca voluntária pelo email",
+            "type": "main",
+            "index": 0
           }
         ],
         [
-          {
-            "node": "O status da voluntária é capacitacao",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Verifica se ela já finalizou a capacitação",
             "type": "main",
@@ -1822,7 +1797,7 @@
       "main": [
         [
           {
-            "node": "Busca voluntária pelo email",
+            "node": "Se retornou a voluntária do Zendesk",
             "type": "main",
             "index": 0
           }
@@ -1855,7 +1830,7 @@
       "main": [
         [
           {
-            "node": "Wait1",
+            "node": "Se é o curso de voluntárias",
             "type": "main",
             "index": 0
           }
@@ -1941,17 +1916,6 @@
           }
         ]
       ]
-    },
-    "Wait1": {
-      "main": [
-        [
-          {
-            "node": "Se é o curso de voluntárias",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "createdAt": "2024-01-24T01:52:22.279Z",
@@ -2023,8 +1987,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        544,
-        2144
+        96,
+        2176
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -2731,7 +2695,7 @@
           "conditions": [
             {
               "id": "223d2e9d-3926-4499-b422-4cdaf53ff415",
-              "leftValue": "={{$node[\"Busca voluntária pelo moodle ID\"].json[\"condition\"]}}",
+              "leftValue": "={{ $json.user_fields.condition }}",
               "rightValue": "capacitacao",
               "operator": {
                 "type": "string",
@@ -2749,8 +2713,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        336,
-        2160
+        352,
+        2176
       ]
     },
     {
@@ -3050,20 +3014,6 @@
     },
     {
       "parameters": {
-        "amount": 10
-      },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [
-        -1696,
-        2496
-      ],
-      "id": "7c472ce6-47c5-495d-900d-9462c494586e",
-      "name": "Wait1",
-      "webhookId": "20b74c00-3e4f-4ee6-9969-77378983b298"
-    },
-    {
-      "parameters": {
         "content": "## Wait temporário\n\nEstamos usando o evento de visualização de certificado para aprovar a voluntária como pode acontecer dele ser disparado em um intervalo menor que a finalização do curso coloquei ele aqui por enquanto",
         "height": 144,
         "width": 608
@@ -3165,7 +3115,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-06-14T23:13:42.000Z",
+              "updatedAt": "2026-06-15T13:27:16.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -3185,7 +3135,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-06-14",
+              "lastActiveAt": "2026-06-15",
               "isPending": false
             }
           }
@@ -3203,7 +3153,7 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-06-03T21:01:41.359Z",
-  "versionCounter": 59,
-  "versionId": "e7624634-ceed-431b-a390-fe6e1460102a"
+  "updatedAt": "2026-06-15T16:04:49.840Z",
+  "versionCounter": 61,
+  "versionId": "66d44d50-3b5c-4b24-ab1c-c622e9b2ff37"
 }
