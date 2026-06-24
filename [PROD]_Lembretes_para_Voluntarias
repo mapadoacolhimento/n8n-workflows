@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-02-27T02:22:11.327Z",
-    "createdAt": "2026-02-27T02:22:11.327Z",
-    "versionId": "fb582da4-3f96-4348-b536-9a63c1f0d0b0",
+    "updatedAt": "2026-06-24T19:00:04.186Z",
+    "createdAt": "2026-06-24T19:00:04.186Z",
+    "versionId": "d4135a55-b853-4805-b961-e6094d75de16",
     "workflowId": "tD7IUqILripwa5x2",
     "nodes": [
       {
@@ -21,14 +21,14 @@
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2,
         "position": [
-          180,
+          192,
           560
         ]
       },
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
+          "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND m.created_at < '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
           "options": {}
         },
         "id": "34b41c7b-b19b-49b7-b30b-5579d163a502",
@@ -36,7 +36,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          440,
+          448,
           560
         ],
         "credentials": {
@@ -63,7 +63,7 @@
         "typeVersion": 4.1,
         "position": [
           1360,
-          580
+          592
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -83,7 +83,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          700,
+          704,
           560
         ],
         "credentials": {
@@ -95,9 +95,9 @@
       },
       {
         "parameters": {
-          "content": "Lembretes para atualização do status do acolhimento (3, 10 e 14 dias)",
+          "content": "Lembretes para atualização do status do acolhimento (3, 10 e 14 dias) \n### apagar depois do dia 10/07",
           "height": 80,
-          "width": 469.3469390685987,
+          "width": 469,
           "color": 6
         },
         "id": "9d5aad7e-695e-4b0b-bf77-c6c6bbb96514",
@@ -105,8 +105,8 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          140,
-          440
+          144,
+          448
         ]
       },
       {
@@ -118,7 +118,7 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          920,
+          928,
           560
         ]
       },
@@ -131,8 +131,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
         "position": [
-          1140,
-          580
+          1152,
+          592
         ],
         "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
       },
@@ -143,8 +143,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          1140,
-          380
+          1152,
+          384
         ]
       },
       {
@@ -172,7 +172,7 @@
         "typeVersion": 1.1,
         "position": [
           1840,
-          1540
+          1552
         ],
         "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
       },
@@ -183,8 +183,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          1800,
-          1300
+          1808,
+          1312
         ]
       },
       {
@@ -203,8 +203,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          2020,
-          1540
+          2032,
+          1552
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -222,8 +222,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          1860,
-          980
+          1872,
+          992
         ]
       },
       {
@@ -235,8 +235,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
         "position": [
-          2100,
-          1000
+          2112,
+          1008
         ],
         "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
       },
@@ -248,7 +248,7 @@
         "typeVersion": 1,
         "position": [
           2080,
-          780
+          784
         ]
       },
       {
@@ -280,8 +280,8 @@
         "type": "n8n-nodes-base.filter",
         "typeVersion": 2,
         "position": [
-          1560,
-          1000
+          1568,
+          1008
         ]
       },
       {
@@ -295,8 +295,8 @@
         "type": "n8n-nodes-base.removeDuplicates",
         "typeVersion": 1,
         "position": [
-          1260,
-          1260
+          1264,
+          1264
         ]
       },
       {
@@ -307,7 +307,7 @@
         "typeVersion": 2.1,
         "position": [
           1040,
-          1260
+          1264
         ]
       },
       {
@@ -321,8 +321,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          420,
-          1140
+          432,
+          1152
         ],
         "alwaysOutputData": false,
         "executeOnce": false,
@@ -344,7 +344,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          420,
+          432,
           1360
         ],
         "alwaysOutputData": false,
@@ -389,7 +389,7 @@
         "typeVersion": 2.4,
         "position": [
           800,
-          1340
+          1344
         ],
         "credentials": {
           "postgres": {
@@ -411,7 +411,7 @@
         "typeVersion": 1,
         "position": [
           160,
-          1020
+          1024
         ]
       },
       {
@@ -429,8 +429,8 @@
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2,
         "position": [
-          200,
-          1260
+          208,
+          1264
         ]
       },
       {
@@ -469,7 +469,7 @@
         "typeVersion": 4.2,
         "position": [
           2320,
-          1000
+          1008
         ],
         "credentials": {
           "httpBasicAuth": {
@@ -509,7 +509,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          600,
+          608,
           1360
         ]
       },
@@ -543,9 +543,131 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          600,
-          1140
+          608,
+          1152
         ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"volunteer_zendesk_ticket_id\": \"{{ $json.volunteer_zendesk_ticket_id }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "366e7c24-4116-4e86-83f4-ed764b901616",
+        "name": "[Voluntaria] Envia email de lembrete1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1360,
+          256
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    first_name AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    '{{ $json.volunteer_zendesk_ticket_id }}' AS volunteer_zendesk_ticket_id\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+          "options": {}
+        },
+        "id": "2eba60bd-a383-4083-9b15-b4a3b2d58377",
+        "name": "Busca informações da MSR e da Voluntária1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          704,
+          224
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Lembretes para atualização do status do acolhimento (2,4 e 5 dias)",
+          "height": 80,
+          "width": 469,
+          "color": 6
+        },
+        "id": "903a4c9e-17f7-40c6-adab-ca33f2d83fcc",
+        "name": "Sticky Note1",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          144,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "5d77d537-6398-4076-8f7d-f2558975d77c",
+        "name": "Loop Over Items3",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          928,
+          224
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "a6e0d4a1-e5e3-493d-be49-7408fb95f1e6",
+        "name": "Wait3",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1152,
+          256
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {},
+        "id": "ba92e861-f6e3-4242-a2b5-2f73ccb68c75",
+        "name": "No Operation, do nothing3",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1152,
+          48
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND m.created_at >= '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '5 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '4 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '2 DAY');",
+          "options": {}
+        },
+        "id": "01456b96-02bb-402a-a742-674f7e7032f6",
+        "name": "Busca matches aguardando contato há 5,4,2 dias1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          448,
+          224
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
       }
     ],
     "connections": {
@@ -554,6 +676,11 @@
           [
             {
               "node": "Busca matches aguardando contato há 14 ou 28 dias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca matches aguardando contato há 5,4,2 dias1",
               "type": "main",
               "index": 0
             }
@@ -821,19 +948,86 @@
             }
           ]
         ]
+      },
+      "[Voluntaria] Envia email de lembrete1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca informações da MSR e da Voluntária1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items3": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait3": {
+        "main": [
+          [
+            {
+              "node": "[Voluntaria] Envia email de lembrete1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca matches aguardando contato há 5,4,2 dias1": {
+        "main": [
+          [
+            {
+              "node": "Busca informações da MSR e da Voluntária1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
-    "authors": "system migration",
+    "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "fb582da4-3f96-4348-b536-9a63c1f0d0b0",
+  "activeVersionId": "d4135a55-b853-4805-b961-e6094d75de16",
   "connections": {
     "Schedule Trigger": {
       "main": [
         [
           {
             "node": "Busca matches aguardando contato há 14 ou 28 dias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca matches aguardando contato há 5,4,2 dias1",
             "type": "main",
             "index": 0
           }
@@ -1101,6 +1295,68 @@
           }
         ]
       ]
+    },
+    "[Voluntaria] Envia email de lembrete1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca informações da MSR e da Voluntária1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "[Voluntaria] Envia email de lembrete1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca matches aguardando contato há 5,4,2 dias1": {
+      "main": [
+        [
+          {
+            "node": "Busca informações da MSR e da Voluntária1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-07-24T18:23:24.856Z",
@@ -1127,14 +1383,14 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        180,
+        192,
         560
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND m.created_at < '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
         "options": {}
       },
       "id": "34b41c7b-b19b-49b7-b30b-5579d163a502",
@@ -1142,7 +1398,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        440,
+        448,
         560
       ],
       "credentials": {
@@ -1169,7 +1425,7 @@
       "typeVersion": 4.1,
       "position": [
         1360,
-        580
+        592
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1189,7 +1445,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        700,
+        704,
         560
       ],
       "credentials": {
@@ -1201,9 +1457,9 @@
     },
     {
       "parameters": {
-        "content": "Lembretes para atualização do status do acolhimento (3, 10 e 14 dias)",
+        "content": "Lembretes para atualização do status do acolhimento (3, 10 e 14 dias) \n### apagar depois do dia 10/07",
         "height": 80,
-        "width": 469.3469390685987,
+        "width": 469,
         "color": 6
       },
       "id": "9d5aad7e-695e-4b0b-bf77-c6c6bbb96514",
@@ -1211,8 +1467,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        140,
-        440
+        144,
+        448
       ]
     },
     {
@@ -1224,7 +1480,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        920,
+        928,
         560
       ]
     },
@@ -1237,8 +1493,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1140,
-        580
+        1152,
+        592
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -1249,8 +1505,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1140,
-        380
+        1152,
+        384
       ]
     },
     {
@@ -1278,7 +1534,7 @@
       "typeVersion": 1.1,
       "position": [
         1840,
-        1540
+        1552
       ],
       "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
     },
@@ -1289,8 +1545,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1800,
-        1300
+        1808,
+        1312
       ]
     },
     {
@@ -1309,8 +1565,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2020,
-        1540
+        2032,
+        1552
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1328,8 +1584,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1860,
-        980
+        1872,
+        992
       ]
     },
     {
@@ -1341,8 +1597,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2100,
-        1000
+        2112,
+        1008
       ],
       "webhookId": "14ea1b78-dd62-48d6-8fb6-535b9f08c48e"
     },
@@ -1354,7 +1610,7 @@
       "typeVersion": 1,
       "position": [
         2080,
-        780
+        784
       ]
     },
     {
@@ -1386,8 +1642,8 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2,
       "position": [
-        1560,
-        1000
+        1568,
+        1008
       ]
     },
     {
@@ -1401,8 +1657,8 @@
       "type": "n8n-nodes-base.removeDuplicates",
       "typeVersion": 1,
       "position": [
-        1260,
-        1260
+        1264,
+        1264
       ]
     },
     {
@@ -1413,7 +1669,7 @@
       "typeVersion": 2.1,
       "position": [
         1040,
-        1260
+        1264
       ]
     },
     {
@@ -1427,8 +1683,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        420,
-        1140
+        432,
+        1152
       ],
       "alwaysOutputData": false,
       "executeOnce": false,
@@ -1450,7 +1706,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        420,
+        432,
         1360
       ],
       "alwaysOutputData": false,
@@ -1495,7 +1751,7 @@
       "typeVersion": 2.4,
       "position": [
         800,
-        1340
+        1344
       ],
       "credentials": {
         "postgres": {
@@ -1517,7 +1773,7 @@
       "typeVersion": 1,
       "position": [
         160,
-        1020
+        1024
       ]
     },
     {
@@ -1535,8 +1791,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        200,
-        1260
+        208,
+        1264
       ]
     },
     {
@@ -1575,7 +1831,7 @@
       "typeVersion": 4.2,
       "position": [
         2320,
-        1000
+        1008
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -1615,7 +1871,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        600,
+        608,
         1360
       ]
     },
@@ -1649,9 +1905,131 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        600,
-        1140
+        608,
+        1152
       ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh3n8t80037dgsakbcl1evg\",\n  \"email\": \"{{ $json.volunteer_email }}\",\n  \"dataVariables\": {\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"volunteer_zendesk_ticket_id\": \"{{ $json.volunteer_zendesk_ticket_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "366e7c24-4116-4e86-83f4-ed764b901616",
+      "name": "[Voluntaria] Envia email de lembrete1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1360,
+        256
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    first_name AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    '{{ $json.volunteer_zendesk_ticket_id }}' AS volunteer_zendesk_ticket_id\nFROM pii_sec.msr_pii\nWHERE msr_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "2eba60bd-a383-4083-9b15-b4a3b2d58377",
+      "name": "Busca informações da MSR e da Voluntária1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        704,
+        224
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Lembretes para atualização do status do acolhimento (2,4 e 5 dias)",
+        "height": 80,
+        "width": 469,
+        "color": 6
+      },
+      "id": "903a4c9e-17f7-40c6-adab-ca33f2d83fcc",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        144,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5d77d537-6398-4076-8f7d-f2558975d77c",
+      "name": "Loop Over Items3",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        928,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "a6e0d4a1-e5e3-493d-be49-7408fb95f1e6",
+      "name": "Wait3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        256
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {},
+      "id": "ba92e861-f6e3-4242-a2b5-2f73ccb68c75",
+      "name": "No Operation, do nothing3",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  volunteer_zendesk_ticket_id\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND m.created_at >= '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '5 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '4 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '2 DAY');",
+        "options": {}
+      },
+      "id": "01456b96-02bb-402a-a742-674f7e7032f6",
+      "name": "Busca matches aguardando contato há 5,4,2 dias1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        224
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {
@@ -1701,7 +2079,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-06-22T12:41:53.000Z",
+              "updatedAt": "2026-06-24T15:57:55.131Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -1715,14 +2093,14 @@
                 "userActivatedAt": 1731658062996,
                 "npsSurvey": {
                   "waitingForResponse": true,
-                  "ignoredCount": 1,
-                  "lastShownAt": 1781616956799
+                  "ignoredCount": 2,
+                  "lastShownAt": 1782316670965
                 },
                 "easyAIWorkflowOnboarded": true
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-06-22",
+              "lastActiveAt": "2026-06-24",
               "isPending": false
             }
           }
@@ -1742,7 +2120,7 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-01-29T13:53:20.000Z",
-  "versionCounter": 12,
-  "versionId": "fb582da4-3f96-4348-b536-9a63c1f0d0b0"
+  "updatedAt": "2026-06-24T19:00:04.185Z",
+  "versionCounter": 20,
+  "versionId": "d4135a55-b853-4805-b961-e6094d75de16"
 }
