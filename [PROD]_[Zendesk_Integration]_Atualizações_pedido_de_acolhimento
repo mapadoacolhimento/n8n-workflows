@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-05-21T16:22:54.274Z",
-    "createdAt": "2026-05-21T16:22:54.274Z",
-    "versionId": "930ad1e6-0fa0-4400-9572-4031d359bc04",
+    "updatedAt": "2026-06-24T18:43:40.479Z",
+    "createdAt": "2026-06-24T18:43:40.479Z",
+    "versionId": "79bc83f2-95a7-4dc7-8d6b-198636e13c90",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -111,7 +111,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2024-01-25'\n   AND created_at < CURRENT_DATE - INTERVAL '15 DAY'",
+          "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2024-01-25'\n   AND created_at <  '2026-06-24 18:25:13' \n   AND created_at < CURRENT_DATE - INTERVAL '15 DAY'",
           "additionalFields": {}
         },
         "id": "7858e8b6-92c7-4a3e-ac15-00dfc1c6cbf7",
@@ -214,7 +214,7 @@
       },
       {
         "parameters": {
-          "content": "expires matches",
+          "content": "1expires matches 15 dias\n### apagar depois do dia 10/07/2026\n",
           "height": 80,
           "width": 233.26349637113265
         },
@@ -904,8 +904,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          704,
-          2544
+          688,
+          4128
         ],
         "credentials": {
           "postgres": {
@@ -930,8 +930,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          1184,
-          2784
+          1168,
+          4368
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -951,8 +951,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          960,
-          2400
+          944,
+          3984
         ],
         "credentials": {
           "postgres": {
@@ -981,8 +981,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          960,
-          2608
+          944,
+          4192
         ],
         "credentials": {
           "zendeskApi": {
@@ -1002,8 +1002,8 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          288,
-          2560
+          272,
+          4144
         ]
       },
       {
@@ -1017,8 +1017,8 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          960,
-          2784
+          944,
+          4368
         ],
         "credentials": {
           "zendeskApi": {
@@ -2332,6 +2332,392 @@
         ],
         "id": "24d5ce06-a085-45df-a21f-cc5c9cb5159d",
         "name": "If6"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10,
+                "triggerAtMinute": 10
+              }
+            ]
+          }
+        },
+        "id": "48c7305a-ccbd-4f40-91f6-c4be142a7d55",
+        "name": "Schedule Trigger1",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1,
+        "position": [
+          288,
+          2640
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2026-06-24 18:25:13'\n   AND created_at < CURRENT_DATE - INTERVAL '5 DAY'",
+          "additionalFields": {}
+        },
+        "id": "25f27e0d-6c83-43fd-b455-229bce0493db",
+        "name": "Fetch matches that should be expired today1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 1,
+        "position": [
+          640,
+          2640
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{$json[\"msr_zendesk_ticket_id\"]}}",
+          "updateFields": {
+            "customFieldsUi": {
+              "customFieldsValues": [
+                {
+                  "id": 360014379412,
+                  "value": "encaminhamento__expirado"
+                }
+              ]
+            },
+            "publicReply": "Olá, {{ticket.requester.first_name}}!\n\nEspero que esteja bem na medida do possível.\n\nEstamos aqui para informá-la que hoje completam 5 dias do seu encaminhamento. Dessa forma, como não recebemos nenhuma confirmação acerca do início do atendimento entre você e a profissional indicada, sua vaga será liberada para uma outra mulher que necessite de ajuda.\n\nCaso, em algum outro momento, você deseje novamente receber nossa ajuda, é só escrever para o atendimento@mapadoacolhimento.org que te encaminharemos o contato de uma outra profissional disponível ou do serviço público mais próximo.\n\nConte conosco e nos escreva em caso de dúvidas. Estamos aqui para ajudá-la no que for possível <3.\n\nForte abraço,\nEquipe do Mapa do Acolhimento"
+          }
+        },
+        "id": "014584df-9204-4fca-bfd7-db44b0ab331f",
+        "name": "Update MSR Zendesk ticket1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          960,
+          2896
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{$json[\"volunteer_zendesk_ticket_id\"]}}",
+          "updateFields": {
+            "customFieldsUi": {
+              "customFieldsValues": [
+                {
+                  "id": 360014379412,
+                  "value": "encaminhamento__expirado"
+                }
+              ]
+            },
+            "publicReply": "Olá, {{ticket.requester.first_name}}! Esperamos que você esteja bem! \n\nEstamos aqui para informá-la que hoje completam 5 dias desde o encaminhamento da {{ticket.ticket_field_360016681971}} mulher que precisa de ajuda. Dessa forma, como não recebemos nenhuma confirmação acerca do início do atendimento entre você e ela, estamos liberando sua vaga para um novo pedido de ajuda.\n\nNo entanto, se a {{ticket.ticket_field_360016681971}} te contactar, mesmo depois do tempo previsto, pedimos por favor que nos avise por e-mail ou por WhatsApp. Assim, poderemos garantir que ela receba o apoio que precisa e atualizar a sua disponibilidade no nosso sistema.\n\nVocê é parte essencial da nossa rede de apoio <3. Qualquer dúvida nos escreva.\n\nAbraços,\nEquipe do Mapa do Acolhimento"
+          }
+        },
+        "id": "b848afc1-1956-4940-bb3b-88f08c6d3ea6",
+        "name": "Update Volunteer Zendesk ticket1",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          960,
+          3168
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "expires matches 5 dias",
+          "height": 80,
+          "width": 233.26349637113265
+        },
+        "id": "d928b00e-10c9-4782-88bb-f8d80f214608",
+        "name": "Sticky Note4",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          640,
+          2544
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+          "options": {}
+        },
+        "id": "8ea2ff29-134b-491b-a72b-b7d027b15001",
+        "name": "Update current_matches2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          1744,
+          2144
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    zendesk_user_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, zendesk_user_id, current_matches, max_matches, condition",
+          "options": {}
+        },
+        "id": "9be3b251-7359-4e28-97cf-9d7db342af02",
+        "name": "Fetch volunteer current_matches2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          1168,
+          2656
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "id": "53a6dfc0-564c-46c6-ba31-a373e2b718ac",
+                "leftValue": "={{ $json.calculated_current_matches }}",
+                "rightValue": "={{ $json.max_matches }}",
+                "operator": {
+                  "type": "number",
+                  "operation": "gte"
+                }
+              },
+              {
+                "id": "a2bc3ae3-1aab-441f-85c1-1b45156b8492",
+                "leftValue": "={{ $json.condition }}",
+                "rightValue": "disponivel",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {
+            "looseTypeValidation": true
+          }
+        },
+        "id": "ccde3fa6-cdd8-47e8-a2a6-cb3dc3cc28c8",
+        "name": "Should make volunteer unavailable?2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1744,
+          2448
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "id": "40361bb8-ee27-4874-8c13-bbaa181aaece",
+                "leftValue": "={{ $json.current_matches }}",
+                "rightValue": "={{ $json.calculated_current_matches }}",
+                "operator": {
+                  "type": "number",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {
+            "looseTypeValidation": true
+          }
+        },
+        "id": "c6611448-8582-4075-9db0-9039f8eaa256",
+        "name": "Should update current_matches?2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1360,
+          2656
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE public.volunteers\nSET condition = 'indisponivel_sem_vagas', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'indisponivel_sem_vagas', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = FALSE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
+          "options": {}
+        },
+        "id": "dee5f69e-55d2-49f1-a0a7-cba3ff286807",
+        "name": "Make volunteer unavailable2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          2128,
+          2224
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "update",
+          "id": "={{$json[\"zendesk_user_id\"]}}",
+          "updateFields": {
+            "userFieldsUi": {
+              "userFieldValues": [
+                {
+                  "field": "condition",
+                  "value": "indisponivel_sem_vagas"
+                }
+              ]
+            }
+          }
+        },
+        "id": "33154361-3660-4672-a297-c46ebe68315c",
+        "name": "Status da Mulher = Indisponivel - Sem Vagas2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          2128,
+          2416
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "id": "53a6dfc0-564c-46c6-ba31-a373e2b718ac",
+                "leftValue": "={{ $json.calculated_current_matches }}",
+                "rightValue": "={{ $json.max_matches }}",
+                "operator": {
+                  "type": "number",
+                  "operation": "lt"
+                }
+              },
+              {
+                "id": "a2bc3ae3-1aab-441f-85c1-1b45156b8492",
+                "leftValue": "={{ $json.condition }}",
+                "rightValue": "indisponivel_sem_vagas",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {
+            "looseTypeValidation": true
+          }
+        },
+        "id": "6cb447e1-7c11-40ff-b045-66c90fdb55b7",
+        "name": "Should make volunteer available?2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1760,
+          2784
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
+          "options": {}
+        },
+        "id": "8f2df0f4-5857-4d7a-8e73-c5ebd52a15d3",
+        "name": "Make volunteer available2",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          2128,
+          2768
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "update",
+          "id": "={{$json[\"zendesk_user_id\"]}}",
+          "updateFields": {
+            "userFieldsUi": {
+              "userFieldValues": [
+                {
+                  "field": "condition",
+                  "value": "Disponível"
+                }
+              ]
+            }
+          }
+        },
+        "id": "95ae7747-4447-46ad-9393-f525e1373bc1",
+        "name": "Status da Mulher = Disponível2",
+        "type": "n8n-nodes-base.zendesk",
+        "typeVersion": 1,
+        "position": [
+          2128,
+          3008
+        ],
+        "credentials": {
+          "zendeskApi": {
+            "id": "MYAFeR51noxrxEC7",
+            "name": "Zendesk account"
+          }
+        }
       }
     ],
     "connections": {
@@ -3047,13 +3433,109 @@
             }
           ]
         ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Fetch matches that should be expired today1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch matches that should be expired today1": {
+        "main": [
+          [
+            {
+              "node": "Update MSR Zendesk ticket1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Update Volunteer Zendesk ticket1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Fetch volunteer current_matches2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch volunteer current_matches2": {
+        "main": [
+          [
+            {
+              "node": "Should update current_matches?2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Should make volunteer unavailable?2": {
+        "main": [
+          [
+            {
+              "node": "Make volunteer unavailable2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Status da Mulher = Indisponivel - Sem Vagas2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Should update current_matches?2": {
+        "main": [
+          [
+            {
+              "node": "Update current_matches2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Should make volunteer unavailable?2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Should make volunteer available?2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Should make volunteer available?2": {
+        "main": [
+          [
+            {
+              "node": "Make volunteer available2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Status da Mulher = Disponível2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "930ad1e6-0fa0-4400-9572-4031d359bc04",
+  "activeVersionId": "79bc83f2-95a7-4dc7-8d6b-198636e13c90",
   "connections": {
     "Webhook": {
       "main": [
@@ -3767,6 +4249,102 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Fetch matches that should be expired today1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch matches that should be expired today1": {
+      "main": [
+        [
+          {
+            "node": "Update MSR Zendesk ticket1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Volunteer Zendesk ticket1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch volunteer current_matches2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch volunteer current_matches2": {
+      "main": [
+        [
+          {
+            "node": "Should update current_matches?2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should make volunteer unavailable?2": {
+      "main": [
+        [
+          {
+            "node": "Make volunteer unavailable2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Status da Mulher = Indisponivel - Sem Vagas2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should update current_matches?2": {
+      "main": [
+        [
+          {
+            "node": "Update current_matches2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Should make volunteer unavailable?2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Should make volunteer available?2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should make volunteer available?2": {
+      "main": [
+        [
+          {
+            "node": "Make volunteer available2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Status da Mulher = Disponível2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-04-10T15:17:23.968Z",
@@ -3883,7 +4461,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2024-01-25'\n   AND created_at < CURRENT_DATE - INTERVAL '15 DAY'",
+        "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2024-01-25'\n   AND created_at <  '2026-06-24 18:25:13' \n   AND created_at < CURRENT_DATE - INTERVAL '15 DAY'",
         "additionalFields": {}
       },
       "id": "7858e8b6-92c7-4a3e-ac15-00dfc1c6cbf7",
@@ -3986,7 +4564,7 @@
     },
     {
       "parameters": {
-        "content": "expires matches",
+        "content": "1expires matches 15 dias\n### apagar depois do dia 10/07/2026\n",
         "height": 80,
         "width": 233.26349637113265
       },
@@ -4676,8 +5254,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        704,
-        2544
+        688,
+        4128
       ],
       "credentials": {
         "postgres": {
@@ -4702,8 +5280,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1184,
-        2784
+        1168,
+        4368
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -4723,8 +5301,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        960,
-        2400
+        944,
+        3984
       ],
       "credentials": {
         "postgres": {
@@ -4753,8 +5331,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        960,
-        2608
+        944,
+        4192
       ],
       "credentials": {
         "zendeskApi": {
@@ -4774,8 +5352,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        288,
-        2560
+        272,
+        4144
       ]
     },
     {
@@ -4789,8 +5367,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        960,
-        2784
+        944,
+        4368
       ],
       "credentials": {
         "zendeskApi": {
@@ -6104,6 +6682,392 @@
       ],
       "id": "24d5ce06-a085-45df-a21f-cc5c9cb5159d",
       "name": "If6"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10,
+              "triggerAtMinute": 10
+            }
+          ]
+        }
+      },
+      "id": "48c7305a-ccbd-4f40-91f6-c4be142a7d55",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        2640
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2026-06-24 18:25:13'\n   AND created_at < CURRENT_DATE - INTERVAL '5 DAY'",
+        "additionalFields": {}
+      },
+      "id": "25f27e0d-6c83-43fd-b455-229bce0493db",
+      "name": "Fetch matches that should be expired today1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2640
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{$json[\"msr_zendesk_ticket_id\"]}}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "encaminhamento__expirado"
+              }
+            ]
+          },
+          "publicReply": "Olá, {{ticket.requester.first_name}}!\n\nEspero que esteja bem na medida do possível.\n\nEstamos aqui para informá-la que hoje completam 5 dias do seu encaminhamento. Dessa forma, como não recebemos nenhuma confirmação acerca do início do atendimento entre você e a profissional indicada, sua vaga será liberada para uma outra mulher que necessite de ajuda.\n\nCaso, em algum outro momento, você deseje novamente receber nossa ajuda, é só escrever para o atendimento@mapadoacolhimento.org que te encaminharemos o contato de uma outra profissional disponível ou do serviço público mais próximo.\n\nConte conosco e nos escreva em caso de dúvidas. Estamos aqui para ajudá-la no que for possível <3.\n\nForte abraço,\nEquipe do Mapa do Acolhimento"
+        }
+      },
+      "id": "014584df-9204-4fca-bfd7-db44b0ab331f",
+      "name": "Update MSR Zendesk ticket1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        960,
+        2896
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{$json[\"volunteer_zendesk_ticket_id\"]}}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360014379412,
+                "value": "encaminhamento__expirado"
+              }
+            ]
+          },
+          "publicReply": "Olá, {{ticket.requester.first_name}}! Esperamos que você esteja bem! \n\nEstamos aqui para informá-la que hoje completam 5 dias desde o encaminhamento da {{ticket.ticket_field_360016681971}} mulher que precisa de ajuda. Dessa forma, como não recebemos nenhuma confirmação acerca do início do atendimento entre você e ela, estamos liberando sua vaga para um novo pedido de ajuda.\n\nNo entanto, se a {{ticket.ticket_field_360016681971}} te contactar, mesmo depois do tempo previsto, pedimos por favor que nos avise por e-mail ou por WhatsApp. Assim, poderemos garantir que ela receba o apoio que precisa e atualizar a sua disponibilidade no nosso sistema.\n\nVocê é parte essencial da nossa rede de apoio <3. Qualquer dúvida nos escreva.\n\nAbraços,\nEquipe do Mapa do Acolhimento"
+        }
+      },
+      "id": "b848afc1-1956-4940-bb3b-88f08c6d3ea6",
+      "name": "Update Volunteer Zendesk ticket1",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        960,
+        3168
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "expires matches 5 dias",
+        "height": 80,
+        "width": 233.26349637113265
+      },
+      "id": "d928b00e-10c9-4782-88bb-f8d80f214608",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2544
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteer_availability\nSET current_matches = {{ $json.calculated_current_matches }}, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }}",
+        "options": {}
+      },
+      "id": "8ea2ff29-134b-491b-a72b-b7d027b15001",
+      "name": "Update current_matches2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1744,
+        2144
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH matches_from_volunteer AS (\n    SELECT \n        volunteer_id,\n        match_id\n    FROM match.matches\n    WHERE \n        volunteer_id = {{ $json.volunteer_id }}\n        AND status IN ('waiting_contact', 'in_contact')\n)\nSELECT\n    volunteer_id,\n    zendesk_user_id,\n    current_matches,\n    max_matches,\n    condition,\n    COUNT(DISTINCT match_id) AS calculated_current_matches\nFROM volunteer_availability a\nLEFT JOIN matches_from_volunteer m USING(volunteer_id)\nLEFT JOIN volunteers v ON v.id = a.volunteer_id\nWHERE \n    volunteer_id =  {{ $json.volunteer_id }}\nGROUP BY volunteer_id, zendesk_user_id, current_matches, max_matches, condition",
+        "options": {}
+      },
+      "id": "9be3b251-7359-4e28-97cf-9d7db342af02",
+      "name": "Fetch volunteer current_matches2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1168,
+        2656
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "53a6dfc0-564c-46c6-ba31-a373e2b718ac",
+              "leftValue": "={{ $json.calculated_current_matches }}",
+              "rightValue": "={{ $json.max_matches }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "a2bc3ae3-1aab-441f-85c1-1b45156b8492",
+              "leftValue": "={{ $json.condition }}",
+              "rightValue": "disponivel",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "ccde3fa6-cdd8-47e8-a2a6-cb3dc3cc28c8",
+      "name": "Should make volunteer unavailable?2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1744,
+        2448
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "40361bb8-ee27-4874-8c13-bbaa181aaece",
+              "leftValue": "={{ $json.current_matches }}",
+              "rightValue": "={{ $json.calculated_current_matches }}",
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "c6611448-8582-4075-9db0-9039f8eaa256",
+      "name": "Should update current_matches?2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        2656
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteers\nSET condition = 'indisponivel_sem_vagas', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'indisponivel_sem_vagas', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = FALSE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
+        "options": {}
+      },
+      "id": "dee5f69e-55d2-49f1-a0a7-cba3ff286807",
+      "name": "Make volunteer unavailable2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2128,
+        2224
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{$json[\"zendesk_user_id\"]}}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "indisponivel_sem_vagas"
+              }
+            ]
+          }
+        }
+      },
+      "id": "33154361-3660-4672-a297-c46ebe68315c",
+      "name": "Status da Mulher = Indisponivel - Sem Vagas2",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        2416
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "53a6dfc0-564c-46c6-ba31-a373e2b718ac",
+              "leftValue": "={{ $json.calculated_current_matches }}",
+              "rightValue": "={{ $json.max_matches }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "a2bc3ae3-1aab-441f-85c1-1b45156b8492",
+              "leftValue": "={{ $json.condition }}",
+              "rightValue": "indisponivel_sem_vagas",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "6cb447e1-7c11-40ff-b045-66c90fdb55b7",
+      "name": "Should make volunteer available?2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        2784
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.volunteers\nSET condition = 'disponivel', updated_at = NOW()\nWHERE id = {{$json[\"volunteer_id\"]}};\n\nINSERT INTO public.volunteer_status_history (volunteer_id, status, created_at)\nVALUES ({{$json[\"volunteer_id\"]}}, 'disponivel', NOW());\n\nUPDATE public.volunteer_availability\nSET is_available = TRUE, updated_at = NOW()\nWHERE volunteer_id = {{$json[\"volunteer_id\"]}}",
+        "options": {}
+      },
+      "id": "8f2df0f4-5857-4d7a-8e73-c5ebd52a15d3",
+      "name": "Make volunteer available2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2128,
+        2768
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "update",
+        "id": "={{$json[\"zendesk_user_id\"]}}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "Disponível"
+              }
+            ]
+          }
+        }
+      },
+      "id": "95ae7747-4447-46ad-9393-f525e1373bc1",
+      "name": "Status da Mulher = Disponível2",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        3008
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -6218,6 +7182,23 @@
           "item": 0
         }
       }
+    ],
+    "Schedule Trigger1": [
+      {
+        "json": {
+          "timestamp": "2024-05-06T09:00:00.018-03:00",
+          "Readable date": "May 6th 2024, 9:00:00 am",
+          "Readable time": "9:00:00 am",
+          "Day of week": "Monday",
+          "Year": "2024",
+          "Month": "May",
+          "Day of month": "06",
+          "Hour": "09",
+          "Minute": "00",
+          "Second": "00",
+          "Timezone": "-03 -03:00"
+        }
+      }
     ]
   },
   "settings": {
@@ -6248,7 +7229,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-06-23T18:50:15.000Z",
+              "updatedAt": "2026-06-24T15:57:55.131Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -6262,14 +7243,14 @@
                 "userActivatedAt": 1731658062996,
                 "npsSurvey": {
                   "waitingForResponse": true,
-                  "ignoredCount": 1,
-                  "lastShownAt": 1781616956799
+                  "ignoredCount": 2,
+                  "lastShownAt": 1782316670965
                 },
                 "easyAIWorkflowOnboarded": true
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-06-23",
+              "lastActiveAt": "2026-06-24",
               "isPending": false
             }
           }
@@ -6281,6 +7262,9 @@
     "node:Schedule Trigger": {
       "recurrencyRules": [],
       "recurrenceRules": []
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
     }
   },
   "tags": [
@@ -6291,8 +7275,8 @@
       "name": "zendesk integration"
     }
   ],
-  "triggerCount": 4,
-  "updatedAt": "2026-05-21T16:22:54.272Z",
-  "versionCounter": 137,
-  "versionId": "930ad1e6-0fa0-4400-9572-4031d359bc04"
+  "triggerCount": 5,
+  "updatedAt": "2026-06-24T18:43:40.477Z",
+  "versionCounter": 144,
+  "versionId": "79bc83f2-95a7-4dc7-8d6b-198636e13c90"
 }
