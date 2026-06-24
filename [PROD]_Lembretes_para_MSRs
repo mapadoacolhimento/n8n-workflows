@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-02-27T02:22:11.327Z",
-    "createdAt": "2026-02-27T02:22:11.327Z",
-    "versionId": "bb9ba47b-02b6-4d85-a4c4-6f5e733d062a",
+    "updatedAt": "2026-06-24T18:42:56.022Z",
+    "createdAt": "2026-06-24T18:42:56.022Z",
+    "versionId": "4d67fe9c-14c5-403d-b4aa-94ef6104b6a9",
     "workflowId": "PmzVbulsO99IhiJ6",
     "nodes": [
       {
@@ -22,7 +22,7 @@
         "typeVersion": 1.1,
         "position": [
           1280,
-          340
+          352
         ]
       },
       {
@@ -41,7 +41,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          3000,
+          3008,
           960
         ],
         "credentials": {
@@ -63,7 +63,7 @@
         "typeVersion": 2.3,
         "position": [
           1920,
-          920
+          928
         ],
         "credentials": {
           "postgres": {
@@ -83,7 +83,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          2140,
+          2144,
           800
         ],
         "credentials": {
@@ -96,7 +96,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
+          "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND  m.created_at < '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
           "options": {}
         },
         "id": "8b02403f-7387-47d3-b148-ea5df4d264f7",
@@ -104,8 +104,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          1900,
-          -120
+          1904,
+          -128
         ],
         "credentials": {
           "postgres": {
@@ -125,8 +125,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          2100,
-          -120
+          2112,
+          -128
         ],
         "credentials": {
           "postgres": {
@@ -151,8 +151,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          2740,
-          -100
+          2752,
+          -96
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -173,8 +173,8 @@
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          1900,
-          -220
+          1904,
+          -224
         ]
       },
       {
@@ -190,7 +190,7 @@
         "typeVersion": 1,
         "position": [
           1920,
-          680
+          688
         ]
       },
       {
@@ -202,8 +202,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          2340,
-          -120
+          2352,
+          -128
         ]
       },
       {
@@ -215,8 +215,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
         "position": [
-          2540,
-          -100
+          2544,
+          -96
         ],
         "webhookId": "40038c57-453f-4319-a0bb-60ecdb153133"
       },
@@ -228,7 +228,7 @@
         "typeVersion": 1,
         "position": [
           2560,
-          -280
+          -288
         ]
       },
       {
@@ -241,7 +241,7 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1,
         "position": [
-          2780,
+          2784,
           960
         ],
         "webhookId": "f12e8ff1-9ff6-4407-990b-55a79f376f6d"
@@ -256,7 +256,7 @@
         "typeVersion": 3,
         "position": [
           2560,
-          940
+          944
         ]
       },
       {
@@ -266,8 +266,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          2780,
-          780
+          2784,
+          784
         ]
       },
       {
@@ -281,8 +281,8 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 2.1,
         "position": [
-          2340,
-          940
+          2352,
+          944
         ]
       },
       {
@@ -298,7 +298,7 @@
         "typeVersion": 1,
         "position": [
           1920,
-          1240
+          1248
         ]
       },
       {
@@ -313,7 +313,7 @@
         "typeVersion": 2.3,
         "position": [
           1920,
-          1400
+          1408
         ],
         "credentials": {
           "postgres": {
@@ -333,8 +333,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.4,
         "position": [
-          2360,
-          1400
+          2368,
+          1408
         ],
         "credentials": {
           "postgres": {
@@ -353,8 +353,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1,
         "position": [
-          2940,
-          1420
+          2944,
+          1424
         ],
         "webhookId": "1296b42c-3692-48dc-a798-e583c03a653e"
       },
@@ -368,7 +368,7 @@
         "typeVersion": 3,
         "position": [
           2720,
-          1400
+          1408
         ]
       },
       {
@@ -378,8 +378,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          2940,
-          1240
+          2944,
+          1248
         ]
       },
       {
@@ -398,8 +398,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          3160,
-          1420
+          3168,
+          1424
         ],
         "credentials": {
           "httpHeaderAuth": {
@@ -437,8 +437,130 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          2140,
-          1400
+          2144,
+          1408
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND m.created_at >= '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '5 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '4 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '2 DAY');",
+          "options": {}
+        },
+        "id": "76f601c5-0c4f-43a7-a230-4659a628c566",
+        "name": "Busca matches aguardando contato há 14 ou 28 dias1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          1856,
+          272
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    first_name AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type,\n    '{{ $json.msr_zendesk_ticket_id }}' AS msr_zendesk_ticket_id\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}",
+          "options": {}
+        },
+        "id": "7959ec95-a6e6-4fbe-b3ce-e38406055840",
+        "name": "Busca informações da MSR e da Voluntária1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          2064,
+          272
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://app.loops.so/api/v1/transactional",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_zendesk_ticket_id\": \"{{ $json.msr_zendesk_ticket_id }}\"\n  }\n}",
+          "options": {}
+        },
+        "id": "0023e0f7-48a3-45e6-969d-001c7c5c0d1a",
+        "name": "[MSR] Envia email de lembrete1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          2704,
+          304
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Lembretes para atualização do status do acolhimento (2, 4 e 5 dias)",
+          "height": 80,
+          "width": 484.19607189456474,
+          "color": 6
+        },
+        "id": "8905f527-c728-406f-8138-0e1384e917fd",
+        "name": "Sticky Note3",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1856,
+          176
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "46df9a59-ec3f-45af-86d6-b1f5336eeca9",
+        "name": "Loop Over Items3",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          2304,
+          272
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 2
+        },
+        "id": "06b66d7a-4576-456c-a78c-d32c37d767d5",
+        "name": "Wait1",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2496,
+          304
+        ],
+        "webhookId": "40038c57-453f-4319-a0bb-60ecdb153133"
+      },
+      {
+        "parameters": {},
+        "id": "0cba166f-14a3-433a-8ea2-343b083a9018",
+        "name": "No Operation, do nothing3",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2512,
+          112
         ]
       }
     ],
@@ -458,6 +580,11 @@
             },
             {
               "node": "Busca pedidos de acolhimento há 7 dias na fila",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Busca matches aguardando contato há 14 ou 28 dias1",
               "type": "main",
               "index": 0
             }
@@ -676,13 +803,75 @@
             }
           ]
         ]
+      },
+      "Busca matches aguardando contato há 14 ou 28 dias1": {
+        "main": [
+          [
+            {
+              "node": "Busca informações da MSR e da Voluntária1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca informações da MSR e da Voluntária1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "[MSR] Envia email de lembrete1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items3": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "[MSR] Envia email de lembrete1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
-    "authors": "system migration",
+    "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "bb9ba47b-02b6-4d85-a4c4-6f5e733d062a",
+  "activeVersionId": "4d67fe9c-14c5-403d-b4aa-94ef6104b6a9",
   "connections": {
     "Schedule Trigger": {
       "main": [
@@ -699,6 +888,11 @@
           },
           {
             "node": "Busca pedidos de acolhimento há 7 dias na fila",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca matches aguardando contato há 14 ou 28 dias1",
             "type": "main",
             "index": 0
           }
@@ -917,6 +1111,68 @@
           }
         ]
       ]
+    },
+    "Busca matches aguardando contato há 14 ou 28 dias1": {
+      "main": [
+        [
+          {
+            "node": "Busca informações da MSR e da Voluntária1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca informações da MSR e da Voluntária1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[MSR] Envia email de lembrete1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "[MSR] Envia email de lembrete1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-07-24T18:15:05.042Z",
@@ -944,7 +1200,7 @@
       "typeVersion": 1.1,
       "position": [
         1280,
-        340
+        352
       ]
     },
     {
@@ -963,7 +1219,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        3000,
+        3008,
         960
       ],
       "credentials": {
@@ -985,7 +1241,7 @@
       "typeVersion": 2.3,
       "position": [
         1920,
-        920
+        928
       ],
       "credentials": {
         "postgres": {
@@ -1005,7 +1261,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2140,
+        2144,
         800
       ],
       "credentials": {
@@ -1018,7 +1274,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND  m.created_at < '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '14 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '10 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '3 DAY');",
         "options": {}
       },
       "id": "8b02403f-7387-47d3-b148-ea5df4d264f7",
@@ -1026,8 +1282,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1900,
-        -120
+        1904,
+        -128
       ],
       "credentials": {
         "postgres": {
@@ -1047,8 +1303,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        2100,
-        -120
+        2112,
+        -128
       ],
       "credentials": {
         "postgres": {
@@ -1073,8 +1329,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2740,
-        -100
+        2752,
+        -96
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1095,8 +1351,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1900,
-        -220
+        1904,
+        -224
       ]
     },
     {
@@ -1112,7 +1368,7 @@
       "typeVersion": 1,
       "position": [
         1920,
-        680
+        688
       ]
     },
     {
@@ -1124,8 +1380,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        2340,
-        -120
+        2352,
+        -128
       ]
     },
     {
@@ -1137,8 +1393,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2540,
-        -100
+        2544,
+        -96
       ],
       "webhookId": "40038c57-453f-4319-a0bb-60ecdb153133"
     },
@@ -1150,7 +1406,7 @@
       "typeVersion": 1,
       "position": [
         2560,
-        -280
+        -288
       ]
     },
     {
@@ -1163,7 +1419,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
       "position": [
-        2780,
+        2784,
         960
       ],
       "webhookId": "f12e8ff1-9ff6-4407-990b-55a79f376f6d"
@@ -1178,7 +1434,7 @@
       "typeVersion": 3,
       "position": [
         2560,
-        940
+        944
       ]
     },
     {
@@ -1188,8 +1444,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        2780,
-        780
+        2784,
+        784
       ]
     },
     {
@@ -1203,8 +1459,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        2340,
-        940
+        2352,
+        944
       ]
     },
     {
@@ -1220,7 +1476,7 @@
       "typeVersion": 1,
       "position": [
         1920,
-        1240
+        1248
       ]
     },
     {
@@ -1235,7 +1491,7 @@
       "typeVersion": 2.3,
       "position": [
         1920,
-        1400
+        1408
       ],
       "credentials": {
         "postgres": {
@@ -1255,8 +1511,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        2360,
-        1400
+        2368,
+        1408
       ],
       "credentials": {
         "postgres": {
@@ -1275,8 +1531,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
       "position": [
-        2940,
-        1420
+        2944,
+        1424
       ],
       "webhookId": "1296b42c-3692-48dc-a798-e583c03a653e"
     },
@@ -1290,7 +1546,7 @@
       "typeVersion": 3,
       "position": [
         2720,
-        1400
+        1408
       ]
     },
     {
@@ -1300,8 +1556,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        2940,
-        1240
+        2944,
+        1248
       ]
     },
     {
@@ -1320,8 +1576,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        3160,
-        1420
+        3168,
+        1424
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1359,8 +1615,130 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        2140,
-        1400
+        2144,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  match_id,\n  msr_id,\n  volunteer_id,\n  first_name AS volunteer_first_name,\n  email AS volunteer_email,\n  msr_zendesk_ticket_id,\n  CASE WHEN support_type = 'legal' THEN 'advogada' ELSE 'psicóloga' END AS volunteer_type\nFROM match.matches m\nLEFT JOIN volunteers v ON id = volunteer_id\nWHERE \n  status = 'waiting_contact' AND m.created_at >= '2026-06-24 18:25:13' AND\n  (DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '5 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '4 DAY' OR \n  DATE_TRUNC('DAY', m.created_at) = CURRENT_DATE - INTERVAL '2 DAY');",
+        "options": {}
+      },
+      "id": "76f601c5-0c4f-43a7-a230-4659a628c566",
+      "name": "Busca matches aguardando contato há 14 ou 28 dias1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1856,
+        272
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    {{ $json.match_id }} AS match_id,\n    email AS msr_email,\n    first_name AS msr_first_name,\n    '{{ $json.volunteer_email }}' AS volunteer_email,  \n    INITCAP('{{ $json.volunteer_first_name }}') AS volunteer_first_name,\n    '{{ $json.volunteer_type }}' AS volunteer_type,\n    '{{ $json.msr_zendesk_ticket_id }}' AS msr_zendesk_ticket_id\nFROM msr.msrs\nINNER JOIN pii_sec.msr_pii USING(msr_id)\nWHERE msr_id = {{ $json.msr_id }}",
+        "options": {}
+      },
+      "id": "7959ec95-a6e6-4fbe-b3ce-e38406055840",
+      "name": "Busca informações da MSR e da Voluntária1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2064,
+        272
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"clvh0vby900enkh7dpftrrdnl\",\n  \"email\": \"{{ $json.msr_email }}\",\n  \"dataVariables\": {\n    \"msr_first_name\": \"{{ $json.msr_first_name }}\",\n    \"volunteer_type\": \"{{ $json.volunteer_type }}\",\n    \"volunteer_first_name\": \"{{ $json.volunteer_first_name }}\",\n    \"match_id\": \"{{ $json.match_id }}\",\n    \"msr_zendesk_ticket_id\": \"{{ $json.msr_zendesk_ticket_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "0023e0f7-48a3-45e6-969d-001c7c5c0d1a",
+      "name": "[MSR] Envia email de lembrete1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2704,
+        304
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Lembretes para atualização do status do acolhimento (2, 4 e 5 dias)",
+        "height": 80,
+        "width": 484.19607189456474,
+        "color": 6
+      },
+      "id": "8905f527-c728-406f-8138-0e1384e917fd",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "46df9a59-ec3f-45af-86d6-b1f5336eeca9",
+      "name": "Loop Over Items3",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2304,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "06b66d7a-4576-456c-a78c-d32c37d767d5",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        304
+      ],
+      "webhookId": "40038c57-453f-4319-a0bb-60ecdb153133"
+    },
+    {
+      "parameters": {},
+      "id": "0cba166f-14a3-433a-8ea2-343b083a9018",
+      "name": "No Operation, do nothing3",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        112
       ]
     }
   ],
@@ -1411,7 +1789,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-06-23T18:50:15.000Z",
+              "updatedAt": "2026-06-24T15:57:55.131Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -1425,14 +1803,14 @@
                 "userActivatedAt": 1731658062996,
                 "npsSurvey": {
                   "waitingForResponse": true,
-                  "ignoredCount": 1,
-                  "lastShownAt": 1781616956799
+                  "ignoredCount": 2,
+                  "lastShownAt": 1782316670965
                 },
                 "easyAIWorkflowOnboarded": true
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-06-23",
+              "lastActiveAt": "2026-06-24",
               "isPending": false
             }
           }
@@ -1451,7 +1829,7 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-21T14:47:02.000Z",
-  "versionCounter": 12,
-  "versionId": "bb9ba47b-02b6-4d85-a4c4-6f5e733d062a"
+  "updatedAt": "2026-06-24T18:42:56.021Z",
+  "versionCounter": 18,
+  "versionId": "4d67fe9c-14c5-403d-b4aa-94ef6104b6a9"
 }
