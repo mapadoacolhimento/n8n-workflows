@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-06-24T18:43:40.479Z",
-    "createdAt": "2026-06-24T18:43:40.479Z",
-    "versionId": "79bc83f2-95a7-4dc7-8d6b-198636e13c90",
+    "updatedAt": "2026-07-07T11:36:34.156Z",
+    "createdAt": "2026-07-07T11:36:34.156Z",
+    "versionId": "f95f8794-cce7-430d-9c47-f9a980cb93ae",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -2335,26 +2335,6 @@
       },
       {
         "parameters": {
-          "rule": {
-            "interval": [
-              {
-                "triggerAtHour": 10,
-                "triggerAtMinute": 10
-              }
-            ]
-          }
-        },
-        "id": "48c7305a-ccbd-4f40-91f6-c4be142a7d55",
-        "name": "Schedule Trigger1",
-        "type": "n8n-nodes-base.scheduleTrigger",
-        "typeVersion": 1,
-        "position": [
-          288,
-          2640
-        ]
-      },
-      {
-        "parameters": {
           "operation": "executeQuery",
           "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2026-06-24 18:25:13'\n   AND created_at < CURRENT_DATE - INTERVAL '5 DAY'",
           "additionalFields": {}
@@ -2484,7 +2464,7 @@
         "typeVersion": 2.3,
         "position": [
           1168,
-          2656
+          2640
         ],
         "credentials": {
           "postgres": {
@@ -2568,7 +2548,7 @@
         "typeVersion": 2,
         "position": [
           1360,
-          2656
+          2640
         ]
       },
       {
@@ -2718,6 +2698,47 @@
             "name": "Zendesk account"
           }
         }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE match.matches\nSET status = 'expired', updated_at = NOW()\nWHERE match_id = {{$json[\"match_id\"]}};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{$json[\"match_id\"]}}, 'expired', NOW());\n\nSELECT volunteer_id\nFROM match.matches\nWHERE match_id = {{$json[\"match_id\"]}};",
+          "options": {}
+        },
+        "id": "59694a99-0ec2-4e6a-9038-54fdab40cf87",
+        "name": "Expire matches in database1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.3,
+        "position": [
+          928,
+          2640
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10,
+                "triggerAtMinute": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          416,
+          2640
+        ],
+        "id": "756cffd8-ec14-41f3-8358-639e1297cd36",
+        "name": "Schedule Trigger1"
       }
     ],
     "connections": {
@@ -3434,20 +3455,14 @@
           ]
         ]
       },
-      "Schedule Trigger1": {
-        "main": [
-          [
-            {
-              "node": "Fetch matches that should be expired today1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Fetch matches that should be expired today1": {
         "main": [
           [
+            {
+              "node": "Expire matches in database1",
+              "type": "main",
+              "index": 0
+            },
             {
               "node": "Update MSR Zendesk ticket1",
               "type": "main",
@@ -3455,11 +3470,6 @@
             },
             {
               "node": "Update Volunteer Zendesk ticket1",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Fetch volunteer current_matches2",
               "type": "main",
               "index": 0
             }
@@ -3529,13 +3539,35 @@
             }
           ]
         ]
+      },
+      "Expire matches in database1": {
+        "main": [
+          [
+            {
+              "node": "Fetch volunteer current_matches2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Fetch matches that should be expired today1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "79bc83f2-95a7-4dc7-8d6b-198636e13c90",
+  "activeVersionId": "f95f8794-cce7-430d-9c47-f9a980cb93ae",
   "connections": {
     "Webhook": {
       "main": [
@@ -4250,20 +4282,14 @@
         ]
       ]
     },
-    "Schedule Trigger1": {
-      "main": [
-        [
-          {
-            "node": "Fetch matches that should be expired today1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Fetch matches that should be expired today1": {
       "main": [
         [
+          {
+            "node": "Expire matches in database1",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Update MSR Zendesk ticket1",
             "type": "main",
@@ -4271,11 +4297,6 @@
           },
           {
             "node": "Update Volunteer Zendesk ticket1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch volunteer current_matches2",
             "type": "main",
             "index": 0
           }
@@ -4340,6 +4361,28 @@
           },
           {
             "node": "Status da Mulher = Disponível2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expire matches in database1": {
+      "main": [
+        [
+          {
+            "node": "Fetch volunteer current_matches2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Fetch matches that should be expired today1",
             "type": "main",
             "index": 0
           }
@@ -6685,26 +6728,6 @@
     },
     {
       "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "triggerAtHour": 10,
-              "triggerAtMinute": 10
-            }
-          ]
-        }
-      },
-      "id": "48c7305a-ccbd-4f40-91f6-c4be142a7d55",
-      "name": "Schedule Trigger1",
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1,
-      "position": [
-        288,
-        2640
-      ]
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
         "query": "SELECT\n   match_id,\n   msr_id,\n   msr_zendesk_ticket_id,\n   volunteer_id,\n   volunteer_zendesk_ticket_id\nFROM match.matches\nWHERE\n   status = 'waiting_contact'\n   AND created_at >= '2026-06-24 18:25:13'\n   AND created_at < CURRENT_DATE - INTERVAL '5 DAY'",
         "additionalFields": {}
@@ -6834,7 +6857,7 @@
       "typeVersion": 2.3,
       "position": [
         1168,
-        2656
+        2640
       ],
       "credentials": {
         "postgres": {
@@ -6918,7 +6941,7 @@
       "typeVersion": 2,
       "position": [
         1360,
-        2656
+        2640
       ]
     },
     {
@@ -7068,6 +7091,47 @@
           "name": "Zendesk account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE match.matches\nSET status = 'expired', updated_at = NOW()\nWHERE match_id = {{$json[\"match_id\"]}};\n\nINSERT INTO match.match_status_history (match_id, status, created_at)\nVALUES ({{$json[\"match_id\"]}}, 'expired', NOW());\n\nSELECT volunteer_id\nFROM match.matches\nWHERE match_id = {{$json[\"match_id\"]}};",
+        "options": {}
+      },
+      "id": "59694a99-0ec2-4e6a-9038-54fdab40cf87",
+      "name": "Expire matches in database1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        2640
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10,
+              "triggerAtMinute": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        2640
+      ],
+      "id": "756cffd8-ec14-41f3-8358-639e1297cd36",
+      "name": "Schedule Trigger1"
     }
   ],
   "pinData": {
@@ -7182,23 +7246,6 @@
           "item": 0
         }
       }
-    ],
-    "Schedule Trigger1": [
-      {
-        "json": {
-          "timestamp": "2024-05-06T09:00:00.018-03:00",
-          "Readable date": "May 6th 2024, 9:00:00 am",
-          "Readable time": "9:00:00 am",
-          "Day of week": "Monday",
-          "Year": "2024",
-          "Month": "May",
-          "Day of month": "06",
-          "Hour": "09",
-          "Minute": "00",
-          "Second": "00",
-          "Timezone": "-03 -03:00"
-        }
-      }
     ]
   },
   "settings": {
@@ -7229,7 +7276,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-07-06T13:52:58.740Z",
+              "updatedAt": "2026-07-07T11:25:18.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -7249,7 +7296,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-07-06",
+              "lastActiveAt": "2026-07-07",
               "isPending": false
             }
           }
@@ -7275,7 +7322,7 @@
     }
   ],
   "triggerCount": 5,
-  "updatedAt": "2026-06-24T18:43:40.477Z",
-  "versionCounter": 145,
-  "versionId": "79bc83f2-95a7-4dc7-8d6b-198636e13c90"
+  "updatedAt": "2026-07-07T11:36:34.155Z",
+  "versionCounter": 155,
+  "versionId": "f95f8794-cce7-430d-9c47-f9a980cb93ae"
 }
