@@ -7,29 +7,7 @@
       "main": [
         [
           {
-            "node": "Execute a SQL query",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute a SQL query": {
-      "main": [
-        [
-          {
-            "node": "Execute a SQL query1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute a SQL query1": {
-      "main": [
-        [
-          {
-            "node": "Execute a SQL query4",
+            "node": "Voluntárias aprovadas a partir do dia 12/06",
             "type": "main",
             "index": 0
           }
@@ -40,22 +18,6 @@
       "main": [
         [],
         [
-          {
-            "node": "Execute a SQL query3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute a SQL query3": {
-      "main": [
-        [
-          {
-            "node": "Execute a SQL query2",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Update a user",
             "type": "main",
@@ -70,6 +32,87 @@
       ]
     },
     "Update a user": {
+      "main": [
+        [
+          {
+            "node": "Busca os tickets da voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voluntárias aprovadas a partir do dia 12/06": {
+      "main": [
+        [
+          {
+            "node": "Voluntárias que não acessaram o certificado no moodle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voluntárias que não acessaram o certificado no moodle": {
+      "main": [
+        [
+          {
+            "node": "Com um match",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Com um match aguardando contato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Com match em contato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status aprovada": {
+      "main": [
+        []
+      ]
+    },
+    "Busca os tickets da voluntária no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Separa os tickets do objeto retornado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa os tickets do objeto retornado": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o ticket para \"aprovada\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o ticket para \"aprovada\"": {
       "main": [
         [
           {
@@ -103,55 +146,13 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT DISTINCT\nv.id,\nv.moodle_id,v.email,\nv.condition,\nv.created_at \nfrom volunteers v \ninner JOIN volunteer_status_history vsh on (vsh.volunteer_id = v.id and vsh.status = 'aprovada')\nwhere vsh.created_at >= '2026-06-12'",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        0,
-        0
-      ],
-      "id": "04c847f2-aa9e-4cee-b6b0-cb117cf920de",
-      "name": "Execute a SQL query",
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2 and userid = {{ $json.moodle_id }} and timecompleted is null",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        208,
-        0
-      ],
-      "id": "dab90c6b-837f-49f3-a7ee-8c8007cc4e2f",
-      "name": "Execute a SQL query1",
-      "credentials": {
-        "postgres": {
-          "id": "KHoy20BFgrBIpHYR",
-          "name": "[PROD] Moodle"
-        }
-      }
-    },
-    {
-      "parameters": {
         "options": {}
       },
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        656,
-        64
+        768,
+        0
       ],
       "id": "c3964282-49cd-4fc2-a00e-893d5f30798c",
       "name": "Loop Over Items"
@@ -159,38 +160,17 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET condition = 'capacitacao', updated_at = NOW()\nWHERE id = {{ $json.id }};\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP,{{ $json.id }} , 'capacitacao');\n\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"id\"] }};",
+        "query": "UPDATE volunteers\nSET condition = 'capacitacao', updated_at = NOW()\nWHERE id = {{ $json.id }};\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP,{{ $json.id }} , 'capacitacao');\n\nDELETE FROM volunteer_training_history where volunteer_id = {{$json.id}} AND event = 'finished_training';\n\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"id\"] }};",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1120,
-        16
+        1424,
+        -160
       ],
       "id": "a733bb69-bc2c-44d9-9848-bc5fc9f93cc4",
       "name": "Execute a SQL query2",
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT * from volunteers where moodle_id = {{ $json.userid }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        864,
-        16
-      ],
-      "id": "7476ef8e-6acf-43de-a2c0-5c85b84f7205",
-      "name": "Execute a SQL query3",
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
@@ -217,8 +197,8 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        1168,
-        176
+        1536,
+        128
       ],
       "id": "f1401489-25e3-4d89-88be-a3b16da0fbc5",
       "name": "Update a user",
@@ -232,17 +212,290 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT distinct\n  id,\n  email,\n  moodle_id,\n  zendesk_user_id, condition\n  from volunteers where moodle_id = {{ $json.userid }}",
+        "query": "SELECT DISTINCT\n  --id,\n  userid, \n  timestarted, \n  timecompleted, \n  to_timestamp(timestarted) data_ini,\n  to_timestamp(timecompleted)  as data_fim\nFROM mdl_course_completions\nWHERE course = 2 and userid = {{ $json.moodle_id }} and timecompleted is null",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        144,
+        304
+      ],
+      "id": "5425cd7e-552f-486b-8ae8-707937b82c42",
+      "name": "Execute a SQL query5",
+      "credentials": {
+        "postgres": {
+          "id": "KHoy20BFgrBIpHYR",
+          "name": "[PROD] Moodle"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT u.id AS user_id, u.firstname, u.lastname, u.email\nFROM mdl_user u\nJOIN mdl_user_enrolments ue ON ue.userid = u.id\nJOIN mdl_enrol e ON e.id = ue.enrolid AND e.courseid = 2\nJOIN mdl_context ctx ON ctx.instanceid = e.courseid AND ctx.contextlevel = 50\nJOIN mdl_role_assignments ra ON ra.userid = u.id AND ra.contextid = ctx.id \n  --AND ra.roleid = 5 -- student\nLEFT JOIN mdl_logstore_standard_log l\n  ON l.userid = u.id\n  AND l.component = 'mod_customcert'\n  AND l.action = 'viewed'\n  AND l.objectid = (\n    SELECT cm.id\n    FROM mdl_course_modules cm\n    JOIN mdl_modules m ON m.id = cm.module AND m.name = 'customcert'\n    WHERE cm.course = 2\n    LIMIT 1\n  )\nWHERE ue.status = 0\n  AND e.status = 0\n  AND l.id IS NULL\nORDER BY u.lastname, u.firstname;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -80,
+        304
+      ],
+      "id": "02e7851d-ad28-4e76-99d4-d3a17b0c3358",
+      "name": "Execute a SQL query6",
+      "credentials": {
+        "postgres": {
+          "id": "KHoy20BFgrBIpHYR",
+          "name": "[PROD] Moodle"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Aprovadas",
+        "height": 80,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        880,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "b274003a-0a0a-47c7-8e3e-20122819855f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT\nv.id,\nv.moodle_id,v.email,\nv.condition,\nv.created_at \nfrom volunteers v \ninner JOIN volunteer_status_history vsh on (vsh.volunteer_id = v.id and vsh.status = 'aprovada')\nwhere vsh.created_at >= '2026-06-12'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "04c847f2-aa9e-4cee-b6b0-cb117cf920de",
+      "name": "Voluntárias aprovadas a partir do dia 12/06",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT u.id AS user_id, u.firstname, u.lastname, u.email\nFROM mdl_user u\nJOIN mdl_user_enrolments ue ON ue.userid = u.id\nJOIN mdl_enrol e ON e.id = ue.enrolid AND e.courseid = 2\nJOIN mdl_context ctx ON ctx.instanceid = e.courseid AND ctx.contextlevel = 50\nJOIN mdl_role_assignments ra ON ra.userid = u.id AND ra.contextid = ctx.id AND ra.roleid = 5 -- student\nLEFT JOIN mdl_logstore_standard_log l\n  ON l.userid = u.id\n  AND l.component = 'mod_customcert'\n  AND l.action = 'viewed'\n  AND l.objectid = (\n    SELECT cm.id\n    FROM mdl_course_modules cm\n    JOIN mdl_modules m ON m.id = cm.module AND m.name = 'customcert'\n    WHERE cm.course = 2\n    LIMIT 1\n  )\nWHERE ue.status = 0\n  AND e.status = 0\n  AND l.id IS NULL\n  AND u.id = {{ $json.moodle_id }}\nORDER BY u.lastname, u.firstname;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "dab90c6b-837f-49f3-a7ee-8c8007cc4e2f",
+      "name": "Voluntárias que não acessaram o certificado no moodle",
+      "credentials": {
+        "postgres": {
+          "id": "KHoy20BFgrBIpHYR",
+          "name": "[PROD] Moodle"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n  from volunteers v\n  where moodle_id = {{ $json.user_id }}  and v.condition = 'aprovada' limit 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        496,
+        -176
+      ],
+      "id": "c00354f1-3386-4643-b6c2-cc19108f83d5",
+      "name": "Status aprovada",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n  , m.volunteer_zendesk_ticket_id ticket_match\n   , m.msr_zendesk_ticket_id ticket_pedido_acolhimento\n  from volunteers v\n  inner join match.matches m on m.volunteer_id = v.id and m.status = 'waiting_contact'\n  where moodle_id = {{ $json.user_id }} order by v.id",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
         448,
-        0
+        192
       ],
-      "id": "c00354f1-3386-4643-b6c2-cc19108f83d5",
-      "name": "Execute a SQL query4",
+      "id": "f09d7193-ca15-4d63-8bb8-d3477a7d5742",
+      "name": "Com um match aguardando contato",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n    , m.volunteer_zendesk_ticket_id ticket_match\n   , m.msr_zendesk_ticket_id ticket_pedido_acolhimento\n  from volunteers v\n  inner join match.matches m on m.volunteer_id = v.id and m.status  ='in_contact'\n  where moodle_id = {{ $json.user_id }} order by v.id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        448,
+        368
+      ],
+      "id": "cfd421ec-12e3-4dd2-8e0c-91bbf3406fb6",
+      "name": "Com match em contato",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/users/{{$json[\"id\"]}}/tickets/requested",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "0fa93509-026d-49d9-aeeb-0cdcc4b00dd2",
+      "name": "Busca os tickets da voluntária no Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1776,
+        112
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tickets",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "6c21224e-5ff8-4b13-b6d6-071dfcbf0a35",
+      "name": "Separa os tickets do objeto retornado",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dde5153b-9d15-4d49-a45e-07debca03042",
+              "leftValue": "={{ $json.tickets.status }}",
+              "rightValue": "open",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "7a8c2fce-009a-48a3-8f91-8cdb963543fc",
+              "leftValue": "={{ $json.tickets.custom_fields[7].value }}",
+              "rightValue": "aprovada",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        2176,
+        112
+      ],
+      "id": "b1de86e5-f008-4b2a-83b3-fdfd12a7eb20",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "updateFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 360021665652,
+                "value": "capacitacao"
+              }
+            ]
+          },
+          "internalNote": "Voluntária com status corrigido de volta para capacitação ",
+          "status": "pending"
+        }
+      },
+      "id": "c1e7437f-80c9-4c27-9a89-cc1f9ecf91c7",
+      "name": "Atualiza o ticket para \"aprovada\"",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        112
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct\n  v.id,\n  v.first_name,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n  \n  from volunteers v\n  inner join match.matches m on m.volunteer_id = v.id \n  where moodle_id = {{ $json.user_id }} \n   and condition <> 'descadastrada'\n  order by v.id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        480,
+        16
+      ],
+      "id": "788daba0-9c43-4a1f-8226-20cbabc84b9f",
+      "name": "Com um match",
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
@@ -277,7 +530,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-07-07T11:25:18.000Z",
+              "updatedAt": "2026-07-08T12:09:04.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -297,7 +550,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-07-07",
+              "lastActiveAt": "2026-07-08",
               "isPending": false
             }
           }
@@ -308,7 +561,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-07-07T20:32:15.930Z",
-  "versionCounter": 3,
-  "versionId": "1c92ff27-1d52-4252-8547-24c08cc49144"
+  "updatedAt": "2026-07-08T18:00:39.702Z",
+  "versionCounter": 8,
+  "versionId": "8e5974a7-ad0c-4747-9a52-cd75830ba4ba"
 }
