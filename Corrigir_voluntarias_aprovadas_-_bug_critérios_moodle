@@ -19,23 +19,22 @@
         [],
         [
           {
-            "node": "Update a user",
+            "node": "Matches encaminhamento realizado",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute a SQL query2": {
-      "main": [
-        []
-      ]
-    },
-    "Update a user": {
-      "main": [
-        [
+          },
           {
-            "node": "Busca os tickets da voluntária no Zendesk",
+            "node": "Matches atendimento iniciado",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualiza status da voluntária no Zendesk",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reverte voluntária para capacitacao no banco",
             "type": "main",
             "index": 0
           }
@@ -60,16 +59,6 @@
             "node": "Com um match",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Com um match aguardando contato",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Com match em contato",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -79,44 +68,120 @@
         []
       ]
     },
-    "Busca os tickets da voluntária no Zendesk": {
-      "main": [
-        [
-          {
-            "node": "Separa os tickets do objeto retornado",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Separa os tickets do objeto retornado": {
-      "main": [
-        [
-          {
-            "node": "Filter",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filter": {
-      "main": [
-        [
-          {
-            "node": "Atualiza o ticket para \"aprovada\"",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualiza o ticket para \"aprovada\"": {
+    "Reverte voluntária para capacitacao no banco": {
       "main": [
         [
           {
             "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca os tickets da voluntária no Zendesk": {
+      "main": [
+        []
+      ]
+    },
+    "Atualiza status da voluntária no Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Cria o ticket de entrada da voluntária pela API do Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria o ticket de entrada da voluntária pela API do Zendesk": {
+      "main": [
+        []
+      ]
+    },
+    "Mensagem Voluntária no ticket do match": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o status do acolhimento do ticket do match pela API do Zendesk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Matches encaminhamento realizado": {
+      "main": [
+        [
+          {
+            "node": "Mensagem Voluntária no ticket do match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem Voluntária no ticket do match1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o status do acolhimento do ticket do match pela API do Zendesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Matches atendimento iniciado": {
+      "main": [
+        [
+          {
+            "node": "Mensagem Voluntária no ticket do match1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o status do acolhimento do ticket do match pela API do Zendesk1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o status do acolhimento do ticket do match pela API do Zendesk2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o status do acolhimento do ticket do match pela API do Zendesk2": {
+      "main": [
+        [
+          {
+            "node": "Mensagem Voluntária no ticket do pedido de acolhimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o status do acolhimento do ticket do match pela API do Zendesk": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o status do acolhimento do ticket do pedido de acolhimento pela API do Zendesk3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o status do acolhimento do ticket do pedido de acolhimento pela API do Zendesk3": {
+      "main": [
+        [
+          {
+            "node": "Mensagem Voluntária no ticket do pedido de acolhimento1",
             "type": "main",
             "index": 0
           }
@@ -138,8 +203,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -176,
-        0
+        176,
+        176
       ],
       "id": "4e2bbc8a-ae87-410d-82fa-f737cbeba3c1",
       "name": "When clicking ‘Execute workflow’"
@@ -151,63 +216,11 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        768,
-        0
+        1024,
+        176
       ],
       "id": "c3964282-49cd-4fc2-a00e-893d5f30798c",
       "name": "Loop Over Items"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE volunteers\nSET condition = 'capacitacao', updated_at = NOW()\nWHERE id = {{ $json.id }};\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP,{{ $json.id }} , 'capacitacao');\n\nDELETE FROM volunteer_training_history where volunteer_id = {{$json.id}} AND event = 'finished_training';\n\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"id\"] }};",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        1424,
-        -160
-      ],
-      "id": "a733bb69-bc2c-44d9-9848-bc5fc9f93cc4",
-      "name": "Execute a SQL query2",
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "user",
-        "operation": "update",
-        "id": "={{ $json.zendesk_user_id }}",
-        "updateFields": {
-          "userFieldsUi": {
-            "userFieldValues": [
-              {
-                "field": "condition",
-                "value": "capacitacao"
-              }
-            ]
-          }
-        }
-      },
-      "type": "n8n-nodes-base.zendesk",
-      "typeVersion": 1,
-      "position": [
-        1536,
-        128
-      ],
-      "id": "f1401489-25e3-4d89-88be-a3b16da0fbc5",
-      "name": "Update a user",
-      "credentials": {
-        "zendeskApi": {
-          "id": "MYAFeR51noxrxEC7",
-          "name": "Zendesk account"
-        }
-      }
     },
     {
       "parameters": {
@@ -218,8 +231,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        144,
-        304
+        -112,
+        576
       ],
       "id": "5425cd7e-552f-486b-8ae8-707937b82c42",
       "name": "Execute a SQL query5",
@@ -239,8 +252,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -80,
-        304
+        -336,
+        576
       ],
       "id": "02e7851d-ad28-4e76-99d4-d3a17b0c3358",
       "name": "Execute a SQL query6",
@@ -259,8 +272,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        880,
-        -192
+        768,
+        -160
       ],
       "typeVersion": 1,
       "id": "b274003a-0a0a-47c7-8e3e-20122819855f",
@@ -275,8 +288,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        0,
-        0
+        352,
+        176
       ],
       "id": "04c847f2-aa9e-4cee-b6b0-cb117cf920de",
       "name": "Voluntárias aprovadas a partir do dia 12/06",
@@ -290,14 +303,14 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT u.id AS user_id, u.firstname, u.lastname, u.email\nFROM mdl_user u\nJOIN mdl_user_enrolments ue ON ue.userid = u.id\nJOIN mdl_enrol e ON e.id = ue.enrolid AND e.courseid = 2\nJOIN mdl_context ctx ON ctx.instanceid = e.courseid AND ctx.contextlevel = 50\nJOIN mdl_role_assignments ra ON ra.userid = u.id AND ra.contextid = ctx.id AND ra.roleid = 5 -- student\nLEFT JOIN mdl_logstore_standard_log l\n  ON l.userid = u.id\n  AND l.component = 'mod_customcert'\n  AND l.action = 'viewed'\n  AND l.objectid = (\n    SELECT cm.id\n    FROM mdl_course_modules cm\n    JOIN mdl_modules m ON m.id = cm.module AND m.name = 'customcert'\n    WHERE cm.course = 2\n    LIMIT 1\n  )\nWHERE ue.status = 0\n  AND e.status = 0\n  AND l.id IS NULL\n  AND u.id = {{ $json.moodle_id }}\nORDER BY u.lastname, u.firstname;",
+        "query": "SELECT u.id AS user_id, u.firstname, u.lastname, u.email\nFROM mdl_user u\nJOIN mdl_user_enrolments ue ON ue.userid = u.id\nJOIN mdl_enrol e ON e.id = ue.enrolid AND e.courseid = 2\nJOIN mdl_context ctx ON ctx.instanceid = e.courseid --AND ctx.contextlevel = 50\nJOIN mdl_role_assignments ra ON ra.userid = u.id AND ra.contextid = ctx.id AND ra.roleid = 5 -- student\nLEFT JOIN mdl_logstore_standard_log l\n  ON l.userid = u.id\n  AND l.component = 'mod_customcert'\n  AND l.action = 'viewed'\n  AND l.objectid = (\n    SELECT cm.id\n    FROM mdl_course_modules cm\n    JOIN mdl_modules m ON m.id = cm.module AND m.name = 'customcert'\n    WHERE cm.course = 2\n    LIMIT 1\n  )\nWHERE ue.status = 0\n  AND e.status = 0\n  AND l.id IS NULL\n  AND u.id = {{ $json.moodle_id }}\nORDER BY u.lastname, u.firstname;",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        208,
-        0
+        560,
+        176
       ],
       "id": "dab90c6b-837f-49f3-a7ee-8c8007cc4e2f",
       "name": "Voluntárias que não acessaram o certificado no moodle",
@@ -311,14 +324,14 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n  from volunteers v\n  where moodle_id = {{ $json.user_id }}  and v.condition = 'aprovada' limit 1",
+        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.phone,\n  v.city,\n  v.state,\n  CONCAT(v.first_name,  ' ' ,  v.last_name) as name,\n  CONCAT(v.first_name,  ' ' ,  v.last_name) as name,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition, \n  CASE\n    WHEN v.occupation = 'lawyer' THEN CONCAT( '[Advogada] ', v.first_name, ' - ', v.register_number)\n    ELSE CONCAT( '[Psicóloga] ', v.first_name, ' - ', v.register_number )\n  END as subject\n  from volunteers v\n  where email = 'dev.adv.mapa@gmail.com' limit 1",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        496,
-        -176
+        48,
+        912
       ],
       "id": "c00354f1-3386-4643-b6c2-cc19108f83d5",
       "name": "Status aprovada",
@@ -338,8 +351,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        448,
-        192
+        -480,
+        256
       ],
       "id": "f09d7193-ca15-4d63-8bb8-d3477a7d5742",
       "name": "Com um match aguardando contato",
@@ -359,11 +372,95 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        448,
-        368
+        192,
+        640
       ],
       "id": "cfd421ec-12e3-4dd2-8e0c-91bbf3406fb6",
       "name": "Com match em contato",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct\n  v.id,\n  v.first_name,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n  \n  from volunteers v\n  inner join match.matches m on m.volunteer_id = v.id \n  where moodle_id = {{ $json.user_id }} \n   and condition <> 'descadastrada'\n  order by v.id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        832,
+        176
+      ],
+      "id": "788daba0-9c43-4a1f-8226-20cbabc84b9f",
+      "name": "Com um match",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT u.id AS user_id, u.firstname, u.lastname, u.email\nFROM mdl_user u\nJOIN mdl_user_enrolments ue ON ue.userid = u.id\nJOIN mdl_enrol e ON e.id = ue.enrolid AND e.courseid = 2\nJOIN mdl_context ctx ON ctx.instanceid = e.courseid AND ctx.contextlevel = 50\nJOIN mdl_role_assignments ra ON ra.userid = u.id AND ra.contextid = ctx.id AND ra.roleid = 5\nLEFT JOIN mdl_logstore_standard_log l\n  ON l.userid = u.id\n  AND l.component = 'mod_page'\n  AND l.action = 'viewed'\n  AND l.contextinstanceid = 382\nWHERE ue.status = 0\n  AND e.status = 0\n  AND l.id IS NULL\n  AND u.id = {{ $json.moodle_id }}\nORDER BY u.lastname, u.firstname;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        -192
+      ],
+      "id": "a4daf457-ad99-4861-a929-0108edb6079d",
+      "name": "Voluntárias que não acessaram o certificado no moodle1",
+      "credentials": {
+        "postgres": {
+          "id": "KHoy20BFgrBIpHYR",
+          "name": "[PROD] Moodle"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  cs.section,\n  cm.id AS cmid,\n  m.name AS module_type,\n  COALESCE(p.name, r.name, b.name, u.name, ass.name, q.name, f.name, fo.name, l.name, h.name, 'sem nome') AS module_name,\n  cm.visible\nFROM mdl_course_modules cm\nJOIN mdl_modules m ON m.id = cm.module\nJOIN mdl_course_sections cs ON cs.id = cm.section\nLEFT JOIN mdl_page p ON m.name = 'page' AND p.id = cm.instance\nLEFT JOIN mdl_resource r ON m.name = 'resource' AND r.id = cm.instance\nLEFT JOIN mdl_book b ON m.name = 'book' AND b.id = cm.instance\nLEFT JOIN mdl_url u ON m.name = 'url' AND u.id = cm.instance\nLEFT JOIN mdl_assign ass ON m.name = 'assign' AND ass.id = cm.instance\nLEFT JOIN mdl_quiz q ON m.name = 'quiz' AND q.id = cm.instance\nLEFT JOIN mdl_folder f ON m.name = 'folder' AND f.id = cm.instance  \nLEFT JOIN mdl_forum fo ON m.name = 'forum' AND fo.id = cm.instance\nLEFT JOIN mdl_lesson l ON m.name = 'lesson' AND l.id = cm.instance\nLEFT JOIN mdl_h5pactivity h ON m.name = 'h5pactivity' AND h.id = cm.instance\nWHERE cm.course = 2\n  AND cm.deletioninprogress = 0 AND cm.visible = 1\nORDER BY cs.section, cm.id;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        16,
+        -192
+      ],
+      "id": "fd9a5b91-6c7b-4c5f-a6ce-3acb81e46c63",
+      "name": "Voluntárias que não acessaram o certificado no moodle2",
+      "credentials": {
+        "postgres": {
+          "id": "KHoy20BFgrBIpHYR",
+          "name": "[PROD] Moodle"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE volunteers\nSET condition = 'capacitacao', updated_at = NOW()\nWHERE id = {{ $json.id }};\n\nINSERT INTO public.volunteer_status_history\n( created_at, volunteer_id, status)\nVALUES( CURRENT_TIMESTAMP,{{ $json.id }} , 'capacitacao');\n\nDELETE FROM volunteer_training_history where volunteer_id = {{$json.id}} AND event = 'finished_training';\n\nUPDATE volunteer_availability\nSET current_matches = 0,is_available = FALSE, updated_at = NOW()\nWHERE volunteer_id = {{ $json.volunteer_id }};\n\nSELECT first_name, email from public.volunteers\nWHERE id = {{ $json[\"id\"] }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1408,
+        832
+      ],
+      "id": "a733bb69-bc2c-44d9-9848-bc5fc9f93cc4",
+      "name": "Reverte voluntária para capacitacao no banco",
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
@@ -383,8 +480,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        1776,
-        112
+        1792,
+        -192
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -395,85 +492,123 @@
     },
     {
       "parameters": {
-        "fieldToSplitOut": "tickets",
-        "include": "allOtherFields",
+        "method": "POST",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"requester_id\":{{$json[\"id\"]}},\n\t\t\"organization_id\": {{$json[\"organization_id\"]}},\n\t\t\"description\": \"Ticket recriado\",\n\t\t\"subject\": \"{{ $node[\"Loop Over Items\"].json[\"subject\"] }}\",\n\t\t\"comment\": {\n\t\t\t\"body\": \"Voluntaria voltou para status de capacitacao bug de aprovação)\",\n\t\t\t\"public\": false\n\t\t},\n\t\t\"status\": \"pending\",\n\t\t\"custom_fields\": [\n\t\t\t{\n\t\t\t\t\"id\": 360021879811, \n\t\t\t\t\"value\": \"{{ $node[\"Loop Over Items\"].json[\"city\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021812712, \n\t\t\t\t\"value\": \"{{ $node[\"Loop Over Items\"].json[\"phone\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360016631592, \n\t\t\t\t\"value\": \"{{ $node[\"Loop Over Items\"].json[\"name\"] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021665652, \n\t\t\t\t\"value\": \"capacitacao\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 360021879791,\n\t\t\t\t\"value\": \"{{ $node[\"Loop Over Items\"].json[\"state\"] }}\"\n\t\t\t}\n\t\t]\n\t}\n}",
         "options": {}
       },
-      "id": "6c21224e-5ff8-4b13-b6d6-071dfcbf0a35",
-      "name": "Separa os tickets do objeto retornado",
-      "type": "n8n-nodes-base.itemLists",
-      "typeVersion": 1,
+      "id": "78f0cb05-6ae2-4806-9f94-be9970c00fca",
+      "name": "Cria o ticket de entrada da voluntária pela API do Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
       "position": [
-        1968,
-        112
-      ]
+        1760,
+        624
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "dde5153b-9d15-4d49-a45e-07debca03042",
-              "leftValue": "={{ $json.tickets.status }}",
-              "rightValue": "open",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
+        "resource": "user",
+        "operation": "update",
+        "id": "={{ $json.zendesk_user_id }}",
+        "updateFields": {
+          "userFieldsUi": {
+            "userFieldValues": [
+              {
+                "field": "condition",
+                "value": "capacitacao"
               }
-            },
-            {
-              "id": "7a8c2fce-009a-48a3-8f91-8cdb963543fc",
-              "leftValue": "={{ $json.tickets.custom_fields[7].value }}",
-              "rightValue": "aprovada",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
+            ]
+          }
+        }
       },
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.3,
+      "id": "0863a861-c9d0-42ba-8725-a58a5c5334c0",
+      "name": "Atualiza status da voluntária no Zendesk",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
       "position": [
-        2176,
-        112
+        1408,
+        624
       ],
-      "id": "b1de86e5-f008-4b2a-83b3-fdfd12a7eb20",
-      "name": "Filter"
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
     },
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $json[\"tickets\"][\"id\"] }}",
+        "id": "={{ $json.ticket_match }}",
         "updateFields": {
-          "customFieldsUi": {
-            "customFieldsValues": [
-              {
-                "id": 360021665652,
-                "value": "capacitacao"
-              }
-            ]
-          },
-          "internalNote": "Voluntária com status corrigido de volta para capacitação ",
-          "status": "pending"
+          "publicReply": "=Oi {{$json.volunteer_first_name}}! Tudo bem por aí?\n\nEstamos entrando em contato para informar que identificamos uma instabilidade técnica em nossa plataforma, e por isso, o seu cadastro ficou ativo antes da conclusão da capacitação.\n\nAntes de qualquer coisa, queremos reforçar que estamos aqui para cuidar disso e te orientarmos na sua jornada como voluntária em nossa rede.\n\nPara garantirmos a segurança e o alinhamento com o Fluxo do Atendimento, informamos que a acolhida {{$json.msr_first_name}} retorna à fila para buscarmos uma voluntária habilitada para atendê-la neste momento. \n\nCaso a acolhida tenha entrado em contato com você, por gentileza, responda este e-mail nos contando brevemente para acompanharmos esse caso de forma individualizada e apoiar vocês no que for necessário.\n\nRecomendamos que você retome a capacitação pela plataforma online https://capacitacao.mapadoacolhimento.org/. Enquanto isso, pedimos que não inicie nenhum atendimento com uma mulher acolhida antes da conclusão da capacitação. Assim que finalizar essa etapa, você estará habilitada para atender mulheres acolhidas pelo Mapa do Acolhimento. Estamos animadas em contar com você!\n\nAgradecemos muito a sua compreensão e seguimos aqui. 💜\n\nUm abraço,\nJussara do Mapa do Acolhimento\n"
         }
       },
-      "id": "c1e7437f-80c9-4c27-9a89-cc1f9ecf91c7",
-      "name": "Atualiza o ticket para \"aprovada\"",
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        2384,
-        112
+        1584,
+        192
+      ],
+      "id": "fc6b9585-112e-4cee-993a-ffe8e5b21916",
+      "name": "Mensagem Voluntária no ticket do match",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n  , m.volunteer_zendesk_ticket_id ticket_match\n   , m.msr_zendesk_ticket_id ticket_pedido_acolhimento, \n   v.first_name        AS volunteer_first_name,\n    p.first_name        AS msr_first_name\n  from match.matches m\n  inner join  volunteers v on m.volunteer_id = v.id \n  INNER JOIN pii_sec.msr_pii p  ON p.msr_id = m.msr_id\n  where m.volunteer_id = {{ $json.id }} \n  and m.status = 'waiting_contact'\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2096,
+        -64
+      ],
+      "id": "5860b898-0fd7-4b52-b5bb-4ec6ad0ce28f",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/{{ $node[\"Matches encaminhamento realizado\"].json.ticket_match }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"comment\": {\n\t\t\t\"body\": \"Voluntaria voltou para status de capacitacao (bug de aprovação)\",\n\t\t\t\"public\": \"false\"\n\t\t},\n\t\t\"custom_fields\": [\n\t\t\t{\n\t\t\t\t\"id\": 360014379412, \n\t\t\t\t\"value\": \"encaminhamento_interrompido\"\n\t\t\t}\n\t\t]\n\t}\n}",
+        "options": {}
+      },
+      "id": "77bb0cb5-e95f-4f3c-ae6a-f48b0f6b7da5",
+      "name": "Atualiza o status do acolhimento do ticket do match pela API do Zendesk1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1824,
+        192
       ],
       "credentials": {
         "zendeskApi": {
@@ -485,21 +620,189 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT distinct\n  v.id,\n  v.first_name,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, v.condition\n  \n  from volunteers v\n  inner join match.matches m on m.volunteer_id = v.id \n  where moodle_id = {{ $json.user_id }} \n   and condition <> 'descadastrada'\n  order by v.id",
+        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, \n  v.condition, \n  m.volunteer_zendesk_ticket_id ticket_match, \n  m.msr_zendesk_ticket_id ticket_pedido_acolhimento, \n  v.first_name        AS volunteer_first_name,\n  p.first_name        AS msr_first_name, \n  m.match_id\n  from match.matches m\n  inner join  volunteers v on m.volunteer_id = v.id \n  INNER JOIN pii_sec.msr_pii p  ON p.msr_id = m.msr_id\n  where m.volunteer_id = {{ $json.id }}\n  and m.status = 'waiting_contact'\n\n",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        480,
-        16
+        1360,
+        192
       ],
-      "id": "788daba0-9c43-4a1f-8226-20cbabc84b9f",
-      "name": "Com um match",
+      "id": "45aed9f2-fbb1-40ed-8c45-fb4af8408961",
+      "name": "Matches encaminhamento realizado",
       "credentials": {
         "postgres": {
           "id": "c5mNsjWNXx3mw1Fh",
           "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT distinct\n  v.id,\n  v.email,\n  v.moodle_id,\n  v.zendesk_user_id, \n  v.condition, \n  m.volunteer_zendesk_ticket_id ticket_match, \n  m.msr_zendesk_ticket_id ticket_pedido_acolhimento, \n  v.first_name        AS volunteer_first_name,\n  p.first_name        AS msr_first_name, \n  m.match_id\n  from match.matches m\n  inner join  volunteers v on m.volunteer_id = v.id \n  INNER JOIN pii_sec.msr_pii p  ON p.msr_id = m.msr_id\n  where m.volunteer_id = {{ $json.id }} \n  and m.status = 'in_contact'\nlimit 1\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1424,
+        432
+      ],
+      "id": "f2633dd4-4948-4b5e-a918-2ac54c814d2e",
+      "name": "Matches atendimento iniciado",
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.ticket_match }}",
+        "updateFields": {
+          "publicReply": "=Oi  {{$json.volunteer_first_name}}! Tudo bem por aí?\n\nEstamos entrando em contato para informar que identificamos uma instabilidade técnica em nossa plataforma, e por isso, o seu cadastro ficou ativo antes da conclusão da capacitação.\n\nAntes de qualquer coisa, queremos reforçar que estamos aqui para cuidar dessa situação e orientar você em sua jornada como voluntária da nossa rede.\n\nPara garantir maior segurança e continuidade no cuidado, enviamos um e-mail para a acolhida  {{$json.msr_first_name}} informando que ela será encaminhada a outra profissional da rede voluntária, que possa seguir com o atendimento dela neste momento.\n\nSentimos muito se o atendimento tenha avançado e gerado expectativas para você ou para a acolhida. Caso haja algum detalhe importante sobre o andamento do caso, pedimos, por gentileza, que nos escreva para compreendermos como oferecer o apoio necessário.\n\nRecomendamos que você retome a capacitação pela plataforma online https://capacitacao.mapadoacolhimento.org/. Enquanto isso, pedimos que não continue nenhum atendimento com uma mulher acolhida antes da conclusão da capacitação. Assim que finalizar essa etapa, você estará habilitada para atender mulheres acolhidas pelo Mapa do Acolhimento. Estamos animadas em contar com você!\n\nAgradecemos a sua compreensão e seguimos aqui. 💜\n\nUm abraço,\nJussara do Mapa do Acolhimento\n"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        432
+      ],
+      "id": "97247f67-8a64-476f-a127-766d825c9769",
+      "name": "Mensagem Voluntária no ticket do match1",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/{{ $node[\"Matches atendimento iniciado\"].json.ticket_match }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"comment\": {\n\t\t\t\"body\": \"Voluntaria voltou para status de capacitacao (bug de aprovação)\",\n\t\t\t\"public\": \"false\"\n\t\t},\n\t\t\"custom_fields\": [\n\t\t\t{\n\t\t\t\t\"id\": 360014379412, \n\t\t\t\t\"value\": \"atendimento__interrompido\"\n\t\t\t}\n\t\t]\n\t}\n}",
+        "options": {}
+      },
+      "id": "7b491b1f-068a-4b96-88ad-d29186310367",
+      "name": "Atualiza o status do acolhimento do ticket do match pela API do Zendesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1824,
+        432
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/{{ $node[\"Matches encaminhamento realizado\"].json.ticket_pedido_acolhimento }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"comment\": {\n\t\t\t\"body\": \"Voluntaria voltou para status de capacitacao (bug de aprovação)\",\n\t\t\t\"public\": \"false\"\n\t\t},\n\t\t\"custom_fields\": [\n\t\t\t{\n\t\t\t\t\"id\": 360014379412, \n\t\t\t\t\"value\": \"aguardando_match__sem_prioridade\"\n\t\t\t}\n\t\t]\n\t}\n}",
+        "options": {}
+      },
+      "id": "04f2e743-0405-4b74-a9d5-47bcf5e116af",
+      "name": "Atualiza o status do acolhimento do ticket do match pela API do Zendesk2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        2064,
+        192
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $node[\"Matches encaminhamento realizado\"].json.ticket_pedido_acolhimento }}",
+        "updateFields": {
+          "publicReply": "=Oi {{$node[\"Matches encaminhamento realizado\"].json.msr_first_name}}! \n"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        192
+      ],
+      "id": "60b3807d-9c74-4bdb-b959-8859e011489f",
+      "name": "Mensagem Voluntária no ticket do pedido de acolhimento",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $node[\"Matches atendimento iniciado\"].json.ticket_pedido_acolhimento }}",
+        "updateFields": {
+          "publicReply": "=Oi {{$node[\"Matches atendimento iniciado\"].json.msr_first_name}}! \n"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        2272,
+        432
+      ],
+      "id": "a2260e89-0791-47e8-9905-d8948d340ee9",
+      "name": "Mensagem Voluntária no ticket do pedido de acolhimento1",
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/{{ $node[\"Matches atendimento iniciado\"].json.ticket_pedido_acolhimento }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n\t\t\"comment\": {\n\t\t\t\"body\": \"Voluntaria voltou para status de capacitacao (bug de aprovação)\",\n\t\t\t\"public\": \"false\"\n\t\t},\n\t\t\"custom_fields\": [\n\t\t\t{\n\t\t\t\t\"id\": 360014379412, \n\t\t\t\t\"value\": \"aguardando_match__com_prioridade\"\n\t\t\t}\n\t\t]\n\t}\n}",
+        "options": {}
+      },
+      "id": "b562cf35-1810-465b-bc7c-f51edb7b8f72",
+      "name": "Atualiza o status do acolhimento do ticket do pedido de acolhimento pela API do Zendesk3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        2048,
+        432
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "MYAFeR51noxrxEC7",
+          "name": "Zendesk account"
         }
       }
     }
@@ -530,7 +833,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-07-08T12:09:04.000Z",
+              "updatedAt": "2026-07-09T12:50:30.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -550,7 +853,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-07-08",
+              "lastActiveAt": "2026-07-09",
               "isPending": false
             }
           }
@@ -561,7 +864,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-07-08T18:00:39.702Z",
-  "versionCounter": 8,
-  "versionId": "8e5974a7-ad0c-4747-9a52-cd75830ba4ba"
+  "updatedAt": "2026-07-09T20:50:19.460Z",
+  "versionCounter": 25,
+  "versionId": "0efa65f4-8bbd-40c1-85fb-982a1e08ddfa"
 }
