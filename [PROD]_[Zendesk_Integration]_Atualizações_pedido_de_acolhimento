@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-07-13T21:28:49.836Z",
-    "createdAt": "2026-07-13T21:28:49.836Z",
-    "versionId": "2d1731cb-122d-4980-b55a-4b670b62b606",
+    "updatedAt": "2026-07-14T18:49:01.702Z",
+    "createdAt": "2026-07-14T18:49:01.702Z",
+    "versionId": "a89d8e1e-c043-4e69-a849-e27f7f4e9e82",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -1391,27 +1391,6 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.emal AS msr_email\nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
-          "options": {}
-        },
-        "id": "6975e7d3-ade3-4aaa-a081-f664636032e9",
-        "name": "Fetch match_id and status v2",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.3,
-        "position": [
-          3472,
-          1344
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
           "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.volunteer_id }},\n    'volunteer_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
           "options": {}
         },
@@ -1927,27 +1906,6 @@
         "typeVersion": 1,
         "id": "eae0d3b3-c863-4cd8-b3fb-431ad0c67266",
         "name": "Sticky Note8"
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "SELECT \n\tmatch_id, \n\tstatus AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    volunteer_id \nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT \nOR msr_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nORDER BY created_at DESC\nLIMIT 1",
-          "options": {}
-        },
-        "id": "8af29728-6f6f-41d0-bf6d-02dcd540141b",
-        "name": "Fetch match_id and status1",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.3,
-        "position": [
-          3232,
-          1344
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
       },
       {
         "parameters": {
@@ -2739,27 +2697,6 @@
         ],
         "id": "756cffd8-ec14-41f3-8358-639e1297cd36",
         "name": "Schedule Trigger1"
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.email AS msr_email, \n    m.volunteer_zendesk_ticket_id, \n    m.msr_zendesk_ticket_id \nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE (m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT)\nAND m.volunteer_id not in (18492,\n27903,\n29254,\n33829,\n34065,\n34197,\n34210,\n34217,\n34244,\n34260,\n34263,\n34265,\n34268,\n34276,\n34277,\n34291,\n34304,\n34334,\n34337,\n34364,\n34391,\n34411,\n34426,\n34433,\n34434,\n34435,\n34437,\n34438,\n34452,\n34459,\n34466,\n34467,\n34475,\n34476,\n34479,\n34485,\n34486,\n34488,\n34490,\n34493,\n34495,\n34496)\nORDER BY m.created_at DESC\nLIMIT 1",
-          "options": {}
-        },
-        "id": "eadbd614-f438-41dc-9a2c-a805c2a43973",
-        "name": "Fetch match_id and status remove mateches de voluntarias bug aprovacao",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.3,
-        "position": [
-          3152,
-          704
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "c5mNsjWNXx3mw1Fh",
-            "name": "[PROD] Mapa"
-          }
-        }
       }
     ],
     "connections": {
@@ -3153,11 +3090,6 @@
               "index": 0
             }
           ]
-        ]
-      },
-      "Fetch match_id and status v2": {
-        "main": [
-          []
         ]
       },
       "Send Loops comms PSI": {
@@ -3582,18 +3514,13 @@
             }
           ]
         ]
-      },
-      "Fetch match_id and status remove mateches de voluntarias bug aprovacao": {
-        "main": [
-          []
-        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "2d1731cb-122d-4980-b55a-4b670b62b606",
+  "activeVersionId": "a89d8e1e-c043-4e69-a849-e27f7f4e9e82",
   "connections": {
     "Webhook": {
       "main": [
@@ -3985,11 +3912,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "Fetch match_id and status v2": {
-      "main": [
-        []
       ]
     },
     "Send Loops comms PSI": {
@@ -4413,11 +4335,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "Fetch match_id and status remove mateches de voluntarias bug aprovacao": {
-      "main": [
-        []
       ]
     }
   },
@@ -5815,27 +5732,6 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.emal AS msr_email\nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT\nORDER BY m.created_at DESC\nLIMIT 1",
-        "options": {}
-      },
-      "id": "6975e7d3-ade3-4aaa-a081-f664636032e9",
-      "name": "Fetch match_id and status v2",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        3472,
-        1344
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
         "query": "INSERT INTO survey.volunteer_instrumental_record (\n    match_id,\n    volunteer_id,\n    instrumental_type,\n    status,\n    sent_at,\n    created_at,\n    updated_at\n)\nVALUES (\n    {{ $('Fetch match_id and status').item.json.match_id }},\n    {{ $('Fetch match_id and status').item.json.volunteer_id }},\n    'volunteer_psychological_support_conclusion',\n    'sent',\n    NOW(),\n    NOW(),\n    NOW()\n)",
         "options": {}
       },
@@ -6351,27 +6247,6 @@
       "typeVersion": 1,
       "id": "eae0d3b3-c863-4cd8-b3fb-431ad0c67266",
       "name": "Sticky Note8"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT \n\tmatch_id, \n\tstatus AS current_status,\n    '{{$json[\"status\"]}}' AS new_status,\n    volunteer_id \nFROM match.matches\nWHERE volunteer_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT \nOR msr_zendesk_ticket_id = {{$json[\"zendesk_ticket_id\"]}}::BIGINT\nORDER BY created_at DESC\nLIMIT 1",
-        "options": {}
-      },
-      "id": "8af29728-6f6f-41d0-bf6d-02dcd540141b",
-      "name": "Fetch match_id and status1",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        3232,
-        1344
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     },
     {
       "parameters": {
@@ -7163,27 +7038,6 @@
       ],
       "id": "756cffd8-ec14-41f3-8358-639e1297cd36",
       "name": "Schedule Trigger1"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT \n    m.match_id, \n    m.status AS current_status,\n    '{{ $json[\"status\"] }}' AS new_status,\n    m.volunteer_id,\n    m.support_type,\n    m.msr_id,\n    v.email AS volunteer_email,\n    v.first_name AS volunteer_first_name,\n    mp.first_name AS msr_first_name, \n    mp.email AS msr_email, \n    m.volunteer_zendesk_ticket_id, \n    m.msr_zendesk_ticket_id \nFROM match.matches m\nJOIN public.volunteers v ON v.id = m.volunteer_id\nJOIN match.support_requests sr ON sr.support_request_id = m.support_request_id\nJOIN pii_sec.msr_pii mp ON mp.msr_id = m.msr_id\nWHERE (m.volunteer_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT \nOR m.msr_zendesk_ticket_id = {{ $json[\"zendesk_ticket_id\"] }}::BIGINT)\nAND m.volunteer_id not in (18492,\n27903,\n29254,\n33829,\n34065,\n34197,\n34210,\n34217,\n34244,\n34260,\n34263,\n34265,\n34268,\n34276,\n34277,\n34291,\n34304,\n34334,\n34337,\n34364,\n34391,\n34411,\n34426,\n34433,\n34434,\n34435,\n34437,\n34438,\n34452,\n34459,\n34466,\n34467,\n34475,\n34476,\n34479,\n34485,\n34486,\n34488,\n34490,\n34493,\n34495,\n34496)\nORDER BY m.created_at DESC\nLIMIT 1",
-        "options": {}
-      },
-      "id": "eadbd614-f438-41dc-9a2c-a805c2a43973",
-      "name": "Fetch match_id and status remove mateches de voluntarias bug aprovacao",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.3,
-      "position": [
-        3152,
-        704
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "c5mNsjWNXx3mw1Fh",
-          "name": "[PROD] Mapa"
-        }
-      }
     }
   ],
   "pinData": {
@@ -7328,7 +7182,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-07-13T12:25:13.000Z",
+              "updatedAt": "2026-07-14T12:55:21.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -7348,7 +7202,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-07-13",
+              "lastActiveAt": "2026-07-14",
               "isPending": false
             }
           }
@@ -7374,7 +7228,7 @@
     }
   ],
   "triggerCount": 5,
-  "updatedAt": "2026-07-13T21:28:49.834Z",
-  "versionCounter": 166,
-  "versionId": "2d1731cb-122d-4980-b55a-4b670b62b606"
+  "updatedAt": "2026-07-14T18:49:01.701Z",
+  "versionCounter": 168,
+  "versionId": "a89d8e1e-c043-4e69-a849-e27f7f4e9e82"
 }
