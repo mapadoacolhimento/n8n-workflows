@@ -1,0 +1,408 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "busca voluntarias rj sp bh sa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca msrs em atendiment/concluido": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "envia email msr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "envia email msr": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "loop whatsapp": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia mensagem whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia mensagem whatsapp": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "loop whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca voluntarias rj sp bh sa": {
+      "main": [
+        [
+          {
+            "node": "loop whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-08-26T21:30:03.894Z",
+  "description": null,
+  "id": "XWRXGNi9PecP5goy",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "[TEMP] envio comms Por Todas Elas",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        400,
+        704
+      ],
+      "id": "ac908b3d-f3a2-4b19-b641-5ea014cd0100",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH matches_status AS (\n    SELECT\n        m.msr_id,\n        pii.email,\n        pii.first_name AS nome_msr,\n        m.support_type,\n        m.match_id,\n        m.status,\n        m.updated_at,\n        ROW_NUMBER() OVER (\n            PARTITION BY m.msr_id\n            ORDER BY m.updated_at DESC\n        ) AS rn\n    FROM match.matches m\n    JOIN pii_sec.msr_pii pii\n        ON pii.msr_id = m.msr_id\n    LEFT JOIN public.volunteers v\n        ON v.id = m.volunteer_id\n    WHERE m.status IN ('in_contact', 'completed')\n)\n\nSELECT\n    msr_id,\n    nome_msr,\n    support_type,\n    email,\n    CASE\n        WHEN status = 'in_contact' THEN 'Em atendimento'\n        WHEN status = 'completed' THEN 'Atendimento concluído'\n    END AS status_atendimento,\n    updated_at AS data_status\nFROM matches_status\nWHERE rn = 1\nORDER BY updated_at DESC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        336,
+        0
+      ],
+      "id": "8e7be810-337c-45ec-8815-40dac9ab0936",
+      "name": "busca msrs em atendiment/concluido",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        608,
+        0
+      ],
+      "id": "947d4bb7-9c99-4047-b868-6e08e51b80ed",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        16
+      ],
+      "id": "8e65aa87-93ce-42a5-b8b3-1bc96c1da56f",
+      "name": "Wait",
+      "webhookId": "16f92966-5bed-422d-8ae5-d8e714da6b3d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.loops.so/api/v1/transactional",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transactionalId\": \"cmu19sm8b0m7j0j1s4mfv15t1\",\n  \"email\": \"{{ $json.email }}\",\n  \"dataVariables\": {\n    \"first_name\": \"{{ $json.nome_msr }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "adf74595-fd3d-490c-87d0-d9e4329d6436",
+      "name": "envia email msr",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        976,
+        16
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "id": "de797018-ced9-4661-a4e7-d891ff79cba8",
+      "name": "loop whatsapp",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        896,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55 \"{{ $json.phone }}\""
+            },
+            {
+              "name": "From",
+              "value": "={{$vars.TWILIO_3PDM_SID}}"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX38a34367227bad79877c005203ad2e6e"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"first_name\": \"{{ $json.first_name }}\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "334c2382-cca6-465d-8a2e-9bb3197662ee",
+      "name": "Envia mensagem whatsapp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        720
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        720
+      ],
+      "id": "3bc56a4d-db24-44e7-9942-e43a52c6db3e",
+      "name": "Wait1",
+      "webhookId": "2d87d2da-cbd7-46e3-a477-a814cef0922e"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select \ndistinct \n  email, \n  first_name, \n  condition, \n  state,\n  city\nfrom volunteers v\nleft join match.matches m on m.volunteer_id = v.id\nWHERE\nv.condition in (\n'disponivel',\n'indisponivel_sem_vagas',\n'indisponivel_aguardando_confirmacao') and v.city in ('SALVADOR', 'BELO HORIZONTE', 'SALVADOR', 'RIO DE JANEIRO', 'SAO PAULO')\nand m.match_id is not null and m.status in ('completed', 'in_contact', 'interrupted_after_support')",
+        "options": {}
+      },
+      "id": "641a0316-5777-4192-a148-9ea21657efd2",
+      "name": "busca voluntarias rj sp bh sa",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        640,
+        704
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+5521971406468"
+            },
+            {
+              "name": "From",
+              "value": "={{$vars.TWILIO_3PDM_SID}}"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX38a34367227bad79877c005203ad2e6e"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={   \"first_name\": \"Janaina\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fe094c8f-b3a2-4b27-ac4d-c5d516b986f5",
+      "name": "Envia mensagem whatsapp1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        944,
+        960
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "SFhrb3m76win1cJr",
+          "name": "Twilio API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-08-26T21:30:03.906Z",
+      "createdAt": "2026-08-26T21:30:03.906Z",
+      "role": "workflow:owner",
+      "workflowId": "XWRXGNi9PecP5goy",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "updatedAt": "2026-10-06T13:49:38.000Z",
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1783345971287
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-10-06",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-30T14:12:05.890Z",
+  "versionCounter": 17,
+  "versionId": "bcf30b53-af6d-4e8c-821f-f74154cc1a58"
+}
