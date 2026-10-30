@@ -7,7 +7,58 @@
       "main": [
         [
           {
+            "node": "Buscar tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lista de IDs": {
+      "main": [
+        [
+          {
+            "node": "IF (tem ID?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF (tem ID?)": {
+      "main": [
+        [
+          {
+            "node": "Consulta banco",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta banco": {
+      "main": [
+        [
+          {
+            "node": "lotes de reatribuição1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lotes de reatribuição1": {
+      "main": [
+        [
+          {
+            "node": "Se tem alguma reatribuicao",
             "type": "main",
             "index": 0
           }
@@ -19,68 +70,126 @@
         [],
         [
           {
-            "node": "HTTP Request",
+            "node": "lista de IDs",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "HTTP Request": {
+    "junta os ids": {
       "main": [
         [
           {
-            "node": "Code in JavaScript",
+            "node": "Wait1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Separa os tickets do objeto retornado": {
+    "Relatorio com as divergencias": {
       "main": [
         []
       ]
     },
-    "Loop Over Items1": {
+    "Atualiza vários ticket": {
       "main": [
-        [],
         [
           {
-            "node": "HTTP Request1",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "HTTP Request1": {
+    "Relatorio com as divergencias1": {
       "main": [
         [
           {
-            "node": "If",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code in JavaScript": {
+    "Se tem alguma reatribuicao": {
       "main": [
         [
           {
-            "node": "If",
+            "node": "Vai restribuir?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vai revisar?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If": {
+    "Vai restribuir?": {
       "main": [
         [
           {
-            "node": "Loop Over Items1",
+            "node": "Relatorio com as divergencias",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "junta os ids",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vai revisar?": {
+      "main": [
+        [
+          {
+            "node": "Relatorio com as divergencias1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Buscar tickets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza vários ticket",
             "type": "main",
             "index": 0
           }
@@ -102,7 +211,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -128,
+        -672,
         0
       ],
       "id": "1d307d72-55eb-4e4e-acd5-f0b20773224d",
@@ -110,19 +219,481 @@
     },
     {
       "parameters": {
-        "url": "https://mapadoacolhimento.zendesk.com/api/v2/users/415485651752/tickets/assigned.json?page[size]=100",
+        "jsCode": "const ids = $input.all()\n  .flatMap(i => i.json.tickets || [])\n  .filter(t => t.status !== 'closed')\n  .map(t => t.id);\n\nreturn [{ json: { ids } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        32
+      ],
+      "id": "c4fc4e5b-fa8c-4b35-9292-77bc1bd2d5a3",
+      "name": "lista de IDs"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b2c49edc-a638-4a6c-9988-e371f3e9bbe0",
+              "leftValue": "={{ $json.ids }}",
+              "rightValue": "=matched",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        704,
+        32
+      ],
+      "id": "8bfb9c75-5026-4f61-9aae-e55aa56c8eb8",
+      "name": "IF (tem ID?)"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    sr.zendesk_ticket_id AS ticket_id,\n    'pedido' AS origem,\n    sr.status::text AS status_banco,\n    sr.created_at\nFROM match.support_requests sr\nWHERE sr.zendesk_ticket_id = ANY(string_to_array($1, ',')::bigint[])\n\nUNION ALL\n\n(\n    SELECT\n        m.msr_zendesk_ticket_id AS ticket_id,\n        'match_acolhida' AS origem,\n        m.status::text AS status_banco,\n        m.created_at\n    FROM match.matches m\n    WHERE m.msr_zendesk_ticket_id = ANY(string_to_array($1, ',')::bigint[])\n    ORDER BY m.created_at DESC\n    LIMIT 1\n)\n\nUNION ALL\n\nSELECT\n    m.volunteer_zendesk_ticket_id AS ticket_id,\n    'match_voluntaria' AS origem,\n    m.status::text AS status_banco,\n    m.created_at\nFROM match.matches m\nWHERE m.volunteer_zendesk_ticket_id = ANY(string_to_array($1, ',')::bigint[]);\n",
+        "options": {
+          "queryReplacement": "={{ [$json.ids.join(',')] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        896,
+        -32
+      ],
+      "id": "712a2400-61a9-4840-a3b4-91ce03bf4ca3",
+      "name": "Consulta banco",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const FIELD_ID_STATUS = 360014379412;          // ID do campo \"Status do Acolhimento\"\nconst SUBDOMINIO = 'mapadoacolhimento';\n\n// valor do campo no Zendesk -> status do pedido no banco\nconst MAPA_PEDIDO = {\n  'solicitação_recebida': 'open',\n  'encaminhamento__realizado_para_serviço_público': 'public_service',\n  'encaminhamento__realizado': 'matched',\n  'atendimento__iniciado': 'matched',\n  'atendimento__concluído': 'matched',\n  \"encaminhamento__expirado\": \"matched\",\n  'atendimento__interrompido': 'matched',\n  'encaminhamento_interrompido':  'matched',\n  'encaminhamento__assistente_social': 'social_worker',\n  'encaminhamento__servico_publico_com_assistente_social': 'public_service_with_social_worker',\n  'aguardando_match__sem_prioridade': 'waiting_for_match',\n  'aguardando_match__com_prioridade': 'waiting_for_match_with_priority',\n  'desistencia': 'waived',\n  'encaminhamento__aguardando_confirmação': 'waiting_for_confirmation',\n  'solicitação_encerrada': 'closed',\n  'solicitação_repetida': 'duplicated',\n};\n\n// valor do campo no Zendesk -> status do match no banco\nconst MAPA_MATCH = {\n  'encaminhamento__realizado': 'waiting_contact',\n  'encaminhamento_interrompido': 'interrupted_before_support',\n  'atendimento__iniciado': 'in_contact',\n  'atendimento__concluído': 'completed',\n  'atendimento__interrompido': 'interrupted_after_support',\n  'encaminhamento__expirado': 'expired',\n};\n\nconst tickets = $('Loop Over Items').all()\n  .flatMap(i => i.json.tickets || [])\n  .filter(t => t.status !== 'closed');\n\nconst porTicket = new Map();\nfor (const { json: r } of $('Consulta banco').all()) {\n  if (!r.ticket_id) continue;\n  const k = String(r.ticket_id);\n  if (!porTicket.has(k)) porTicket.set(k, []);\n  porTicket.get(k).push(r);\n}\n\nreturn tickets.map(t => {\n  const campo = (t.custom_fields || []).find(c => c.id === FIELD_ID_STATUS);\n  const valorZendesk = campo ? campo.value : null;\n  const rows = porTicket.get(String(t.id)) || [];\n\n  const base = {\n    ticket_id: t.id,\n    link: `https://${SUBDOMINIO}.zendesk.com/agent/tickets/${t.id}`,\n    status_zendesk: valorZendesk || 'sem valor',\n  };\n  const reatribuir = (categoria, extra = {}) =>\n    ({ json: { ...base, ...extra, acao: 'reatribuir', categoria } });\n  const revisar = (categoria, extra = {}) =>\n    ({ json: { ...base, ...extra, acao: 'revisar', categoria } });\n\n  // sem relação com pedido nem match\n  if (!rows.length) return reatribuir('sem_relacao');\n\n  const matchesAcolhida = rows\n    .filter(r => r.origem === 'match_acolhida')\n    .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));\n  const pedidos = rows.filter(r => r.origem === 'pedido');\n  const deVoluntaria = rows.some(r => r.origem === 'match_voluntaria');\n\n  // ticket da voluntária: não usa o campo, reatribui direto\n  if (!matchesAcolhida.length && !pedidos.length && deVoluntaria) {\n    return reatribuir('ticket_voluntaria');\n  }\n\n  if (!matchesAcolhida.length && pedidos.length > 1) {\n    return revisar('multiplos_pedidos', {\n      status_banco: pedidos.map(p => p.status_banco).join(' | '),\n    });\n  }\n\n  // se há match, vale o mais recente; senão, o status do pedido\n  const ref = matchesAcolhida[0] || pedidos[0];\n  const mapa = matchesAcolhida.length ? MAPA_MATCH : MAPA_PEDIDO;\n  const extra = { origem: ref.origem, status_banco: ref.status_banco };\n\n  if (!valorZendesk) return revisar('campo_zendesk_vazio', extra);\n\n  const esperado = mapa[valorZendesk];\n  if (esperado === undefined) return revisar('valor_zendesk_sem_mapeamento', extra);\n  if (esperado === ref.status_banco) return reatribuir('status_ok', extra);\n  return revisar('status_divergente', extra);\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        -32
+      ],
+      "id": "1841063f-4468-4d5a-9955-d10bf1bbd644",
+      "name": "lotes de reatribuição1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        112,
+        16
+      ],
+      "id": "86935386-aca1-4988-88ff-84f70b3a064c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ids = $input.all()\n  .flatMap(i => i.json|| [])\n  .map(t => t.ticket_id);\n\nreturn [{ json: { ids } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        -160
+      ],
+      "id": "f57d2e33-be09-4227-8e53-4afd5a4c65cb",
+      "name": "junta os ids"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1VP4gfrPXKvzzmLrlwS2_ARGlst2NfXsMYKdRxE571ww",
+          "mode": "list",
+          "cachedResultName": "Tickets atribuídos a Marcia para revisão - Revisado",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VP4gfrPXKvzzmLrlwS2_ARGlst2NfXsMYKdRxE571ww/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VP4gfrPXKvzzmLrlwS2_ARGlst2NfXsMYKdRxE571ww/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "ticket_id"
+          ],
+          "schema": [
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_zendesk",
+              "displayName": "status_zendesk",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_banco",
+              "displayName": "status_banco",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "acao",
+              "displayName": "acao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "categoria",
+              "displayName": "categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origem",
+              "displayName": "origem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1664,
+        -224
+      ],
+      "id": "2e9e4f26-3a83-49aa-877f-a26f9f411b1e",
+      "name": "Relatorio com as divergencias",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LGjodYg7COQ49lol",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/update_many?ids={{ $json.ids }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n    \"assignee_id\":377511446392\n  }\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        384,
+        2704,
+        48
+      ],
+      "id": "80d2eea9-e06f-460b-81f4-84f8bc527f8f",
+      "name": "Atualiza vários ticket",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cw6WdIc7c9HRGleo",
+          "name": "Zendesk auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1VP4gfrPXKvzzmLrlwS2_ARGlst2NfXsMYKdRxE571ww",
+          "mode": "list",
+          "cachedResultName": "Tickets atribuídos a Marcia para revisão - Revisado",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VP4gfrPXKvzzmLrlwS2_ARGlst2NfXsMYKdRxE571ww/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VP4gfrPXKvzzmLrlwS2_ARGlst2NfXsMYKdRxE571ww/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "ticket_id"
+          ],
+          "schema": [
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_zendesk",
+              "displayName": "status_zendesk",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_banco",
+              "displayName": "status_banco",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "acao",
+              "displayName": "acao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "categoria",
+              "displayName": "categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origem",
+              "displayName": "origem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2112,
+        272
+      ],
+      "id": "828abfde-4d2b-4cdb-b71a-09438f5a6126",
+      "name": "Relatorio com as divergencias1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LGjodYg7COQ49lol",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e76eafc6-2375-4039-8086-46c43428ae4a",
+              "leftValue": "={{ $('lotes de reatribuição1').all().filter(item => item.json.acao === 'reatribuir').length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        -32
+      ],
+      "id": "8afa532c-f0ab-401f-af73-f7c89bc883f9",
+      "name": "Se tem alguma reatribuicao"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7214626b-3a75-495a-bfbc-3f2b5eff2ad8",
+              "leftValue": "={{ $json.acao }}",
+              "rightValue": "reatribuir",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1488,
+        48
+      ],
+      "id": "716137ef-844b-4ba0-a225-234150457ea8",
+      "name": "Vai restribuir?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7214626b-3a75-495a-bfbc-3f2b5eff2ad8",
+              "leftValue": "={{ $json.acao }}",
+              "rightValue": "reatribuir",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1504,
+        288
+      ],
+      "id": "a7f416a9-6cb3-4179-87ae-dfb808086716",
+      "name": "Vai revisar?"
+    },
+    {
+      "parameters": {
+        "url": "https://mapadoacolhimento.zendesk.com/api/v2/users/415485651752/tickets/assigned.json?page[size]=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.links.next }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ $response.body.meta.has_more === false }}"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -192,
         16
       ],
-      "id": "244a1c08-b0b7-49f8-8ff5-2236cf597e3c",
-      "name": "HTTP Request",
+      "id": "7a5bbc27-da30-4bb6-8a54-402aa69cead1",
+      "name": "Buscar tickets",
       "credentials": {
         "httpHeaderAuth": {
           "id": "FSccxEIiuu2kgcw7",
@@ -136,121 +707,42 @@
     },
     {
       "parameters": {
-        "options": {}
+        "amount": 1
       },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
       "position": [
-        80,
-        0
+        2912,
+        48
       ],
-      "id": "24b2c6d5-5ba3-49a9-8b90-61b5ca60f403",
-      "name": "Loop Over Items"
+      "id": "b1871467-99dc-4901-8b52-8d9b8c83b1b8",
+      "name": "Wait",
+      "webhookId": "00aae403-6b03-4884-b668-d8ee839d0851"
     },
     {
       "parameters": {
-        "fieldToSplitOut": "tickets",
-        "include": "allOtherFields",
-        "options": {}
+        "amount": 0.5
       },
-      "id": "e10ebd2e-b718-4165-a13f-7d7273ece964",
-      "name": "Separa os tickets do objeto retornado",
-      "type": "n8n-nodes-base.itemLists",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
       "position": [
-        544,
-        -304
-      ]
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1056,
-        0
+        2112,
+        -160
       ],
-      "id": "603903e6-5ba8-4430-80db-5b25e62bbd8f",
-      "name": "Loop Over Items1",
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "method": "PUT",
-        "url": "=https://mapadoacolhimento.zendesk.com/api/v2/tickets/{{ $json.id }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBasicAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"ticket\": {\n    \"assignee_id\":377511446392\n  }\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        1376,
-        16
-      ],
-      "id": "019a6cf7-8d0a-4804-a1c9-2e3bcf30e0cc",
-      "name": "HTTP Request1",
-      "credentials": {
-        "httpBasicAuth": {
-          "id": "cw6WdIc7c9HRGleo",
-          "name": "Zendesk auth"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nvar items = []\nfor (const item of $input.all()) {\n  items = item.json.tickets.filter((t => t.status !== 'closed'))\n  \n}\n\nreturn items"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        592,
-        16
-      ],
-      "id": "c4fc4e5b-fa8c-4b35-9292-77bc1bd2d5a3",
-      "name": "Code in JavaScript"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "a22b6cd0-47e5-4656-b66e-c676d8af159d",
-              "leftValue": "={{ $json }}",
-              "rightValue": "",
-              "operator": {
-                "type": "object",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        800,
-        16
-      ],
-      "id": "df2a0480-8874-419c-9f9e-935583236641",
-      "name": "If"
+      "id": "266e6f62-2a60-47cd-a474-c9a1d1d9dc8f",
+      "name": "Wait1",
+      "webhookId": "d1b68ce6-a20f-4018-b4f7-d34b65a14652"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {
+          "isArtificialRecoveredEventItem": true
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1"
   },
@@ -276,7 +768,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-10-29T12:32:23.000Z",
+              "updatedAt": "2026-10-30T19:09:47.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -296,7 +788,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-10-29",
+              "lastActiveAt": "2026-10-30",
               "isPending": false
             }
           }
@@ -307,7 +799,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-10-29T20:54:18.637Z",
-  "versionCounter": 2,
-  "versionId": "97098a06-49d2-4955-9d1a-14dfcc0ab657"
+  "updatedAt": "2026-10-30T19:55:24.913Z",
+  "versionCounter": 22,
+  "versionId": "57938725-f162-4448-90e9-1b4e06b44347"
 }
