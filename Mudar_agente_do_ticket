@@ -522,7 +522,7 @@
         ],
         [
           {
-            "node": "Loop Over Items1",
+            "node": "Relatorio com as divergencias3",
             "type": "main",
             "index": 0
           }
@@ -530,6 +530,17 @@
       ]
     },
     "Atualiza ticket2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relatorio com as divergencias3": {
       "main": [
         [
           {
@@ -1150,7 +1161,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        304,
+        256,
         -512
       ],
       "id": "efef803b-0325-468d-bef1-32b52432ee01",
@@ -2173,7 +2184,7 @@
       "typeVersion": 1,
       "position": [
         560,
-        -480
+        -496
       ],
       "id": "ba1c8cd1-70e6-4bd9-86c6-8ac1143dec94",
       "name": "Get a ticket1",
@@ -2197,7 +2208,7 @@
             {
               "id": "b43d6885-111b-48f6-b4f2-27b32e885417",
               "leftValue": "={{ $json.custom_fields[2].value }}",
-              "rightValue": "atendimento__concluído",
+              "rightValue": "atendimento__interrompido",
               "operator": {
                 "type": "string",
                 "operation": "equals"
@@ -2216,7 +2227,7 @@
             {
               "id": "5d50eb26-1ded-408f-ba64-33c3e8cd6fed",
               "leftValue": "={{ $('Loop Over Items1').item.json.status_match}}",
-              "rightValue": "completed",
+              "rightValue": "interrupted_after_support",
               "operator": {
                 "type": "string",
                 "operation": "equals",
@@ -2231,7 +2242,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        768,
+        848,
         -480
       ],
       "id": "cb143248-8e7a-4ae1-a36f-e5646330a4d2",
@@ -2251,8 +2262,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1200,
-        -416
+        1184,
+        -544
       ],
       "id": "fdcff005-908e-4217-9e59-7b2e226c6abb",
       "name": "Atualiza ticket2",
@@ -2315,6 +2326,123 @@
       ],
       "id": "fc0e09f9-7855-4f9c-8327-a57fb373bc3c",
       "name": "If3"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1IxnuikjB7DIwPpftBbbj1KeS1YuE2PXa1pz00WrceBM",
+          "mode": "list",
+          "cachedResultName": "Ticktes -Marcia - Provisao Revisar",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IxnuikjB7DIwPpftBbbj1KeS1YuE2PXa1pz00WrceBM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IxnuikjB7DIwPpftBbbj1KeS1YuE2PXa1pz00WrceBM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticket_id": "={{ $json.id }}",
+            "link": "=https://mapadoacolhimento.zendesk.com/agent/tickets/{{ $json.id }}",
+            "status_zendesk": "={{ $json.custom_fields[2].value }}",
+            "status_banco": "={{ $('Loop Over Items1').item.json.status_pedido }}",
+            "acao": "revisar",
+            "categoria": "status divergente",
+            "origem": "={{ $('Loop Over Items1').item.json.status_match }}"
+          },
+          "matchingColumns": [
+            "ticket_id"
+          ],
+          "schema": [
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_zendesk",
+              "displayName": "status_zendesk",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_banco",
+              "displayName": "status_banco",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "acao",
+              "displayName": "acao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "categoria",
+              "displayName": "categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origem",
+              "displayName": "origem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        -496
+      ],
+      "id": "d3e2b0d0-f9a1-4d80-a913-4229c252a7cf",
+      "name": "Relatorio com as divergencias3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LGjodYg7COQ49lol",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -2351,7 +2479,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-11-04T11:50:30.000Z",
+              "updatedAt": "2026-11-05T03:03:20.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -2371,7 +2499,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-11-04",
+              "lastActiveAt": "2026-11-05",
               "isPending": false
             }
           }
@@ -2382,7 +2510,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-11-04T23:03:12.910Z",
-  "versionCounter": 33,
-  "versionId": "9846b3bc-377d-4d6e-bf14-c2e50d06530d"
+  "updatedAt": "2026-11-05T15:06:51.158Z",
+  "versionCounter": 35,
+  "versionId": "558b0c88-b984-4063-99d4-55b40be89ea1"
 }
