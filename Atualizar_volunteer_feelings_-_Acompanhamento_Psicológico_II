@@ -1,0 +1,370 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Extrair linhas do CSV": {
+      "main": [
+        [
+          {
+            "node": "Normalizar CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar CSV": {
+      "main": [
+        [
+          {
+            "node": "Buscar registros com placeholder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar registros com placeholder": {
+      "main": [
+        [
+          {
+            "node": "Cruzar por match_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cruzar por match_id": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar volunteer_feelings": {
+      "main": [
+        [
+          {
+            "node": "Validar placeholders restantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar placeholders restantes": {
+      "main": [
+        [
+          {
+            "node": "Relatório de validação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Iniciar manualmente": {
+      "main": [
+        [
+          {
+            "node": "Baixar CSV do Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar CSV do Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extrair linhas do CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Atualizar volunteer_feelings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-10T14:59:52.101Z",
+  "description": null,
+  "id": "bVUopa2s1m30HHtd",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Atualizar volunteer_feelings - Acompanhamento Psicológico II",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "3123b3e9-6be4-4650-8a5b-ba3fe0b21733",
+      "name": "Iniciar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "=https://drive.google.com/file/d/1yLEnFrkvTjITwAQMNvDvYFiDUh99YDHP/view?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "id": "1c203c58-2a1f-4f97-ac29-f74f0a4b4bff",
+      "name": "Baixar CSV do Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -496,
+        800
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "31vgqoSRas2e7TQe",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "enableBOM": true
+        }
+      },
+      "id": "9faf8185-3674-4e79-8ceb-aeec639f67a1",
+      "name": "Extrair linhas do CSV",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst CFG = {\n  matchIdCol: 'match_id',\n  feelingsCol: 'volunteer_feelings',\n  submittedAtCol: 'Submitted at'\n};\n\n// Se houver mais de uma resposta para o mesmo match_id, vale a mais recente\nconst latest = new Map();\nfor (const item of $input.all()) {\n  const r = item.json;\n  const match_id = String(r[CFG.matchIdCol] ?? '').trim();\n  if (!match_id) continue;\n  const ts = new Date(r[CFG.submittedAtCol] ?? 0).getTime() || 0;\n  const prev = latest.get(match_id);\n  if (!prev || ts >= prev.ts) {\n    latest.set(match_id, { ts, volunteer_feelings: String(r[CFG.feelingsCol] ?? '').trim() });\n  }\n}\n\nreturn [...latest].map(([match_id, v]) => ({\n  json: { match_id, volunteer_feelings: v.volunteer_feelings }\n}));"
+      },
+      "id": "b9fc0589-18f0-4fa2-bea5-9230d0136714",
+      "name": "Normalizar CSV",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT match_id, volunteer_feelings \nFROM survey.psychological_support_follow_up_ii \nWHERE volunteer_feelings LIKE '%volunteer_experience.volunteer_feelings%'",
+        "options": {}
+      },
+      "id": "a8c97935-be3d-447d-becd-16743110f5b8",
+      "name": "Buscar registros com placeholder",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        176,
+        800
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      },
+      "notes": "Filtra registros onde volunteer_feelings ficou com o texto literal {{ $json.volunteer_experience.volunteer_feelings }} (expressão não resolvida)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Cruza os registros do BD (input) com as linhas do CSV pelo match_id\nconst csv = $('Normalizar CSV').all().map(i => i.json);\nconst byId = new Map(csv.map(r => [r.match_id, r]));\n\nconst out = [];\n\nfor (const item of $input.all()) {\n  const row = item.json;\n  if (!row.match_id) continue; // BD sem resultados\n  const hit = byId.get(String(row.match_id));\n  if (hit && hit.volunteer_feelings) {\n    out.push({ json: { status: 'matched', match_id: row.match_id, volunteer_feelings: hit.volunteer_feelings } });\n  } else {\n    out.push({ json: { status: 'unmatched', match_id: row.match_id, motivo: hit ? 'Resposta vazia no CSV' : 'match_id não encontrado no CSV' } });\n  }\n}\n\nreturn out;"
+      },
+      "id": "81b1798f-7197-40ba-baeb-82f33cf78f86",
+      "name": "Cruzar por match_id",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        800
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE survey.psychological_support_follow_up_ii\nSET volunteer_feelings = $1\nWHERE match_id = $2\n  AND volunteer_feelings LIKE '%volunteer_experience.volunteer_feelings%'\nRETURNING match_id;",
+        "options": {
+          "queryReplacement": "={{ [$json.volunteer_feelings, $json.match_id, $json.form_type] }}"
+        }
+      },
+      "id": "bfaeda90-e897-40fe-90bb-ab7495286697",
+      "name": "Atualizar volunteer_feelings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        864,
+        688
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT match_id\nFROM survey.psychological_support_follow_up_ii\nWHERE volunteer_feelings LIKE '%volunteer_experience.volunteer_feelings%';",
+        "options": {}
+      },
+      "id": "e0545274-dc32-4113-bb78-7eb961f826e7",
+      "name": "Validar placeholders restantes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1088,
+        688
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "lveNjRL3anzREWd8",
+          "name": "[STG] Mapa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const atualizados = $('Atualizar volunteer_feelings').all().filter(i => i.json.match_id).length;\nconst restantes = $input.all().filter(i => i.json.match_id).map(i => i.json.match_id);\nconst semCorrespondencia = $('Cruzar por match_id').all().map(i => i.json).filter(j => j.status === 'unmatched');\n\n// Respostas do CSV sem registro com placeholder no BD\nconst idsBD = new Set($('Buscar registros com placeholder').all().map(i => String(i.json.match_id)));\nconst csvSemRegistro = $('Normalizar CSV').all()\n  .map(i => i.json)\n  .filter(r => r.volunteer_feelings && !idsBD.has(r.match_id))\n  .map(r => r.match_id);\n\nreturn [{ json: {\n  atualizados,\n  placeholders_restantes: restantes.length,\n  ids_restantes: restantes,\n  bd_sem_resposta_no_csv: semCorrespondencia,\n  csv_sem_registro_com_placeholder: csvSemRegistro,\n  status: restantes.length === 0 && semCorrespondencia.length === 0 ? 'OK' : 'REVISAR'\n} }];"
+      },
+      "id": "8f070281-d99c-4bda-aa16-fed8272c0361",
+      "name": "Relatório de validação",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "20d32d66-2fa6-4366-9c61-53dad266ec7b",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "matched",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        608,
+        800
+      ],
+      "id": "dbd1ae49-d4ed-4b05-9b41-f99d8479803b",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-11-10T14:59:52.104Z",
+      "createdAt": "2026-11-10T14:59:52.104Z",
+      "role": "workflow:owner",
+      "workflowId": "bVUopa2s1m30HHtd",
+      "projectId": "rfgBK87HsySgxYKT",
+      "project": {
+        "updatedAt": "2024-11-15T08:07:36.637Z",
+        "createdAt": "2024-11-15T08:07:36.637Z",
+        "id": "rfgBK87HsySgxYKT",
+        "name": "Desenvolvimento Mapa <dev@mapa.org.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2024-11-15T08:07:36.637Z",
+            "createdAt": "2024-11-15T08:07:36.637Z",
+            "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+            "projectId": "rfgBK87HsySgxYKT",
+            "user": {
+              "updatedAt": "2026-11-11T12:59:38.000Z",
+              "createdAt": "2024-01-09T22:21:28.810Z",
+              "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
+              "email": "dev@mapa.org.br",
+              "firstName": "Desenvolvimento",
+              "lastName": "Mapa",
+              "personalizationAnswers": null,
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "sMoToF9HauyKvsFJ",
+                "isOnboarded": true,
+                "userActivatedAt": 1731658062996,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1783345971287
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-11-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-11T21:23:45.752Z",
+  "versionCounter": 7,
+  "versionId": "3011e8c6-c058-466a-b8a9-74356fb4524c"
+}
