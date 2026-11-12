@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-09-16T19:07:39.987Z",
-    "createdAt": "2026-09-16T19:07:39.987Z",
-    "versionId": "fa140fd7-00ca-4cad-b5b1-0862a14abb74",
+    "updatedAt": "2026-11-12T20:58:02.611Z",
+    "createdAt": "2026-11-12T20:58:02.611Z",
+    "versionId": "d0de6eae-7ac4-4b2e-a810-b957c79393a9",
     "workflowId": "JMNgqq6mdcwipLTj",
     "nodes": [
       {
@@ -286,8 +286,8 @@
         "type": "n8n-nodes-base.manualTrigger",
         "typeVersion": 1,
         "position": [
-          512,
-          640
+          544,
+          1248
         ],
         "id": "96c719db-2f46-4ed9-8296-ba01204fd964",
         "name": "When clicking ‘Execute workflow’"
@@ -369,6 +369,84 @@
           "httpHeaderAuth": {
             "id": "XrvtxHAVgwwJ3r6q",
             "name": "Loops API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "batchSize": 10,
+          "options": {
+            "reset": false
+          }
+        },
+        "id": "4164cf84-6577-4ae7-93ce-1bffdc20bb03",
+        "name": "Loop Over Items2",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1184,
+          1264
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 2
+        },
+        "id": "622aeb32-db84-49c3-b3fa-26d3b59e7414",
+        "name": "Wait3",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1584,
+          1264
+        ],
+        "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "https://app.loops.so/api/v1/contacts/update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"firstName\": \"{{ $json.first_name }}\",\n  \"userGroup\": \"{{ $json.user_group }}\",\n  \"volunteerStatus\": \"{{ $json.volunteer_status }}\", \n  \"state\": \"{{ $json.state }}\",\n  \"city\": \"{{ $json.city }}\"\n\n}",
+          "options": {}
+        },
+        "id": "d5272f3e-4588-4d60-b74f-de49190724c1",
+        "name": "Atualiza contato no Loops2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1776,
+          1264
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XrvtxHAVgwwJ3r6q",
+            "name": "Loops API"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "\n    SELECT \n        email,\n        first_name,\n        'volunteer' AS user_group,\n        condition AS volunteer_status,\n        state, \n        city\n    FROM volunteers\n    WHERE state = 'SP' and condition in ('disponivel', 'indisponivel_sem_vagas', 'indisponivel_aguardando_confirmacao')",
+          "options": {}
+        },
+        "id": "46e5d095-7762-419b-adce-8f360b900755",
+        "name": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias1",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          832,
+          1264
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "c5mNsjWNXx3mw1Fh",
+            "name": "[PROD] Mapa"
           }
         }
       }
@@ -496,7 +574,7 @@
         "main": [
           [
             {
-              "node": "Execute a SQL query",
+              "node": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias1",
               "type": "main",
               "index": 0
             }
@@ -547,13 +625,58 @@
             }
           ]
         ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait3": {
+        "main": [
+          [
+            {
+              "node": "Atualiza contato no Loops2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza contato no Loops2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Desenvolvimento Mapa",
     "name": null,
     "description": null
   },
-  "activeVersionId": "fa140fd7-00ca-4cad-b5b1-0862a14abb74",
+  "activeVersionId": "d0de6eae-7ac4-4b2e-a810-b957c79393a9",
   "connections": {
     "Loop Over Items": {
       "main": [
@@ -677,7 +800,7 @@
       "main": [
         [
           {
-            "node": "Execute a SQL query",
+            "node": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias1",
             "type": "main",
             "index": 0
           }
@@ -723,6 +846,51 @@
         [
           {
             "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Atualiza contato no Loops2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza contato no Loops2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
             "type": "main",
             "index": 0
           }
@@ -1019,8 +1187,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        512,
-        640
+        544,
+        1248
       ],
       "id": "96c719db-2f46-4ed9-8296-ba01204fd964",
       "name": "When clicking ‘Execute workflow’"
@@ -1104,6 +1272,84 @@
           "name": "Loops API"
         }
       }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "4164cf84-6577-4ae7-93ce-1bffdc20bb03",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1184,
+        1264
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "622aeb32-db84-49c3-b3fa-26d3b59e7414",
+      "name": "Wait3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        1264
+      ],
+      "webhookId": "b8b838c4-a8d5-4c55-bc34-deb65ed05eb8"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://app.loops.so/api/v1/contacts/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.email  }}\",\n  \"firstName\": \"{{ $json.first_name }}\",\n  \"userGroup\": \"{{ $json.user_group }}\",\n  \"volunteerStatus\": \"{{ $json.volunteer_status }}\", \n  \"state\": \"{{ $json.state }}\",\n  \"city\": \"{{ $json.city }}\"\n\n}",
+        "options": {}
+      },
+      "id": "d5272f3e-4588-4d60-b74f-de49190724c1",
+      "name": "Atualiza contato no Loops2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1776,
+        1264
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XrvtxHAVgwwJ3r6q",
+          "name": "Loops API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "\n    SELECT \n        email,\n        first_name,\n        'volunteer' AS user_group,\n        condition AS volunteer_status,\n        state, \n        city\n    FROM volunteers\n    WHERE state = 'SP' and condition in ('disponivel', 'indisponivel_sem_vagas', 'indisponivel_aguardando_confirmacao')",
+        "options": {}
+      },
+      "id": "46e5d095-7762-419b-adce-8f360b900755",
+      "name": "Busca MSRs e Voluntárias atualizadas nos últimos 7 dias1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        832,
+        1264
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "c5mNsjWNXx3mw1Fh",
+          "name": "[PROD] Mapa"
+        }
+      }
     }
   ],
   "pinData": {
@@ -1181,7 +1427,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-11-11T12:59:38.000Z",
+              "updatedAt": "2026-11-12T13:37:47.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -1201,7 +1447,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-11-11",
+              "lastActiveAt": "2026-11-12",
               "isPending": false
             }
           }
@@ -1218,7 +1464,7 @@
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2026-09-16T19:07:39.986Z",
-  "versionCounter": 37,
-  "versionId": "fa140fd7-00ca-4cad-b5b1-0862a14abb74"
+  "updatedAt": "2026-11-12T20:58:02.610Z",
+  "versionCounter": 39,
+  "versionId": "d0de6eae-7ac4-4b2e-a810-b957c79393a9"
 }
