@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-11-06T19:24:59.161Z",
-    "createdAt": "2026-11-06T19:24:59.161Z",
-    "versionId": "79af1dcd-c6e0-4c97-89fa-fa34b13fdb87",
+    "updatedAt": "2026-11-17T19:21:40.109Z",
+    "createdAt": "2026-11-17T19:21:40.109Z",
+    "versionId": "910fc9e4-89af-4bc3-a1ce-71551dfb6c2d",
     "workflowId": "gOnJ9OT9JnzUcWDW",
     "nodes": [
       {
@@ -135,7 +135,7 @@
       },
       {
         "parameters": {
-          "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"encaminhamento__realizado\": \"waiting_contact\",\n      \"encaminhamento_interrompido\": \"interrupted_before_support\",\n      \"atendimento__iniciado\": \"in_contact\",\n      \"atendimento__concluído\": \"completed\",\n      \"atendimento__interrompido\": \"interrupted_after_support\", \n      //\"encaminhamento__expirado\": \"expired\"\n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const status = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+          "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"encaminhamento__realizado\": \"waiting_contact\",\n      \"encaminhamento_interrompido\": \"interrupted_before_support\",\n      \"atendimento__iniciado\": \"in_contact\",\n      \"atendimento__concluído\": \"completed\",\n      \"atendimento__interrompido\": \"interrupted_after_support\", \n      \"encaminhamento__expirado\": \"expired\"\n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const status = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
         },
         "id": "01c076d8-803d-435e-bc2a-62e0aa6513eb",
         "name": "Extracts zendesk_ticket_id and support_request_status1",
@@ -179,7 +179,7 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          3824,
+          4032,
           832
         ]
       },
@@ -194,7 +194,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          4656,
+          4864,
           -48
         ],
         "credentials": {
@@ -230,7 +230,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          4064,
+          4272,
           400
         ],
         "credentials": {
@@ -280,7 +280,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          4656,
+          4864,
           272
         ]
       },
@@ -295,7 +295,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          3840,
+          4048,
           400
         ],
         "credentials": {
@@ -335,7 +335,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          4272,
+          4480,
           400
         ]
       },
@@ -350,7 +350,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          5040,
+          5248,
           48
         ],
         "credentials": {
@@ -381,7 +381,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          5040,
+          5248,
           240
         ],
         "credentials": {
@@ -431,7 +431,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          4672,
+          4880,
           608
         ]
       },
@@ -446,7 +446,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.3,
         "position": [
-          5040,
+          5248,
           592
         ],
         "credentials": {
@@ -477,7 +477,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          5040,
+          5248,
           832
         ],
         "credentials": {
@@ -733,7 +733,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          6768,
+          6976,
           944
         ],
         "id": "21a775d8-1436-4b69-935b-bc90253b3f54",
@@ -759,7 +759,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          6832,
+          7040,
           1488
         ],
         "id": "e61cea32-a7c0-44a4-b943-0c34885f63bb",
@@ -856,7 +856,7 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          4512,
+          4720,
           1088
         ],
         "id": "c7d52646-8853-4a73-ab30-980a47080df8",
@@ -923,7 +923,7 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          5968,
+          6176,
           1520
         ],
         "id": "c3a1d6c2-c8ed-439a-956a-dd867fabab06",
@@ -944,7 +944,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          5984,
+          6192,
           1984
         ],
         "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
@@ -970,7 +970,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          5488,
+          5696,
           2272
         ],
         "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
@@ -993,7 +993,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.5,
         "position": [
-          7120,
+          7328,
           928
         ],
         "credentials": {
@@ -1014,7 +1014,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.5,
         "position": [
-          7024,
+          7232,
           1488
         ],
         "credentials": {
@@ -1035,7 +1035,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.5,
         "position": [
-          6000,
+          6208,
           2368
         ],
         "credentials": {
@@ -1058,7 +1058,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          6224,
+          6432,
           2496
         ],
         "credentials": {
@@ -1286,7 +1286,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          6768,
+          6976,
           704
         ],
         "id": "50a6bf28-8caf-4a93-bd04-08269ba9db10",
@@ -1309,7 +1309,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.5,
         "position": [
-          7072,
+          7280,
           704
         ],
         "credentials": {
@@ -1332,7 +1332,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          7392,
+          7600,
           928
         ],
         "credentials": {
@@ -1356,7 +1356,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          7312,
+          7520,
           704
         ],
         "credentials": {
@@ -1381,7 +1381,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          6784,
+          6992,
           1296
         ],
         "id": "3b0c37b8-5d6f-4894-9972-9883620a4de6",
@@ -1404,7 +1404,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.5,
         "position": [
-          7024,
+          7232,
           1296
         ],
         "credentials": {
@@ -1427,7 +1427,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          7248,
+          7456,
           1488
         ],
         "credentials": {
@@ -1451,7 +1451,7 @@
         "type": "n8n-nodes-base.zendesk",
         "typeVersion": 1,
         "position": [
-          7280,
+          7488,
           1280
         ],
         "credentials": {
@@ -1538,7 +1538,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          5648,
+          5856,
           1760
         ],
         "id": "1c9ad5c9-344f-4134-b337-d024cc26a891",
@@ -1553,7 +1553,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          5456,
+          5664,
           1728
         ],
         "id": "cf655de8-a390-49c4-84d2-9329a4dca9d8",
@@ -1574,7 +1574,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          4848,
+          5056,
           1872
         ],
         "id": "c1f3ebe6-514e-4348-b98b-86911e0d4ca0",
@@ -1623,7 +1623,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          5056,
+          5264,
           1872
         ],
         "id": "9e159bae-6619-4b56-a464-37269a09586a",
@@ -1638,7 +1638,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          6272,
+          6480,
           720
         ],
         "id": "93259492-1fcf-49d9-a8e9-c023caf520a6",
@@ -1687,7 +1687,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          6480,
+          6688,
           720
         ],
         "id": "5585a7cb-618b-476c-bc8d-22e636c3e0a5",
@@ -1702,7 +1702,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          6288,
+          6496,
           960
         ],
         "id": "9b66a425-31fe-4faa-a4d3-892834108b95",
@@ -1751,7 +1751,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          6496,
+          6704,
           960
         ],
         "id": "2d406fc1-1b70-4bf2-bfc7-a9c410157714",
@@ -1766,7 +1766,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          6320,
+          6528,
           1312
         ],
         "id": "35d29c30-87a7-4f4f-ba87-a61fecc5809b",
@@ -1815,7 +1815,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          6560,
+          6768,
           1312
         ],
         "id": "12acd681-000f-49a3-9d3c-2d6d0690ddad",
@@ -1830,7 +1830,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          6384,
+          6592,
           1520
         ],
         "id": "e4574abd-76df-4580-b2ac-d59f9e1bd231",
@@ -1879,7 +1879,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          6592,
+          6800,
           1520
         ],
         "id": "24d5ce06-a085-45df-a21f-cc5c9cb5159d",
@@ -3007,7 +3007,7 @@
     "name": null,
     "description": null
   },
-  "activeVersionId": "79af1dcd-c6e0-4c97-89fa-fa34b13fdb87",
+  "activeVersionId": "910fc9e4-89af-4bc3-a1ce-71551dfb6c2d",
   "connections": {
     "Webhook": {
       "main": [
@@ -3856,7 +3856,7 @@
     },
     {
       "parameters": {
-        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"encaminhamento__realizado\": \"waiting_contact\",\n      \"encaminhamento_interrompido\": \"interrupted_before_support\",\n      \"atendimento__iniciado\": \"in_contact\",\n      \"atendimento__concluído\": \"completed\",\n      \"atendimento__interrompido\": \"interrupted_after_support\", \n      //\"encaminhamento__expirado\": \"expired\"\n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const status = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
+        "jsCode": "output = []\n\nfor (const item of $input.all()) {\n  const status_lookup = {\n      \"encaminhamento__realizado\": \"waiting_contact\",\n      \"encaminhamento_interrompido\": \"interrupted_before_support\",\n      \"atendimento__iniciado\": \"in_contact\",\n      \"atendimento__concluído\": \"completed\",\n      \"atendimento__interrompido\": \"interrupted_after_support\", \n      \"encaminhamento__expirado\": \"expired\"\n  }\n \n  const zendesk_ticket_id = item.json.body.id;\n  const status_acolhimento = item.json.body.status_acolhimento;\n  \n  const status = status_lookup[status_acolhimento]\n    \n  const newItem = {\n    \"zendesk_ticket_id\": zendesk_ticket_id,\n    \"status\": status\n  }\n  output.push(newItem)\n}\n\nreturn output;"
       },
       "id": "01c076d8-803d-435e-bc2a-62e0aa6513eb",
       "name": "Extracts zendesk_ticket_id and support_request_status1",
@@ -3900,7 +3900,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3824,
+        4032,
         832
       ]
     },
@@ -3915,7 +3915,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4656,
+        4864,
         -48
       ],
       "credentials": {
@@ -3951,7 +3951,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        4064,
+        4272,
         400
       ],
       "credentials": {
@@ -4001,7 +4001,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        4656,
+        4864,
         272
       ]
     },
@@ -4016,7 +4016,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        3840,
+        4048,
         400
       ],
       "credentials": {
@@ -4056,7 +4056,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        4272,
+        4480,
         400
       ]
     },
@@ -4071,7 +4071,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        5040,
+        5248,
         48
       ],
       "credentials": {
@@ -4102,7 +4102,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        5040,
+        5248,
         240
       ],
       "credentials": {
@@ -4152,7 +4152,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        4672,
+        4880,
         608
       ]
     },
@@ -4167,7 +4167,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.3,
       "position": [
-        5040,
+        5248,
         592
       ],
       "credentials": {
@@ -4198,7 +4198,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        5040,
+        5248,
         832
       ],
       "credentials": {
@@ -4454,7 +4454,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        6768,
+        6976,
         944
       ],
       "id": "21a775d8-1436-4b69-935b-bc90253b3f54",
@@ -4480,7 +4480,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        6832,
+        7040,
         1488
       ],
       "id": "e61cea32-a7c0-44a4-b943-0c34885f63bb",
@@ -4577,7 +4577,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        4512,
+        4720,
         1088
       ],
       "id": "c7d52646-8853-4a73-ab30-980a47080df8",
@@ -4644,7 +4644,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        5968,
+        6176,
         1520
       ],
       "id": "c3a1d6c2-c8ed-439a-956a-dd867fabab06",
@@ -4665,7 +4665,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        5984,
+        6192,
         1984
       ],
       "id": "1f642ec2-8d0b-404c-9404-07d4da8ad1c0",
@@ -4691,7 +4691,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        5488,
+        5696,
         2272
       ],
       "id": "4da70cb0-81fe-4b0d-ab7d-c3f13b3b42dc",
@@ -4714,7 +4714,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        7120,
+        7328,
         928
       ],
       "credentials": {
@@ -4735,7 +4735,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        7024,
+        7232,
         1488
       ],
       "credentials": {
@@ -4756,7 +4756,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        6000,
+        6208,
         2368
       ],
       "credentials": {
@@ -4779,7 +4779,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        6224,
+        6432,
         2496
       ],
       "credentials": {
@@ -5007,7 +5007,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        6768,
+        6976,
         704
       ],
       "id": "50a6bf28-8caf-4a93-bd04-08269ba9db10",
@@ -5030,7 +5030,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        7072,
+        7280,
         704
       ],
       "credentials": {
@@ -5053,7 +5053,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        7392,
+        7600,
         928
       ],
       "credentials": {
@@ -5077,7 +5077,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        7312,
+        7520,
         704
       ],
       "credentials": {
@@ -5102,7 +5102,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        6784,
+        6992,
         1296
       ],
       "id": "3b0c37b8-5d6f-4894-9972-9883620a4de6",
@@ -5125,7 +5125,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        7024,
+        7232,
         1296
       ],
       "credentials": {
@@ -5148,7 +5148,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        7248,
+        7456,
         1488
       ],
       "credentials": {
@@ -5172,7 +5172,7 @@
       "type": "n8n-nodes-base.zendesk",
       "typeVersion": 1,
       "position": [
-        7280,
+        7488,
         1280
       ],
       "credentials": {
@@ -5259,7 +5259,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        5648,
+        5856,
         1760
       ],
       "id": "1c9ad5c9-344f-4134-b337-d024cc26a891",
@@ -5274,7 +5274,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        5456,
+        5664,
         1728
       ],
       "id": "cf655de8-a390-49c4-84d2-9329a4dca9d8",
@@ -5295,7 +5295,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        4848,
+        5056,
         1872
       ],
       "id": "c1f3ebe6-514e-4348-b98b-86911e0d4ca0",
@@ -5344,7 +5344,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        5056,
+        5264,
         1872
       ],
       "id": "9e159bae-6619-4b56-a464-37269a09586a",
@@ -5359,7 +5359,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        6272,
+        6480,
         720
       ],
       "id": "93259492-1fcf-49d9-a8e9-c023caf520a6",
@@ -5408,7 +5408,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        6480,
+        6688,
         720
       ],
       "id": "5585a7cb-618b-476c-bc8d-22e636c3e0a5",
@@ -5423,7 +5423,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        6288,
+        6496,
         960
       ],
       "id": "9b66a425-31fe-4faa-a4d3-892834108b95",
@@ -5472,7 +5472,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        6496,
+        6704,
         960
       ],
       "id": "2d406fc1-1b70-4bf2-bfc7-a9c410157714",
@@ -5487,7 +5487,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        6320,
+        6528,
         1312
       ],
       "id": "35d29c30-87a7-4f4f-ba87-a61fecc5809b",
@@ -5536,7 +5536,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        6560,
+        6768,
         1312
       ],
       "id": "12acd681-000f-49a3-9d3c-2d6d0690ddad",
@@ -5551,7 +5551,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        6384,
+        6592,
         1520
       ],
       "id": "e4574abd-76df-4580-b2ac-d59f9e1bd231",
@@ -5600,7 +5600,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        6592,
+        6800,
         1520
       ],
       "id": "24d5ce06-a085-45df-a21f-cc5c9cb5159d",
@@ -6139,7 +6139,7 @@
             "userId": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
             "projectId": "rfgBK87HsySgxYKT",
             "user": {
-              "updatedAt": "2026-11-16T14:04:37.000Z",
+              "updatedAt": "2026-11-17T15:32:44.000Z",
               "createdAt": "2024-01-09T22:21:28.810Z",
               "id": "6e437c36-d4e0-42f4-bbc3-d9b5ac96e474",
               "email": "dev@mapa.org.br",
@@ -6159,7 +6159,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-11-16",
+              "lastActiveAt": "2026-11-17",
               "isPending": false
             }
           }
@@ -6185,7 +6185,7 @@
     }
   ],
   "triggerCount": 4,
-  "updatedAt": "2026-11-06T19:24:59.159Z",
-  "versionCounter": 195,
-  "versionId": "79af1dcd-c6e0-4c97-89fa-fa34b13fdb87"
+  "updatedAt": "2026-11-17T19:21:40.107Z",
+  "versionCounter": 203,
+  "versionId": "910fc9e4-89af-4bc3-a1ce-71551dfb6c2d"
 }
